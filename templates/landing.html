@@ -1,0 +1,16 @@
+{% extend 'base.html' %}
+
+{% block title %}
+Welcome to Leet-Mommy Search
+{% endblock %}
+
+{% block content %}
+
+<form action="/orlandoSearch">
+    <label for="">
+        <input type="text" name = "search-word" id="search-word">
+    </label>
+    <button type='submit'>Search</button>
+</form>
+
+{% endblock %}
