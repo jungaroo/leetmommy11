@@ -1,8 +1,7 @@
-from flask import Flask, request, render_template, redirect
+from flask import Flask, request, render_template, redirect,jsonify
 # from models import db, connect_db, User, Post, Tag, PostTag
-from sqlalchemy import desc
-from notes_search import BASE_URL
-
+# from sqlalchemy import desc
+# from notes_search import BASE_URL
 app = Flask(__name__)
 
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///blogly'
@@ -25,14 +24,14 @@ def landing():
 
     return render_template("landing.html")
 
-@app.route('/orlandSearch')
+@app.route('/orlandoSearch')
 def list_lecture_links():
     """Retrun all lecture links with word"""
 
-    search_word = request.args.get('search_word', None)
-    
-    wc = WordSearcher(BASE_URL)
-    links = wc.getlinks(search_word)
+    search_word = request.args.get('search-word', None)
 
-    return jsonify(lecture_links=links)
+    # wc = WordSearcher(BASE_URL)
+    # links = wc.getlinks(search_word)
+
+    return jsonify(lecture_links=['asfadsfasdfas',search_word])
 
