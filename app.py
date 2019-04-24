@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect,jsonify
+from flask import Flask, request, render_template, redirect, jsonify
 from Classes.WordSearch import WordSearcher, BASE_URL, BASE_LINKS
 # from models import db, connect_db, User, Post, Tag, PostTag
 # from sqlalchemy import desc
@@ -28,8 +28,8 @@ def landing():
 
 @app.route('/codesnip')
 def render_code_snip_search():
-    """Render Landing page"""
-    return render_template("codesnips.html")
+    """Render CodeSnip Landing page"""
+    return render_template("codeForm.html")
 
 @app.route('/codeSnipSearch')
 def list_snipit_links():
@@ -50,7 +50,8 @@ def list_snipit_links():
                 memo2[(c,search_word)] = links
                 all_links[c] = links
             
-    return jsonify(lecture_links=all_links)
+    print(all_links)
+    return render_template("codes.html",links_and_snips=all_links.get('r11'))
 
 @app.route('/orlandoSearch')
 def list_lecture_links():

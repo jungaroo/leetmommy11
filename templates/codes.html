@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Welcome to Leet-Mommy Search
+{% endblock %}
+
+{% block content %}
+
+<div class='container'>
+    <ul class="list-group">
+        {% for link in links_and_snips %}
+        <li class="list-group-item"><strong>{{link[0]}}</strong></li>
+        <li class="list-group-item">
+            <pre>{{link[1]}}</pre>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+{% endblock %}

@@ -57,5 +57,5 @@ class WordSearcher():
             for code_snip in pre:
                 if word in code_snip.text:  # regular expression
                     # print("Try checking in:", f"{BASE_URL}{link}")
-                    output.append(f"{self.base_url}{link}" + code_snip.text)
+                    output.append((f"{self.base_url}{link}", code_snip.text))
         return output
