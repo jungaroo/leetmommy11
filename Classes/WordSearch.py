@@ -36,3 +36,26 @@ class WordSearcher():
                 output.append(f"{self.base_url}{link}")
 
         return output
+
+    def get_links_search_only_pre(self, word):
+
+        output = []
+
+        # Search
+        response = requests.get(self.base_url)
+        soup = bs4.BeautifulSoup(response.text, features='html5lib')
+
+        # First grab all the href links for the lectures
+        html_links = soup.find_all('a', href=True)
+        links = [a['href'] for a in html_links if not a['href'].endswith('.zip')][1:]
+
+        # search for the word
+        for link in links:
+            response = requests.get(self.base_url + link)
+            soup = bs4.BeautifulSoup(response.text, features='html5lib')
+            pre = soup.find_all('pre')   
+            for code_snip in pre:
+                if word in code_snip.text:  # regular expression
+                    # print("Try checking in:", f"{BASE_URL}{link}")
+                    output.append(f"{self.base_url}{link}" + code_snip.text)
+        return output
