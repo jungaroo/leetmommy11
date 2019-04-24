@@ -1,0 +1,415 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Data Structures/Algorithms Wrap Up</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Data Structures/Algorithms Wrap Up</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Data Structures/Algorithms Wrap Up</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#heap">Heap</a><ul>
+<li><a class="reference internal" href="#id2">Heap</a></li>
+<li><a class="reference internal" href="#max-heap">Max Heap</a></li>
+<li><a class="reference internal" href="#adding-item">Adding Item</a></li>
+<li><a class="reference internal" href="#removing-top-item">Removing Top Item</a></li>
+<li><a class="reference internal" href="#runtime">Runtime</a></li>
+<li><a class="reference internal" href="#implementation">Implementation</a></li>
+<li><a class="reference internal" href="#bubbleup">BubbleUp</a></li>
+<li><a class="reference internal" href="#sinkdown">sinkDown</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tries">Tries</a><ul>
+<li><a class="reference internal" href="#id3">Tries</a></li>
+<li><a class="reference internal" href="#id4">Tries</a></li>
+<li><a class="reference internal" href="#typical-methods">Typical Methods</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#self-balancing-trees">Self Balancing Trees</a><ul>
+<li><a class="reference internal" href="#what">What?</a></li>
+<li><a class="reference internal" href="#a-couple-to-know">A couple to know</a></li>
+<li><a class="reference internal" href="#what-does-it-look-like">What does it look like?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bloom-filter">Bloom Filter</a><ul>
+<li><a class="reference internal" href="#id5">Bloom Filter</a></li>
+<li><a class="reference internal" href="#what-is-it-used-for">What is it used for?</a></li>
+<li><a class="reference internal" href="#tell-me-more">Tell me more!</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#other-concepts">Other Concepts</a><ul>
+<li><a class="reference internal" href="#id6">Other Concepts</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#what-do-i-really-need-to-know">What do I really need to know?</a><ul>
+<li><a class="reference internal" href="#the-must-knows">The <em>must</em> knows</a></li>
+<li><a class="reference internal" href="#what-are-you-likely-to-be-asked-about">What are you likely to be asked about?</a></li>
+<li><a class="reference internal" href="#should-you-study-this">Should you study this?</a></li>
+<li><a class="reference internal" href="#where-can-you-learn-more">Where can you learn more?</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="data-structures-algorithms-wrap-up">
+<h1>Data Structures/Algorithms Wrap Up</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Discuss more advanced data structures and their applications</li>
+<li>Understand why knowledge of these data structures is more important than implementation</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="heap">
+<h2>Heap</h2>
+<div class="section" id="id2">
+<p>A new data structure!</p>
+</div>
+<div class="section" id="max-heap">
+<h3>Max Heap</h3>
+<p>Each parent must be greater than children</p>
+<div class="graphviz">
+<img src="_images/graphviz-a51093189562af6403047cdc10533794e2a1876a.svg" />
+</div>
+<p>Weâll use a âcomplete max binary heapâ</p>
+<div class="compare compare23 docutils container">
+<div class="docutils container">
+<div class="graphviz">
+<img src="_images/graphviz-b7d05542391f27aee0de6851c621bc0f8af12bad.svg" />
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li><strong>complete</strong>: filled top â bottom, left â right</li>
+<li><strong>max</strong>: each parent is greater than children</li>
+<li><strong>binary</strong>: parent can have at most two children</li>
+<li><strong>heap</strong>: tree with rule between parent/children</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="adding-item">
+<h3>Adding Item</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<p><strong>Add at bottom right</strong></p>
+<div class="graphviz">
+<img src="_images/graphviz-38234c070c1d533f065d870aea259eeaa9ba35eb.svg" />
+</div>
+</div>
+<div class="docutils container">
+<p><strong>Swap upward until correct</strong></p>
+<div class="graphviz">
+<img src="_images/graphviz-98f1d26e6bbeafe379e0425d3e5811e5da7a565c.svg" />
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="removing-top-item">
+<h3>Removing Top Item</h3>
+<p>Highest-priority item is top of tree!</p>
+<div class="graphviz">
+<img src="_images/graphviz-b1cc850ddca0389f9f44d0ed8b4931994afb7553.svg" />
+</div>
+<div class="docutils container">
+<p>If we just remove it, our tree wonât have a head</p>
+</div>
+<div class="compare docutils container">
+<div class="docutils container">
+<p><strong>Put bottom right node at top</strong></p>
+<div class="graphviz">
+<img src="_images/graphviz-e9a1aec081c76bd4a386d2e685e511dc59838eaa.svg" />
+</div>
+</div>
+<div class="docutils container">
+<p><strong>Swap downward until correct</strong></p>
+<div class="graphviz">
+<img src="_images/graphviz-60c5cb14e0ef0ec284e0b8e03ba3b67c6eadd9bb.svg" />
+</div>
+<div class="docutils container">
+<p>(Swapped with 36, not 19, as 19 &lt; 36)</p>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="runtime">
+<h3>Runtime</h3>
+<p>Adding to bottom right is O(1)</p>
+<p>Swapping top &amp; bottom right is O(1)</p>
+<p>The swapping up &amp; down limits the runtime</p>
+<div class="docutils container">
+<ul class="simple">
+<li><strong>bubbleUp:</strong> O(log n)  <em>(max # swap up = height)</em></li>
+<li><strong>sinkDown:</strong> O(log n)  <em>(max # swap down = height)</em></li>
+</ul>
+</div>
+</div>
+<div class="section" id="implementation">
+<h3>Implementation</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="graphviz">
+<img src="_images/graphviz-d516746d3266a9dc51a023862c341a72bdc1321c.svg" />
+</div>
+</div>
+<div class="docutils container">
+<ul>
+<li><p class="first">Can represent as an array</p>
+<pre class="literal-block">
+[<span class="green">36</span>, <span class="red">19, 25</span>, <span class="blue">17, 9, 3, 1</span>, <span class="orange">2, 7</span>]
+<span class="gray">[#0,  1,  2,  3, 4, 5, 6, 7, 8]</span>
+</pre>
+</li>
+<li><p class="first">Can easily find <cite>i</cite>âs children:</p>
+<ul class="simple">
+<li>Left: <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">*</span> <span class="pre">i</span> <span class="pre">+</span> <span class="pre">1</span></code></li>
+<li>Right: <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">*</span> <span class="pre">i</span> <span class="pre">+</span> <span class="pre">2</span></code></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="bubbleup">
+<h3>BubbleUp</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<p><strong>Add at bottom right</strong></p>
+<div class="graphviz">
+<img src="_images/graphviz-bada6f996edbe882e35e739462d037d78709d1cd.svg" />
+</div>
+</div>
+<div class="docutils container">
+<p><strong>Swap upward until correct</strong></p>
+<div class="graphviz">
+<img src="_images/graphviz-4124c8cd2bbd0b3a7957700cfef75706a5c0edd4.svg" />
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="sinkdown">
+<h3>sinkDown</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<p><strong>Put bottom right node at top</strong></p>
+<div class="graphviz">
+<img src="_images/graphviz-f7cb873c14f25fd73de53eacda54432b70c15b28.svg" />
+</div>
+</div>
+<div class="docutils container">
+<p><strong>Swap downward until correct</strong></p>
+<div class="graphviz">
+<img src="_images/graphviz-67bae072d01b681969cdeae7a21e13d9afbb6961.svg" />
+</div>
+<div class="docutils container">
+<p>(Swapped with 36, not 19, as 19 &lt; 36)</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="tries">
+<h2>Tries</h2>
+<div class="section" id="id3">
+<div class="docutils container">
+<ul class="simple">
+<li>pronounced like âtreesâ</li>
+<li>letters as node values!</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id4">
+<div class="graphviz">
+<img src="_images/graphviz-a54206b3dbfc8a593b54f36369f3b30047b8647b.svg" />
+</div>
+</div>
+<div class="section" id="typical-methods">
+<h3>Typical Methods</h3>
+<p>Method names vary across implementations, but one set:</p>
+<div class="docutils container">
+<dl class="docutils">
+<dt><cite>addWord()</cite></dt>
+<dd>Add a word to the trie</dd>
+<dt><cite>removeWord()</cite></dt>
+<dd>Remove a word from the trie</dd>
+<dt><cite>hasWord()</cite></dt>
+<dd>See if a Trie has a word</dd>
+<dt><cite>autoComplete()</cite></dt>
+<dd>Given a string, return a list of all words</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="section" id="self-balancing-trees">
+<h2>Self Balancing Trees</h2>
+<div class="section" id="what">
+<h3>What?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Trees can suffer from being imbalanced</li>
+<li>There exist a few data structures with internal algorithms for self-balancing</li>
+</ul>
+</div>
+</div>
+<div class="section" id="a-couple-to-know">
+<h3>A couple to know</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>AVL</li>
+<li>Red Black</li>
+<li>B-Tree</li>
+</ul>
+</div>
+</div>
+<div class="section" id="what-does-it-look-like">
+<h3>What does it look like?</h3>
+<a class="reference internal image-reference" href="_images/avl.png"><img alt="_images/avl.png" src="_images/avl.png" style="width: 50%;" /></a>
+<a class="reference internal image-reference" href="_images/rbt.png"><img alt="_images/rbt.png" src="_images/rbt.png" style="width: 50%;" /></a>
+</div>
+</div>
+<div class="section" id="bloom-filter">
+<h2>Bloom Filter</h2>
+<div class="section" id="id5">
+<div class="docutils container">
+<ul class="simple">
+<li>A data structure that uses a hash function to store values</li>
+<li>Bloom filters quickly answer questions around, âIs a particular item in a collection?â<ul>
+<li>Very rarely, it will say Yes when the answer is actually No</li>
+<li>It will never say No, when the answer is actually Yes.</li>
+</ul>
+</li>
+<li>You also canât remove an item from a Bloom filter.</li>
+<li>The more space, the fewer false positives</li>
+</ul>
+</div>
+</div>
+<div class="section" id="what-is-it-used-for">
+<h3>What is it used for?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Caching</li>
+<li>Recommendation Engines (has this person seen a particular article?)</li>
+<li>Test if a URL has been visited for privacy / security concerns</li>
+<li>When you have a tolerance for false negatives but no tolerance for false positives</li>
+</ul>
+</div>
+</div>
+<div class="section" id="tell-me-more">
+<h3>Tell me more!</h3>
+<a class="reference internal image-reference" href="_images/bloom.png"><img alt="_images/bloom.png" src="_images/bloom.png" style="width: 50%;" /></a>
+</div>
+</div>
+<div class="section" id="other-concepts">
+<h2>Other Concepts</h2>
+<div class="section" id="id6">
+<div class="docutils container">
+<ul class="simple">
+<li>Public/Private encryption</li>
+<li>Dijkstra</li>
+<li>minmax</li>
+<li>A*</li>
+<li>Backtracking</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="what-do-i-really-need-to-know">
+<h2>What do I really need to know?</h2>
+<div class="section" id="the-must-knows">
+<h3>The <em>must</em> knows</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Big O</li>
+<li>Identifying Recursion</li>
+<li>Identifying Data Structures</li>
+<li>Traversal In Lists + Trees</li>
+<li>BFS / DFS</li>
+</ul>
+</div>
+</div>
+<div class="section" id="what-are-you-likely-to-be-asked-about">
+<h3>What are you likely to be asked about?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Algorithm design</li>
+<li>Selecting a data structure</li>
+<li>Big O Notation</li>
+</ul>
+</div>
+</div>
+<div class="section" id="should-you-study-this">
+<h3>Should you study this?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>It depends.</li>
+<li>Study the <em>must</em> knows</li>
+</ul>
+</div>
+</div>
+<div class="section" id="where-can-you-learn-more">
+<h3>Where can you learn more?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Practice!<ul>
+<li>leetcode</li>
+<li>hackerrank</li>
+<li>codewars</li>
+<li>codecombat</li>
+<li>interviewcake</li>
+<li>pramp</li>
+</ul>
+</li>
+<li><a class="reference external" href="https://interviewing.io/recordings/">https://interviewing.io/recordings/</a></li>
+<li>Cracking the Coding Interview</li>
+<li>Udemy Course</li>
+<li>excellent free book in py on this: <a class="reference external" href="http://interactivepython.org/runestone/static/pythonds/index.html">http://interactivepython.org/runestone/static/pythonds/index.html</a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

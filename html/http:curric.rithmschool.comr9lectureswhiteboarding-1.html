@@ -1,0 +1,468 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Whiteboarding</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Whiteboarding</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Whiteboarding</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a></li>
+<li><a class="reference internal" href="#whiteboarding-interview">Whiteboarding Interview</a></li>
+<li><a class="reference internal" href="#why-do-they-do-this">Why Do They Do This?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#process">Process</a><ul>
+<li><a class="reference internal" href="#listen-carefully">Listen Carefully</a></li>
+<li><a class="reference internal" href="#repeat-it-back">Repeat it Back</a></li>
+<li><a class="reference internal" href="#ask-clarifying-questions">Ask Clarifying Questions</a></li>
+<li><a class="reference internal" href="#write-down-the-requirements">Write Down the Requirements</a></li>
+<li><a class="reference internal" href="#write-down-a-test-case">Write Down a Test Case</a></li>
+<li><a class="reference internal" href="#stop-and-think">Stop and Think</a></li>
+<li><a class="reference internal" href="#pseudo-code">Pseudo-Code</a></li>
+<li><a class="reference internal" href="#code">Code</a></li>
+<li><a class="reference internal" href="#test-your-code">Test Your Code</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#things-to-think-about">Things to Think About</a><ul>
+<li><a class="reference internal" href="#whiteboarding-is-a-new-skill">Whiteboarding Is A New Skill</a></li>
+<li><a class="reference internal" href="#partial-credit">Partial Credit</a></li>
+<li><a class="reference internal" href="#don-t-go-radio-silent">Donât Go Radio Silent</a></li>
+<li><a class="reference internal" href="#hints">Hints</a></li>
+<li><a class="reference internal" href="#good-variable-names">Good Variable Names</a></li>
+<li><a class="reference internal" href="#test-don-t-hand-wave">Test, Donât Hand-Wave</a></li>
+<li><a class="reference internal" href="#it-s-not-an-api-quiz">Itâs Not an API Quiz</a></li>
+<li><a class="reference internal" href="#take-your-time">Take Your Time</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#remember">Remember</a><ul>
+<li><a class="reference internal" href="#id1">Remember</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="whiteboarding">
+<h1>Whiteboarding</h1>
+<div class="section" id="introduction">
+<h2>Introduction</h2>
+<div class="section" id="goals">
+<h3>Goals</h3>
+<ul class="simple">
+<li>Overview of whiteboard interviews</li>
+<li>Process for answering whiteboard challenges</li>
+<li>Live demo</li>
+<li>Practice</li>
+</ul>
+</div>
+<div class="section" id="whiteboarding-interview">
+<h3>Whiteboarding Interview</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>An interview style that poses a coding challenge â¦</li>
+<li>Which you do, live, at a whiteboard<ul>
+<li>or, sometimes, on paper or a computer</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="why-do-they-do-this">
+<h3>Why Do They Do This?</h3>
+<p>They want to assess</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Your understanding of algorithms</li>
+<li>Your problem-solving techniques</li>
+<li>How you communicate your thought process</li>
+<li>How you work under pressure</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="process">
+<h2>Process</h2>
+<div class="section" id="listen-carefully">
+<h3>Listen Carefully</h3>
+<blockquote>
+<div><p>âWrite a function that is given a list of numbers.</p>
+<p>Find all the even numbers in the list <span class="raw-reveal"><br></span>
+and return the average of them.â</p>
+</div></blockquote>
+</div>
+<div class="section" id="repeat-it-back">
+<h3>Repeat it Back</h3>
+<blockquote>
+<div>âOk, so you want me to write a function <span class="raw-reveal"><br></span>
+thatâs called with a list of numbers, <span class="raw-reveal"><br></span>
+and returns average of the even numbers?â</div></blockquote>
+</div>
+<div class="section" id="ask-clarifying-questions">
+<h3>Ask Clarifying Questions</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Do I need to handle other kinds of things in list?<ul>
+<li>For example, if a string were in the list?</li>
+</ul>
+</li>
+<li>Will these all be integers?</li>
+<li>Do I just skip over odd numbers?</li>
+<li>By âaverage,â do you mean the mean? Median? Mode?</li>
+<li>Do I print the result or return it?</li>
+<li>Am I allowed/not allowed to use certain built-in methods?</li>
+</ul>
+</div>
+<p>Why?</p>
+<ul class="simple">
+<li>To buy more time.</li>
+<li>To understand the challenge details</li>
+<li>So you write bug-free code</li>
+</ul>
+</div>
+<div class="section" id="write-down-the-requirements">
+<h3>Write Down the Requirements</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Make a short, bulleted list of requirements on whiteboard<ul>
+<li>So you canât forget any details</li>
+<li>Gives you a moment to think with less pressure</li>
+</ul>
+</li>
+<li>For example:<ul>
+<li>function given integers</li>
+<li>just skip odd numbers</li>
+<li>get mean of even numbers</li>
+<li>return mean</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="write-down-a-test-case">
+<h3>Write Down a Test Case</h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="mi">6</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">=&gt;</span> <span class="mi">3</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>Any other test case youâd want?</p>
+</div>
+<div class="docutils container">
+<p>Perhaps one with non-integer average</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">]</span> <span class="o">=</span> <span class="mi">14</span> <span class="o">/</span> <span class="mi">3</span> <span class="o">=&gt;</span> <span class="mf">4.6666</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="stop-and-think">
+<h3>Stop and Think</h3>
+<p>Donât just start writing code!</p>
+<div class="docutils container">
+<p>Think about your strategy</p>
+<blockquote>
+<div>âIâll loop over the list, skipping odds and non-numbers. <span class="raw-reveal"><br></span>
+Iâll keep the sum of the evens, and the number of them. <span class="raw-reveal"><br></span>
+Once I finish looping, I can divide the sum by the count.â</div></blockquote>
+</div>
+</div>
+<div class="section" id="pseudo-code">
+<h3>Pseudo-Code</h3>
+<p>This can keep you from getting lost in the weeds</p>
+<div class="docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">number</span> <span class="ow">in</span> <span class="nb">list</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">even</span><span class="p">,</span> <span class="n">skip</span>
+    <span class="n">add</span> <span class="n">number</span> <span class="n">to</span> <span class="nb">sum</span>
+    <span class="n">increase</span> <span class="n">count</span> <span class="n">by</span> <span class="mi">1</span>
+<span class="k">return</span> <span class="nb">sum</span> <span class="n">divided</span> <span class="n">by</span> <span class="n">count</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="code">
+<h3>Code</h3>
+<ul class="simple">
+<li>Start at top-left of the board<ul>
+<li>You want space to fit code!</li>
+</ul>
+</li>
+<li>Write neatly and evenly<ul>
+<li>In Python, you may find it helpful to show indentation with lines</li>
+</ul>
+</li>
+</ul>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">avgEvens</span><span class="p">(</span><span class="nx">nums</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="kd">let</span> <span class="nx">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">num</span> <span class="k">of</span> <span class="nx">nums</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">num</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span>  <span class="k">continue</span><span class="p">;</span>
+
+        <span class="nx">sum</span> <span class="o">+=</span> <span class="nx">num</span><span class="p">;</span>
+        <span class="nx">count</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">sum</span> <span class="o">/</span> <span class="nx">sum</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="test-your-code">
+<h3>Test Your Code</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">avgEvens</span><span class="p">(</span><span class="nx">nums</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="kd">let</span> <span class="nx">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">num</span> <span class="k">of</span> <span class="nx">nums</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">num</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span>  <span class="k">continue</span><span class="p">;</span>
+
+        <span class="nx">sum</span> <span class="o">+=</span> <span class="nx">num</span><span class="p">;</span>
+        <span class="nx">count</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">sum</span> <span class="o">/</span> <span class="nx">sum</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="docutils container">
+<ul class="simple">
+<li>Go slowly. Be the computer.</li>
+<li>Keep track of vars (use a table)</li>
+<li>Weâre skipping <em>even</em> numbers!</li>
+<li>Dividing <cite>sum</cite> by <cite>sum</cite>, not <cite>count</cite></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">function</span> <span class="n">avgEvens</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">let</span> <span class="nb">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">let</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="n">let</span> <span class="n">num</span> <span class="n">of</span> <span class="n">nums</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">num</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span>  <span class="k">continue</span><span class="p">;</span>
+
+        <span class="nb">sum</span> <span class="o">+=</span> <span class="n">num</span><span class="p">;</span>
+        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nb">sum</span> <span class="o">/</span> <span class="n">count</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>nums = [1, 2, 4, 8]</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="38%" />
+<col width="25%" />
+<col width="38%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>number</td>
+<td>sum</td>
+<td>count</td>
+</tr>
+<tr class="row-even"><td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr class="row-even"><td>4</td>
+<td>6</td>
+<td>2</td>
+</tr>
+<tr class="row-odd"><td>8</td>
+<td>14</td>
+<td>3</td>
+</tr>
+</tbody>
+</table>
+<p>return 14 / 3</p>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="things-to-think-about">
+<h2>Things to Think About</h2>
+<div class="section" id="whiteboarding-is-a-new-skill">
+<h3>Whiteboarding Is A New Skill</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Itâs not the same as programming</li>
+<li>The first few times, your brain will fall out</li>
+<li>Like any skill, it takes time â practice!</li>
+</ul>
+</div>
+</div>
+<div class="section" id="partial-credit">
+<h3>Partial Credit</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Itâs not pass/fail</li>
+<li>Do what you can,<ul>
+<li>even if itâs only pseudocode</li>
+<li>even if itâs a simpler case</li>
+<li>even if itâs just 1 part of the problem</li>
+</ul>
+</li>
+<li>They want to see how you think</li>
+<li>They want to see how you handle pressure</li>
+<li>Sometimes, the questions are <em>really hard</em></li>
+<li>They typically donât want you to solve it with a built-in function<ul>
+<li>eg, for âfind max number,â you canât use <code class="docutils literal notranslate"><span class="pre">Math.max()</span></code></li>
+<li>You can get partial credit/bonus point by knowing <cite>Math.max()</cite> exists</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="don-t-go-radio-silent">
+<h3>Donât Go Radio Silent</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Itâs fine (good, even!) to stop and think<ul>
+<li>Donât go entirely silent for too long â let them know where you are</li>
+</ul>
+</li>
+<li>Use the whiteboard for scratch space<ul>
+<li>Helps keep you organized</li>
+<li>Helps them see where you are</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="hints">
+<h3>Hints</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Itâs fine to ask for a hint</li>
+<li>Some questions are designed so thatâs expected</li>
+<li>If you know part of the answer, say that before asking for help</li>
+</ul>
+</div>
+</div>
+<div class="section" id="good-variable-names">
+<h3>Good Variable Names</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Think for a second before writing down <code class="docutils literal notranslate"><span class="pre">x</span></code><ul>
+<li>You want something short but helpful</li>
+</ul>
+</li>
+<li>Good rules of thumb:<ul>
+<li>For <em>indexes of list</em>: <cite>i</cite>, <cite>j</cite>, <cite>k</cite></li>
+<li>For <em>items in list</em>: <cite>a</cite>, <cite>b</cite>, <cite>c</cite> (or <cite>x</cite>, <cite>y</cite>, <cite>z</cite>)</li>
+<li>Use mnemonics: <cite>n</cite> for number, <cite>s</cite> for string, etc</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="test-don-t-hand-wave">
+<h3>Test, Donât Hand-Wave</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Some parts are hairy and you might feel shaky</li>
+<li>Itâs easy to try to âhand-waveâ past them<ul>
+<li>âAnd now I recurse and find the longest stringâ</li>
+</ul>
+</li>
+<li>Resist that temptation<ul>
+<li>The parts youâre less sure of need the slowest testing</li>
+<li>Be the computer</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="it-s-not-an-api-quiz">
+<h3>Itâs Not an API Quiz</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Try to remember the very most common operations<ul>
+<li>eg, to add to an array, itâs <cite>myArray.push()</cite></li>
+</ul>
+</li>
+<li>But whiteboarding isnât an API pop quiz<ul>
+<li>Itâs ok to ask what a method is called</li>
+<li>Itâs ok to use a best-guess name (<cite>mySet.additem()</cite>)</li>
+</ul>
+</li>
+<li>They want to test your thinking, not memorization of APIs!</li>
+</ul>
+</div>
+</div>
+<div class="section" id="take-your-time">
+<h3>Take Your Time</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Interviewers will not be checking watches</li>
+<li>They want you to think deeply</li>
+<li>Donât let nerves speed up your speech</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="remember">
+<h2>Remember</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>You have a useful, new skill</li>
+<li>Theyâre hungry for people they can hire â they want you to succeed!</li>
+<li>Think of them as a âpair programming partnerâ, not a âtest proctorâ</li>
+<li>Think first, go slow, code out loud, test your work</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> 
+</body>
+</html>

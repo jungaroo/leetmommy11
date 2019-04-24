@@ -1,0 +1,747 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Testing APIs with Jest</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Testing APIs with Jest</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Testing APIs with Jest</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#an-introduction-to-jest">An Introduction to Jest</a><ul>
+<li><a class="reference internal" href="#jest">Jest</a></li>
+<li><a class="reference internal" href="#installing-jest">Installing Jest</a></li>
+<li><a class="reference internal" href="#updating-your-package-json">Updating your <cite>package.json</cite></a></li>
+<li><a class="reference internal" href="#running-tests-with-jest">Running tests with Jest</a></li>
+<li><a class="reference internal" href="#matchers">Matchers</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#unit-testing-in-jest">Unit Testing in Jest</a><ul>
+<li><a class="reference internal" href="#testing-review">Testing review</a></li>
+<li><a class="reference internal" href="#unit-tests">Unit Tests</a></li>
+<li><a class="reference internal" href="#let-s-write-tests-for-an-ecommerce-application">Letâs write tests for an ecommerce application!</a></li>
+<li><a class="reference internal" href="#let-s-build-the-functionality">Letâs build the functionality!</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#integration-tests-in-express-setup">Integration Tests in Express: Setup</a><ul>
+<li><a class="reference internal" href="#integration-tests">Integration Tests</a></li>
+<li><a class="reference internal" href="#integration-tests-with-supertest">Integration Tests with Supertest</a></li>
+<li><a class="reference internal" href="#installing-supertest">Installing Supertest</a></li>
+<li><a class="reference internal" href="#adding-a-test-database">Adding a test database</a></li>
+<li><a class="reference internal" href="#running-tests">Running Tests</a></li>
+<li><a class="reference internal" href="#setting-up-and-tearing-down-the-test-suite">Setting Up and Tearing Down the test suite</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#testing-crud-actions">Testing CRUD Actions</a><ul>
+<li><a class="reference internal" href="#our-restful-json-api">Our Restful JSON API</a></li>
+<li><a class="reference internal" href="#testing-read">Testing Read</a></li>
+<li><a class="reference internal" href="#testing-create">Testing Create</a></li>
+<li><a class="reference internal" href="#testing-update">Testing Update</a></li>
+<li><a class="reference internal" href="#testing-delete">Testing Delete</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#testing-auth">Testing Auth</a><ul>
+<li><a class="reference internal" href="#the-steps">The steps</a></li>
+<li><a class="reference internal" href="#before-hook">Before hook</a></li>
+<li><a class="reference internal" href="#routes-requiring-authentication">Routes requiring authentication</a></li>
+<li><a class="reference internal" href="#routes-requiring-authorization">Routes requiring authorization</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#caveats">Caveats</a><ul>
+<li><a class="reference internal" href="#id2">Caveats</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="testing-apis-with-jest">
+<h1>Testing APIs with Jest</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Write unit tests for Express apps using Jest</li>
+<li>Write integration tests for Express apps using Jest and Supertest</li>
+<li>Test authentication / authorization with Jest and Supertest</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="an-introduction-to-jest">
+<h2>An Introduction to Jest</h2>
+<div class="section" id="jest">
+<h3>Jest</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Jest is an open-source testing platform written by Facebook</li>
+<li>Itâs built on top of Jasmine!</li>
+<li>Easy to test in environments that arenât browser-based</li>
+<li>Also very popular for testing React apps</li>
+<li>More information: <a class="reference external" href="https://jestjs.io/">Jestjs.io</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="installing-jest">
+<h3>Installing Jest</h3>
+<pre class="console literal-block">
+$ <span class="cmd">npm i --save-dev jest</span>
+</pre>
+<div class="docutils container">
+<ul class="simple">
+<li>This saves Jest as a âdevelopment dependencyâ</li>
+<li>Often helpful to separate out dependencies only used for development (e.g. testing, logging, etc) that arenât desirable or required in production</li>
+</ul>
+</div>
+</div>
+<div class="section" id="updating-your-package-json">
+<h3>Updating your <cite>package.json</cite></h3>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">demo/ecommerce-app/package.json</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;ecommerce-app&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;version&quot;</span><span class="o">:</span> <span class="s2">&quot;1.0.0&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;main&quot;</span><span class="o">:</span> <span class="s2">&quot;shopping-cart-calculations.js&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;scripts&quot;</span><span class="o">:</span> <span class="p">{</span>
+<span class="hll">    <span class="s2">&quot;test&quot;</span><span class="o">:</span> <span class="s2">&quot;jest&quot;</span>
+</span>  <span class="p">},</span>
+  <span class="s2">&quot;keywords&quot;</span><span class="o">:</span> <span class="p">[],</span>
+  <span class="s2">&quot;author&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;license&quot;</span><span class="o">:</span> <span class="s2">&quot;ISC&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;devDependencies&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;jest&quot;</span><span class="o">:</span> <span class="s2">&quot;^23.6.0&quot;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>Allows you to run tests with jest via the <code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">test</span></code> command.</p>
+</div>
+</div>
+<div class="section" id="running-tests-with-jest">
+<h3>Running tests with Jest</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Write your tests in a folder called <cite>__tests__</cite></li>
+<li>Alternatively, name your test files <cite>NAME_OF_FILE.test.js</cite><ul>
+<li>When in doubt, do both!</li>
+</ul>
+</li>
+<li>If you have a <cite>package.json</cite>, you donât need additional configuration.<ul>
+<li>If not, create <cite>jest.config.js</cite> file. It can be emptyâyou just need one.</li>
+</ul>
+</li>
+<li>Run tests using command <cite>npm test</cite><ul>
+<li>Run this in <cite>__tests__</cite> folder or in root of your application</li>
+<li>Use <code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">test</span> <span class="pre">--</span> <span class="pre">--watch</span></code> to watch and re-run tests as test files change</li>
+<li>Tests run in parallel by defaultâto run them in order, use <code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">test</span> <span class="pre">--</span> <span class="pre">-i</span></code></li>
+</ul>
+</li>
+<li>Specify the name of the file after <cite>npm test</cite> to run a specific file</li>
+</ul>
+</div>
+</div>
+<div class="section" id="matchers">
+<h3>Matchers</h3>
+<dl class="docutils">
+<dt><code class="docutils literal notranslate"><span class="pre">.toEqual(obj)</span></code></dt>
+<dd>Has the same value (eg, different lists with same values match)</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">.toBe(obj)</span></code></dt>
+<dd>Is the same object (eg, different lists with same items donât)</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">.toContain(obj)</span></code></dt>
+<dd>Does object/array contain this item?</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">.not.</span></code></dt>
+<dd>Add before matcher to invert (eg <code class="docutils literal notranslate"><span class="pre">expect(...).not.toEqual(7)</span></code>)</dd>
+</dl>
+<p><a class="reference external" href="https://jestjs.io/docs/en/using-matchers">https://jestjs.io/docs/en/using-matchers</a></p>
+</div>
+</div>
+<div class="section" id="unit-testing-in-jest">
+<h2>Unit Testing in Jest</h2>
+<div class="section" id="testing-review">
+<h3>Testing review</h3>
+<div class="docutils container">
+<ul class="simple">
+<li><strong>Unit Test</strong>: does this individual component work?</li>
+<li><strong>Integration Tests</strong>: do the parts work together?</li>
+<li><strong>End-to-end Test</strong>: does the application meet the requirements?</li>
+</ul>
+</div>
+</div>
+<div class="section" id="unit-tests">
+<h3>Unit Tests</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Test one âunitâ of functionality<ul>
+<li>Typically, one function or method</li>
+</ul>
+</li>
+<li>Donât test integration of components<ul>
+<li>Donât test framework itself <em>(eg, Express)</em></li>
+</ul>
+</li>
+<li>Promote modular code<ul>
+<li>Write code with testing in mind</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="let-s-write-tests-for-an-ecommerce-application">
+<h3>Letâs write tests for an ecommerce application!</h3>
+<div class="docutils container">
+<p>We need a function to calculate the total number of items in our cart.</p>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">shopping-cart-calculations.test.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;calculateTotalQuantity&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;it calculates total quantity&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">cart</span> <span class="o">=</span> <span class="p">[</span>
+      <span class="p">{</span> <span class="nx">item</span><span class="o">:</span> <span class="s2">&quot;le croix&quot;</span><span class="p">,</span> <span class="nx">price</span><span class="o">:</span> <span class="mf">4.99</span><span class="p">,</span> <span class="nx">quantity</span><span class="o">:</span> <span class="mi">3</span> <span class="p">},</span>
+      <span class="p">{</span> <span class="nx">item</span><span class="o">:</span> <span class="s2">&quot;pretzels&quot;</span><span class="p">,</span> <span class="nx">price</span><span class="o">:</span> <span class="mf">8.99</span><span class="p">,</span> <span class="nx">quantity</span><span class="o">:</span> <span class="mi">10</span> <span class="p">}</span>
+    <span class="p">];</span>
+    <span class="kr">const</span> <span class="nx">totalQuantity</span> <span class="o">=</span> <span class="nx">calculateTotalQuantity</span><span class="p">(</span><span class="nx">cart</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">totalQuantity</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">13</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<p>We also need a function to calculate the total price of all items in our cart.</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;calculateCartTotal&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// let&#39;s make a variable cart to be used in each test</span>
+  <span class="kd">let</span> <span class="nx">cart</span><span class="p">;</span>
+
+  <span class="nx">beforeEach</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">cart</span> <span class="o">=</span> <span class="p">[</span>
+      <span class="p">{</span> <span class="nx">item</span><span class="o">:</span> <span class="s2">&quot;le croix&quot;</span><span class="p">,</span> <span class="nx">price</span><span class="o">:</span> <span class="mf">4.99</span><span class="p">,</span> <span class="nx">quantity</span><span class="o">:</span> <span class="mi">3</span> <span class="p">},</span>
+      <span class="p">{</span> <span class="nx">item</span><span class="o">:</span> <span class="s2">&quot;pretzels&quot;</span><span class="p">,</span> <span class="nx">price</span><span class="o">:</span> <span class="mf">8.99</span><span class="p">,</span> <span class="nx">quantity</span><span class="o">:</span> <span class="mi">10</span> <span class="p">}</span>
+    <span class="p">];</span>
+  <span class="p">});</span>
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;it calculates total without discount&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">total</span> <span class="o">=</span> <span class="nx">calculateCartTotal</span><span class="p">(</span><span class="nx">cart</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">total</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mf">104.87</span><span class="p">);</span>
+  <span class="p">});</span>
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;it calculates total with discount&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">total</span> <span class="o">=</span> <span class="nx">calculateCartTotal</span><span class="p">(</span><span class="nx">cart</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">total</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mf">52.44</span><span class="p">);</span>
+  <span class="p">});</span>
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;it handles empty carts&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">total</span> <span class="o">=</span> <span class="nx">calculateCartTotal</span><span class="p">([]);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">total</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="let-s-build-the-functionality">
+<h3>Letâs build the functionality!</h3>
+<div class="docutils container">
+<p>This code passes our tests!</p>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">demo/ecommerce-app/shopping-cart-calculations.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** calculate total price rounded to two decimals</span>
+<span class="cm"> -  discount amount is an optional float */</span>
+
+<span class="kd">function</span> <span class="nx">calculateCartTotal</span><span class="p">(</span><span class="nx">cart</span><span class="p">,</span> <span class="nx">discountAmount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">totalPrice</span> <span class="o">=</span> <span class="nx">cart</span><span class="p">.</span><span class="nx">reduce</span><span class="p">(</span>
+      <span class="p">(</span><span class="nx">price</span><span class="p">,</span> <span class="nx">item</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">(</span><span class="nx">price</span> <span class="o">+</span> <span class="nx">item</span><span class="p">.</span><span class="nx">price</span> <span class="o">*</span> <span class="nx">item</span><span class="p">.</span><span class="nx">quantity</span><span class="p">),</span> <span class="mi">0</span><span class="p">);</span>
+  <span class="kd">let</span> <span class="nx">discountedPrice</span> <span class="o">=</span> <span class="nx">totalPrice</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="nx">discountAmount</span><span class="p">);</span>
+  <span class="c1">// toFixed returns string; convert to a number</span>
+  <span class="k">return</span> <span class="o">+</span><span class="nx">discountedPrice</span><span class="p">.</span><span class="nx">toFixed</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cm">/** sum the quantity key for each item */</span>
+
+<span class="kd">function</span> <span class="nx">calculateTotalQuantity</span><span class="p">(</span><span class="nx">cart</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">cart</span><span class="p">.</span><span class="nx">reduce</span><span class="p">((</span><span class="nx">tot</span><span class="p">,</span> <span class="nx">item</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">(</span><span class="nx">tot</span> <span class="o">+</span> <span class="nx">item</span><span class="p">.</span><span class="nx">quantity</span><span class="p">),</span> <span class="mi">0</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="hll"><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class="hll">  <span class="nx">calculateCartTotal</span><span class="p">,</span>
+</span><span class="hll">  <span class="nx">calculateTotalQuantity</span>
+</span><span class="hll"><span class="p">};</span>
+</span></pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="integration-tests-in-express-setup">
+<h2>Integration Tests in Express: Setup</h2>
+<div class="section" id="integration-tests">
+<h3>Integration Tests</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Making sure the parts work together</li>
+<li>Essential to have along with unit tests!</li>
+<li>More involved than unit tests</li>
+</ul>
+</div>
+</div>
+<div class="section" id="integration-tests-with-supertest">
+<h3>Integration Tests with Supertest</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>A library for testing Express applications</li>
+<li>Our tool for integration testing</li>
+<li>Similar to Flask-testing: allows us to make requests against our app in a test environment</li>
+<li>Docs: <a class="reference external" href="https://github.com/visionmedia/supertest">https://github.com/visionmedia/supertest</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="installing-supertest">
+<h3>Installing Supertest</h3>
+<pre class="console literal-block">
+$ <span class="cmd">npm i --save-dev supertest</span>
+</pre>
+</div>
+<div class="section" id="adding-a-test-database">
+<h3>Adding a test database</h3>
+<p>Weâre going to need a different database for testing, so letâs configure that!</p>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">demo/cats-api/config.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">DB_URI</span><span class="p">;</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">NODE_ENV</span> <span class="o">===</span> <span class="s2">&quot;test&quot;</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">DB_URI</span> <span class="o">=</span> <span class="s2">&quot;postgresql:///cats-test&quot;</span><span class="p">;</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+  <span class="nx">DB_URI</span> <span class="o">=</span> <span class="s2">&quot;postgresql:///cats&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">DB_URI</span> <span class="p">};</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="running-tests">
+<h3>Running Tests</h3>
+<p>Make sure you create your test database before running your tests, otherwise they will hang.</p>
+<div class="docutils container">
+<pre class="console literal-block">
+$ <span class="cmd">createdb cats-test</span>
+$ <span class="cmd">psql cats-test &lt; data.sql</span>
+</pre>
+</div>
+<div class="docutils container">
+<p>Once you have your database, you can run your tests as usual <span class="raw-reveal"><br></span> with <cite>npm test</cite></p>
+</div>
+</div>
+<div class="section" id="setting-up-and-tearing-down-the-test-suite">
+<h3>Setting Up and Tearing Down the test suite</h3>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">Setup at beginning</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="hll"><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">NODE_ENV</span> <span class="o">=</span> <span class="s2">&quot;test&quot;</span><span class="p">;</span>
+</span><span class="c1">// npm packages</span>
+<span class="kr">const</span> <span class="nx">request</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;supertest&quot;</span><span class="p">);</span>
+
+<span class="c1">// app imports</span>
+<span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;../app&quot;</span><span class="p">);</span>
+<span class="kr">const</span> <span class="nx">db</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;../db&quot;</span><span class="p">);</span>
+
+<span class="kd">let</span> <span class="nx">cat</span><span class="p">;</span>
+
+<span class="nx">beforeEach</span><span class="p">(</span><span class="nx">async</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="sb">`</span>
+<span class="sb">    INSERT INTO </span>
+<span class="sb">      cats (name) VALUES (&#39;beans&#39;)  </span>
+<span class="sb">      RETURNING id, name`</span><span class="p">);</span>
+  <span class="nx">cat</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">Teardown at end</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">afterEach</span><span class="p">(</span><span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// delete any data created by test</span>
+  <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s2">&quot;DELETE FROM cats&quot;</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="nx">afterAll</span><span class="p">(</span><span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// close db connection</span>
+  <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">end</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="testing-crud-actions">
+<h2>Testing CRUD Actions</h2>
+<div class="section" id="our-restful-json-api">
+<h3>Our Restful JSON API</h3>
+<p>What routes do we need for a RESTful JSON API with full CRUD on cats? <span class="raw-reveal"><br></span> (ZOMG so many acryonyms.)</p>
+<div class="docutils container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="27%" />
+<col width="29%" />
+<col width="44%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">HTTP Verb</th>
+<th class="head">Route</th>
+<th class="head">Response</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>GET</td>
+<td>/cats</td>
+<td>Display all cats</td>
+</tr>
+<tr class="row-odd"><td>GET</td>
+<td>/cats/:id</td>
+<td>Display a cat</td>
+</tr>
+<tr class="row-even"><td>POST</td>
+<td>/cats</td>
+<td>Create a cat</td>
+</tr>
+<tr class="row-odd"><td>PUT / PATCH</td>
+<td>/cats/:id</td>
+<td>Update a cat</td>
+</tr>
+<tr class="row-even"><td>DELETE</td>
+<td>/cats/:id</td>
+<td>Delete a cat</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="testing-read">
+<h3>Testing Read</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">demo/cats-api/__tests__/cats.test.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** GET /cats - returns `{cats: [cat, ...]}` */</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;GET /cats&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;Gets a list of 1 cat&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="sb">`/cats`</span><span class="p">);</span>
+    <span class="kr">const</span> <span class="p">{</span> <span class="nx">cats</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">;</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">200</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">cats</span><span class="p">).</span><span class="nx">toHaveLength</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">cats</span><span class="p">[</span><span class="mi">0</span><span class="p">]).</span><span class="nx">toEqual</span><span class="p">(</span><span class="nx">cat</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">demo/cats-api/__tests__/cats.test.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** GET /cats/[id] - return data about one cat: `{cat: cat}` */</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;GET /cats/:id&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;Gets a single cat&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="sb">`/cats/</span><span class="si">${</span><span class="nx">cat</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">200</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">cat</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="nx">cat</span><span class="p">);</span>
+  <span class="p">});</span>
+
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;Responds with 404 if can&#39;t find cat&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="sb">`/cats/0`</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">404</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="testing-create">
+<h3>Testing Create</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">demo/cats-api/__tests__/cats.test.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** POST /cats - create cat from data; return `{cat: cat}` */</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;POST /cats&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;Creates a new cat&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="sb">`/cats`</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">send</span><span class="p">({</span>
+        <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Ezra&quot;</span>
+      <span class="p">});</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">201</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">cat</span><span class="p">).</span><span class="nx">toHaveProperty</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">cat</span><span class="p">).</span><span class="nx">toHaveProperty</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">cat</span><span class="p">.</span><span class="nx">name</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s2">&quot;Ezra&quot;</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="testing-update">
+<h3>Testing Update</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">demo/cats-api/__tests__/cats.test.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** PATCH /cats/[id] - update cat; return `{cat: cat}` */</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;PATCH /cats/:id&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;Updates a single cat&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">patch</span><span class="p">(</span><span class="sb">`/cats/</span><span class="si">${</span><span class="nx">cat</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="sb">`</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">send</span><span class="p">({</span>
+        <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Troll&quot;</span>
+      <span class="p">});</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">200</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">cat</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">({</span>
+      <span class="nx">id</span><span class="o">:</span> <span class="nx">cat</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Troll&quot;</span>
+    <span class="p">});</span>
+  <span class="p">});</span>
+
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;Responds with 404 if can&#39;t find cat&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">).</span><span class="nx">patch</span><span class="p">(</span><span class="sb">`/cats/0`</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">404</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="testing-delete">
+<h3>Testing Delete</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">demo/cats-api/__tests__/cats.test.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** DELETE /cats/[id] - delete cat, </span>
+<span class="cm"> *  return `{message: &quot;Cat deleted&quot;}` */</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;DELETE /cats/:id&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;Deletes a single a cat&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+      <span class="p">.</span><span class="k">delete</span><span class="p">(</span><span class="sb">`/cats/</span><span class="si">${</span><span class="nx">cat</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">200</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">({</span> <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;Cat deleted&quot;</span> <span class="p">});</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="testing-auth">
+<h2>Testing Auth</h2>
+<div class="section" id="the-steps">
+<h3>The steps</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Create a global object for storing auth information</li>
+<li>Before each request, create a user and log them in</li>
+<li>Store a JWT in store in the global auth object</li>
+</ul>
+</div>
+</div>
+<div class="section" id="before-hook">
+<h3>Before hook</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">demo/auth-api/__tests__/users.test.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">auth</span> <span class="o">=</span> <span class="p">{};</span>
+    
+<span class="nx">beforeEach</span><span class="p">(</span><span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">hashedPassword</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">bcrypt</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="s2">&quot;secret&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+  <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span>
+    <span class="sb">`INSERT INTO users (username, password)</span>
+<span class="sb">        VALUES (&#39;test&#39;, $1)`</span><span class="p">,</span>
+    <span class="p">[</span><span class="nx">hashedPassword</span><span class="p">]);</span>
+  <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s2">&quot;/login&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">send</span><span class="p">({</span>
+      <span class="nx">username</span><span class="o">:</span> <span class="s2">&quot;test&quot;</span><span class="p">,</span>
+      <span class="nx">password</span><span class="o">:</span> <span class="s2">&quot;secret&quot;</span>
+    <span class="p">});</span>
+  
+  <span class="c1">// we&#39;ll need the token for future requests</span>
+  <span class="nx">auth</span><span class="p">.</span><span class="nx">token</span> <span class="o">=</span> <span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">token</span><span class="p">;</span>
+
+  <span class="c1">// we&#39;ll need the user_id for future requests</span>
+  <span class="nx">auth</span><span class="p">.</span><span class="nx">curr_user_id</span> <span class="o">=</span> <span class="s2">&quot;test&quot;</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="routes-requiring-authentication">
+<h3>Routes requiring authentication</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-text">demo/auth-api/__tests__/users.test.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** GET /secret - returns `{ message: &quot;You made it!&quot; }`</span>
+<span class="cm"> * Requirements: ensureLoginRequired</span>
+<span class="cm"> */</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;GET /secret success&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;returns &#39;You made it&#39;&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="sb">`/secret`</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">send</span><span class="p">({</span> <span class="nx">_token</span><span class="o">:</span> <span class="nx">auth</span><span class="p">.</span><span class="nx">token</span> <span class="p">});</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">200</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">({</span> <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;You made it!&quot;</span><span class="p">});</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id16">
+<div class="code-block-caption"><span class="caption-text">demo/auth-api/__tests__/users.test.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;GET /secret failure&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;returns 401 when logged out&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="sb">`/secret`</span><span class="p">);</span> <span class="c1">// no token being sent!</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">401</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">error</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">({</span>
+      <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;Unauthorized&quot;</span><span class="p">,</span> <span class="nx">status</span><span class="o">:</span> <span class="mi">401</span>
+    <span class="p">});</span>
+  <span class="p">});</span>
+
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;returns 401 with invalid token&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="sb">`/secret`</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">send</span><span class="p">({</span> <span class="nx">_token</span><span class="o">:</span> <span class="s2">&quot;garbage&quot;</span><span class="p">});</span> <span class="c1">// invalid token!</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">401</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">error</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">({</span>
+      <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;Unauthorized&quot;</span><span class="p">,</span> <span class="nx">status</span><span class="o">:</span> <span class="mi">401</span>
+    <span class="p">});</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="routes-requiring-authorization">
+<h3>Routes requiring authorization</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id17">
+<div class="code-block-caption"><span class="caption-text">demo/auth-api/__tests__/users.test.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** GET /users/:username - returns `{ message: &quot;You made it!&quot; }`</span>
+<span class="cm"> * Requirements: ensureCorrectUser</span>
+<span class="cm"> */</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;GET /users/:username, valid token&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">test</span><span class="p">(</span>
+    <span class="s2">&quot;returns &#39;You made it&#39; when logged in as the correct user&quot;</span><span class="p">,</span> 
+    <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="sb">`/users/test`</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">send</span><span class="p">({</span> <span class="nx">_token</span><span class="o">:</span> <span class="nx">auth</span><span class="p">.</span><span class="nx">token</span> <span class="p">});</span>
+      <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">200</span><span class="p">);</span>
+      <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">({</span> <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;You made it!&quot;</span><span class="p">});</span>
+    <span class="p">});</span>
+  
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;returns 401 with mismatch in URL&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="sb">`/users/test2`</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">send</span><span class="p">({</span> <span class="nx">_token</span><span class="o">:</span> <span class="nx">auth</span><span class="p">.</span><span class="nx">token</span><span class="p">});</span> <span class="c1">// mismatch!</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">401</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">error</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">({</span>
+      <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;Unauthorized&quot;</span><span class="p">,</span> <span class="nx">status</span><span class="o">:</span> <span class="mi">401</span>
+    <span class="p">});</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id18">
+<div class="code-block-caption"><span class="caption-text">demo/auth-api/__tests__/users.test.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;GET /users/:uname, invalid token&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;returns 401 when logged out&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="sb">`/users/test`</span><span class="p">);</span> <span class="c1">// no token!</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">401</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">error</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">({</span>
+      <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;Unauthorized&quot;</span><span class="p">,</span> <span class="nx">status</span><span class="o">:</span> <span class="mi">401</span>
+    <span class="p">});</span>
+  <span class="p">});</span>
+
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;returns 401 with invalid token&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="sb">`/users/test`</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">send</span><span class="p">({</span> <span class="nx">_token</span><span class="o">:</span> <span class="s2">&quot;garbage&quot;</span><span class="p">});</span> <span class="c1">// invalid token!</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">401</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">error</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">({</span>
+      <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;Unauthorized&quot;</span><span class="p">,</span> <span class="nx">status</span><span class="o">:</span> <span class="mi">401</span>
+    <span class="p">});</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="caveats">
+<h2>Caveats</h2>
+<div class="section" id="id2">
+<div class="docutils container">
+<ul class="simple">
+<li>Supertest has itâs own <cite>expect</cite> methodâfor consistency, stick to Jest for expectations!</li>
+<li>Make simple assertions first! Checking the status code is a nice way to start.</li>
+<li>If your tests hang, make sure you have your database and are <cite>async</cite> / <cite>await</cite>-ing properly.</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

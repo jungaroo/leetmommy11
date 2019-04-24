@@ -1,0 +1,749 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>EcmaScript 2015 - aka ES6</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">EcmaScript 2015 - aka ES6</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">EcmaScript 2015 - aka ES6</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#string-template-literals">String Template Literals</a><ul>
+<li><a class="reference internal" href="#id2">String Template Literals</a></li>
+<li><a class="reference internal" href="#interpolating-expressions">Interpolating expressions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#let-and-const"><cite>let</cite> and <cite>const</cite></a><ul>
+<li><a class="reference internal" href="#const"><cite>const</cite></a></li>
+<li><a class="reference internal" href="#let"><cite>let</cite></a></li>
+<li><a class="reference internal" href="#what-is-a-code-block">What is a code block?</a></li>
+<li><a class="reference internal" href="#where-do-they-exist">Where do they exist?</a></li>
+<li><a class="reference internal" href="#an-example">An example</a></li>
+<li><a class="reference internal" href="#a-bit-more-about-let">A bit more about <cite>let</cite></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#default-parameters">Default Parameters</a><ul>
+<li><a class="reference internal" href="#id3">Default Parameters</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#arrow-functions">Arrow Functions</a><ul>
+<li><a class="reference internal" href="#id4">Arrow Functions</a></li>
+<li><a class="reference internal" href="#again">Again!</a></li>
+<li><a class="reference internal" href="#more-more-more">More, more, more!</a></li>
+<li><a class="reference internal" href="#one-more-note">One more note</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#rest-spread-operator">Rest / Spread Operator</a><ul>
+<li><a class="reference internal" href="#id5">Rest / Spread Operator</a></li>
+<li><a class="reference internal" href="#collecting-remaining-arguments">Collecting remaining arguments</a></li>
+<li><a class="reference internal" href="#spread-operator">Spread Operator</a></li>
+<li><a class="reference internal" href="#spread-to-copy-objects">Spread to copy objects</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#object-enhancements">Object enhancements</a><ul>
+<li><a class="reference internal" href="#id6">Object enhancements</a></li>
+<li><a class="reference internal" href="#object-shorthand">Object shorthand</a></li>
+<li><a class="reference internal" href="#computed-property-names">Computed property names</a></li>
+<li><a class="reference internal" href="#object-methods">Object methods</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#array-and-object-destructuring">Array and Object destructuring</a><ul>
+<li><a class="reference internal" href="#object-destructuring">Object Destructuring</a></li>
+<li><a class="reference internal" href="#but-that-s-a-lot-of-typing">But thatâs a lot of typing</a></li>
+<li><a class="reference internal" href="#we-can-do-even-more">We can do even more!</a></li>
+<li><a class="reference internal" href="#you-can-apply-the-same-concept-to-arrays">You can apply the same concept to arrays!</a></li>
+<li><a class="reference internal" href="#you-can-also-swap-values">You can also swap values!</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#array-from">Array.from()</a><ul>
+<li><a class="reference internal" href="#id7">Array.from()</a></li>
+<li><a class="reference internal" href="#array-from-under-the-hood">Array.from() under the hood</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#a-few-new-methods-and-a-quick-revisit">A few new methods (and a quick revisit)</a><ul>
+<li><a class="reference internal" href="#finding-things-in-arrays">Finding Things in Arrays</a></li>
+<li><a class="reference internal" href="#find"><cite>find</cite></a></li>
+<li><a class="reference internal" href="#findindex"><cite>findIndex</cite></a></li>
+<li><a class="reference internal" href="#some"><cite>some</cite></a></li>
+<li><a class="reference internal" href="#every"><cite>every</cite></a></li>
+<li><a class="reference internal" href="#your-turn">Your Turn!</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="ecmascript-2015-aka-es6">
+<h1>EcmaScript 2015 - aka ES6</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Develop a conceptual of what ES2015 is</li>
+<li>Compare and contrast <cite>var</cite> and <cite>let</cite></li>
+<li>Use newer features of JavaScript to write better code</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="string-template-literals">
+<h2>String Template Literals</h2>
+<div class="section" id="id2">
+<ul class="simple">
+<li>You can now declare strings with <em>back ticks</em> (grave accent). These are special strings that allow for interpolation; this is cleaner than old-school string concatenation.</li>
+</ul>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">firstName</span> <span class="o">=</span> <span class="s2">&quot;Jian&quot;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">lastName</span> <span class="o">=</span> <span class="s2">&quot;Yang&quot;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">title</span> <span class="o">=</span> <span class="s2">&quot;web developer&quot;</span><span class="p">;</span>
+
+<span class="c1">// ughhh, so much concatenation...</span>
+<span class="kd">var</span> <span class="nx">old</span> <span class="o">=</span> <span class="s2">&quot;I&#39;m &quot;</span> <span class="o">+</span> <span class="nx">firstName</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nx">lastName</span> <span class="o">+</span>
+          <span class="s2">&quot;, and I am a &quot;</span> <span class="o">+</span> <span class="nx">title</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span><span class="p">;</span>
+
+<span class="c1">// much better</span>
+<span class="kd">var</span> <span class="k">new</span> <span class="o">=</span> <span class="sb">`I&#39;m </span><span class="si">${</span><span class="nx">firstName</span><span class="si">}</span><span class="sb"> </span><span class="si">${</span><span class="nx">lastName</span><span class="si">}</span><span class="sb">, and I am a </span><span class="si">${</span><span class="nx">title</span><span class="si">}</span><span class="sb">.`</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="interpolating-expressions">
+<h3>Interpolating expressions</h3>
+<p>You can interpolate full JavaScript expressions.
+Once youâre in the <code class="docutils literal notranslate"><span class="pre">${</span> <span class="pre">}</span></code> block, youâre back in regular JS, and any expression you put in gets evaluated.</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">addTwo</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">x</span> <span class="o">+</span> <span class="nx">y</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">j</span> <span class="o">=</span> <span class="mi">99</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">k</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">numberyString</span> <span class="o">=</span> <span class="sb">`</span><span class="si">${</span><span class="nx">j</span><span class="si">}</span><span class="sb"> plus </span><span class="si">${</span><span class="nx">k</span><span class="si">}</span><span class="sb"> equals </span><span class="si">${</span><span class="nx">addTwo</span><span class="p">(</span><span class="nx">j</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span><span class="si">}</span><span class="sb">.`</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="let-and-const">
+<h2><cite>let</cite> and <cite>const</cite></h2>
+<div class="section" id="const">
+<h3><cite>const</cite></h3>
+<p><cite>const</cite> keyword prevents a variable from ever being re-declared or re-assigned.</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">PI</span> <span class="o">=</span> <span class="mf">3.14</span><span class="p">;</span>
+
+<span class="nx">PI</span> <span class="o">=</span> <span class="mi">15</span><span class="p">;</span> <span class="c1">// TypeError: Assignment to constant variable.</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="let">
+<h3><cite>let</cite></h3>
+<p>The let keyword creates a block-scoped variable.</p>
+</div>
+<div class="section" id="what-is-a-code-block">
+<h3>What is a code block?</h3>
+<p>Essentially any pair of curly braces (outside of object syntax).</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="c1">// this is a code block</span>
+
+  <span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+
+  <span class="kd">var</span> <span class="nx">y</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+
+  <span class="kr">const</span> <span class="nx">z</span> <span class="o">=</span> <span class="o">-</span><span class="kc">Infinity</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">);</span>
+<span class="c1">// ReferenceError: x is not defined</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">y</span><span class="p">);</span>
+<span class="c1">// 10</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">z</span><span class="p">);</span>
+<span class="c1">// ReferenceError: z is not defined</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="where-do-they-exist">
+<h3>Where do they exist?</h3>
+<p>Youâll mostly use code blocks in for loops and if statements.</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">)</span> <span class="p">{</span>
+
+  <span class="kd">let</span> <span class="nx">happy</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span> <span class="c1">// happy lives in this code block</span>
+
+<span class="p">}</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">happy</span><span class="p">);</span> <span class="c1">// ReferenceError: happy is not defined</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="an-example">
+<h3>An example</h3>
+<div class="docutils container">
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// 1</span>
+<span class="c1">// 2</span>
+<span class="c1">// 3</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
+<span class="c1">// 4</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// 1</span>
+<span class="c1">// 2</span>
+<span class="c1">// 3</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span> <span class="c1">// ReferenceError: i is not defined</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="a-bit-more-about-let">
+<h3>A bit more about <cite>let</cite></h3>
+<p>It can be re-assigned but not re-declared (unlike <cite>var</cite>).</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">z</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+<span class="nx">z</span> <span class="o">=</span> <span class="mi">25</span><span class="p">;</span>
+<span class="kd">let</span> <span class="nx">z</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+<span class="c1">// SyntaxError: Identifier &#39;z&#39; has already been declared</span>
+</pre></div>
+</div>
+<p>Comparison of variable declaration keywords</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="25%" />
+<col width="25%" />
+<col width="41%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Keyword</th>
+<th class="head">Can Be Re-Assigned</th>
+<th class="head">Can Be Re-Declared</th>
+<th class="head">Scope Rules</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>var</td>
+<td>yes</td>
+<td>yes</td>
+<td>default (function scope only)</td>
+</tr>
+<tr class="row-odd"><td>let</td>
+<td>yes</td>
+<td>no</td>
+<td>block scope</td>
+</tr>
+<tr class="row-even"><td>const</td>
+<td>no</td>
+<td>no</td>
+<td>block scope</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="default-parameters">
+<h2>Default Parameters</h2>
+<div class="section" id="id3">
+<p>If you have parameters that might be undefined (i.e. the user didnât pass them), you can easily assign default values in ES6</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">multiply</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">a</span> <span class="o">*</span> <span class="nx">b</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">multiply</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">));</span>
+<span class="c1">// 10</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">multiply</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span>
+<span class="c1">// 5</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>Note: these only work for undefined values, not other falsy values.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="arrow-functions">
+<h2>Arrow Functions</h2>
+<div class="section" id="id4">
+<ul class="simple">
+<li>Arrow Functions are shorthand for Anonymous Functions</li>
+<li>They cannot be named functions and they only work as function expressions. Ideal for shortening callbacks.</li>
+</ul>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">].</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">idx</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">idx</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>is the same as</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">].</span><span class="nx">forEach</span><span class="p">((</span><span class="nx">n</span><span class="p">,</span> <span class="nx">idx</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">idx</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="again">
+<h3>Again!</h3>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">].</span><span class="nx">filter</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">idx</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">===</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>is the same as</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">].</span><span class="nx">filter</span><span class="p">((</span><span class="nx">n</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">===</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="more-more-more">
+<h3>More, more, more!</h3>
+<p>Arrow Functions have an implicit return if you leave out the curly braces</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/* square everything */</span>
+
+<span class="kd">let</span> <span class="nx">nums</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">];</span>
+
+<span class="kd">let</span> <span class="nx">arrSquared</span> <span class="o">=</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">n</span> <span class="p">=&gt;</span> <span class="nx">n</span> <span class="o">**</span> <span class="mi">2</span><span class="p">);</span> <span class="c1">// [1, 4, 9]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="one-more-note">
+<h3>One more note</h3>
+<p>Arrow Functions do not have their own <cite>this</cite></p>
+<p>To summarize:</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Can only be used as shorthand for anonymous function expressions</li>
+<li>Must put parentheses around parameters if there are 0 or 2+ parameters</li>
+<li>Return statement is implied if you leave out curly braces</li>
+<li>They do not make their own <cite>this</cite></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="rest-spread-operator">
+<h2>Rest / Spread Operator</h2>
+<div class="section" id="id5">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">sumMany</span><span class="p">(...</span><span class="nx">nums</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">nums</span><span class="p">.</span><span class="nx">reduce</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">sumMany</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>  <span class="c1">// 15</span>
+
+<span class="nx">sumMany</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>  <span class="c1">// 90</span>
+
+<span class="nx">sumMany</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>  <span class="c1">// 1</span>
+</pre></div>
+</div>
+<p>That <code class="docutils literal notranslate"><span class="pre">...nums</span></code> collects additional args into single <cite>nums</cite> array.</p>
+</div>
+<div class="section" id="collecting-remaining-arguments">
+<h3>Collecting remaining arguments</h3>
+<p>You can also define a couple of params and collect the rest</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">oneOrMoreArguments</span><span class="p">(</span><span class="nx">first</span><span class="p">,</span> <span class="p">...</span><span class="nx">more</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">first</span><span class="p">);</span>
+  <span class="nx">more</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">arg</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">arg</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Here, <cite>first</cite> will be first item and <cite>more</cite> will be array of everything else.</p>
+</div>
+<div class="section" id="spread-operator">
+<h3>Spread Operator</h3>
+<p>That <code class="docutils literal notranslate"><span class="pre">...</span></code> syntax, in a different context, is the <em>spread operator</em>. <span class="raw-reveal"><br></span>
+For example: when calling a function, you can âspread outâ array elements:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">takesFour</span><span class="p">(</span><span class="nx">one</span><span class="p">,</span> <span class="nx">two</span><span class="p">,</span> <span class="nx">three</span><span class="p">,</span> <span class="nx">four</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">one</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">two</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">three</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">four</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kr">const</span> <span class="nx">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Elie&#39;</span><span class="p">,</span> <span class="s1">&#39;Matt&#39;</span><span class="p">,</span> <span class="s1">&#39;Michael&#39;</span><span class="p">,</span> <span class="s1">&#39;Joel&#39;</span><span class="p">];</span>
+
+<span class="nx">takesFour</span><span class="p">(...</span><span class="nx">names</span><span class="p">);</span>
+<span class="c1">// Elie</span>
+<span class="c1">// Matt</span>
+<span class="c1">// Michael</span>
+<span class="c1">// Joel</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="spread-to-copy-objects">
+<h3>Spread to copy objects</h3>
+<p>You can use the same operator to copy over pieces of an object!</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">whiskey</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Whiskey&#39;</span><span class="p">,</span>
+  <span class="nx">species</span><span class="o">:</span> <span class="s1">&#39;canine&#39;</span><span class="p">,</span>
+  <span class="nx">cool</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+<span class="p">};</span>
+
+<span class="kr">const</span> <span class="nx">anotherDog</span> <span class="o">=</span> <span class="p">{</span> <span class="p">...</span><span class="nx">whiskey</span><span class="p">,</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Gandalf&#39;</span> <span class="p">};</span>
+
+<span class="cm">/*</span>
+
+<span class="cm">{</span>
+<span class="cm">  name: &#39;Gandalf&#39;,</span>
+<span class="cm">  species: &#39;canine&#39;,</span>
+<span class="cm">  cool: true,</span>
+<span class="cm">}</span>
+
+<span class="cm">*/</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="object-enhancements">
+<h2>Object enhancements</h2>
+<div class="section" id="id6">
+<p>ES2015 provides quite a few enhancements for objects in ES2015</p>
+</div>
+<div class="section" id="object-shorthand">
+<h3>Object shorthand</h3>
+<div class="compare docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">firstName</span> <span class="o">=</span> <span class="s2">&quot;Elie&quot;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">lastName</span> <span class="o">=</span> <span class="s2">&quot;Schoppik&quot;</span><span class="p">;</span>
+
+<span class="c1">// ES5</span>
+<span class="kd">var</span> <span class="nx">instructor</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">firstName</span><span class="o">:</span> <span class="nx">firstName</span><span class="p">,</span>
+    <span class="nx">lastName</span><span class="o">:</span> <span class="nx">lastName</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">firstName</span> <span class="o">=</span> <span class="s2">&quot;Elie&quot;</span><span class="p">;</span>
+<span class="kd">let</span> <span class="nx">lastName</span> <span class="o">=</span> <span class="s2">&quot;Schoppik&quot;</span><span class="p">;</span>
+
+<span class="c1">// ES2015</span>
+<span class="kd">let</span> <span class="nx">instructor</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">firstName</span><span class="p">,</span>
+    <span class="nx">lastName</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="computed-property-names">
+<h3>Computed property names</h3>
+<div class="compare docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">// ES5</span>
+<span class="kd">var</span> <span class="nx">firstName</span> <span class="o">=</span> <span class="s2">&quot;Elie&quot;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">instructor</span> <span class="o">=</span> <span class="p">{};</span>
+<span class="nx">instructor</span><span class="p">[</span><span class="nx">firstName</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;That&#39;s me!&quot;</span><span class="p">;</span>
+
+<span class="nx">instructor</span><span class="p">.</span><span class="nx">Elie</span><span class="p">;</span> <span class="c1">// &quot;That&#39;s me!&quot;</span>
+</pre></div>
+</div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">// ES2015</span>
+<span class="kd">let</span> <span class="nx">firstName</span> <span class="o">=</span> <span class="s2">&quot;Elie&quot;</span><span class="p">;</span>
+<span class="kd">let</span> <span class="nx">instructor</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">[</span><span class="nx">firstName</span><span class="p">]</span><span class="o">:</span> <span class="s2">&quot;That&#39;s me!&quot;</span>
+<span class="p">}</span>
+
+<span class="nx">instructor</span><span class="p">.</span><span class="nx">Elie</span><span class="p">;</span> <span class="c1">// &quot;That&#39;s me!&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="object-methods">
+<h3>Object methods</h3>
+<div class="compare docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">// ES5</span>
+<span class="kd">var</span> <span class="nx">instructor</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">sayHello</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="s2">&quot;Hello!&quot;</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">// ES2015 - do NOT use arrow functions here!</span>
+<span class="kd">let</span> <span class="nx">instructor</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">sayHello</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="s2">&quot;Hello!&quot;</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="array-and-object-destructuring">
+<h2>Array and Object destructuring</h2>
+<div class="section" id="object-destructuring">
+<h3>Object Destructuring</h3>
+<p>JavaScript programmers take things out of objects all the time.</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">userData</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">username</span><span class="o">:</span> <span class="s1">&#39;hueter&#39;</span><span class="p">,</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="mi">12345</span><span class="p">,</span>
+  <span class="nx">password</span><span class="o">:</span> <span class="s1">&#39;fiddlesticks&#39;</span><span class="p">,</span>
+  <span class="nx">firstName</span><span class="o">:</span> <span class="s1">&#39;Michael&#39;</span><span class="p">,</span>
+  <span class="nx">lastName</span><span class="o">:</span> <span class="s1">&#39;Hueter&#39;</span><span class="p">,</span>
+  <span class="nx">age</span><span class="o">:</span> <span class="s1">&#39;guess&#39;</span><span class="p">,</span>
+  <span class="nx">isLegit</span><span class="o">:</span> <span class="kc">undefined</span><span class="p">,</span>
+<span class="p">};</span>
+
+<span class="kd">let</span> <span class="nx">username</span> <span class="o">=</span> <span class="nx">userData</span><span class="p">.</span><span class="nx">username</span><span class="p">;</span>
+<span class="kd">let</span> <span class="nx">firstName</span> <span class="o">=</span> <span class="nx">userData</span><span class="p">.</span><span class="nx">firstName</span><span class="p">;</span>
+<span class="kd">let</span> <span class="nx">lastName</span> <span class="o">=</span> <span class="nx">userData</span><span class="p">.</span><span class="nx">lastName</span><span class="p">;</span>
+<span class="kd">let</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">userData</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="but-that-s-a-lot-of-typing">
+<h3>But thatâs a lot of typing</h3>
+<p>So we came up with some syntactic sugar.</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">userData</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">username</span><span class="o">:</span> <span class="s1">&#39;hueter&#39;</span><span class="p">,</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="mi">12345</span><span class="p">,</span>
+  <span class="nx">password</span><span class="o">:</span> <span class="s1">&#39;fiddlesticks&#39;</span><span class="p">,</span>
+  <span class="nx">firstName</span><span class="o">:</span> <span class="s1">&#39;Michael&#39;</span><span class="p">,</span>
+  <span class="nx">lastName</span><span class="o">:</span> <span class="s1">&#39;Hueter&#39;</span><span class="p">,</span>
+  <span class="nx">age</span><span class="o">:</span> <span class="s1">&#39;guess&#39;</span><span class="p">,</span>
+  <span class="nx">isLegit</span><span class="o">:</span> <span class="kc">undefined</span><span class="p">,</span>
+<span class="p">};</span>
+
+<span class="kd">let</span> <span class="p">{</span> <span class="nx">username</span><span class="p">,</span> <span class="nx">firstName</span><span class="p">,</span> <span class="nx">lastName</span><span class="p">,</span> <span class="nx">id</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">userData</span><span class="p">;</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">username</span><span class="p">);</span>  <span class="c1">// hueter</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>        <span class="c1">// 12345</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="we-can-do-even-more">
+<h3>We can do even more!</h3>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">userData</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">username</span><span class="o">:</span> <span class="s1">&#39;hueter&#39;</span><span class="p">,</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="mi">12345</span><span class="p">,</span>
+  <span class="nx">password</span><span class="o">:</span> <span class="s1">&#39;fiddlesticks&#39;</span><span class="p">,</span>
+  <span class="nx">firstName</span><span class="o">:</span> <span class="s1">&#39;Michael&#39;</span><span class="p">,</span>
+  <span class="nx">lastName</span><span class="o">:</span> <span class="s1">&#39;Hueter&#39;</span><span class="p">,</span>
+  <span class="nx">age</span><span class="o">:</span> <span class="s1">&#39;guess&#39;</span><span class="p">,</span>
+  <span class="nx">isLegit</span><span class="o">:</span> <span class="kc">undefined</span><span class="p">,</span>
+<span class="p">};</span>
+
+<span class="kr">const</span> <span class="p">{</span> <span class="nx">password</span><span class="p">,</span> <span class="p">...</span><span class="nx">user</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">userData</span><span class="p">;</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">user</span><span class="p">);</span>
+<span class="cm">/*</span>
+<span class="cm">{</span>
+<span class="cm">  username: &#39;hueter&#39;,</span>
+<span class="cm">  id: 12345,</span>
+<span class="cm">  firstName: &#39;Michael&#39;,</span>
+<span class="cm">  lastName: &#39;Hueter&#39;,</span>
+<span class="cm">  age: &#39;guess&#39;,</span>
+<span class="cm">  isLegit: undefined</span>
+<span class="cm">}</span>
+<span class="cm">*/</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="you-can-apply-the-same-concept-to-arrays">
+<h3>You can apply the same concept to arrays!</h3>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">myFavoriteThings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;teaching&#39;</span><span class="p">,</span> <span class="s1">&#39;music&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;hiking&#39;</span><span class="p">,</span> <span class="s1">&#39;dank memes&#39;</span><span class="p">];</span>
+
+<span class="kr">const</span> <span class="p">[</span><span class="nx">first</span><span class="p">,</span> <span class="nx">second</span><span class="p">,</span> <span class="p">...</span><span class="nx">others</span><span class="p">]</span> <span class="o">=</span> <span class="nx">myFavoriteThings</span><span class="p">;</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">first</span><span class="p">);</span>   <span class="c1">// &#39;teaching&#39;</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">second</span><span class="p">);</span>  <span class="c1">// &#39;music&#39;</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">others</span><span class="p">);</span>  <span class="c1">// [&#39;hiking&#39;, &#39;dank memes&#39;]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="you-can-also-swap-values">
+<h3>You can also swap values!</h3>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">a</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="kd">let</span> <span class="nx">b</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+<span class="p">[</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nx">b</span><span class="p">,</span> <span class="nx">a</span><span class="p">];</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">a</span><span class="p">);</span> <span class="c1">// 3</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">b</span><span class="p">);</span> <span class="c1">// 1</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="array-from">
+<h2>Array.from()</h2>
+<div class="section" id="id7">
+<p>Sometimes JavaScript gives you array-like objects that you wish were arrays</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">paragraphsNodeList</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelectorAll</span><span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">);</span>
+<span class="nb">Array</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">paragraphsNodeList</span><span class="p">);</span>  <span class="c1">// false</span>
+
+<span class="kd">let</span> <span class="nx">paragraphs</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">from</span><span class="p">(</span><span class="nx">paragraphsNodeList</span><span class="p">);</span>
+<span class="nb">Array</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">paragraphs</span><span class="p">);</span>  <span class="c1">// true</span>
+</pre></div>
+</div>
+<p>Now you can easily make an array out of those things with <cite>Array.from()</cite>!</p>
+</div>
+<div class="section" id="array-from-under-the-hood">
+<h3>Array.from() under the hood</h3>
+<p>It works by looking for anything with a .length property.</p>
+<p>Then it iterates over the items and pushes them into an array.</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">cat</span> <span class="o">=</span> <span class="s1">&#39;cat&#39;</span><span class="p">;</span>
+
+<span class="nb">Array</span><span class="p">.</span><span class="nx">from</span><span class="p">(</span><span class="nx">cat</span><span class="p">);</span>
+
+<span class="c1">// [&#39;c&#39;, &#39;a&#39;, &#39;t&#39;]</span>
+</pre></div>
+</div>
+<p>You can use this trick to build empty arrays of a certain size:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nb">Array</span><span class="p">.</span><span class="nx">from</span><span class="p">({</span> <span class="nx">length</span><span class="o">:</span> <span class="mi">5</span> <span class="p">});</span>
+<span class="c1">// [undefined, undefined, undefined, undefined, undefined]</span>
+</pre></div>
+</div>
+<p>A particularly nice idiom is to combine this with the <cite>Set</cite>
+feature to remove duplicates from an array. Since sets donât
+contain duplicates, we can de-duplicate an array easily by
+putting it into a set and then turning it back into a new
+array:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">nums</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">];</span>
+
+<span class="nx">nums</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">from</span><span class="p">(</span><span class="k">new</span> <span class="nx">Set</span><span class="p">(</span><span class="nx">nums</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="a-few-new-methods-and-a-quick-revisit">
+<h2>A few new methods (and a quick revisit)</h2>
+<div class="section" id="finding-things-in-arrays">
+<h3>Finding Things in Arrays</h3>
+<p>For finding simple values (eg, numbers or strings) in arrays, itâs easy:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">numbers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">];</span>
+
+<span class="nx">nums</span><span class="p">.</span><span class="nx">includes</span><span class="p">(</span><span class="mi">7</span><span class="p">);</span>    <span class="c1">// true or false</span>
+<span class="nx">nums</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="mi">7</span><span class="p">);</span>     <span class="c1">// index or -1 if not found</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>This doesnât work for finding complex things (eg, arrays/objects):</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">instructors</span> <span class="o">=</span> <span class="p">[{</span><span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Elie&quot;</span><span class="p">},</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Joel&quot;</span><span class="p">}];</span>
+
+<span class="nx">instructors</span><span class="p">.</span><span class="nx">includes</span><span class="p">({</span><span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;Joel&quot;</span><span class="p">});</span>   <span class="c1">// false</span>
+<span class="nx">instructors</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">({</span><span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;Joel&quot;</span><span class="p">});</span>    <span class="c1">// -1</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="find">
+<h3><cite>find</cite></h3>
+<p><strong>âFind first matching itemâ</strong></p>
+<div class="docutils container">
+<ul class="simple">
+<li>Invoked on arrays</li>
+<li>Accepts callback with value, index and array (like <cite>forEach</cite>, <cite>map</cite>, <cite>filter</cite>, etc.)</li>
+<li>Returns the value found or undefined if not found</li>
+</ul>
+</div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">instructors</span> <span class="o">=</span> <span class="p">[{</span><span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Elie&quot;</span><span class="p">},</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Joel&quot;</span><span class="p">}];</span>
+
+<span class="nx">instructors</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="nx">o</span> <span class="p">=&gt;</span> <span class="nx">o</span><span class="p">.</span><span class="nx">name</span> <span class="o">===</span> <span class="s2">&quot;Joel&quot;</span><span class="p">)</span>  <span class="c1">// {name: &quot;Joel&quot;}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="findindex">
+<h3><cite>findIndex</cite></h3>
+<p><strong>âFind first matching item, returning indexâ</strong> <span class="raw-reveal"><br></span>
+(Like <cite>find</cite>, but returns index of item or -1 if no match)</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">instructors</span> <span class="o">=</span> <span class="p">[{</span><span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Elie&quot;</span><span class="p">},</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Joel&quot;</span><span class="p">}];</span>
+
+<span class="nx">instructors</span><span class="p">.</span><span class="nx">findIndex</span><span class="p">(</span><span class="nx">o</span> <span class="p">=&gt;</span> <span class="nx">o</span><span class="p">.</span><span class="nx">name</span> <span class="o">===</span> <span class="s2">&quot;Joel&quot;</span><span class="p">)</span>  <span class="c1">// 1</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="some">
+<h3><cite>some</cite></h3>
+<p><strong>Does at least one item match?</strong></p>
+<div class="docutils container">
+<ul class="simple">
+<li>Iterates through array, running callback on each value</li>
+<li>If callback returns true for at least one value, return true (else false)<ul>
+<li>The result of the callback will ALWAYS be a boolean</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">numbers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">];</span>
+
+<span class="c1">// are any numbers even?</span>
+<span class="k">if</span> <span class="p">(</span><span class="nx">numbers</span><span class="p">.</span><span class="nx">some</span><span class="p">(</span><span class="nx">n</span> <span class="p">=&gt;</span> <span class="nx">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">===</span> <span class="mi">0</span><span class="p">))</span> <span class="p">{</span>
+  <span class="c1">// ...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="every">
+<h3><cite>every</cite></h3>
+<p><strong>Do all items match?</strong></p>
+<div class="docutils container">
+<ul class="simple">
+<li>Iterates through array, running callback on each value</li>
+<li>If callback returns false for any single value, return false (else true)<ul>
+<li>The result of the callback will ALWAYS be a boolean</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">numbers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">];</span>
+
+<span class="c1">// are all numbers even?</span>
+<span class="k">if</span> <span class="p">(</span><span class="nx">numbers</span><span class="p">.</span><span class="nx">every</span><span class="p">(</span><span class="nx">n</span> <span class="p">=&gt;</span> <span class="nx">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">===</span> <span class="mi">0</span><span class="p">))</span> <span class="p">{</span>
+  <span class="c1">// ...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="your-turn">
+<h3>Your Turn!</h3>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

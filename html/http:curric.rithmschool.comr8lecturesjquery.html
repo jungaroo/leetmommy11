@@ -1,0 +1,281 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Introduction to jQuery</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Introduction to jQuery</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Introduction to jQuery</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#jquery">jQuery</a><ul>
+<li><a class="reference internal" href="#what-is-it">What is it?</a></li>
+<li><a class="reference internal" href="#why-should-you-still-learn-jquery">Why should you still learn jQuery?</a></li>
+<li><a class="reference internal" href="#why-should-you-not-use-jquery">Why should you not use jQuery?</a></li>
+<li><a class="reference internal" href="#including-jquery">Including jQuery</a></li>
+<li><a class="reference internal" href="#selecting-elements">Selecting elements</a></li>
+<li><a class="reference internal" href="#what-does-this-give-you">What does this give you?</a></li>
+<li><a class="reference internal" href="#jquery-objects-are-not-the-same-as-dom-elements">jQuery objects are NOT the same as DOM elements!</a></li>
+<li><a class="reference internal" href="#common-jquery-methods">Common jQuery methods</a></li>
+<li><a class="reference internal" href="#jquery-getter-setter-pattern">jQuery getter / setter pattern</a></li>
+<li><a class="reference internal" href="#chaining-with-jquery">Chaining with jQuery</a></li>
+<li><a class="reference internal" href="#creating-elements">Creating elements</a></li>
+<li><a class="reference internal" href="#waiting-for-the-dom-to-load">Waiting for the DOM to load</a></li>
+<li><a class="reference internal" href="#jquery-events">jQuery events</a></li>
+<li><a class="reference internal" href="#why-use-on">Why Use On()?</a></li>
+<li><a class="reference internal" href="#event-delegation">Event Delegation</a></li>
+<li><a class="reference internal" href="#your-turn">Your turn!</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="introduction-to-jquery">
+<h1>Introduction to jQuery</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Develop a conceptual understanding of jQuery and itâs methods</li>
+<li>Explain why you would or would not use a library like jQuery</li>
+<li>Compare and contrast jQuery with VanillaJS</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="jquery">
+<h2>jQuery</h2>
+<div class="section" id="what-is-it">
+<h3>What is it?</h3>
+<p>Itâs a library for:</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Manipulating the DOM</li>
+<li>Adding Event Listeners</li>
+<li>Animating Elements</li>
+<li>Making HTTP Requests(AJAX)</li>
+</ul>
+</div>
+</div>
+<div class="section" id="why-should-you-still-learn-jquery">
+<h3>Why should you still learn jQuery?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Itâs an easier API</li>
+<li>Brevity and clarity</li>
+<li>Cross-Browser Support</li>
+<li>AJAX</li>
+<li>77% of the top 1,000,000 most visited pages use it</li>
+</ul>
+</div>
+</div>
+<div class="section" id="why-should-you-not-use-jquery">
+<h3>Why should you not use jQuery?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>The DOM API is much more standardized</li>
+<li>It doesnât do anything you canât do on your own</li>
+<li>Itâs an unnecessary dependency</li>
+</ul>
+</div>
+</div>
+<div class="section" id="including-jquery">
+<h3>Including jQuery</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Once you include the jQuery script, you have access to the global <code class="docutils literal notranslate"><span class="pre">$</span></code></li>
+<li><a class="reference external" href="https://code.jquery.com/">https://code.jquery.com/</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="selecting-elements">
+<h3>Selecting elements</h3>
+<p>Itâs as easy as using CSS selectors! <span class="raw-reveal"><br></span>
+(except you need to remember your CSS selectors!)</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;ul&quot;</span><span class="p">)</span>
+
+<span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#todo-container&quot;</span><span class="p">)</span>
+
+<span class="nx">$</span><span class="p">(</span><span class="s2">&quot;.carousel-image&quot;</span><span class="p">)</span> <span class="c1">// this will select ALL the elements with that class</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="what-does-this-give-you">
+<h3>What does this give you?</h3>
+<p>A jQuery object!</p>
+<p>Letâs take a look!</p>
+</div>
+<div class="section" id="jquery-objects-are-not-the-same-as-dom-elements">
+<h3>jQuery objects are NOT the same as DOM elements!</h3>
+<p>If you need access to an element you can use the <cite>get</cite> function.</p>
+</div>
+<div class="section" id="common-jquery-methods">
+<h3>Common jQuery methods</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>A great way to learn these is to compare them to vanillaJS methods!</li>
+<li><code class="docutils literal notranslate"><span class="pre">.val()</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">.text()</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">.attr()</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">.html()</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">.css()</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">.addClass()</span></code> / <code class="docutils literal notranslate"><span class="pre">.removeClass()</span></code> / <code class="docutils literal notranslate"><span class="pre">.toggleClass()</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">.empty()</span></code> / <code class="docutils literal notranslate"><span class="pre">.remove()</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">.append()</span></code> / <code class="docutils literal notranslate"><span class="pre">.prepend()</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">.find()</span></code> / <code class="docutils literal notranslate"><span class="pre">.closest()</span></code> / <code class="docutils literal notranslate"><span class="pre">.parent()</span></code> / <code class="docutils literal notranslate"><span class="pre">.next()</span></code> / <code class="docutils literal notranslate"><span class="pre">.prev()</span></code></li>
+</ul>
+</div>
+</div>
+<div class="section" id="jquery-getter-setter-pattern">
+<h3>jQuery getter / setter pattern</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Vanilla JS: <code class="docutils literal notranslate"><span class="pre">.getAttribute(attrName)</span></code> and <code class="docutils literal notranslate"><span class="pre">.setAttribute(attrName,</span> <span class="pre">newValue)</span></code></li>
+<li>jQuery: <code class="docutils literal notranslate"><span class="pre">.attr(nameOfAttribute,</span> <span class="pre">newValue)</span></code> (second parameter is optional)</li>
+<li>This is extremely common with jQuery methods</li>
+</ul>
+</div>
+</div>
+<div class="section" id="chaining-with-jquery">
+<h3>Chaining with jQuery</h3>
+<p>Almost all jQuery methods return jQuery objectâwhich allows for chaining.</p>
+<p>Instead of performing DOM operations line-by-line, we can chain elements.</p>
+<div class="docutils container">
+<p>Instead of:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">todoContainer</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s2">&quot;#todo-container&quot;</span><span class="p">)</span>
+<span class="nx">todoContainer</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">color</span> <span class="o">=</span> <span class="s2">&quot;red&quot;</span><span class="p">;</span>
+<span class="nx">todoContainer</span><span class="p">.</span><span class="nx">innerText</span> <span class="o">=</span> <span class="s2">&quot;look at this!&quot;</span><span class="p">;</span>
+<span class="nx">todoContainer</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span>
+    <span class="s2">&quot;click&quot;</span><span class="p">,</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;clicked!&quot;</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>We can have</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#todo-container&quot;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">css</span><span class="p">(</span><span class="s2">&quot;color&quot;</span><span class="p">,</span> <span class="s2">&quot;red&quot;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">text</span><span class="p">(</span><span class="s2">&quot;look at this!&quot;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;click&quot;</span><span class="p">,</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;clicked!&quot;</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="creating-elements">
+<h3>Creating elements</h3>
+<p>Instead of using <code class="docutils literal notranslate"><span class="pre">document.createElement(&quot;li&quot;)</span></code> <span class="raw-reveal"><br></span>
+we can simply create an element using <code class="docutils literal notranslate"><span class="pre">$(&quot;&lt;li&gt;&quot;)</span></code></p>
+</div>
+<div class="section" id="waiting-for-the-dom-to-load">
+<h3>Waiting for the DOM to load</h3>
+<p>With vanillaJS we have <cite>DOMContentLoaded</cite> and <cite>window.onload</cite>, <span class="raw-reveal"><br></span> with jQuery we have:</p>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">// waits for the DOM to load</span>
+<span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">ready</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="jquery-events">
+<h3>jQuery events</h3>
+<p>jQueryâs <cite>on()</cite> works similarly to <cite>addEventListener</cite>. <span class="raw-reveal"><br></span>
+It lets you specify the type of event to listen for.</p>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">//prints when item with id &#39;submit&#39; is clicked</span>
+<span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#submit&#39;</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Another click&quot;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">//alerts when ANY button is clicked</span>
+<span class="nx">$</span><span class="p">(</span><span class="s1">&#39;button&#39;</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;button clicked!&quot;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="why-use-on">
+<h3>Why Use On()?</h3>
+<p>In most cases, <cite>click()</cite> and <cite>on(âclickâ)</cite> will both get the job done. <span class="raw-reveal"><br></span>
+HOWEVER, there is one key difference:</p>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>click()</cite> only adds listeners for existing elements</li>
+<li><cite>on()</cite> will add listeners for all potential future elements</li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">//alerts when ANY button is clicked</span>
+<span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#todo-container&#39;</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="s2">&quot;.todo-item&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;todo was clicked!&quot;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>This allows us to leverage event delegation</p>
+</div>
+</div>
+<div class="section" id="event-delegation">
+<h3>Event Delegation</h3>
+<p>Event delegation allows us to attach a single event listener, to a parent element, <span class="raw-reveal"><br></span>
+that will fire for all descendants matching a selector â <span class="raw-reveal"><br></span>
+whether those descendants exist now or are added in the future.</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Why might we want to do this?</li>
+</ul>
+</div>
+</div>
+<div class="section" id="your-turn">
+<h3>Your turn!</h3>
+<p>jQuery has some of the best documentation out there as well</p>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

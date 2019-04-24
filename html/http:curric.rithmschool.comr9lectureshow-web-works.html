@@ -1,0 +1,844 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>How the Web Works</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">How the Web Works</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">How the Web Works</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#an-introduction">An Introduction</a><ul>
+<li><a class="reference internal" href="#what-happens-when">What Happens Whenâ¦</a></li>
+<li><a class="reference internal" href="#id2">How the Web Works</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#networks">Networks</a><ul>
+<li><a class="reference internal" href="#id3">Networks</a></li>
+<li><a class="reference internal" href="#hostnames">Hostnames</a></li>
+<li><a class="reference internal" href="#ip-addresses">IP Addresses</a></li>
+<li><a class="reference internal" href="#id4">127.0.0.1</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#urls">URLs</a><ul>
+<li><a class="reference internal" href="#id5">URLs</a></li>
+<li><a class="reference internal" href="#protocols">Protocols</a></li>
+<li><a class="reference internal" href="#hostname">Hostname</a></li>
+<li><a class="reference internal" href="#port">Port</a></li>
+<li><a class="reference internal" href="#resource">Resource</a></li>
+<li><a class="reference internal" href="#query-string">Query String</a></li>
+<li><a class="reference internal" href="#so">So</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#dns">DNS</a><ul>
+<li><a class="reference internal" href="#id6">DNS</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#browsers-and-servers">Browsers and Servers</a><ul>
+<li><a class="reference internal" href="#request-and-response">Request and Response</a></li>
+<li><a class="reference internal" href="#what-s-in-a-request">Whatâs in a Request?</a></li>
+<li><a class="reference internal" href="#what-s-in-a-response">Whatâs in a Response</a></li>
+<li><a class="reference internal" href="#watch-a-request-response">Watch a Request/Response</a></li>
+<li><a class="reference internal" href="#response-codes">Response Codes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#serving-over-http">Serving Over HTTP</a><ul>
+<li><a class="reference internal" href="#id7">Serving Over HTTP</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#multiple-requests">Multiple Requests</a><ul>
+<li><a class="reference internal" href="#sample-html">Sample HTML</a></li>
+<li><a class="reference internal" href="#css">CSS</a></li>
+<li><a class="reference internal" href="#image">Image</a></li>
+<li><a class="reference internal" href="#javascript">Javascript</a></li>
+<li><a class="reference internal" href="#hey-that-s-a-lot-of-work">Hey, Thatâs a Lot of Work!</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#trying-on-command-line">Trying on Command Line</a><ul>
+<li><a class="reference internal" href="#curl-osx">Curl (OSX)</a></li>
+<li><a class="reference internal" href="#hey">Heyâ¦</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#methods-get-and-post">Methods: GET and POST</a><ul>
+<li><a class="reference internal" href="#get-vs-post">GET vs POST</a></li>
+<li><a class="reference internal" href="#sample-get-requests">Sample GET Requests</a></li>
+<li><a class="reference internal" href="#sample-post-request">Sample POST Request</a></li>
+<li><a class="reference internal" href="#http-methods">HTTP Methods</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#looking-forward">Looking Forward</a><ul>
+<li><a class="reference internal" href="#coming-up">Coming Up</a></li>
+<li><a class="reference internal" href="#further-study">Further Study</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="how-the-web-works">
+<h1>How the Web Works</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>At a high level, explain what happens when you type a URL into your browser bar and hit enter</li>
+<li>Explain what IP and DNS are</li>
+<li>Describe the different parts of a URL</li>
+<li>Describe the request / response cycle</li>
+<li>Compare GET vs POST requests</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="an-introduction">
+<h2>An Introduction</h2>
+<div class="section" id="what-happens-when">
+<h3>What Happens Whenâ¦</h3>
+<p>When I type <cite>http://site.com/some/page.html</cite></p>
+<p>into a browser, what really happens?</p>
+<div class="docutils container">
+<p>This is a common interview question for software engineers.</p>
+</div>
+</div>
+<div class="section" id="id2">
+<h3>How the Web Works</h3>
+<p>The internet is complicated.</p>
+<div class="docutils container">
+<p>Really, really complicated.</p>
+</div>
+<div class="docutils container">
+<p>Fortunately, to be a software developer, you only need to know a bit.</p>
+</div>
+<p>For people who want to work in âdevelopment operations,â or as a
+system administrator, itâs typical to have to learn more about the
+details here.</p>
+</div>
+</div>
+<div class="section" id="networks">
+<h2>Networks</h2>
+<div class="section" id="id3">
+<p>A network is a set of computers that can intercommunicate.</p>
+<div class="docutils container">
+<p>The internet is just a really, really big network.</p>
+</div>
+<div class="docutils container">
+<p>The internet is made up of smaller, âlocalâ networks.</p>
+</div>
+</div>
+<div class="section" id="hostnames">
+<h3>Hostnames</h3>
+<p>We often talk to servers by âhostnameâ â <span class="raw-reveal"><br></span>
+<cite>site.com</cite> or <cite>computer-a.site.com</cite>.</p>
+<p>Thatâs just a nickname for the server, though â <span class="raw-reveal"><br></span> and
+the same server can have many hostnames.</p>
+</div>
+<div class="section" id="ip-addresses">
+<h3>IP Addresses</h3>
+<p>On networks, computers have an âIP Addressâ â <span class="raw-reveal"><br></span>
+a unique address to find that computer on the network.</p>
+<div class="docutils container">
+<p>IP addresses look like <code class="docutils literal notranslate"><span class="pre">123.77.32.121</span></code>, <span class="raw-reveal"><br></span>
+four numbers (0-255) connected by dots.</p>
+</div>
+<p>There are a lot of advanced edges here that make this more complicated,
+but most of these details arenât important for software engineers:</p>
+<ul class="simple">
+<li>there another whole way to specify networks, âIPv6â, that use a
+different numbering scheme.</li>
+<li>some computers can have multiple IP addresses they can be reached by</li>
+<li>under some circumstances, multiple computers can share an IP address
+and have this be handled by a special kind of router. If youâre interested
+in system administration details, you can learn about this by
+reading about âNetwork Address Translationâ.</li>
+</ul>
+</div>
+<div class="section" id="id4">
+<h3>127.0.0.1</h3>
+<p><code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code> is special â itâs âthis computer that youâre onâ.</p>
+<p>In addition to their IP address on the network, <span class="raw-reveal"><br></span>
+all computers can reach themselves at this address.</p>
+<div class="docutils container">
+<p>The name <cite>localhost</cite> always maps to <code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code>.</p>
+</div>
+</div>
+</div>
+<div class="section" id="urls">
+<h2>URLs</h2>
+<div class="section" id="id5">
+<p><cite>http://site.com/some/page.html?x=1</cite></p>
+<p>turns into:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="21%" />
+<col width="21%" />
+<col width="14%" />
+<col width="28%" />
+<col width="16%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Protocol</th>
+<th class="head">Hostname</th>
+<th class="head">Port</th>
+<th class="head">Resource</th>
+<th class="head">Query</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>http</td>
+<td>site.com</td>
+<td>80</td>
+<td>/some/page.html</td>
+<td>?x=1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="protocols">
+<h3>Protocols</h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="21%" />
+<col width="21%" />
+<col width="14%" />
+<col width="28%" />
+<col width="16%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head"><span class="red">Protocol</span></th>
+<th class="head">Hostname</th>
+<th class="head">Port</th>
+<th class="head">Resource</th>
+<th class="head">Query</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><span class="red">http</span></td>
+<td>site.com</td>
+<td>80</td>
+<td>/some/page.html</td>
+<td>?x=1</td>
+</tr>
+</tbody>
+</table>
+<p>âProtocolsâ are the conventions and ways of one thing talking to another.</p>
+<dl class="docutils">
+<dt>http</dt>
+<dd>Hypertext Transfer Protcol (standard web) <span class="raw-reveal"><br></span>
+(How browsers and servers communicate)</dd>
+<dt>https</dt>
+<dd>HTTP Secure <span class="raw-reveal"><br></span>
+(How browsers and servers communicate with encryption)</dd>
+<dt>ftp</dt>
+<dd>File transfer protocol <span class="raw-reveal"><br></span>
+(An older protocol for sending files over internet)</dd>
+</dl>
+<p>There are many others, but these are the common ones.</p>
+<p>In this lecture, weâll be focusing only on HTTP.</p>
+</div>
+<div class="section" id="hostname">
+<h3>Hostname</h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="21%" />
+<col width="23%" />
+<col width="14%" />
+<col width="27%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Protocol</th>
+<th class="head"><span class="red">Hostname</span></th>
+<th class="head">Port</th>
+<th class="head">Resource</th>
+<th class="head">Query</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>http</td>
+<td><span class="red">site.com</span></td>
+<td>80</td>
+<td>/some/page.html</td>
+<td>?x=1</td>
+</tr>
+</tbody>
+</table>
+<p>DNS (domain name service) turns this into an IP address</p>
+<p>So <cite>site.com</cite> might resolve to  <code class="docutils literal notranslate"><span class="pre">123.45.67.89</span></code></p>
+</div>
+<div class="section" id="port">
+<h3>Port</h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="21%" />
+<col width="21%" />
+<col width="15%" />
+<col width="28%" />
+<col width="15%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Protocol</th>
+<th class="head">Hostname</th>
+<th class="head"><span class="red">Port</span></th>
+<th class="head">Resource</th>
+<th class="head">Query</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>http</td>
+<td>site.com</td>
+<td><span class="red">80</span></td>
+<td>/some/page.html</td>
+<td>?x=1</td>
+</tr>
+</tbody>
+</table>
+<div class="docutils container">
+<ul class="simple">
+<li>Every server has 65,535 unique âportsâ you can talk to</li>
+<li>Services tend to have a
+<a class="reference external" href="https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers">default port</a><ul>
+<li>For HTTP, is port 80</li>
+<li>For HTTPS, is port 443</li>
+<li>You donât have to specify in URL unless you want a different port<ul>
+<li>To do: <cite>http://site.com:12345/some/page.html</cite></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="resource">
+<h3>Resource</h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="21%" />
+<col width="21%" />
+<col width="14%" />
+<col width="29%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Protocol</th>
+<th class="head">Hostname</th>
+<th class="head">Port</th>
+<th class="head"><span class="red">Resource</span></th>
+<th class="head">Query</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>http</td>
+<td>site.com</td>
+<td>80</td>
+<td><span class="red">/some/page.html</span></td>
+<td>?x=1</td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li>This always talks to some âweb serverâ program on the server<ul>
+<li>For some servers, may just have them read an actual file on disk: <cite>/some/page.html</cite></li>
+<li>For many servers, âdynamically generatesâ a page</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="query-string">
+<h3>Query String</h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="21%" />
+<col width="21%" />
+<col width="14%" />
+<col width="29%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Protocol</th>
+<th class="head">Hostname</th>
+<th class="head">Port</th>
+<th class="head"><span class="red">Resource</span></th>
+<th class="head">Query</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>http</td>
+<td>site.com</td>
+<td>80</td>
+<td><cite>/some/page.html</cite></td>
+<td><span class="red">?x=1</span></td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li>This provides âextra informationâ â search terms, info from forms, etc<ul>
+<li>The server is provided this info; might use to change page</li>
+<li>Sometimes, JavaScript will use this information in addition/instead</li>
+</ul>
+</li>
+<li>Multiple arguments are separated by <cite>&amp;</cite>: <code class="docutils literal notranslate"><span class="pre">?x=1&amp;y=2</span></code><ul>
+<li>Argument can be given several times: <code class="docutils literal notranslate"><span class="pre">?x=1&amp;x=2</span></code></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="so">
+<h3>So</h3>
+<p><cite>http://site.com/some/page.html?x=1</cite></p>
+<p>means</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Turn âsite.comâ into <code class="docutils literal notranslate"><span class="pre">123.45.67.89</span></code></li>
+<li>Connect to <code class="docutils literal notranslate"><span class="pre">123.45.67.89</span></code></li>
+<li>On port 80 (the default)</li>
+<li>Using the HTTP protocol</li>
+<li>Ask for <cite>/some/page.html</cite></li>
+<li>Pass along query string: <cite>x</cite> = 1</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="dns">
+<h2>DNS</h2>
+<div class="section" id="id6">
+<p>âI want to talk to site.comâ</p>
+<div class="graphviz">
+<img src="_images/graphviz-aae8358c574f0ccd7bf81f607ccf7b9813541037.svg" />
+</div>
+<p>Unix (and OSX and Linux) systems ship with a utility, <cite>dig</cite>,
+which will translate a hostname into an IP address for you,
+and provide debugging information about the process by which
+it answered this.</p>
+<pre class="console literal-block">
+$ <span class="cmd">dig site.com</span>
+
+; &lt;&lt;&gt;&gt; DiG 9.8.3-P1 &lt;&lt;&gt;&gt; site.com
+;; global options: +cmd
+;; Got answer:
+;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 959
+;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDTL: 0
+
+;; QUESTION SECTION:
+;site.com.        IN  A
+
+;; ANSWER SECTION:
+site.com.       631  IN  A  123.45.67.89 <span class="red"># Answer</span>
+
+;; Query time: 28 msec
+;; SERVER: 10.0.1.1#53(10.0.1.1)
+;; WHEN: Mon Apr 20 00:48:16 2018
+;; MSG SIZE  rcvd: 46
+</pre>
+</div>
+</div>
+<div class="section" id="browsers-and-servers">
+<h2>Browsers and Servers</h2>
+<div class="section" id="request-and-response">
+<h3>Request and Response</h3>
+<p>When you point your browser to a webpage on a server, your browser makes a <cite>request</cite> to that
+server.</p>
+<p>This is almost always a <cite>GET</cite> request and it contains the exact URL you want.</p>
+<div class="graphviz">
+<img src="_images/graphviz-16baf755d376b4e11dde380c4d79d6edbb777330.svg" />
+</div>
+<p>The server then responds with the exact HTML text for that page:</p>
+<div class="graphviz">
+<img src="_images/graphviz-f57bb849a8420dfcafe4ca4d2b09bf15ec2d90f8.svg" />
+</div>
+<p>Itâs often the case, though, that the web server itself will
+have to do some work to get the page you want, often interacting
+with other things, such as database servers.</p>
+<div class="graphviz">
+<img src="_images/graphviz-d9a47d3a58e3c1f20e5c3ea819066376b2c90477.svg" />
+</div>
+<div class="graphviz">
+<img src="_images/graphviz-e040db5811ce63b5a76343d2d8e4a47cb7ff6bf9.svg" />
+</div>
+<p>And then it can give back the response you want:</p>
+<div class="graphviz">
+<img src="_images/graphviz-1772ae726705719c2823fd37f111a776ca9956b7.svg" />
+</div>
+</div>
+<div class="section" id="what-s-in-a-request">
+<h3>Whatâs in a Request?</h3>
+<ul class="simple">
+<li>Method (ex: <cite>GET</cite>)</li>
+<li>HTTP protocol version (almost always 1.1)</li>
+<li>Resource URL you want</li>
+<li>Headers<ul>
+<li>Hostname youâre asking about</li>
+<li>Date your browser thinks it is</li>
+<li>Language your browser wants information in</li>
+<li>Any cookies that server has sent</li>
+<li>And more!</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="what-s-in-a-response">
+<h3>Whatâs in a Response</h3>
+<ul class="simple">
+<li>HTTP protocol version (almost always 1.1)</li>
+<li>Response Code (200, 404, etc)</li>
+<li>Headers<ul>
+<li>Content Type (typically <code class="docutils literal notranslate"><span class="pre">text/html</span></code> for web pages)</li>
+<li>Date/time the server thinks it is</li>
+<li>Any cookies server wants to set</li>
+<li>Any caching information</li>
+<li>And more!</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="watch-a-request-response">
+<h3>Watch a Request/Response</h3>
+<pre class="console literal-block">
+$ <span class="cmd">telnet 123.45.67.89 80</span>
+Trying 123.45.67.89...
+Connected to site.com.
+Escape character is '^]'.
+<span class="cmd">GET / HTTP/1.1</span>                     <span class="red"># GET request for /</span>
+<span class="cmd">Host: site.com</span>                     <span class="red"># Header in request</span>
+
+HTTP/1.1 200 OK                        <span class="red"># HTTP Ver &amp; Response Code</span>
+Date: Mon, 20 Apr 2018 07:09:16 GMT    <span class="red"># Date Header</span>
+Server: Apache                         <span class="red"># Server version</span>
+Content-Type: text/html                <span class="red"># This is HTML content</span>
+
+&lt;!doctype html&gt;                        <span class="red"># Body of response</span>
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;The Site&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    <span class="tan">...</span>
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+</div>
+<div class="section" id="response-codes">
+<h3>Response Codes</h3>
+<dl class="docutils">
+<dt>200</dt>
+<dd>OK</dd>
+<dt>301</dt>
+<dd>What you requested is elsewhere</dd>
+<dt>404</dt>
+<dd>Not Found</dd>
+<dt>500</dt>
+<dd>Server had an internal problem</dd>
+</dl>
+<p>There are <a class="reference external" href="https://en.wikipedia.org/wiki/List_of_HTTP_status_codes">more</a>,
+but these are the most important ones.</p>
+</div>
+</div>
+<div class="section" id="serving-over-http">
+<h2>Serving Over HTTP</h2>
+<div class="section" id="id7">
+<p>Just opening an HTML file in browser uses <cite>file</cite> protocol, not <cite>http</cite></p>
+<p>Some things donât work same (esp security-related stuff)</p>
+<p>Itâs often useful to start a simple HTTP server for testing</p>
+<p>You can start a simple, local HTTP server with Python:</p>
+<pre class="console literal-block">
+$ <span class="cmd">python3 -m http.server</span>
+</pre>
+<div class="docutils container">
+<p>Serve files in current directory (&amp; below):</p>
+<pre class="console literal-block">
+$ <span class="cmd">python3 -m http.server</span>
+Serving HTTP on 0.0.0.0 port 8000 (<a class="reference external" href="http://0.0.0.0:8000/">http://0.0.0.0:8000/</a>) ...
+</pre>
+</div>
+<div class="docutils container">
+<p>(You can do this with Node, too.)</p>
+</div>
+</div>
+</div>
+<div class="section" id="multiple-requests">
+<h2>Multiple Requests</h2>
+<div class="section" id="sample-html">
+<h3>Sample HTML</h3>
+<div class="literal-block-wrapper docutils container" id="hww1">
+<div class="code-block-caption"><span class="caption-text">demo/demo.html</span></div>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;!doctype html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;demo.css&quot;</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Hi There!<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">img</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;http://tinyurl.com/rithm-logo&quot;</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;demo.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="css">
+<h3>CSS</h3>
+<div class="literal-block-wrapper docutils container" id="hww2">
+<div class="code-block-caption"><span class="caption-text">demo/demo.html</span></div>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;!doctype html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="hll">  <span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;demo.css&quot;</span><span class="p">&gt;</span>
+</span><span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Hi There!<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">img</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;http://tinyurl.com/rithm-logo&quot;</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;demo.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+<p>Connects to <cite>site.com</cite> on port 80 and requests:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">demo</span><span class="o">.</span><span class="n">css</span> <span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span>
+<span class="n">Host</span><span class="p">:</span> <span class="n">site</span><span class="o">.</span><span class="n">com</span>
+<span class="n">Date</span><span class="p">:</span> <span class="p">[</span><span class="n">date</span> <span class="n">browser</span> <span class="n">thinks</span> <span class="n">it</span> <span class="ow">is</span><span class="p">]</span>
+<span class="n">Cookie</span><span class="p">:</span> <span class="p">[</span><span class="nb">any</span> <span class="n">cookies</span> <span class="n">browser</span> <span class="ow">is</span> <span class="n">storing</span> <span class="k">for</span> <span class="n">that</span> <span class="n">host</span><span class="p">]</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+<p>Response:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span> <span class="mi">200</span> <span class="n">OK</span>
+<span class="n">Date</span><span class="p">:</span> <span class="p">[</span><span class="n">date</span> <span class="n">server</span> <span class="n">thinks</span> <span class="n">it</span> <span class="ow">is</span><span class="p">]</span>
+<span class="n">Content</span><span class="o">-</span><span class="n">Type</span><span class="p">:</span> <span class="n">text</span><span class="o">/</span><span class="n">css</span>
+<span class="n">Cookie</span><span class="p">:</span> <span class="p">[</span><span class="nb">any</span> <span class="n">cookies</span> <span class="n">server</span> <span class="n">wants</span> <span class="n">you</span> <span class="n">to</span> <span class="nb">set</span><span class="p">]</span>
+<span class="o">...</span>
+
+<span class="n">body</span> <span class="p">{</span>
+  <span class="n">background</span><span class="o">-</span><span class="n">color</span><span class="p">:</span> <span class="n">lightblue</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="image">
+<h3>Image</h3>
+<div class="literal-block-wrapper docutils container" id="hww3">
+<div class="code-block-caption"><span class="caption-text">demo/demo.html</span></div>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;!doctype html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;demo.css&quot;</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Hi There!<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+<span class="hll"><span class="p">&lt;</span><span class="nt">img</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;http://tinyurl.com/rithm-logo&quot;</span><span class="p">&gt;</span>
+</span><span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;demo.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+<p>Connects to <cite>tinyurl.com</cite> on port 80 and requests:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">rithm</span><span class="o">-</span><span class="n">logo</span> <span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span>
+<span class="n">Host</span><span class="p">:</span> <span class="n">tinyurl</span><span class="o">.</span><span class="n">com</span>
+<span class="n">Date</span><span class="p">:</span> <span class="p">[</span><span class="n">date</span> <span class="n">browser</span> <span class="n">thinks</span> <span class="n">it</span> <span class="ow">is</span><span class="p">]</span>
+<span class="n">Cookie</span><span class="p">:</span> <span class="p">[</span><span class="nb">any</span> <span class="n">cookies</span> <span class="n">browser</span> <span class="ow">is</span> <span class="n">storing</span> <span class="k">for</span> <span class="n">tinyurl</span><span class="o">.</span><span class="n">com</span><span class="p">]</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="javascript">
+<h3>Javascript</h3>
+<div class="literal-block-wrapper docutils container" id="hww4">
+<div class="code-block-caption"><span class="caption-text">demo/demo.html</span></div>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;!doctype html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;demo.css&quot;</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Hi There!<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">img</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;http://tinyurl.com/rithm-logo&quot;</span><span class="p">&gt;</span>
+<span class="hll"><span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;demo.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</span><span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+<p>Connects to <cite>site.com</cite> on port 80 and requests:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="o">/</span><span class="n">demo</span><span class="o">.</span><span class="n">js</span> <span class="n">HTTP</span><span class="o">/</span><span class="mf">1.1</span>
+<span class="n">Host</span><span class="p">:</span> <span class="n">site</span><span class="o">.</span><span class="n">com</span>
+<span class="n">Date</span><span class="p">:</span> <span class="p">[</span><span class="n">date</span> <span class="n">browser</span> <span class="n">thinks</span> <span class="n">it</span> <span class="ow">is</span><span class="p">]</span>
+<span class="n">Cookie</span><span class="p">:</span> <span class="p">[</span><span class="nb">any</span> <span class="n">cookies</span> <span class="n">browser</span> <span class="ow">is</span> <span class="n">storing</span> <span class="k">for</span> <span class="n">that</span> <span class="n">host</span><span class="p">]</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="hey-that-s-a-lot-of-work">
+<h3>Hey, Thatâs a Lot of Work!</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Yes, it is</li>
+<li>Requesting 1 webpage often involves many separate requests!</li>
+<li>Browsers issue these requests asynchronously<ul>
+<li>Theyâll assemble the final result as requests come back</li>
+</ul>
+</li>
+<li>You can view this in the browser console â Network</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="trying-on-command-line">
+<h2>Trying on Command Line</h2>
+<div class="section" id="curl-osx">
+<h3>Curl (OSX)</h3>
+<p>OSX systems come with a utility, <cite>curl</cite>, which will make an HTTP
+request on the command line.</p>
+<pre class="console literal-block">
+$ <span class="cmd">curl -v site.com</span>
+* Rebuilt URL to: <a class="reference external" href="http://site.com/">http://site.com/</a>
+*   Trying 123.45.67.89...
+* Connected to site.com (123.45.67.89) port 80 (#0)
+&gt; GET / HTTP/1.1
+&gt; User-Agent: curl/7.41.0
+&gt; Host: site.com
+&gt;
+&lt; HTTP/1.1 200 OK
+&lt; Date: Mon, 20 Apr 2018 08:28:50 GMT
+&lt; Server: Apache/2.4.7 (Ubuntu)
+&lt; Vary: Accept-Encoding
+&lt; Transfer-Encoding: chunked
+&lt; Content-Type: text/html; charset=UTF-8
+&lt;
+
+&lt;!doctype html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;demo.css&quot;&gt;
+&lt;/head&gt;
+...
+</pre>
+</div>
+<div class="section" id="hey">
+<h3>Heyâ¦</h3>
+<p><strong>Everything is a string!</strong></p>
+</div>
+</div>
+<div class="section" id="methods-get-and-post">
+<h2>Methods: GET and POST</h2>
+<div class="section" id="get-vs-post">
+<h3>GET vs POST</h3>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>GET</cite>: requests without side effects (ie, donât change server data)<ul>
+<li>Typically, arguments are passed along in query string<ul>
+<li>If you know the arguments, you can change the URL</li>
+</ul>
+</li>
+<li>Entering-URL-in-browser, clicking links, and <em>some</em> form submissions</li>
+</ul>
+</li>
+<li><cite>POST</cite>: requests with side effects (ie, change data on server)<ul>
+<li>Typically, arguments sent as body of the request (not in query string)</li>
+<li><em>Some</em> form submissions (but never entering-URL-in-browser or links)</li>
+<li>Always do this if thereâs a side-effect: sending mail, charge credit card, etc</li>
+<li>âAre you sure you want to resubmit?â</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="sample-get-requests">
+<h3>Sample GET Requests</h3>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/about-us&quot;</span><span class="p">&gt;</span>About Us<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/search?q=lemurs&quot;</span><span class="p">&gt;</span>Search For Lemurs!<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+
+<span class="c">&lt;!-- will submit to URL like /search?q=value-in-input --&gt;</span>
+<span class="p">&lt;</span><span class="nt">form</span> <span class="na">action</span><span class="o">=</span><span class="s">&quot;/search&quot;</span> <span class="na">method</span><span class="o">=</span><span class="s">&quot;GET&quot;</span><span class="p">&gt;</span>
+  Search for <span class="p">&lt;</span><span class="nt">input</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;q&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">button</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;submit&quot;</span><span class="p">&gt;</span>Search!<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="sample-post-request">
+<h3>Sample POST Request</h3>
+<p>POST requests are always form submissions:</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="c">&lt;!-- will submit to URL add-comment, with value in body --&gt;</span>
+<span class="p">&lt;</span><span class="nt">form</span> <span class="na">action</span><span class="o">=</span><span class="s">&quot;add-comment&quot;</span> <span class="na">method</span><span class="o">=</span><span class="s">&quot;POST&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">input</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;comment&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">button</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;submit&quot;</span><span class="p">&gt;</span>Add<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="http-methods">
+<h3>HTTP Methods</h3>
+<p><cite>GET</cite> and <cite>POST</cite> are âHTTP methodsâ (also called âHTTP verbsâ)</p>
+<p>Theyâre the most common, by far, but there are others</p>
+</div>
+</div>
+<div class="section" id="looking-forward">
+<h2>Looking Forward</h2>
+<div class="section" id="coming-up">
+<h3>Coming Up</h3>
+<ul class="simple">
+<li>AJAX</li>
+<li>Cookies and Sessions</li>
+<li>More on âHow the Web Worksâ<ul>
+<li>Virtual IP addresses</li>
+<li>TCP and UDP protocols</li>
+<li>Common server setups</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="further-study">
+<h3>Further Study</h3>
+<ul class="simple">
+<li><a class="reference external" href="https://www.youtube.com/playlist?list=PLzdnOPI1iJNfMRZm5DDxco3UdsFegvuB7">How the Internet Works: A Code.org Video Series</a></li>
+<li><a class="reference external" href="https://web.stanford.edu/class/msande91si/www-spr04/readings/week1/InternetWhitepaper.htm">How Does the Internet Work?</a></li>
+<li><a class="reference external" href="https://howdns.works/">A cute webcomic about how DNS works</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> 
+</body>
+</html>

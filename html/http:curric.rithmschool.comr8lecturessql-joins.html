@@ -1,0 +1,640 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Associations in SQL</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Associations in SQL</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Associations in SQL</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#data-example-movies">Data Example: Movies</a><ul>
+<li><a class="reference internal" href="#id2">Data Example: Movies</a></li>
+<li><a class="reference internal" href="#a-better-way">A better way</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
+<li><a class="reference internal" href="#the-sql">The SQL</a></li>
+<li><a class="reference internal" href="#examining-the-constraint">Examining the Constraint</a></li>
+<li><a class="reference internal" href="#deleting-data-examples">Deleting Data Examples</a></li>
+<li><a class="reference internal" href="#controlling-deleting-with-ddl">Controlling Deleting with DDL</a></li>
+<li><a class="reference internal" href="#a-situation">A situation</a></li>
+<li><a class="reference internal" href="#join-tables">Join Tables</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#our-first-join">Our first Join</a><ul>
+<li><a class="reference internal" href="#id3">Our first Join</a></li>
+<li><a class="reference internal" href="#id4">Our first join</a></li>
+<li><a class="reference internal" href="#types-of-joins">Types of Joins</a></li>
+<li><a class="reference internal" href="#so-many-joins">So Many Joins!</a></li>
+<li><a class="reference internal" href="#join-diagrams">Join Diagrams</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#movies-revisited">Movies revisited</a><ul>
+<li><a class="reference internal" href="#id5">Movies revisited</a></li>
+<li><a class="reference internal" href="#many-to-many">Many to Many</a></li>
+<li><a class="reference internal" href="#id6">Join tables</a></li>
+<li><a class="reference internal" href="#many-to-many-dll">Many to many DLL</a></li>
+<li><a class="reference internal" href="#querying-a-many-to-many">Querying a Many to Many</a></li>
+<li><a class="reference internal" href="#your-turn">Your Turn!</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="associations-in-sql">
+<h1>Associations in SQL</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Describe what a one-to-many and many-to-many relationship is, and why itâs useful</li>
+<li>Create a foreign key constraint to express a relationship between two tables</li>
+<li>Explore what happens when you delete data in a one-to-many relationship</li>
+<li>Query a one-to-many relationship by using a join table</li>
+<li>Describe the different types of joins (inner, left, right, full outer, cross)</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="data-example-movies">
+<h2>Data Example: Movies</h2>
+<div class="section" id="id2">
+<table border="1" class="docutils">
+<colgroup>
+<col width="3%" />
+<col width="43%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">id</th>
+<th class="head">title</th>
+<th class="head">studio</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>Star Wars: The Force Awakens</td>
+<td>Walt Disney Studios Motion Pictures</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>Avatar</td>
+<td>20th Century Fox</td>
+</tr>
+<tr class="row-even"><td>3</td>
+<td>Black Panther</td>
+<td>Walt Disney Studios Motion Pictures</td>
+</tr>
+<tr class="row-odd"><td>4</td>
+<td>Jurassic World</td>
+<td>Universal Pictures</td>
+</tr>
+<tr class="row-even"><td>5</td>
+<td>Marvelâs The Avengers</td>
+<td>Walt Disney Studios Motion Pictures</td>
+</tr>
+</tbody>
+</table>
+<div class="docutils container">
+<ul class="simple">
+<li>So much duplication!</li>
+<li>What if we want other info about studios?</li>
+</ul>
+</div>
+</div>
+<div class="section" id="a-better-way">
+<h3>A better way</h3>
+<div class="docutils container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="5%" />
+<col width="72%" />
+<col width="23%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">id</th>
+<th class="head">title</th>
+<th class="head">studio_id</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>Star Wars: The Force Awakens</td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>Avatar</td>
+<td>2</td>
+</tr>
+<tr class="row-even"><td>3</td>
+<td>Black Panther</td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><td>4</td>
+<td>Jurassic World</td>
+<td>3</td>
+</tr>
+<tr class="row-even"><td>5</td>
+<td>Marvelâs The Avengers</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="docutils container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="4%" />
+<col width="74%" />
+<col width="21%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">id</th>
+<th class="head">name</th>
+<th class="head">start_date</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>Walt Disney Studios Motion Pictures</td>
+<td>1953-06-23</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>20th Century Fox</td>
+<td>1935-05-31</td>
+</tr>
+<tr class="row-even"><td>3</td>
+<td>Universal Pictures</td>
+<td>1912-04-30</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="references">
+<h3>References</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Our studio_id column provides us with a reference to the studio by its primary key</li>
+<li>Typically this is implemented with a foreign key constraint</li>
+<li>A foreign key constraint requires that the id being referenced actually corresponds to a valid row in the other table</li>
+<li>In this example, we can say movies is the referencing table, and studios is the referenced  table</li>
+<li>We can also say that the studios table is âthe one,â and the movies table is âthe manyâ, since one studio has many  movies, and each movie belongs to  one studio</li>
+</ul>
+</div>
+</div>
+<div class="section" id="the-sql">
+<h3>The SQL</h3>
+<p>Letâs see what the SQL looks like to make this happen!</p>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">studios</span> <span class="p">(</span>
+  <span class="n">id</span> <span class="nb">SERIAL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+  <span class="n">name</span> <span class="nb">TEXT</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="n">start_date</span> <span class="nb">DATE</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">movies</span> <span class="p">(</span>
+  <span class="n">id</span> <span class="nb">SERIAL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+  <span class="n">title</span> <span class="nb">TEXT</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="n">release_year</span> <span class="nb">INTEGER</span><span class="p">,</span>
+  <span class="n">runtime</span> <span class="nb">INTEGER</span><span class="p">,</span>
+  <span class="n">rating</span> <span class="nb">TEXT</span><span class="p">,</span>
+  <span class="n">studio_id</span> <span class="nb">INTEGER</span> <span class="k">REFERENCES</span> <span class="n">studios</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="examining-the-constraint">
+<h3>Examining the Constraint</h3>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">studios</span>
+  <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">start_date</span><span class="p">)</span>
+<span class="k">VALUES</span>
+  <span class="p">(</span><span class="s1">&#39;Walt Disney Studios Motion Pictures&#39;</span><span class="p">,</span> <span class="s1">&#39;1953-06-23&#39;</span><span class="p">),</span>
+  <span class="p">(</span><span class="s1">&#39;20th Century Fox&#39;</span><span class="p">,</span> <span class="s1">&#39;1935-05-31&#39;</span><span class="p">),</span>
+  <span class="p">(</span><span class="s1">&#39;Universal Pictures&#39;</span><span class="p">,</span> <span class="s1">&#39;1912-04-30&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">movies</span> <span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">studio_id</span><span class="p">)</span>
+  <span class="k">VALUES</span> <span class="p">(</span><span class="s1">&#39;Star Wars: The Force Awakens&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">movies</span> <span class="p">(</span><span class="n">title</span><span class="p">)</span>
+  <span class="c1">-- this will work since we do not have a NOT NULL constraint on the FK</span>
+  <span class="k">VALUES</span> <span class="p">(</span><span class="s1">&#39;Avatar&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- this will cause an error because that studio_id does not exist</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">movies</span> <span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">studio_id</span><span class="p">)</span>
+  <span class="k">VALUES</span> <span class="p">(</span><span class="s1">&#39;Black Panther&#39;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="deleting-data-examples">
+<h3>Deleting Data Examples</h3>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- this will throw an error,</span>
+<span class="c1">-- since there&#39;s a movie that references this studio</span>
+<span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">studios</span> <span class="k">WHERE</span> <span class="n">id</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- option one: remove the foreign key</span>
+<span class="c1">-- but keep the movie</span>
+<span class="k">UPDATE</span> <span class="n">movies</span> <span class="k">SET</span> <span class="n">studio_id</span><span class="o">=</span><span class="k">NULL</span> <span class="k">WHERE</span> <span class="n">studio_id</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+<span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">studios</span> <span class="k">WHERE</span> <span class="n">id</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- option two: when deleting the one,</span>
+<span class="c1">-- also delete the many</span>
+<span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">movies</span> <span class="k">WHERE</span> <span class="n">studio_id</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+<span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">studios</span> <span class="k">WHERE</span> <span class="n">id</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="controlling-deleting-with-ddl">
+<h3>Controlling Deleting with DDL</h3>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">movies</span> <span class="p">(</span>
+  <span class="n">id</span> <span class="nb">SERIAL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+  <span class="n">title</span> <span class="nb">TEXT</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="n">release_year</span> <span class="nb">INTEGER</span><span class="p">,</span>
+  <span class="n">runtime</span> <span class="nb">INTEGER</span><span class="p">,</span>
+  <span class="n">rating</span> <span class="nb">TEXT</span><span class="p">,</span>
+  <span class="n">studio_id</span> <span class="nb">INTEGER</span> <span class="k">REFERENCES</span> <span class="n">studios</span> <span class="k">ON</span> <span class="k">DELETE</span> <span class="k">SET</span> <span class="k">NULL</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">movies</span> <span class="p">(</span>
+  <span class="n">id</span> <span class="nb">SERIAL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+  <span class="n">title</span> <span class="nb">TEXT</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="n">release_year</span> <span class="nb">INTEGER</span><span class="p">,</span>
+  <span class="n">runtime</span> <span class="nb">INTEGER</span><span class="p">,</span>
+  <span class="n">rating</span> <span class="nb">TEXT</span><span class="p">,</span>
+  <span class="n">studio_id</span> <span class="nb">INTEGER</span> <span class="k">REFERENCES</span> <span class="n">studios</span> <span class="k">ON</span> <span class="k">DELETE</span> <span class="k">CASCADE</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="a-situation">
+<h3>A situation</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Imagine you want the film titles and studio names for every movie in your database.</li>
+<li>This data lives in two separate tables, so how do we pull it all together?</li>
+</ul>
+</div>
+</div>
+<div class="section" id="join-tables">
+<h3>Join Tables</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>The <code class="docutils literal notranslate"><span class="pre">JOIN</span></code> operation allows us to create a table in memory by combining information from different tables</li>
+<li>Data from tables is matched according to a join condition</li>
+<li>Most commonly, the join condition involves comparing a foreign key from one table and a primary key in another table</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="our-first-join">
+<h2>Our first Join</h2>
+<div class="section" id="id3">
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">studios</span>
+  <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">start_date</span><span class="p">)</span>
+<span class="k">VALUES</span>
+  <span class="p">(</span><span class="s1">&#39;Walt Disney Studios Motion Pictures&#39;</span><span class="p">,</span> <span class="s1">&#39;1953-06-23&#39;</span><span class="p">),</span>
+  <span class="p">(</span><span class="s1">&#39;20th Century Fox&#39;</span><span class="p">,</span> <span class="s1">&#39;1935-05-31&#39;</span><span class="p">),</span>
+  <span class="p">(</span><span class="s1">&#39;Universal Pictures&#39;</span><span class="p">,</span> <span class="s1">&#39;1912-04-30&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">movies</span>
+  <span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">release_year</span><span class="p">,</span> <span class="n">runtime</span><span class="p">,</span> <span class="n">rating</span><span class="p">,</span> <span class="n">studio_id</span><span class="p">)</span>
+<span class="k">VALUES</span>
+  <span class="p">(</span><span class="s1">&#39;Star Wars: The Force Awakens&#39;</span><span class="p">,</span> <span class="mi">2015</span><span class="p">,</span> <span class="mi">136</span><span class="p">,</span> <span class="s1">&#39;PG-13&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+  <span class="p">(</span><span class="s1">&#39;Avatar&#39;</span><span class="p">,</span> <span class="mi">2009</span><span class="p">,</span> <span class="mi">160</span><span class="p">,</span> <span class="s1">&#39;PG-13&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+  <span class="p">(</span><span class="s1">&#39;Black Panther&#39;</span><span class="p">,</span> <span class="mi">2018</span><span class="p">,</span> <span class="mi">140</span><span class="p">,</span> <span class="s1">&#39;PG-13&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+  <span class="p">(</span><span class="s1">&#39;Jurassic World&#39;</span><span class="p">,</span> <span class="mi">2015</span><span class="p">,</span> <span class="mi">124</span><span class="p">,</span> <span class="s1">&#39;PG-13&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+  <span class="p">(</span><span class="s1">&#39;Marvel&#39;&#39;s The Avengers&#39;</span><span class="p">,</span> <span class="mi">2012</span><span class="p">,</span> <span class="mi">142</span><span class="p">,</span> <span class="s1">&#39;PG-13&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id4">
+<h3>Our first join</h3>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="n">title</span><span class="p">,</span> <span class="n">name</span>
+  <span class="k">FROM</span> <span class="n">movies</span>
+  <span class="k">JOIN</span> <span class="n">studios</span>
+  <span class="k">ON</span> <span class="n">movies</span><span class="p">.</span><span class="n">studio_id</span> <span class="o">=</span> <span class="n">studios</span><span class="p">.</span><span class="n">id</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="n">title</span><span class="p">,</span> <span class="n">name</span>
+  <span class="k">FROM</span> <span class="n">movies</span>
+  <span class="k">INNER</span> <span class="k">JOIN</span> <span class="n">studios</span>
+  <span class="k">ON</span> <span class="n">movies</span><span class="p">.</span><span class="n">studio_id</span> <span class="o">=</span> <span class="n">studios</span><span class="p">.</span><span class="n">id</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p><cite>JOIN</cite> and <cite>INNER JOIN</cite> are the same, the inner keyword is optional as all joins are considered to be inner joins unless otherwise specified</p>
+</div>
+</div>
+</div>
+<div class="section" id="types-of-joins">
+<h3>Types of Joins</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Inner</li>
+<li>Left Outer</li>
+<li>Right Outer</li>
+<li>Full Outer</li>
+<li>Cross</li>
+</ul>
+</div>
+</div>
+<div class="section" id="so-many-joins">
+<h3>So Many Joins!</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Practically speaking, youâll mostly be using inner joins</li>
+<li>Outer joins can be helpful when trying to find rows in one table with no match in another table (e.g. studios that have made no movies)</li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="n">name</span>
+  <span class="k">FROM</span> <span class="n">movies</span> <span class="k">RIGHT</span> <span class="k">OUTER</span> <span class="k">JOIN</span> <span class="n">studios</span>
+  <span class="k">ON</span> <span class="n">movies</span><span class="p">.</span><span class="n">studio_id</span> <span class="o">=</span> <span class="n">studios</span><span class="p">.</span><span class="n">id</span>
+  <span class="k">WHERE</span> <span class="n">movies</span><span class="p">.</span><span class="n">id</span> <span class="k">IS</span> <span class="k">NULL</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="join-diagrams">
+<h3>Join Diagrams</h3>
+<a class="noprint reference internal image-reference" href="_images/joins.jpg"><img alt="_images/joins.jpg" class="noprint" src="_images/joins.jpg" style="width: 70%;" /></a>
+</div>
+</div>
+<div class="section" id="movies-revisited">
+<h2>Movies revisited</h2>
+<div class="section" id="id5">
+<div class="docutils container">
+<ul class="simple">
+<li>Weâve seen an example of a one-to-many relationship: one studio has many movies, and one movie belongs to one studio</li>
+<li>But not every relationship can be expressed in this way</li>
+<li>Consider movie stars: one movie has many stars, but each star also has many movies on their filmography!</li>
+<li>This is an example of a many-to-many relationship</li>
+<li>A many-to-many is just two one-to-manys!</li>
+</ul>
+</div>
+</div>
+<div class="section" id="many-to-many">
+<h3>Many to Many</h3>
+<p>Letâs see what the movies, stars and roles tables look like!</p>
+<div class="docutils container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="4%" />
+<col width="45%" />
+<col width="24%" />
+<col width="14%" />
+<col width="12%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">id</th>
+<th class="head">title</th>
+<th class="head">release_year</th>
+<th class="head">runtime</th>
+<th class="head">rating</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>Marvelâs The Avengers</td>
+<td>2012</td>
+<td>142</td>
+<td>PG-13</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>Avatar</td>
+<td>2009</td>
+<td>160</td>
+<td>PG-13</td>
+</tr>
+<tr class="row-even"><td>3</td>
+<td>Star Wars: Episode I</td>
+<td>1999</td>
+<td>133</td>
+<td>PG</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="docutils container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="6%" />
+<col width="32%" />
+<col width="29%" />
+<col width="32%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">id</th>
+<th class="head">first_name</th>
+<th class="head">last_name</th>
+<th class="head">birth_date</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>Scarlett</td>
+<td>Johansson</td>
+<td>1984-11-22</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>Samuel</td>
+<td>Jackson</td>
+<td>1948-12-21</td>
+</tr>
+<tr class="row-even"><td>3</td>
+<td>Kristen</td>
+<td>Wiig</td>
+<td>1973-08-22</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="docutils container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="11%" />
+<col width="44%" />
+<col width="44%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">id</th>
+<th class="head">movie_id</th>
+<th class="head">star_id</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>1</td>
+<td>2</td>
+</tr>
+<tr class="row-even"><td>3</td>
+<td>3</td>
+<td>2</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="id6">
+<h3>Join tables</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>The roles table in our current schema is an example of a join table or an associative table</li>
+<li>A join table serves as a way to connect to tables in a many-to-many relationship</li>
+<li>The join table consists of, at a minimum, two foreign key columns to the other tables in the relationship</li>
+<li>Itâs possible to put other data in the join table (e.g. how much was an actor paid for the role)</li>
+<li>If you canât think of a nice name for the join table between table1 and table2, you can call it table1_table2</li>
+</ul>
+</div>
+</div>
+<div class="section" id="many-to-many-dll">
+<h3>Many to many DLL</h3>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">movies</span> <span class="p">(</span>
+  <span class="n">id</span> <span class="nb">SERIAL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+  <span class="n">title</span> <span class="nb">TEXT</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="n">release_year</span> <span class="nb">INTEGER</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="n">runtime</span> <span class="nb">INTEGER</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="n">rating</span> <span class="nb">TEXT</span> <span class="k">NOT</span> <span class="k">NULL</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">stars</span> <span class="p">(</span>
+  <span class="n">id</span> <span class="nb">SERIAL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+  <span class="n">first_name</span> <span class="nb">TEXT</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="n">last_name</span> <span class="nb">TEXT</span><span class="p">,</span>
+  <span class="n">birth_date</span> <span class="nb">DATE</span> <span class="k">NOT</span> <span class="k">NULL</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">roles</span> <span class="p">(</span>
+  <span class="n">id</span> <span class="nb">SERIAL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+  <span class="n">movie_id</span> <span class="nb">INTEGER</span> <span class="k">REFERENCES</span> <span class="n">movies</span> <span class="k">ON</span> <span class="k">DELETE</span> <span class="k">CASCADE</span><span class="p">,</span>
+  <span class="n">star_id</span> <span class="nb">INTEGER</span> <span class="k">REFERENCES</span> <span class="n">stars</span> <span class="k">ON</span> <span class="k">DELETE</span> <span class="k">CASCADE</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="querying-a-many-to-many">
+<h3>Querying a Many to Many</h3>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Joining to roles</span>
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">movies</span> <span class="n">m</span>
+  <span class="k">JOIN</span> <span class="n">roles</span> <span class="n">r</span>
+    <span class="k">ON</span> <span class="n">m</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">r</span><span class="p">.</span><span class="n">movie_id</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Using the join</span>
+<span class="c1">-- to connect movies and stars</span>
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">movies</span> <span class="n">m</span>
+  <span class="k">JOIN</span> <span class="n">roles</span> <span class="n">r</span>
+    <span class="k">ON</span> <span class="n">m</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">r</span><span class="p">.</span><span class="n">movie_id</span>
+  <span class="k">JOIN</span> <span class="n">stars</span> <span class="n">s</span>
+    <span class="k">ON</span> <span class="n">r</span><span class="p">.</span><span class="n">star_id</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">id</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- grabbing just a few columns</span>
+<span class="k">SELECT</span> <span class="n">m</span><span class="p">.</span><span class="n">title</span><span class="p">,</span> <span class="n">s</span><span class="p">.</span><span class="n">first_name</span><span class="p">,</span> <span class="n">s</span><span class="p">.</span><span class="n">last_name</span>
+  <span class="k">FROM</span> <span class="n">movies</span> <span class="n">m</span>
+  <span class="k">JOIN</span> <span class="n">roles</span> <span class="n">r</span>
+    <span class="k">ON</span> <span class="n">m</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">r</span><span class="p">.</span><span class="n">movie_id</span>
+  <span class="k">JOIN</span> <span class="n">stars</span> <span class="n">s</span>
+    <span class="k">ON</span> <span class="n">r</span><span class="p">.</span><span class="n">star_id</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">id</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="your-turn">
+<h3>Your Turn!</h3>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

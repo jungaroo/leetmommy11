@@ -1,0 +1,463 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Validation and Testing</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Validation and Testing</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Validation and Testing</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a><ul>
+<li><a class="reference internal" href="#objectives">Objectives</a></li>
+<li><a class="reference internal" href="#server-side-data-validation">Server-side Data Validation</a></li>
+<li><a class="reference internal" href="#why-json-schema">Why JSON Schema?</a></li>
+<li><a class="reference internal" href="#rolling-your-own-validation-doesn-t-always-scale">Rolling Your Own Validation Doesnât Always Scale</a></li>
+<li><a class="reference internal" href="#your-request">Your request</a></li>
+<li><a class="reference internal" href="#more-validation">More validation</a></li>
+<li><a class="reference internal" href="#json-schema-basics">JSON Schema Basics</a></li>
+<li><a class="reference internal" href="#jsonschema-net">JSONschema.net</a></li>
+<li><a class="reference internal" href="#id1">JSONschema.net</a></li>
+<li><a class="reference internal" href="#using-the-jsonschema-npm-package-in-express">Using the JSONSchema NPM Package in Express</a></li>
+<li><a class="reference internal" href="#the-steps">The steps</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#testing-apis-with-jest">Testing APIs with Jest</a><ul>
+<li><a class="reference internal" href="#id2">Testing APIs with Jest</a></li>
+<li><a class="reference internal" href="#jest">Jest</a></li>
+<li><a class="reference internal" href="#supertest">Supertest</a></li>
+<li><a class="reference internal" href="#testing-with-jest-and-supertest">Testing with Jest and Supertest</a></li>
+<li><a class="reference internal" href="#adding-a-test-database">Adding a test database</a></li>
+<li><a class="reference internal" href="#setting-up-and-tearing-down-the-test-suite">Setting Up and Tearing Down the test suite</a></li>
+<li><a class="reference internal" href="#testing-create">Testing Create</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#testing-auth">Testing Auth</a><ul>
+<li><a class="reference internal" href="#id3">The steps</a></li>
+<li><a class="reference internal" href="#the-tests">The tests</a></li>
+<li><a class="reference internal" href="#sample-tests-for-authentication">Sample tests for authentication</a></li>
+<li><a class="reference internal" href="#sample-tests-for-authorization">Sample tests for authorization</a></li>
+<li><a class="reference internal" href="#your-turn">Your Turn!</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="validation-and-testing">
+<h1>Validation and Testing</h1>
+<div class="section" id="introduction">
+<h2>Introduction</h2>
+<div class="section" id="objectives">
+<h3>Objectives</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Validate using jsonschema</li>
+<li>Write tests using Jest and Supertest</li>
+</ul>
+</div>
+</div>
+<div class="section" id="server-side-data-validation">
+<h3>Server-side Data Validation</h3>
+<p>A server lacking adequate validation can result in:</p>
+<div class="docutils container">
+<ul class="simple">
+<li>corrupt or incomplete data in the database (this causes all kinds of errors down the road)</li>
+<li>crashing or locking up the server</li>
+<li>displaying vague, unhelpful errors to the frontend or users of the API</li>
+<li>at a minimum, extra server or database CPU/memory load due to unsuccessfully trying to process bad data</li>
+</ul>
+</div>
+</div>
+<div class="section" id="why-json-schema">
+<h3>Why JSON Schema?</h3>
+<p>There are three main reasons for using a schema validation system:</p>
+<div class="docutils container">
+<ul class="simple">
+<li>You want user data to fail fast, before the bad data even gets to your ORM or database.</li>
+<li>You want to reduce the amount of code you have to write for processing and validating data.</li>
+<li>You want a validation system that is easy to setup and maintain.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="rolling-your-own-validation-doesn-t-always-scale">
+<h3>Rolling Your Own Validation Doesnât Always Scale</h3>
+<p>Letâs assume you have a /books endpoint, and the JSON payload to add a new book looks like this:</p>
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;data&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;amazon-url&quot;</span><span class="o">:</span> <span class="s2">&quot;http://a.co/eobPtX2&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;author&quot;</span><span class="o">:</span> <span class="s2">&quot;Matthew Lane&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;isbn-10&quot;</span><span class="o">:</span> <span class="s2">&quot;0691161518&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;isbn-13&quot;</span><span class="o">:</span> <span class="s2">&quot;978-0691161518&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;language&quot;</span><span class="o">:</span> <span class="s2">&quot;english&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;pages&quot;</span><span class="o">:</span> <span class="mi">264</span><span class="p">,</span>
+    <span class="s2">&quot;publisher&quot;</span><span class="o">:</span> <span class="s2">&quot;Princeton University Press&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;title&quot;</span><span class="o">:</span> <span class="s2">&quot;Power-Up: Unlocking the Hidden Mathematics in Video Games&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;year&quot;</span><span class="o">:</span> <span class="mi">2017</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="your-request">
+<h3>Your request</h3>
+<p>Your /books POST request handler might look like this:</p>
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">router</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s2">&quot;/books&quot;</span><span class="p">,</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">book</span> <span class="o">=</span> <span class="nx">request</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">book</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// pass a 400 error to the error-handler</span>
+    <span class="kd">let</span> <span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Book payload is required&#39;</span><span class="p">);</span>
+    <span class="nx">error</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="mi">400</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nx">next</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="cm">/*</span>
+<span class="cm">    (not implemented) insert the book into the database here</span>
+<span class="cm">  */</span>
+  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="mi">201</span><span class="p">).</span><span class="nx">json</span><span class="p">(</span><span class="nx">book</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>In the above example, there is some very light validation going on, consisting of checking if the request.body.data is not null or undefined.</p>
+</div>
+</div>
+<div class="section" id="more-validation">
+<h3>More validation</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>What if you want title and author to be required fields?</li>
+<li>What if users send invalid amazon URLs or ISBNs that are numbers instead of strings?</li>
+<li>As you can see in the above examples, if we want to roll our own validation this way, every request handler is just going to have tons of conditional logic checking for all the edge cases.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="json-schema-basics">
+<h3>JSON Schema Basics</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>JSON Schema is a standard specification for describing JSON documents in a human- and machine-readable format.</li>
+<li>Weâre going to jump right into it using our previous example. Recall the example âBookâ JSON payload using Mattâs book:</li>
+</ul>
+</div>
+</div>
+<div class="section" id="jsonschema-net">
+<h3>JSONschema.net</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Instead of manually writing a JSON schema doc, since we have this nice example already filled out we can head over to jsonschema.net to auto-generate a schema for us. Simply paste the JSON in the box on the left and click âSUBMITâ:</li>
+<li>In the main box marked âHTMLâ we have our resulting JSON schema as interpreted by our input.</li>
+</ul>
+</div>
+<div class="docutils container">
+<a class="reference internal image-reference" href="_images/jsonschema1.png"><img alt="_images/jsonschema1.png" src="_images/jsonschema1.png" style="width: 80%;" /></a>
+</div>
+</div>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>The easiest thing we can do to customize this, is to click on the âEDITâ tab, and adjust the fields. Letâs make âdataâ, âauthorâ, and âtitleâ required.</li>
+<li>Click the save button at the top right (looks like a floppy disk). And then the schema should update.</li>
+<li>This is what the resulting schema should look like (on JSONschema.net you can click the copy button and paste it into any .json file):</li>
+</ul>
+</div>
+<div class="docutils container">
+<a class="reference internal image-reference" href="_images/jsonschema2.png"><img alt="_images/jsonschema2.png" src="_images/jsonschema2.png" style="width: 80%;" /></a>
+</div>
+</div>
+<div class="section" id="using-the-jsonschema-npm-package-in-express">
+<h3>Using the JSONSchema NPM Package in Express</h3>
+<p>Weâll be using the jsonschema npm package (links: npm and github).</p>
+<p>The package works basically works like this:</p>
+<div class="docutils container">
+<ul class="simple">
+<li>You import the validator.</li>
+<li>You supply the validator with a schema.</li>
+<li>You pass instances of user input to the validator.</li>
+<li>The validator checks if the user input is valid against the schema.</li>
+<li>If itâs invalid, you respond with errors. Otherwise continue.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="the-steps">
+<h3>The steps</h3>
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="p">{</span> <span class="nx">validate</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;jsonschema&#39;</span><span class="p">);</span>
+<span class="kr">const</span> <span class="nx">bookSchema</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./bookSchema.json&#39;</span><span class="p">);</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s1">&#39;/books&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+
+  <span class="kr">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">validate</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">,</span> <span class="nx">bookSchema</span><span class="p">);</span>
+
+  <span class="c1">// jsonschema validation results in a &quot;valid&quot;</span>
+  <span class="c1">// key being set to &quot;false&quot; if the instance doesn&#39;t match the schema</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">result</span><span class="p">.</span><span class="nx">valid</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// pass the validation errors to the error handler</span>
+    <span class="c1">//  the &quot;stack&quot; key is generally the most useful</span>
+    <span class="k">return</span> <span class="nx">next</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">errors</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">error</span> <span class="p">=&gt;</span> <span class="nx">error</span><span class="p">.</span><span class="nx">stack</span><span class="p">));</span>
+  <span class="p">}</span>
+
+  <span class="c1">// at this point in the code, we know we have a valid payload</span>
+  <span class="kr">const</span> <span class="nx">book</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
+  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="mi">201</span><span class="p">).</span><span class="nx">json</span><span class="p">(</span><span class="nx">book</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="testing-apis-with-jest">
+<h2>Testing APIs with Jest</h2>
+<div class="section" id="id2">
+</div>
+<div class="section" id="jest">
+<h3>Jest</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Wonderful library for running tests</li>
+<li>Comes with a library for assertions and matchers</li>
+<li>Fantastic for unit testing</li>
+</ul>
+</div>
+</div>
+<div class="section" id="supertest">
+<h3>Supertest</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>A library for testing express applications</li>
+<li>Our tool for integration testing</li>
+</ul>
+</div>
+</div>
+<div class="section" id="testing-with-jest-and-supertest">
+<h3>Testing with Jest and Supertest</h3>
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">request</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;supertest&quot;</span><span class="p">);</span>
+<span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;../app&quot;</span><span class="p">);</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;GET / &quot;</span><span class="p">,</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;It should respond with an array of students&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">([</span><span class="s2">&quot;Elie&quot;</span><span class="p">,</span> <span class="s2">&quot;Matt&quot;</span><span class="p">,</span> <span class="s2">&quot;Joel&quot;</span><span class="p">,</span> <span class="s2">&quot;Michael&quot;</span><span class="p">]);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">200</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="adding-a-test-database">
+<h3>Adding a test database</h3>
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="p">{</span> <span class="nx">Client</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;pg&quot;</span><span class="p">);</span>
+<span class="kr">const</span> <span class="nx">db</span> <span class="o">=</span> <span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">NODE_ENV</span> <span class="o">===</span> <span class="s2">&quot;test&quot;</span> <span class="o">?</span> <span class="s2">&quot;students-test&quot;</span> <span class="o">:</span> <span class="s2">&quot;students&quot;</span><span class="p">;</span>
+
+<span class="nx">client</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Client</span><span class="p">({</span>
+  <span class="nx">connectionString</span><span class="o">:</span> <span class="sb">`postgresql://localhost/</span><span class="si">${</span><span class="nx">db</span><span class="si">}</span><span class="sb">`</span>
+<span class="p">});</span>
+
+<span class="nx">client</span><span class="p">.</span><span class="nx">connect</span><span class="p">();</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">client</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="setting-up-and-tearing-down-the-test-suite">
+<h3>Setting Up and Tearing Down the test suite</h3>
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">NODE_ENV</span> <span class="o">=</span> <span class="s2">&quot;test&quot;</span><span class="p">;</span>
+<span class="kr">const</span> <span class="nx">db</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;../db&quot;</span><span class="p">);</span>
+<span class="kr">const</span> <span class="nx">request</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;supertest&quot;</span><span class="p">);</span>
+<span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;../app&quot;</span><span class="p">);</span>
+
+<span class="nx">beforeAll</span><span class="p">(</span><span class="nx">async</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s2">&quot;CREATE TABLE students (id SERIAL PRIMARY KEY, name TEXT)&quot;</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="nx">beforeEach</span><span class="p">(</span><span class="nx">async</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="c1">// seed with some data</span>
+  <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s2">&quot;INSERT INTO students (name) VALUES (&#39;Elie&#39;), (&#39;Matt&#39;)&quot;</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="nx">afterEach</span><span class="p">(</span><span class="nx">async</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s2">&quot;DELETE FROM students&quot;</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="nx">afterAll</span><span class="p">(</span><span class="nx">async</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s2">&quot;DROP TABLE students&quot;</span><span class="p">);</span>
+  <span class="nx">db</span><span class="p">.</span><span class="nx">end</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="testing-create">
+<h3>Testing Create</h3>
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;POST /students&quot;</span><span class="p">,</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;It responds with the newly created student&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">newStudent</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s2">&quot;/students&quot;</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">send</span><span class="p">({</span>
+        <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;New Student&quot;</span>
+      <span class="p">});</span>
+
+    <span class="c1">// make sure we add it correctly</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">newStudent</span><span class="p">.</span><span class="nx">body</span><span class="p">).</span><span class="nx">toHaveProperty</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">newStudent</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">name</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="s2">&quot;New Student&quot;</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">newStudent</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">200</span><span class="p">);</span>
+
+    <span class="c1">// make sure we have 3 students now</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/students&quot;</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">length</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="testing-auth">
+<h2>Testing Auth</h2>
+<div class="section" id="id3">
+<h3>The steps</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>create a global object for storing auth information</li>
+<li>before each request, create a user and log them in</li>
+<li>store a JWT in store in the global auth object</li>
+</ul>
+</div>
+</div>
+<div class="section" id="the-tests">
+<h3>The tests</h3>
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">auth</span> <span class="o">=</span> <span class="p">{};</span>
+
+<span class="nx">beforeAll</span><span class="p">(</span><span class="nx">async</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span>
+    <span class="s2">&quot;CREATE TABLE users (id SERIAL PRIMARY KEY, username TEXT, password TEXT)&quot;</span>
+  <span class="p">);</span>
+<span class="p">});</span>
+
+<span class="nx">beforeEach</span><span class="p">(</span><span class="nx">async</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">hashedPassword</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">bcrypt</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="s2">&quot;secret&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+  <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s2">&quot;INSERT INTO users (username, password) VALUES (&#39;test&#39;, $1)&quot;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="nx">hashedPassword</span>
+  <span class="p">]);</span>
+  <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s2">&quot;/users/auth&quot;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">send</span><span class="p">({</span>
+      <span class="nx">username</span><span class="o">:</span> <span class="s2">&quot;test&quot;</span><span class="p">,</span>
+      <span class="nx">password</span><span class="o">:</span> <span class="s2">&quot;secret&quot;</span>
+    <span class="p">});</span>
+
+  <span class="nx">auth</span><span class="p">.</span><span class="nx">token</span> <span class="o">=</span> <span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">token</span><span class="p">;</span>
+  <span class="nx">auth</span><span class="p">.</span><span class="nx">current_user_id</span> <span class="o">=</span> <span class="nx">jsonwebtoken</span><span class="p">.</span><span class="nx">decode</span><span class="p">(</span><span class="nx">auth</span><span class="p">.</span><span class="nx">token</span><span class="p">).</span><span class="nx">user_id</span><span class="p">;</span>
+<span class="p">});</span>
+
+<span class="nx">afterEach</span><span class="p">(</span><span class="nx">async</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s2">&quot;DELETE FROM users&quot;</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="nx">afterAll</span><span class="p">(</span><span class="nx">async</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s2">&quot;DROP TABLE users&quot;</span><span class="p">);</span>
+  <span class="nx">db</span><span class="p">.</span><span class="nx">end</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="sample-tests-for-authentication">
+<h3>Sample tests for authentication</h3>
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;GET /users&quot;</span><span class="p">,</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;returns a list of users&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/users&quot;</span><span class="p">)</span>
+      <span class="c1">// add an authorization header with the token</span>
+      <span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">&quot;authorization&quot;</span><span class="p">,</span> <span class="nx">auth</span><span class="p">.</span><span class="nx">token</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">length</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">200</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="sample-tests-for-authorization">
+<h3>Sample tests for authorization</h3>
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;GET /secure/:id&quot;</span><span class="p">,</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;authorizes only correct users&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+      <span class="c1">// add an authorization header with the token</span>
+      <span class="c1">// go to the same ID as the one stored in the token</span>
+      <span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="sb">`/users/secure/</span><span class="si">${</span><span class="nx">auth</span><span class="p">.</span><span class="nx">current_user_id</span><span class="si">}</span><span class="sb">`</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">&quot;authorization&quot;</span><span class="p">,</span> <span class="nx">auth</span><span class="p">.</span><span class="nx">token</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">200</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">message</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="s2">&quot;You made it!&quot;</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;GET /secure/:id&quot;</span><span class="p">,</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;authorizes only correct users&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+      <span class="c1">// add an authorization header with the token,</span>
+      <span class="c1">// go to a different ID than the one stored in the token</span>
+      <span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="sb">`/users/secure/100`</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">&quot;authorization&quot;</span><span class="p">,</span> <span class="nx">auth</span><span class="p">.</span><span class="nx">token</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">401</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">message</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="s2">&quot;Unauthorized&quot;</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="your-turn">
+<h3>Your Turn!</h3>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

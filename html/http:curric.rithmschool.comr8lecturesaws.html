@@ -1,0 +1,947 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Flask on AWS</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Flask on AWS</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Flask on AWS</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+<li><a class="reference internal" href="#agenda">Agenda</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#amazon-web-services">Amazon Web Services</a><ul>
+<li><a class="reference internal" href="#id2">Amazon Web Services</a></li>
+<li><a class="reference internal" href="#steps-to-create-an-aws-account">Steps to create an AWS account</a></li>
+<li><a class="reference internal" href="#cloud-based-servers">Cloud-Based Servers</a></li>
+<li><a class="reference internal" href="#launch-an-instance">Launch an Instance</a></li>
+<li><a class="reference internal" href="#launch-script">Launch Script</a></li>
+<li><a class="reference internal" href="#get-your-server">Get Your Server</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#secure-shell">Secure Shell</a><ul>
+<li><a class="reference internal" href="#id3">Secure Shell</a></li>
+<li><a class="reference internal" href="#connecting-via-browser">Connecting Via Browser</a></li>
+<li><a class="reference internal" href="#key-file">Key File</a></li>
+<li><a class="reference internal" href="#move-and-protect-your-key">Move and Protect Your Key</a></li>
+<li><a class="reference internal" href="#ssh-onto-server">SSH Onto Server</a></li>
+<li><a class="reference internal" href="#logging-out-and-in">Logging Out and In</a></li>
+<li><a class="reference internal" href="#look-around">Look Around</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#flask-app">Flask App</a><ul>
+<li><a class="reference internal" href="#id4">Flask App</a></li>
+<li><a class="reference internal" href="#id5">Flask App</a></li>
+<li><a class="reference internal" href="#make-our-database">Make Our Database</a></li>
+<li><a class="reference internal" href="#installing-it">Installing It</a></li>
+<li><a class="reference internal" href="#seed-database">Seed Database</a></li>
+<li><a class="reference internal" href="#testing-flask-app">Testing Flask App</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#edge-http-server-nginx">Edge HTTP Server: Nginx</a><ul>
+<li><a class="reference internal" href="#edge-http-server">Edge HTTP Server</a></li>
+<li><a class="reference internal" href="#nginx">Nginx</a></li>
+<li><a class="reference internal" href="#nginx-config">Nginx Config</a></li>
+<li><a class="reference internal" href="#telling-nginx-about-our-config">Telling Nginx About Our Config</a></li>
+<li><a class="reference internal" href="#reloading-nginx-configuration">Reloading Nginx Configuration</a></li>
+<li><a class="reference internal" href="#viewing-flask-via-port-80">Viewing Flask Via Port 80</a></li>
+<li><a class="reference internal" href="#proxying">Proxying</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#production-style-flask">Production-Style Flask</a><ul>
+<li><a class="reference internal" href="#id6">Production-Style Flask</a></li>
+<li><a class="reference internal" href="#saving-output">Saving Output</a></li>
+<li><a class="reference internal" href="#running-in-background">Running in Background</a></li>
+<li><a class="reference internal" href="#background-process">Background Process</a></li>
+<li><a class="reference internal" href="#stopping-flask">Stopping Flask</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#copying-files-to-from-server">Copying Files To/From Server</a><ul>
+<li><a class="reference internal" href="#id7">Copying Files To/From Server</a></li>
+<li><a class="reference internal" href="#copy-from-laptop-to-server">Copy From Laptop To Server</a></li>
+<li><a class="reference internal" href="#copy-from-server-to-laptop">Copy From Server to Laptop</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#copying-database-to-production">Copying Database to Production</a><ul>
+<li><a class="reference internal" href="#id8">Copying Database to Production</a></li>
+<li><a class="reference internal" href="#dump-database">Dump Database</a></li>
+<li><a class="reference internal" href="#copy-to-server">Copy to Server</a></li>
+<li><a class="reference internal" href="#read-in-database-on-server">Read in Database On Server</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#looking-ahead">Looking Ahead</a><ul>
+<li><a class="reference internal" href="#updating-your-app">Updating Your App</a></li>
+<li><a class="reference internal" href="#new-shell-commands">New Shell Commands</a></li>
+<li><a class="reference internal" href="#further-study">Further Study</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="flask-on-aws">
+<h1>Flask on AWS</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<p>Learn to get a cloud-based server from Amazon.</p>
+<p>Learn to host a Flask application on it.</p>
+<p>Learn some new UNIX shell commands.</p>
+</div>
+<div class="section" id="agenda">
+<h3>Agenda</h3>
+<ul class="simple">
+<li>Get an AWS server with Python &amp; PostgreSQL</li>
+<li>Get Flask app running on it</li>
+<li>Get a production-quality HTTP server on it</li>
+</ul>
+</div>
+</div>
+<div class="section" id="amazon-web-services">
+<h2>Amazon Web Services</h2>
+<div class="section" id="id2">
+<p>Get an AWS account: <a class="reference external" href="http://aws.amazon.com">http://aws.amazon.com</a>.</p>
+</div>
+<p>This process takes a few minutes. Youâll need to provide Amazon with your
+contact information and a valid credit card number. The type of server used
+in this lecture is free for the first month and $5 afterwards. Unlike
+some other subscription-based services, though, you really can cancel
+easily anytime, and youâre only charged for the time you use.</p>
+<p>Amazon will prompt you for the level of service contract youâd like for
+your account. Assuming youâd like to stay in the free tier, choose âBasicâ.</p>
+<div class="section" id="steps-to-create-an-aws-account">
+<h3>Steps to create an AWS account</h3>
+<p><strong>1.</strong> On the <a class="reference external" href="https://aws.amazon.com/">Amazon Web Services homepage</a>,
+click <strong>Sign In to the Console</strong> in the top right-hand corner of the screen.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="_images/signup.png"><img alt="_images/signup.png" src="_images/signup.png" style="width: 25%;" /></a>
+</div></blockquote>
+<p><strong>2.</strong> Enter your email address and select <strong>I am a new user</strong></p>
+<blockquote>
+<div><a class="reference internal image-reference" href="_images/signup_1.png"><img alt="_images/signup_1.png" src="_images/signup_1.png" style="width: 35%;" /></a>
+</div></blockquote>
+<p><strong>3.</strong> Enter your login credentials on the next page and click <strong>Create account</strong>.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="_images/signup_2.png"><img alt="_images/signup_2.png" src="_images/signup_2.png" style="width: 40%;" /></a>
+</div></blockquote>
+<p><strong>4.</strong> Enter your contact information.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="_images/signup_3.png"><img alt="_images/signup_3.png" src="_images/signup_3.png" style="width: 40%;" /></a>
+</div></blockquote>
+<p><strong>5.</strong> Enter payment information. AWS accounts themselves are free, but higher
+levels of support and various AWS services are paid. You are required to enter
+a valid credit card number to create an account, but you may select to remain
+on the basic, free tier later in this process.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="_images/signup_4.png"><img alt="_images/signup_4.png" src="_images/signup_4.png" style="width: 40%;" /></a>
+</div></blockquote>
+<p><strong>6.</strong> AWS will confirm your identity through a phone call. Enter your phone
+number and click <strong>Call me now</strong>.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="_images/signup_5.png"><img alt="_images/signup_5.png" src="_images/signup_5.png" style="width: 40%;" /></a>
+</div></blockquote>
+<p>You will receive a PIN on the screen. You should soon receive an automated call
+from AWS and you will be prompted to enter the PIN on your keypad during the call.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="_images/signup_6.png"><img alt="_images/signup_6.png" src="_images/signup_6.png" style="width: 35%;" /></a>
+</div></blockquote>
+<p>After you have successfully entered the PIN during the phone call, your screen
+should refresh and you will see <strong>Identity verification complete</strong>.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="_images/signup_7.png"><img alt="_images/signup_7.png" src="_images/signup_7.png" style="width: 35%;" /></a>
+</div></blockquote>
+<p><strong>7.</strong> Choose your support plan. Assuming youâd like to stay in the free tier,
+choose âBasicâ.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="_images/signup_8.png"><img alt="_images/signup_8.png" src="_images/signup_8.png" style="width: 40%;" /></a>
+</div></blockquote>
+<p><strong>8.</strong> You will be redirected back to the AWS homepage, where you should see a
+<strong>Complete Sign Up</strong> button in the top right-hand corner of the screen. Click
+that button to finalize your account creation.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="_images/signup_9.png"><img alt="_images/signup_9.png" src="_images/signup_9.png" style="width: 25%;" /></a>
+</div></blockquote>
+</div>
+<div class="section" id="cloud-based-servers">
+<h3>Cloud-Based Servers</h3>
+<p>Flexible way to get servers â popular for ease-of-setup and for scalability.</p>
+<p>Amazon has their classic offering, âEC2â (the <em>Elastic Compute Cloud</em>), which are highly
+flexible cloud-based servers that you can configure in many different ways, and pay for
+on a per-house basis. These are very popular with many startups and enterprises.</p>
+<p>In this demonstration, weâll be using a different product of their, âLightSailâ. This
+is a way to get a cloud server of the same type as Amazon EC2, but on a flat-rate
+per month charge and with considerably fewer complex choices for setup.</p>
+<p>In the end, the server you get works the same, regardless of how you acquire it. If youâd
+like to explore the process for getting a classic EC2 instance, feel free â but do
+expect it to take more effort to provision.</p>
+</div>
+<div class="section" id="launch-an-instance">
+<h3>Launch an Instance</h3>
+<p><a class="reference external" href="http://lightsail.aws.amazon.com">http://lightsail.aws.amazon.com</a></p>
+<ul class="simple">
+<li><strong>Create Instance</strong></li>
+<li><strong>OS Only</strong> â <strong>Ubuntu 16.04</strong><ul>
+<li>Current âLTSâ <em>(long-term support)</em> version of Ubuntu</li>
+<li>Same as used in labs and Vagrant instances</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="launch-script">
+<h3>Launch Script</h3>
+<p>Copy and paste the following into the âLaunch Scriptâ</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>hostnamectl set-hostname aws
+sed <span class="s1">&#39;1s/$/ aws/&#39;</span> -i /etc/hosts
+apt-get update
+apt-get install -y python-virtualenv
+apt-get install -y build-essential python-dev
+apt-get install -y postgresql postgresql-client
+sudo -u postgres createuser -s ubuntu
+apt-get install -y postgresql-server-dev-9.5
+apt-get install -y postgresql-plpython
+apt-get install -y postgresql-contrib
+</pre></div>
+</div>
+<p>This provides the same core software as our labs &amp; Vagrant</p>
+<p>You donât need to understand this script to use your server. However, if youâd like
+to understand what weâre doing here:</p>
+<ul class="simple">
+<li>We change the nickname this server will use for itself to <cite>aws</cite>. This will make it
+easier for you to tell which computer youâre logged onto, as that name will appear
+in the shell prompts</li>
+<li>We use <code class="docutils literal notranslate"><span class="pre">apt-get</span> <span class="pre">update</span></code> to update the list of available software for Ubuntu Linux.</li>
+<li>We install Python and PostgreSQL using <code class="docutils literal notranslate"><span class="pre">apt-get</span> <span class="pre">install</span></code> (the <cite>-y</cite> option means
+âassume yes for any promptsâ)</li>
+<li>We add a user to the PostgreSQL cluster called <cite>ubuntu</cite>, since that is the default
+user  on your new server.</li>
+</ul>
+</div>
+<div class="section" id="get-your-server">
+<h3>Get Your Server</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Choose your plan<ul>
+<li>For almost all projects, the $5/month plan will be fine</li>
+</ul>
+</li>
+<li>Name your instance<ul>
+<li>This isnât public; it just helps you different instances straight</li>
+</ul>
+</li>
+<li>Click <strong>Create</strong></li>
+</ul>
+</div>
+<p>This launch script will take about 5 minutes to complete. You can start other things
+while it runs in the background, but it may be simplest to pause</p>
+<p>Once your server become active, click on its name to see the management page for it.</p>
+</div>
+</div>
+<div class="section" id="secure-shell">
+<h2>Secure Shell</h2>
+<div class="section" id="id3">
+<p>Weâll use <strong>SSH</strong> <em>(the secure shell)</em> to get a shell on our server.</p>
+<p>This is how we can set up our server, run software on it, etc.</p>
+</div>
+<div class="section" id="connecting-via-browser">
+<h3>Connecting Via Browser</h3>
+<p>For convenience, Lightsail lets you connect via your browser</p>
+<p>Click <cite>Connect using SSH</cite> and you get a shell on your server!</p>
+<pre class="console literal-block">
+ubuntu&#64;aws:~ $ <span class="cmd">ls -a</span>   <span class="gray"># files on my server!</span>
+</pre>
+<div class="docutils container">
+<p>Youâre at the shell on your new server!</p>
+<p>Your username is <cite>ubuntu</cite></p>
+</div>
+<p>Connecting via browser is handy, but browsers arenât great UIs for this</p>
+<p>Letâs do it properly â via our laptop Terminal</p>
+<p>In this demonstration, weâll be mildly assuming your laptop runs Linux or OSX natively.
+For Windows users, your computer may not have the <cite>ssh</cite> program installed (it depends on
+your setup and version of Windows).</p>
+<p>For Windows users, you can either:</p>
+<ul class="simple">
+<li>do the parts marked <cite>laptop</cite> inside of your Vagrant instance, or</li>
+<li>download the program <a class="reference external" href="http://www.putty.org/">Putty</a>, a free SSH program for Windows</li>
+</ul>
+</div>
+<div class="section" id="key-file">
+<h3>Key File</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Amazon made you a âkey pairâ for your server<ul>
+<li>Youâll use this, rather than a password, to log in</li>
+</ul>
+</li>
+<li>The server has the public key installed on it</li>
+<li>You should download the private key â having this proves youâre you</li>
+<li><cite>Account</cite> â <cite>Download default key</cite></li>
+</ul>
+</div>
+<p>Letâs take a look at it:</p>
+<pre class="console literal-block">
+<span class="tan">laptop</span> $ <span class="cmd">cat ~/Downloads/LightsailDefaultPrivateKey.pem</span>
+-----BEGIN RSA PRIVATE KEY-----
+MIIEogIBAAKCAQEAqdfAFP8tPRdb5Yl5f2dbgEeboUFp934DvRgP0
+1Cm10ZvFgj4xuZ9B0l0VYfs5SPx/riowJ6R7Xt7Clxa+UsGYn8isK
+<span class="gray">...</span>
+</pre>
+<p>(of course, you key will be different than this output)</p>
+</div>
+<div class="section" id="move-and-protect-your-key">
+<h3>Move and Protect Your Key</h3>
+<p>Letâs move and rename that so itâs easier to remember &amp; type:</p>
+<pre class="console literal-block">
+<span class="tan">laptop</span> $ <span class="cmd">mv ~/Downloads/LightsailDefaultPrivateKey.pem ~/aws.pem</span>
+</pre>
+<div class="docutils container">
+<p>SSH requires keys to be readable only by you <em>(not other users of your laptop)</em>:</p>
+<pre class="console literal-block">
+<span class="tan">laptop</span> $ <span class="cmd">chmod a=,u=rw ~/aws.pem</span>    <span class="gray"># make readable only by you</span>
+</pre>
+</div>
+<div class="admonition note">
+<p>chmod</p>
+<p>Given how important it is that your private key remain a secret, the <cite>ssh</cite> program
+requires that the private key is readable only by you, and is unreadable
+to other users on your computer.</p>
+<p>The UNIX program <cite>chmod</cite> lets you specify the permissions for a file. Weâve specified
+that everyone (<strong>a</strong>) has no privileges for it, but that
+that the user (<strong>u</strong>) who owns the file (you) can read and write it.</p>
+<p class="last">You can learn more about chmod with <cite>man chmod</cite> or at
+<a class="reference external" href="http://www.computerhope.com/uniax/uchmod.htm">http://www.computerhope.com/uniax/uchmod.htm</a></p>
+</div>
+</div>
+<div class="section" id="ssh-onto-server">
+<h3>SSH Onto Server</h3>
+<pre class="big literal-block">
+ssh <span class="red">-i ~/aws.pem</span> <span class="green">ubuntu</span>&#64;<span class="blue">1.2.3.4</span>
+</pre>
+<div class="docutils container">
+<dl class="docutils">
+<dt><span class="red">use this key</span></dt>
+<dd>Tell SSH which key to use to authenticate you</dd>
+<dt><span class="green">username on server</span></dt>
+<dd>Log  in as user <cite>ubuntu</cite> on server <em>(Amazon created that account)</em></dd>
+<dt><span class="blue">IP address of your server</span></dt>
+<dd>What machine do you want to log in on?</dd>
+</dl>
+</div>
+<div class="docutils container">
+<pre class="console literal-block">
+<span class="tan">laptop</span> $ <span class="cmd">ssh -i ~/aws.pem ubuntu&#64;1.2.3.4</span>
+The authenticity of host ... can't be established.
+ECDSA key fingerprint is SHA256:s7vcRHFe9Z3NsgMYo...
+Are you sure you want to continue connecting (yes/no)? <span class="cmd">yes</span>
+
+<span class="gray">... lots of welcome text ...</span>
+
+<span class="tan">server</span> $
+</pre>
+</div>
+<p>It will only ask for that safety confirmation the first time.</p>
+<p>Notice your prompt when youâre shelled onto server:</p>
+<pre class="big literal-block">
+<span class="green">ubuntu</span>&#64;<span class="blue">aws</span>:<span class="tan">~</span>$
+</pre>
+<div class="docutils container">
+<dl class="docutils">
+<dt><span class="green">username</span></dt>
+<dd>Youâre logged in as the <cite>ubuntu</cite> user</dd>
+<dt><span class="blue">host name</span></dt>
+<dd>Youâre logged into your server</dd>
+<dt><span class="tan">current directory</span></dt>
+<dd>This is your current directory (<code class="docutils literal notranslate"><span class="pre">~</span></code> is home)</dd>
+</dl>
+</div>
+<div class="docutils container">
+<p>The prompt reminds you which computer youâre shelled in on.</p>
+</div>
+</div>
+<div class="section" id="logging-out-and-in">
+<h3>Logging Out and In</h3>
+<p>To log out from the server shell, type <cite>Control-D</cite></p>
+<p>This takes you back to your laptop shell</p>
+<div class="docutils container">
+<p>To log back into your server shell, retype</p>
+<pre class="console literal-block">
+<span class="tan">laptop</span> $ <span class="cmd">ssh -i ~/aws.pem ubuntu&#64;1.2.3.4</span>
+<span class="tan">server</span> $ <span class="cmd">(Control-D)</span>
+<span class="tan">laptop</span> $
+</pre>
+</div>
+<div class="docutils container">
+<p>Repeat this until it feels comfortable!</p>
+</div>
+</div>
+<div class="section" id="look-around">
+<h3>Look Around</h3>
+<ul class="simple">
+<li>Python</li>
+<li>PostgreSQL</li>
+</ul>
+<div class="docutils container">
+<p>Now letâs add a Flask app!</p>
+</div>
+</div>
+</div>
+<div class="section" id="flask-app">
+<h2>Flask App</h2>
+<div class="section" id="id4">
+<p>Use Git clone to get our Flask app onto our server:</p>
+<pre class="console literal-block">
+<span class="tan">server</span> $ <span class="cmd">git clone https://github.com/joelburton/catapp.git</span>
+</pre>
+<p>You could use any Flask application; this is just a simple sample Flask app.</p>
+</div>
+<div class="section" id="id5">
+<p>Our demo Flask app:</p>
+<ul class="simple">
+<li>Database:<ul>
+<li>Needs PostgreSQL database, <cite>cats</cite></li>
+<li>Script <cite>seed.py</cite> will add starting data</li>
+</ul>
+</li>
+<li>Routes:<ul>
+<li><cite>/</cite>: homepage</li>
+<li><cite>/cats</cite>: lists cats in database</li>
+<li><cite>/err</cite>: page that always throws error</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="make-our-database">
+<h3>Make Our Database</h3>
+<p>Letâs make the database for our app:</p>
+<pre class="console literal-block">
+<span class="tan">server</span> $ <span class="cmd">createdb cats</span>
+</pre>
+<div class="docutils container">
+<p>Can make sure we can get in:</p>
+<pre class="console literal-block">
+<span class="tan">server</span> $ <span class="cmd">psql cats</span>
+</pre>
+</div>
+<div class="docutils container">
+<p>(<cite>Control-D</cite> to exit back to shell)</p>
+</div>
+<p>Of course, there wonât be any tables in the database yet â you just created it!</p>
+</div>
+<div class="section" id="installing-it">
+<h3>Installing It</h3>
+<p>Installing our Flask app is the same as it would be on our laptop:</p>
+<pre class="console literal-block">
+<span class="tan">server</span> $ <span class="cmd">cd catapp</span>
+<span class="tan">server</span> $ <span class="cmd">virtualenv</span> <span class="cmd">env</span>
+<span class="tan">server</span> $ <span class="cmd">source env/bin/activate</span>
+
+<span class="tan">server</span> (env) $ <span class="cmd">pip</span> <span class="cmd">install -r requirements.txt</span>
+</pre>
+</div>
+<div class="section" id="seed-database">
+<h3>Seed Database</h3>
+<p>Letâs run our database seeding script:</p>
+<pre class="console literal-block">
+<span class="tan">server</span> (env) $ <span class="cmd">python</span> <span class="cmd">seed.py</span>
+</pre>
+</div>
+<div class="section" id="testing-flask-app">
+<h3>Testing Flask App</h3>
+<p>Run Flask</p>
+<pre class="console literal-block">
+<span class="tan">server</span> (env) $ <span class="cmd">python</span> <span class="cmd">server.py</span>
+</pre>
+<div class="docutils container">
+<p>This should start your Flask app on port 5000.</p>
+</div>
+<div class="docutils container">
+<p>Canât get to it from laptop, though â Amazon firewalls off port 5000</p>
+</div>
+<p>Amazon firewalls off every port except 22 (SSH) and 80 (HTTP)</p>
+<div class="docutils container">
+<ul class="simple">
+<li>We <em>could</em> open port 5000 on our firewall<ul>
+<li>But we donât want people to have to ask for <cite>http://oursite:5000</cite></li>
+</ul>
+</li>
+<li>We <em>could</em> run Flask on port 80<ul>
+<li>But itâs uncommon to run an app server directly on 80</li>
+<li>Also: if had a second app, <cite>dogapp</cite>, we couldnât run both on 80!</li>
+</ul>
+</li>
+<li>So: weâll keep on 5000, and solve that in a minute<ul>
+<li>First, letâs make sure itâs actually running :)</li>
+</ul>
+</li>
+</ul>
+</div>
+<p>Open a <strong>new, second</strong> terminal window and shell onto server:</p>
+<pre class="console literal-block">
+<span class="tan">laptop</span> $ <span class="cmd">ssh -i ~/aws.pem ubuntu&#64;1.2.3.4</span>
+
+<span class="tan">server</span> $ <span class="cmd">curl http://localhost:5000</span>
+<span class="gray">... HTML of homepage ...</span>
+</pre>
+</div>
+</div>
+<div class="section" id="edge-http-server-nginx">
+<h2>Edge HTTP Server: Nginx</h2>
+<div class="section" id="edge-http-server">
+<h3>Edge HTTP Server</h3>
+<p>Itâs common to have a generic HTTP server talking to the internet</p>
+<div class="docutils container">
+<ul class="simple">
+<li>This server listens on port 80</li>
+<li>This server passes requests to (possibly several different) applications</li>
+<li>This type of server is often called an âedgeâ server<ul>
+<li>As itâs on the âedgeâ of your system and the Internet</li>
+</ul>
+</li>
+</ul>
+</div>
+<p>This also allows for some intermediate security/performance solutions.</p>
+<p>Weâll use general-purpose <cite>Nginx</cite> HTTP server to <em>proxy</em> to Flask on 5000:</p>
+<div class="graphviz">
+<img src="_images/graphviz-01d1ab4c9cdcdd293c99b67110918fc4f49861e1.svg" />
+</div>
+<div class="docutils container">
+<p>Can use this to serve multiple Flask apps:</p>
+<div class="graphviz">
+<img src="_images/graphviz-354b3e73552a60e6aaa90b6609708f6013dfe99b.svg" />
+</div>
+</div>
+<p>And not just Flask apps â it will proxy to <em>anything</em> â so this could be
+two Flask apps, a Django app, a Ruby on Rails app, and so on.</p>
+</div>
+<div class="section" id="nginx">
+<h3>Nginx</h3>
+<p>If youâre not shelled onto your server, do so:</p>
+<pre class="console literal-block">
+<span class="tan">laptop</span> $ <span class="cmd">ssh -i ~/aws.pem ubuntu&#64;1.2.3.4</span>
+</pre>
+<div class="docutils container">
+<p>Install Nginx:</p>
+<pre class="console literal-block">
+<span class="tan">server</span> $ <span class="cmd">sudo apt install nginx</span>
+</pre>
+</div>
+<pre class="big literal-block">
+<span class="green">sudo</span> <span class="blue">apt</span> <span class="red">install</span> <span class="tan">nginx</span>
+</pre>
+<div class="docutils container">
+<dl class="docutils">
+<dt><span class="green">sudo</span></dt>
+<dd>Do rest of this line as superuser</dd>
+<dt><span class="blue">apt</span></dt>
+<dd>Ubuntu Linux package management program</dd>
+<dt><span class="red">install</span></dt>
+<dd>Action for <cite>apt</cite> (can also <cite>search</cite>, etc)</dd>
+<dt><span class="tan">nginx</span></dt>
+<dd>Package(s) to install</dd>
+</dl>
+</div>
+<p>Here, weâre using a program called <cite>apt</cite>, which is a âpackage managerâ for Ubuntu
+Linux: it installs new software onto our server.</p>
+<p>Normally, only the superuser can install software â so weâre running the program
+apt in a special way, by prepending it with <cite>sudo</cite>. This program, Sudo, stands for
+âSuperuser, doâ. It provides a way to quickly perform a task that is normally limited
+to the superuser: just prepend the name <cite>sudo</cite> before any command.</p>
+<p>Of course, if everyone could just do this, it would be a terrible security hole.
+Amazon set up our server so that the default user, <cite>ubuntu</cite>, has the right to use
+<cite>sudo</cite>. Most ordinary users wouldnât be given that right.</p>
+<p>We can now make sure Nginx is running on 80:</p>
+<p><a class="reference external" href="http://1.2.3.4">http://1.2.3.4</a></p>
+</div>
+<div class="section" id="nginx-config">
+<h3>Nginx Config</h3>
+<p>We donât want that default Nginx site â letâs delete configuration for it</p>
+<pre class="console literal-block">
+<span class="tan">server</span> $ <span class="cmd">sudo rm /etc/nginx/sites-enabled/default</span>
+</pre>
+<div class="docutils container">
+<p>Our demo app already has a configuration file weâd like to use instead:</p>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">catapp/nginx.conf</span></div>
+<div class="highlight-nginx notranslate"><div class="highlight"><pre><span></span><span class="k">server</span> <span class="p">{</span>
+  <span class="kn">listen</span> <span class="mi">80</span> <span class="s">default_server</span><span class="p">;</span>
+  <span class="kn">location</span> <span class="s">/</span> <span class="p">{</span> <span class="kn">proxy_pass</span> <span class="s">http://127.0.0.1:5000</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<p>This proxies requests on port 80 at <code class="docutils literal notranslate"><span class="pre">/</span></code> to <cite>http://127.0.0.1:5000</cite>.</p>
+</div>
+<div class="admonition note">
+<p>Optional Advanced: Nginx Config</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">/</span></code> is interesting â we could divide a web hostname into multiple apps.
+For example, we could have everything on our site under the name <cite>/blog</cite> go to
+Flask blogging app running on 5001, and everything else go to a Flask app running on
+port 5000:</p>
+<div class="last highlight-nginx notranslate"><div class="highlight"><pre><span></span><span class="k">server</span> <span class="p">{</span>
+  <span class="kn">listen</span> <span class="mi">80</span> <span class="s">default_server</span><span class="p">;</span>
+  <span class="kn">location</span> <span class="s">/blog</span> <span class="p">{</span> <span class="kn">proxy_pass</span> <span class="s">http://127.0.0.1:5001</span><span class="p">;</span> <span class="p">}</span>
+  <span class="kn">location</span> <span class="s">/</span> <span class="p">{</span> <span class="kn">proxy_pass</span> <span class="s">http://127.0.0.1:5000</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="telling-nginx-about-our-config">
+<h3>Telling Nginx About Our Config</h3>
+<pre class="console literal-block">
+<span class="tan">server</span> $ <span class="cmd">cd ~/catapp</span>
+<span class="tan">server</span> $ <span class="cmd">sudo cp nginx.conf /etc/nginx/sites-enabled/catapp.conf</span>
+</pre>
+</div>
+<div class="section" id="reloading-nginx-configuration">
+<h3>Reloading Nginx Configuration</h3>
+<p>Any time you edit the Nginx config, you need tell Nginx to reload it:</p>
+<pre class="console literal-block">
+<span class="tan">server</span> $ <span class="cmd">sudo /etc/init.d/nginx reload</span>
+</pre>
+<p>If this returns an error message, go back to editing the configuration file,
+double-check that file for errors, re-save and try the command above to reload
+Nginx.</p>
+</div>
+<div class="section" id="viewing-flask-via-port-80">
+<h3>Viewing Flask Via Port 80</h3>
+<p>If youâre not running Flask in any terminal window, do so:</p>
+<pre class="console literal-block">
+<span class="tan">server</span> (env) $ <span class="cmd">python</span> <span class="cmd">server.py</span>
+</pre>
+<p>Now we can visit <a class="reference external" href="http://1.2.3.4">http://1.2.3.4</a> and see your site!</p>
+</div>
+<div class="section" id="proxying">
+<h3>Proxying</h3>
+<div class="big highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">1.2</span><span class="o">.</span><span class="mf">3.4</span>
+</pre></div>
+</div>
+<div class="compare docutils container">
+<div class="docutils container">
+<ul class="simple">
+<li>Notice thereâs no <cite>:5000</cite></li>
+<li>Weâre not talking directly to Flask<ul>
+<li>We canât â itâs firewalled off!</li>
+</ul>
+</li>
+<li>Nginx talks with Flask on 5000 and relays the response to us</li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="graphviz">
+<img src="_images/graphviz-f525bf366cafc39fdf0d2417f88a2f29829bdd63.svg" />
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="production-style-flask">
+<h2>Production-Style Flask</h2>
+<div class="section" id="id6">
+<div class="docutils container">
+<ul class="simple">
+<li>We donât want our Flask app in debug mode<ul>
+<li>Debug mode is a big security hole!</li>
+<li>So: instead of <code class="docutils literal notranslate"><span class="pre">app.run(debug=True)</span></code> change to <code class="docutils literal notranslate"><span class="pre">app.run()</span></code></li>
+<li>(Weâve already done this for <cite>catapp</cite>)</li>
+</ul>
+</li>
+<li>We donât want Flask to just print to the terminal<ul>
+<li>Since we wonât always have this terminal window open</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="saving-output">
+<h3>Saving Output</h3>
+<p>We want to tell Flask to save all output to a file:</p>
+<pre class="big literal-block">
+<span class="green">python server.py</span> <span class="blue">&amp;&gt;</span><span class="red">log</span>
+</pre>
+<div class="docutils container">
+<dl class="docutils">
+<dt><span class="green">python server.py</span></dt>
+<dd>Start Flask, as usual</dd>
+<dt><span class="blue">&amp;&gt;</span></dt>
+<dd>Redirect <strong>all</strong> output (print <em>and</em> errors) toâ¦</dd>
+<dt><span class="red">log</span></dt>
+<dd>A file in this directory named <cite>log</cite></dd>
+</dl>
+</div>
+<pre class="console literal-block">
+<span class="tan">server</span> $ <span class="cmd">python server.py &amp;&gt;log</span>  <span class="gray"># hangs; running</span>
+</pre>
+<p>Can visit site at <a class="reference external" href="http://1.2.3.4">http://1.2.3.4</a>.</p>
+<p>If you get the shell prompt here, your Flask app crashed in some way
+on startup â look in the log file (<code class="docutils literal notranslate"><span class="pre">cat</span> <span class="pre">log</span></code>) for information.</p>
+</div>
+<div class="section" id="running-in-background">
+<h3>Running in Background</h3>
+<p>Weâd like to move Flask to ârunning in the backgroundâ <span class="raw-reveal"><br></span>
+(Still running, but not connected to a terminal window)</p>
+<div class="docutils container">
+<pre class="console literal-block">
+<span class="tan">server</span> $ <span class="cmd">python server.py &amp;&gt;log</span>  <span class="gray"># hangs; running</span>
+<span class="tan">server</span> <span class="cmd">(Ctrl-Z)</span>
+<span class="tan">server</span> [1]+  Stopped    python server.py
+<span class="tan">server</span> $
+</pre>
+<p>That stops our process, temporarily (ie, Flask isnât answering requests)</p>
+</div>
+<div class="docutils container">
+<p>Letâs re-start it in the background:</p>
+<pre class="console literal-block">
+<span class="tan">server</span> $ <span class="cmd">bg</span>
+[1]+ python server.py &amp;
+<span class="tan">server</span> $
+</pre>
+</div>
+<p>We can test that itâs still working: <a class="reference external" href="http://1.2.3.4">http://1.2.3.4</a></p>
+</div>
+<div class="section" id="background-process">
+<h3>Background Process</h3>
+<p>How can we tell itâs running? Use <cite>ps -x</cite>:</p>
+<pre class="console literal-block">
+<span class="tan">server</span> (env) $ <span class="cmd">ps -x</span>
+  PID TTY      STAT   TIME COMMAND
+ 6772 ?        Ss     0:00 /lib/systemd/systemd --user
+ 6773 ?        S      0:00 (sd-pam)
+16784 ?        S      0:00 sshd: ubuntu&#64;pts/0
+16960 pts/0    S      0:00 bash
+<span class="red">16985</span> ?        S      0:00 <span class="red">python server.py</span>
+16993 pts/0    R+     0:00 ps -x
+</pre>
+<p>This lists âprocessesâ, even those in the background.</p>
+<div class="docutils container">
+<p>Note the âPIDâ (process ID of our process)</p>
+</div>
+</div>
+<div class="section" id="stopping-flask">
+<h3>Stopping Flask</h3>
+<p>To stop our Flask app, we can kill its process with <cite>kill</cite>:</p>
+<pre class="console literal-block">
+<span class="tan">server</span> (env) $ <span class="cmd">kill 16985</span>
+
+<span class="tan">server</span> (env) $ <span class="cmd">ps -x</span>  <span class="gray"># make sure it stopped</span>
+  PID TTY      STAT   TIME COMMAND
+ 6772 ?        Ss     0:00 /lib/systemd/systemd --user
+ 6773 ?        S      0:00 (sd-pam)
+16784 ?        S      0:00 sshd: ubuntu&#64;pts/0
+16960 pts/0    S      0:00 bash
+16995 pts/0    R+     0:00 ps -x
+</pre>
+<div class="docutils container">
+<p>Now we can start and stop our app!</p>
+</div>
+</div>
+</div>
+<div class="section" id="copying-files-to-from-server">
+<h2>Copying Files To/From Server</h2>
+<div class="section" id="id7">
+<p>You can use <cite>scp</cite> (âsecure copy programâ) to copy across networks.</p>
+<p>It works by using SSH, so make sure SSH works first!</p>
+<pre class="big literal-block">
+scp -i ~/aws.pem <span class="green">from</span> <span class="blue">to</span>
+</pre>
+<dl class="docutils">
+<dt><span class="green">from</span></dt>
+<dd>File path (for local file) or <cite>user&#64;server:path</cite> for remote file</dd>
+<dt><span class="blue">to</span></dt>
+<dd>File path (for local file) or <cite>user&#64;server:path</cite> for remote file</dd>
+</dl>
+</div>
+<div class="section" id="copy-from-laptop-to-server">
+<h3>Copy From Laptop To Server</h3>
+<p>Copy file named <cite>secrets.sh</cite> from laptop to home directory on server:</p>
+<pre class="console literal-block">
+<span class="tan">laptop</span> $ <span class="cmd">scp -i ~/aws.pem secrets.sh ubuntu&#64;1.2.3.4:catapp/</span>
+</pre>
+<div class="docutils container">
+<p>You can check that it arrived on server:</p>
+<pre class="console literal-block">
+<span class="tan">laptop</span> $ <span class="cmd">ssh aws -i ~/aws.pem ubuntu&#64;1.2.3.4</span>
+<span class="tan">server</span> $ <span class="cmd">ls catapp/</span>
+...    secrets.sh    ...
+</pre>
+</div>
+</div>
+<div class="section" id="copy-from-server-to-laptop">
+<h3>Copy From Server to Laptop</h3>
+<p>Copy <cite>secrets.sh</cite> from home directory of server to laptop:</p>
+<pre class="console literal-block">
+<span class="tan">laptop</span> $ <span class="cmd">scp -i ~/aws.pem ubuntu&#64;1.2.3.4:catapp/secrets.sh .</span>
+</pre>
+<div class="docutils container">
+<p>You can check that it arrived on your laptop:</p>
+<pre class="console literal-block">
+<span class="tan">laptop</span> $ <span class="cmd">ls</span>
+...    secrets.sh    ...
+</pre>
+</div>
+<p>There are lots of useful options you can learn about here â particularly
+the option <cite>-r</cite>, which recursively copies a folder and all its contents.</p>
+</div>
+</div>
+<div class="section" id="copying-database-to-production">
+<h2>Copying Database to Production</h2>
+<div class="section" id="id8">
+<p>Our strategy:</p>
+<div class="docutils container">
+<ol class="arabic simple">
+<li>Dump database on laptop with <cite>pg_dump</cite></li>
+<li>Copy this SQL dump to server with <cite>scp</cite></li>
+<li>Read in database dump on server</li>
+</ol>
+</div>
+</div>
+<div class="section" id="dump-database">
+<h3>Dump Database</h3>
+<p>Dump your laptop database:</p>
+<pre class="console literal-block">
+<span class="tan">laptop</span> $ <span class="cmd">pg_dump --clean --no-owner cats &gt; /tmp/cats.sql</span>
+</pre>
+<dl class="docutils">
+<dt><cite>âclean</cite></dt>
+<dd>ensures that any existing tables on server will be dropped when your import this.</dd>
+<dt><cite>âno-owner</cite></dt>
+<dd>useful since your development-database-owner name is likely to be âVagrantâ
+whereas on your server itâs âubuntuâ. Using the no-owner flag changes the database
+dump to not include the commands to try to set the owner to the exact same thing it was in the
+original database.</dd>
+</dl>
+</div>
+<div class="section" id="copy-to-server">
+<h3>Copy to Server</h3>
+<pre class="console literal-block">
+<span class="tan">laptop</span> $ <span class="cmd">scp -i ~/aws.pem /tmp/cats.sql ubuntu&#64;1.2.3.4:/tmp/</span>
+</pre>
+</div>
+<div class="section" id="read-in-database-on-server">
+<h3>Read in Database On Server</h3>
+<pre class="console literal-block">
+<span class="tan">laptop</span> $ <span class="cmd">ssh -i ~/aws.pem ubuntu&#64;1.2.3.4</span>
+
+<span class="tan">server</span> $ <span class="cmd">psql cats &lt; /tmp/cats.sql</span>
+<span class="gray">... output of SQL being read in ...</span>
+</pre>
+</div>
+</div>
+<div class="section" id="looking-ahead">
+<h2>Looking Ahead</h2>
+<div class="section" id="updating-your-app">
+<h3>Updating Your App</h3>
+<p>Since we deployed on our server with Git, itâs easy to update!</p>
+<p>If your app changes, make sure you commit and push to GitHub.</p>
+<p>Log onto your server, stop your app, update working directory, and start:</p>
+<p>(this assumes youâre not logged onto server â just on laptop!)</p>
+<pre class="console literal-block">
+<span class="tan">laptop</span> $ <span class="cmd">ssh -i ~/aws.pem ubuntu&#64;1.2.3.4</span> <span class="gray"># log on to server</span>
+
+<span class="tan">server</span> $ <span class="cmd">cd catapp</span>
+<span class="tan">server</span> $ <span class="cmd">ps -x</span>                           <span class="gray"># find PID of Flask</span>
+<span class="tan">server</span> $ <span class="cmd">kill [pid]</span>                      <span class="gray"># stop Flask</span>
+
+<span class="tan">server</span> $ <span class="cmd">git pull</span>                        <span class="gray"># update code from git</span>
+<span class="gray">... git output ...</span>
+
+<span class="tan">server</span> $ <span class="cmd">source env/bin/activate</span>
+<span class="tan">server</span> (env) $ <span class="cmd">python server.py &amp;&gt;log &amp;</span>  <span class="gray"># start Flask in bg</span>
+</pre>
+<p>If youâve added new Python requirements, you might need to re-run <cite>pip</cite> <cite>install</cite> with
+<code class="docutils literal notranslate"><span class="pre">-r</span> <span class="pre">requirements.txt</span></code> before you restart Flask, so that you get
+these new Python libraries on the server.</p>
+</div>
+<div class="section" id="new-shell-commands">
+<h3>New Shell Commands</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<dl class="docutils">
+<dt>chmod <em>perms</em> <em>file(s)</em></dt>
+<dd>Change permissions of a file</dd>
+<dt>ssh <em>server</em></dt>
+<dd>Get shell on server</dd>
+<dt>sudo <em>command</em></dt>
+<dd>Do command as <cite>root</cite></dd>
+<dt>apt install <em>package-name</em></dt>
+<dd>Install software on Linux</dd>
+</dl>
+</div>
+<div class="docutils container">
+<dl class="docutils">
+<dt>ps -x</dt>
+<dd>List all my processes</dd>
+<dt>kill <em>PID</em></dt>
+<dd>Kill process by PID</dd>
+<dt>scp <em>from</em> <em>to</em></dt>
+<dd>Copy files to/from server</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="section" id="further-study">
+<h3>Further Study</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Get a âstatic IPâ at Lightsail<ul>
+<li>Even if you shut down server, your IP address stays the same</li>
+</ul>
+</li>
+<li>Get a custom domain name and attach to your server<ul>
+<li>So you can visit site at <cite>http://awesome-cat-app.com</cite></li>
+</ul>
+</li>
+</ul>
+</div>
+<p>If you shut down your server and restart it, Amazon may give it a different IP address.
+This can make it difficult to tell people how to visit your server. Through Lightsailâs
+website, you can request a âstatic IP addressâ, so that it will always gives your server
+the same IP address. You can learn how to do this on the Lightsail web site.</p>
+<p>You can also learn how to connect a custom domain name, like <cite>myname.com</cite>, to your server.
+If you already own a custom name, the Lightsail site provides instructions on what youâll
+need to tell your domain name provider. If you donât already own a name, you can register
+one from a place like <a class="reference external" href="http://register.com">Register.com</a> or through Amazon themselves,
+through their product called âRoute 51â. The Lightsail site provides help on this.</p>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

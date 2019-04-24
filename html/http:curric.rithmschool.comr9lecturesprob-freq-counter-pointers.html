@@ -1,0 +1,442 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Problem Solving Process and Patterns</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Problem Solving Process and Patterns</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Problem Solving Process and Patterns</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#developing-a-problem-solving-process">Developing a problem solving process</a><ul>
+<li><a class="reference internal" href="#the-process">The process</a></li>
+<li><a class="reference internal" href="#understand-the-problem">1. Understand the Problem</a></li>
+<li><a class="reference internal" href="#explore-concrete-examples">2. Explore Concrete Examples</a></li>
+<li><a class="reference internal" href="#break-it-down">3. Break It Down</a></li>
+<li><a class="reference internal" href="#solve-a-simpler-problem">4. Solve A Simpler Problem</a></li>
+<li><a class="reference internal" href="#use-tools-strategically">5. Use Tools Strategically</a></li>
+<li><a class="reference internal" href="#look-back-and-refactor">6. Look back and refactor</a></li>
+<li><a class="reference internal" href="#now-that-you-have-the-plan">Now that you have the planâ¦.</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#common-problem-solving-patterns">Common problem solving patterns</a><ul>
+<li><a class="reference internal" href="#id2">Common problem solving patterns</a></li>
+<li><a class="reference internal" href="#frequency-counters">Frequency counters</a></li>
+<li><a class="reference internal" href="#an-example">An example</a></li>
+<li><a class="reference internal" href="#a-naive-solution">A naive solution</a></li>
+<li><a class="reference internal" href="#using-a-frequency-counter-first-a-helper-function">Using a frequency counter - first a helper function</a></li>
+<li><a class="reference internal" href="#using-a-frequency-counter-solution">Using a frequency counter - solution</a></li>
+<li><a class="reference internal" href="#your-turn">Your turn!</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#multiple-pointers">Multiple pointers</a><ul>
+<li><a class="reference internal" href="#id3">Multiple pointers</a></li>
+<li><a class="reference internal" href="#id4">An example</a></li>
+<li><a class="reference internal" href="#id5">A naive solution</a></li>
+<li><a class="reference internal" href="#using-multiple-pointers">Using multiple pointers</a></li>
+<li><a class="reference internal" href="#id6">Your turn!</a></li>
+<li><a class="reference internal" href="#recap">Recap</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="problem-solving-process-and-patterns">
+<h1>Problem Solving Process and Patterns</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Develop a problem solving process and learn fundamental problem solving patterns</li>
+<li>Use frequency counters to solve problems more efficiently</li>
+<li>Use multiple pointers to solve problems more efficiently</li>
+<li>Compare and contrast different runtimes and space complexities</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="developing-a-problem-solving-process">
+<h2>Developing a problem solving process</h2>
+<div class="section" id="the-process">
+<h3>The process</h3>
+<div class="docutils container">
+<ol class="arabic simple">
+<li>Understand the Problem</li>
+<li>Explore Concrete Examples</li>
+<li>Break It Down</li>
+<li>Solve a Simpler Problem</li>
+<li>Use Tools Strategically</li>
+<li>Look Back and Refactor</li>
+</ol>
+</div>
+</div>
+<div class="section" id="understand-the-problem">
+<h3>1. Understand the Problem</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Can I restate the problem in my own words?</li>
+<li>What are the inputs that go into the problem?</li>
+<li>What are the outputs that should come from the solution to the problem?</li>
+<li>Do I have enough information?</li>
+<li>How should I label the important pieces of data that are a part of the problem?</li>
+</ul>
+</div>
+</div>
+<div class="section" id="explore-concrete-examples">
+<h3>2. Explore Concrete Examples</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Start with Simple Examples</li>
+<li>Progress to More Complex Examples</li>
+<li>Explore Examples with Empty Inputs</li>
+<li>Explore Examples with Invalid Inputs</li>
+</ul>
+</div>
+</div>
+<div class="section" id="break-it-down">
+<h3>3. Break It Down</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Explicitly write out the steps you need to take.</li>
+<li>You can type this as pseudocode or write it on a whiteboard (or desk)</li>
+<li>This forces you to think about the code youâll write before you write it</li>
+<li>This helps you catch any lingering conceptual issues or misunderstandings</li>
+<li>Donât write code!</li>
+</ul>
+</div>
+</div>
+<div class="section" id="solve-a-simpler-problem">
+<h3>4. Solve A Simpler Problem</h3>
+<blockquote>
+<div><p>If there is a problem you canât solve, then there is an easier problem you can solve: find it.</p>
+<p class="attribution">&mdash;George PÃ³lya</p>
+</div></blockquote>
+<div class="docutils container">
+<ul class="simple">
+<li>Find the core difficulty in what youâre trying to do</li>
+<li>Temporarily ignore that difficulty</li>
+<li>Write a simplified solution</li>
+<li>Then incorporate that difficulty back in</li>
+</ul>
+</div>
+<div class="admonition note">
+<p><strong>Easier said than done.</strong></p>
+<p class="last">This fourth strategy (solve a simpler problem) is easier said than done. If you simplify too much, you may make the problem too simple, in which case solving the simpler problem provides little insight into the original. But if you donât simplify enough, you still might be stuck on a problem that is too challenging. Finding the right sub-problem to isolate takes a decent amount of practice.</p>
+</div>
+</div>
+<div class="section" id="use-tools-strategically">
+<h3>5. Use Tools Strategically</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Use your debugging tools.</li>
+<li>Donât guess and check!</li>
+<li>Take a scientific approach: formulate hypotheses, test them, draw conclusions. Rinse and repeat.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="look-back-and-refactor">
+<h3>6. Look back and refactor</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Does the result match your expected output?</li>
+<li>Can you improve the performance of your solution?</li>
+<li>What other ideas could you have pursued?</li>
+</ul>
+</div>
+</div>
+<div class="section" id="now-that-you-have-the-plan">
+<h3>Now that you have the planâ¦.</h3>
+<ul class="simple">
+<li>The only way to get better is to practice using this plan!</li>
+</ul>
+</div>
+</div>
+<div class="section" id="common-problem-solving-patterns">
+<h2>Common problem solving patterns</h2>
+<div class="section" id="id2">
+<div class="docutils container">
+<ul class="simple">
+<li>Frequency Counter</li>
+<li>Multiple Pointers</li>
+<li>Sliding Window</li>
+<li>Divide and Conquer</li>
+<li>Dynamic Programming</li>
+<li>Greedy Algorithms</li>
+<li>Backtracking</li>
+<li>Many more!</li>
+</ul>
+</div>
+</div>
+<div class="section" id="frequency-counters">
+<h3>Frequency counters</h3>
+<ul class="simple">
+<li>This pattern uses objects, maps, or sets to collect values/frequencies of values</li>
+<li>This can often avoid the need for nested loops or O(n<sup>2</sup>) operations with arrays / strings</li>
+</ul>
+</div>
+<div class="section" id="an-example">
+<h3>An example</h3>
+<p>Write a function called <cite>squares</cite>, which accepts two arrays. The function should return true if every value in the array has itâs corresponding value squared in the second array. The frequency of values must be the same.</p>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">squares</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">9</span><span class="p">]);</span> <span class="c1">// true</span>
+<span class="nx">squares</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">9</span><span class="p">]);</span> <span class="c1">// false</span>
+<span class="nx">squares</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">]);</span> <span class="c1">// false (must be same frequency)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="a-naive-solution">
+<h3>A naive solution</h3>
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">squares</span><span class="p">(</span><span class="nx">nums1</span><span class="p">,</span> <span class="nx">nums2</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">nums1</span><span class="p">.</span><span class="nx">length</span> <span class="o">!==</span> <span class="nx">nums2</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">nums1</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">correctIndex</span> <span class="o">=</span> <span class="nx">nums2</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">nums1</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">correctIndex</span> <span class="o">===</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nx">nums2</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">correctIndex</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>Time Complexity - O(n<sup>2</sup>)</p>
+</div>
+</div>
+<div class="section" id="using-a-frequency-counter-first-a-helper-function">
+<h3>Using a frequency counter - first a helper function</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="c1">// a function to create a simple</span>
+<span class="c1">// frequency counter using an object</span>
+<span class="kd">function</span> <span class="nx">createFrequencyCounter</span><span class="p">(</span><span class="nx">array</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">frequencies</span> <span class="o">=</span> <span class="p">{};</span>
+
+  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">val</span> <span class="k">of</span> <span class="nx">array</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">valCount</span> <span class="o">=</span> <span class="nx">frequencies</span><span class="p">[</span><span class="nx">val</span><span class="p">]</span> <span class="o">||</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="nx">frequencies</span><span class="p">[</span><span class="nx">val</span><span class="p">]</span> <span class="o">=</span> <span class="nx">valCount</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="nx">frequencies</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="c1">// a function to create a simple</span>
+<span class="c1">// frequency counter using a map</span>
+<span class="kd">function</span> <span class="nx">createFrequencyCounter</span><span class="p">(</span><span class="nx">array</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">frequencies</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Map</span><span class="p">();</span>
+
+  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">val</span> <span class="k">of</span> <span class="nx">array</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">valCount</span> <span class="o">=</span> <span class="nx">frequencies</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="o">||</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="nx">frequencies</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">val</span><span class="p">,</span> <span class="nx">valCount</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="nx">frequencies</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="admonition note">
+<p><strong>Maps vs. objects</strong></p>
+<p class="last">Maps and objects are similar in JavaScript, as both can be used to store
+collections of key-value pairs. While objects have been around since the
+beginning of JavaScript, Maps came to the language as part of ES2015.
+You can read more about the difference between these to data structures at
+<a class="reference external" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map">MDN</a>.</p>
+</div>
+</div>
+<div class="section" id="using-a-frequency-counter-solution">
+<h3>Using a frequency counter - solution</h3>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">squaresWithFreqCounter</span><span class="p">(</span><span class="nx">nums1</span><span class="p">,</span> <span class="nx">nums2</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">nums1</span><span class="p">.</span><span class="nx">length</span> <span class="o">!==</span> <span class="nx">nums2</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+
+  <span class="kd">let</span> <span class="nx">nums1Freqs</span> <span class="o">=</span> <span class="nx">createFrequencyCounter</span><span class="p">(</span><span class="nx">nums1</span><span class="p">);</span>
+  <span class="kd">let</span> <span class="nx">nums2Freqs</span> <span class="o">=</span> <span class="nx">createFrequencyCounter</span><span class="p">(</span><span class="nx">nums2</span><span class="p">);</span>
+
+  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">key</span> <span class="k">of</span> <span class="nx">nums1Freqs</span><span class="p">.</span><span class="nx">keys</span><span class="p">())</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">nums2Freqs</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">key</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">nums2Freqs</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">key</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">!==</span> <span class="nx">nums1Freqs</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>Time Complexity - O(n)
+Space Complexity - O(n)</p>
+</div>
+</div>
+<div class="section" id="your-turn">
+<h3>Your turn!</h3>
+<p>Given two strings, write a function called <cite>validAnagram</cite>, which determines if the second string is an anagram of the first.</p>
+<p>An anagram is a word, phrase, or name formed by rearranging the letters of another, such as cinema, formed from iceman.</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">validAnagram</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="p">);</span> <span class="c1">// true</span>
+<span class="nx">validAnagram</span><span class="p">(</span><span class="s2">&quot;aaz&quot;</span><span class="p">,</span> <span class="s2">&quot;zza&quot;</span><span class="p">);</span> <span class="c1">// false</span>
+<span class="nx">validAnagram</span><span class="p">(</span><span class="s2">&quot;anagram&quot;</span><span class="p">,</span> <span class="s2">&quot;nagaram&quot;</span><span class="p">);</span> <span class="c1">// true</span>
+<span class="nx">validAnagram</span><span class="p">(</span><span class="s2">&quot;rat&quot;</span><span class="p">,</span> <span class="s2">&quot;car&quot;</span><span class="p">);</span> <span class="c1">// false</span>
+<span class="nx">validAnagram</span><span class="p">(</span><span class="s2">&quot;awesome&quot;</span><span class="p">,</span> <span class="s2">&quot;awesom&quot;</span><span class="p">);</span> <span class="c1">// false</span>
+<span class="nx">validAnagram</span><span class="p">(</span><span class="s2">&quot;qwerty&quot;</span><span class="p">,</span> <span class="s2">&quot;qeywrt&quot;</span><span class="p">);</span> <span class="c1">// true</span>
+<span class="nx">validAnagram</span><span class="p">(</span><span class="s2">&quot;texttwisttime&quot;</span><span class="p">,</span> <span class="s2">&quot;timetwisttext&quot;</span><span class="p">);</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="multiple-pointers">
+<h2>Multiple pointers</h2>
+<div class="section" id="id3">
+<ul class="simple">
+<li>Creating <cite>pointers</cite> or values that correspond to an index or position and move towards the beginning, end or middle based on a certain condition</li>
+<li><cite>Very</cite> efficient for solving problems with minimal space complexity</li>
+</ul>
+</div>
+<div class="section" id="id4">
+<h3>An example</h3>
+<p>Write a function called <cite>sumZero</cite> which accepts a sorted array of integers. The function should find the first pair where the sum is 0.</p>
+<p>Return an array that includes both values that sum to zero or <cite>undefined</cite> if a pair does not exist.</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">sumZero</span><span class="p">([</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]);</span> <span class="c1">// [-3,3]</span>
+<span class="nx">sumZero</span><span class="p">([</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">]);</span> <span class="c1">// undefined</span>
+<span class="nx">sumZero</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]);</span> <span class="c1">// undefined</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h3>A naive solution</h3>
+<div class="docutils container">
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">sumZero</span><span class="p">(</span><span class="nx">nums</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">nums</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">j</span> <span class="o">=</span> <span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">nums</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">+</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">[</span><span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">j</span><span class="p">]];</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Time Complexity - O(n<sup>2</sup>)</li>
+<li>Space Complexity - O(1)</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="using-multiple-pointers">
+<h3>Using multiple pointers</h3>
+<div class="docutils container">
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">sumZeroMultiplePointers</span><span class="p">(</span><span class="nx">arr</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">left</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="kd">let</span> <span class="nx">right</span> <span class="o">=</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+
+  <span class="k">while</span> <span class="p">(</span><span class="nx">left</span> <span class="o">&lt;</span> <span class="nx">right</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">sum</span> <span class="o">=</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">left</span><span class="p">]</span> <span class="o">+</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">right</span><span class="p">];</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">sum</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="p">[</span><span class="nx">arr</span><span class="p">[</span><span class="nx">left</span><span class="p">],</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">right</span><span class="p">]];</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">sum</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">right</span><span class="o">--</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">left</span><span class="o">++</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Time Complexity - O(n)</li>
+<li>Space Complexity - O(1)</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="id6">
+<h3>Your turn!</h3>
+<p>Implement a function called countUniqueValues, which accepts a sorted array, and counts the unique values in the array.</p>
+<p>There can be negative numbers in the array, but it will always be sorted.</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">countUniqueValues</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]);</span> <span class="c1">// 2</span>
+<span class="nx">countUniqueValues</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">]);</span> <span class="c1">// 7</span>
+<span class="nx">countUniqueValues</span><span class="p">([]);</span> <span class="c1">// 0</span>
+<span class="nx">countUniqueValues</span><span class="p">([</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]);</span> <span class="c1">// 4</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="recap">
+<h3>Recap</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Developing a problem solving approach is incredibly important</li>
+<li>Thinking about code before writing code will always make you solve problems faster</li>
+<li>Be mindful about problem solving patterns</li>
+<li>Frequency counters and multiple pointers are just the start</li>
+<li>Do not overfit!</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> 
+</body>
+</html>

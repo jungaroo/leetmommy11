@@ -1,0 +1,872 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>React Performance</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">React Performance</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">React Performance</a><ul>
+<li><a class="reference internal" href="#id1">React Performance</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a></li>
+<li><a class="reference internal" href="#todo-app">ToDo App</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#profiling-logging">Profiling &amp; Logging</a><ul>
+<li><a class="reference internal" href="#profiling">Profiling</a></li>
+<li><a class="reference internal" href="#logging">Logging</a></li>
+<li><a class="reference internal" href="#highlighting-updates">Highlighting Updates</a></li>
+<li><a class="reference internal" href="#rendering">Rendering</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#changing-state-less-often">Changing State Less Often</a><ul>
+<li><a class="reference internal" href="#reducing-scope-of-state">Reducing Scope Of State</a></li>
+<li><a class="reference internal" href="#addform"><cite>AddForm</cite></a></li>
+<li><a class="reference internal" href="#id2">AddForm</a></li>
+<li><a class="reference internal" href="#queryinput"><cite>QueryInput</cite></a></li>
+<li><a class="reference internal" href="#id3">QueryInput</a></li>
+<li><a class="reference internal" href="#debouncing">Debouncing</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#running-render-less-often">Running Render Less Often</a><ul>
+<li><a class="reference internal" href="#too-many-things-re-render">Too Many Things Re-Render</a></li>
+<li><a class="reference internal" href="#when-do-components-re-render">When Do Components Re-Render?</a></li>
+<li><a class="reference internal" href="#when-should-our-components-re-render">When Should Our Components Re-Render?</a></li>
+<li><a class="reference internal" href="#purecomponent"><cite>PureComponent</cite></a></li>
+<li><a class="reference internal" href="#should-all-components-be-pure">Should All Components Be Pure?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#doing-less-in-render">Doing Less In Render</a><ul>
+<li><a class="reference internal" href="#id4">Doing Less In Render</a></li>
+<li><a class="reference internal" href="#when-to-worry-about-this">When To Worry About This</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#reconciliation">Reconciliation</a><ul>
+<li><a class="reference internal" href="#virtual-dom">Virtual DOM</a></li>
+<li><a class="reference internal" href="#reconciling-dom-changes">Reconciling DOM Changes</a></li>
+<li><a class="reference internal" href="#id5">Reconciling DOM Changes</a></li>
+<li><a class="reference internal" href="#assisting-reconciliation">Assisting Reconciliation</a></li>
+<li><a class="reference internal" href="#keys">Keys</a></li>
+<li><a class="reference internal" href="#stable-keys">Stable Keys</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#summary">Summary</a><ul>
+<li><a class="reference internal" href="#id6">Summary</a></li>
+<li><a class="reference internal" href="#resources">Resources</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="react-performance">
+<h1>React Performance</h1>
+<div class="section" id="id1">
+<div class="section" id="goals">
+<h3>Goals</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Our example app</li>
+<li>Profiling</li>
+<li>Logging</li>
+<li>Strategies for improving performance<ul>
+<li>Changing state less often</li>
+<li>Running <cite>render()</cite> less often</li>
+<li>Doing less in <cite>render()</cite></li>
+<li>Assisting Virtual DOM reconciliation</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="todo-app">
+<h3>ToDo App</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<a class="image-border reference internal image-reference" href="_images/todo.png"><img alt="_images/todo.png" class="image-border" src="_images/todo.png" style="width: 90%;" /></a>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>List todos (task and category)</li>
+<li>Live filtering on task title</li>
+<li>Add new todos with form</li>
+<li>Delete todo by clicking on it</li>
+</ul>
+</div>
+</div>
+<div class="compare compare23 docutils container">
+<div class="docutils container">
+<a class="image-border reference internal image-reference" href="_images/todo.png"><img alt="_images/todo.png" class="image-border" src="_images/todo.png" style="width: 90%;" /></a>
+</div>
+<div class="docutils container">
+<dl class="docutils">
+<dt><cite>ToDoList</cite></dt>
+<dd><ul class="first last simple">
+<li>state<ul>
+<li>todos: <code class="docutils literal notranslate"><span class="pre">[{id,</span> <span class="pre">task,</span> <span class="pre">cat},</span> <span class="pre">â¦]</span></code></li>
+<li>query: <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></li>
+<li>task: <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></li>
+<li>cat: <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt><cite>ToDo</cite></dt>
+<dd><ul class="first last simple">
+<li>props<ul>
+<li>id: <code class="docutils literal notranslate"><span class="pre">1</span></code></li>
+<li>task: <code class="docutils literal notranslate"><span class="pre">&quot;Clean</span> <span class="pre">house&quot;</span></code></li>
+<li>cat: <code class="docutils literal notranslate"><span class="pre">&quot;Home&quot;</span></code></li>
+<li>delTodo: <code class="docutils literal notranslate"><span class="pre">fn</span> <span class="pre">on*</span> <span class="pre">ToDoList</span></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="profiling-logging">
+<h2>Profiling &amp; Logging</h2>
+<div class="section" id="profiling">
+<h3>Profiling</h3>
+<p>Establish a performance baseline with React profiler</p>
+<div class="compare docutils container">
+<div class="docutils container">
+<a class="image-border reference internal image-reference" href="_images/profile.png"><img alt="_images/profile.png" class="image-border" src="_images/profile.png" style="width: 90%;" /></a>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li><em>Dev Tools</em> â <em>React</em> â <em>Profiler</em></li>
+<li>Click â¬¤ to start recording</li>
+<li>Interact with app</li>
+<li>Click <em>Stop</em> to stop recording</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="logging">
+<h3>Logging</h3>
+<p>Add <cite>console.log</cite> call at top of every <cite>render()</cite> method</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<div class="compare compare32 docutils container">
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">Add to each component</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">App</span> <span class="k">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s">&quot;render App&quot;</span><span class="p">);</span> <span class="c1">// ...rest of render</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nx">ToDoList</span> <span class="k">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s">&quot;render ToDoList&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">);</span> <span class="c1">//...</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nx">ToDo</span> <span class="k">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s">&quot;render ToDo&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span> <span class="c1">//...</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>Shows rendering of all components:</p>
+<a class="reference internal image-reference" href="_images/log.png"><img alt="_images/log.png" src="_images/log.png" style="width: 90%;" /></a>
+</div>
+</div>
+</div>
+<div class="section" id="highlighting-updates">
+<h3>Highlighting Updates</h3>
+<a class="image-border reference internal image-reference" href="_images/updates.png"><img alt="_images/updates.png" class="image-border" src="_images/updates.png" style="width: 14em;" /></a>
+<ul class="simple">
+<li><em>Dev Tools</em> â <em>React</em> â <em>Elements</em> â â â âHighlight Updatesâ</li>
+<li>Draws color outline to show that an element re-rendered</li>
+</ul>
+</div>
+<div class="section" id="rendering">
+<h3>Rendering</h3>
+<p>By default, a component re-renders if:</p>
+<ul class="simple">
+<li><cite>setState()</cite> was called on it</li>
+<li>Its parent re-rendered</li>
+</ul>
+<div class="docutils container">
+<p>Our goal: eliminate needless rendering</p>
+</div>
+</div>
+</div>
+<div class="section" id="changing-state-less-often">
+<h2>Changing State Less Often</h2>
+<div class="section" id="reducing-scope-of-state">
+<h3>Reducing Scope Of State</h3>
+<div class="compare compare23 docutils container">
+<div class="docutils container">
+<a class="image-border reference internal image-reference" href="_images/todo.png"><img alt="_images/todo.png" class="image-border" src="_images/todo.png" style="width: 90%;" /></a>
+</div>
+<div class="docutils container">
+<dl class="docutils">
+<dt><cite>ToDoList</cite> state</dt>
+<dd><ul class="first last simple">
+<li>todos: <code class="docutils literal notranslate"><span class="pre">[{id,</span> <span class="pre">task,</span> <span class="pre">cat},</span> <span class="pre">â¦]</span></code></li>
+<li>query: <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></li>
+<li>task: <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></li>
+<li>cat: <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></li>
+</ul>
+</dd>
+</dl>
+<ul class="simple">
+<li>Using form changes <cite>ToDoList</cite> state</li>
+<li>Which causes re-render of <cite>ToDoList</cite></li>
+<li>Letâs break out an <cite>AddForm</cite> component</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="addform">
+<h3><cite>AddForm</cite></h3>
+<div class="compare compare23 docutils container">
+<div class="docutils container">
+<a class="image-border reference internal image-reference" href="_images/todo.png"><img alt="_images/todo.png" class="image-border" src="_images/todo.png" style="width: 90%;" /></a>
+</div>
+<div class="docutils container">
+<dl class="docutils">
+<dt><cite>ToDoList</cite> state</dt>
+<dd><ul class="first last simple">
+<li>todos: <code class="docutils literal notranslate"><span class="pre">[{id,</span> <span class="pre">task,</span> <span class="pre">cat},</span> <span class="pre">â¦]</span></code></li>
+<li>query: <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></li>
+</ul>
+</dd>
+<dt><cite>AddForm</cite> state</dt>
+<dd><ul class="first last simple">
+<li>task: <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></li>
+<li>cat: <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="section" id="id2">
+<h3>AddForm</h3>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">demo/src/v2/AddForm.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">AddForm</span> <span class="kr">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">state</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">task</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nx">cat</span><span class="o">:</span> <span class="s2">&quot;Home&quot;</span><span class="p">,</span>
+  <span class="p">}</span>
+
+  <span class="nx">changeTask</span> <span class="o">=</span> <span class="nx">e</span> <span class="p">=&gt;</span> <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span> <span class="nx">task</span><span class="o">:</span> <span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span> <span class="p">})</span> <span class="p">}</span>
+  <span class="nx">changeCat</span> <span class="o">=</span> <span class="nx">e</span> <span class="p">=&gt;</span> <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span> <span class="nx">cat</span><span class="o">:</span> <span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span> <span class="p">})</span> <span class="p">}</span>
+
+  <span class="nx">handleSubmitNew</span> <span class="o">=</span> <span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">evt</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+    <span class="kd">let</span> <span class="p">{</span> <span class="nx">task</span><span class="p">,</span> <span class="nx">cat</span> <span class="p">}</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">addNewTodo</span><span class="p">({</span> <span class="nx">id</span><span class="o">:</span> <span class="o">++</span><span class="nx">id</span><span class="p">,</span> <span class="nx">task</span><span class="p">,</span> <span class="nx">cat</span> <span class="p">});</span>
+  <span class="p">}</span>
+
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<p>Now, interacting with <cite>AddForm</cite> only re-renders <cite>AddForm</cite></p>
+<p><em>Submitting form</em> re-renders <cite>ToDoList</cite> (and its children)</p>
+</div>
+<div class="section" id="queryinput">
+<h3><cite>QueryInput</cite></h3>
+<div class="compare compare23 docutils container">
+<div class="docutils container">
+<a class="image-border reference internal image-reference" href="_images/todo.png"><img alt="_images/todo.png" class="image-border" src="_images/todo.png" style="width: 90%;" /></a>
+</div>
+<div class="docutils container">
+<dl class="docutils">
+<dt><cite>QueryInput</cite> state</dt>
+<dd><ul class="first last simple">
+<li>term: <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code> <em>(val of input)</em></li>
+</ul>
+</dd>
+<dt><cite>ToDoList</cite> state</dt>
+<dd><ul class="first last simple">
+<li>todos: <code class="docutils literal notranslate"><span class="pre">[{id,</span> <span class="pre">task,</span> <span class="pre">cat},</span> <span class="pre">â¦]</span></code></li>
+<li>query: <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code> <em>(active filter)</em></li>
+</ul>
+</dd>
+<dt><cite>AddForm</cite> state</dt>
+<dd><ul class="first last simple">
+<li>task: <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></li>
+<li>cat: <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="section" id="id3">
+<h3>QueryInput</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">demo/src/v2/QueryInput.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">QueryInput</span> <span class="kr">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">state</span> <span class="o">=</span> <span class="p">{</span><span class="nx">term</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">}</span>
+
+  <span class="nx">changeTerm</span> <span class="o">=</span> <span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span><span class="nx">term</span><span class="o">:</span> <span class="nx">evt</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span><span class="p">});</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">setQuery</span><span class="p">(</span><span class="nx">evt</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="o">&lt;</span><span class="nx">input</span> <span class="nx">onChange</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">changeTerm</span><span class="p">}</span>
+                  <span class="nx">value</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">term</span><span class="p">}</span>
+                  <span class="nx">className</span><span class="o">=</span><span class="s2">&quot;searchBox&quot;</span> <span class="o">/&gt;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">demo/src/v2/ToDoList.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">ToDoList</span> <span class="k">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">state</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">todos</span><span class="p">:</span> <span class="nx">sampleTodos</span><span class="p">,</span>
+    <span class="nx">query</span><span class="p">:</span> <span class="s">&quot;&quot;</span><span class="p">,</span>
+  <span class="p">}</span>
+
+  <span class="nx">setQuery</span> <span class="o">=</span> <span class="nx">query</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span><span class="nx">query</span><span class="p">})</span>
+  <span class="p">};</span>
+
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<p>Form state is local â but <cite>ToDoList</cite> state still changes on every keystroke</p>
+<div class="docutils container">
+<p>We could not update automagically &amp; have an <em>Apply</em> button</p>
+<p>Then weâd change <cite>ToDoList</cite> state less only on apply.</p>
+</div>
+<div class="docutils container">
+<p>That might be frustrating UX, though â is there a better way?</p>
+</div>
+</div>
+<div class="section" id="debouncing">
+<h3>Debouncing</h3>
+<p>When users type slowly, they expect filtering update after each key.</p>
+<p>When users type quickly, itâs ok to delay filtering update.</p>
+<div class="docutils container">
+<p>We can have <cite>setQuery</cite> function on <cite>ToDoList</cite> be âdebouncedâ</p>
+<p>It will only run after 1 second of not being called</p>
+</div>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">demo/src/v3/ToDoList.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="hll"><span class="k">import</span> <span class="nx">debounce</span> <span class="nx">from</span> <span class="s">&#39;lodash/debounce&#39;</span><span class="p">;</span>
+</span>
+<span class="kd">class</span> <span class="nx">ToDoList</span> <span class="k">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">state</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">todos</span><span class="p">:</span> <span class="nx">sampleTodos</span><span class="p">,</span>
+    <span class="nx">query</span><span class="p">:</span> <span class="s">&quot;&quot;</span><span class="p">,</span>
+  <span class="p">}</span>
+
+<span class="hll">  <span class="cm">/* update query --- debounced to 1sec */</span>
+</span><span class="hll">
+</span><span class="hll">  <span class="nx">setQuery</span> <span class="o">=</span> <span class="nx">debounce</span><span class="p">(</span>
+</span><span class="hll">      <span class="nx">query</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span><span class="nx">query</span><span class="p">})</span> <span class="p">},</span> <span class="m">1000</span><span class="p">);</span>
+</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<p>Now, we still have nice UX, but change <cite>ToDoList</cite> state less often!</p>
+</div>
+</div>
+<div class="section" id="running-render-less-often">
+<h2>Running Render Less Often</h2>
+<div class="section" id="too-many-things-re-render">
+<h3>Too Many Things Re-Render</h3>
+<p>When we add a new todo, <cite>ToDoList</cite> state changes.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<div class="compare compare23 docutils container">
+<div class="docutils container">
+<a class="image-border reference internal image-reference" href="_images/todo.png"><img alt="_images/todo.png" class="image-border" src="_images/todo.png" style="width: 90%;" /></a>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>QueryInput</cite> re-renders<ul>
+<li><em>(but it doesnât need to)</em></li>
+</ul>
+</li>
+<li>all <cite>ToDo</cite> components re-render<ul>
+<li><em>(but only new one needs to)</em></li>
+</ul>
+</li>
+<li><cite>AddForm</cite> re-renders<ul>
+<li><em>(it needs to; its state changed)</em></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="when-do-components-re-render">
+<h3>When Do Components Re-Render?</h3>
+<ul class="simple">
+<li>When <cite>setState()</cite> is called on them</li>
+<li>When their parent re-renders</li>
+</ul>
+<div class="docutils container">
+<p>This is the default, though â you can control this</p>
+</div>
+<dl class="docutils">
+<dt><cite>shouldComponentUpdate(nextState, nextProps)</cite></dt>
+<dd>Called before rendering; rendering only happens if it returns truthy value.</dd>
+</dl>
+<div class="docutils container">
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">QueryInput</span> <span class="k">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">state</span> <span class="o">=</span> <span class="p">{</span><span class="nx">term</span><span class="p">:</span> <span class="s">&quot;&quot;</span><span class="p">}</span>
+
+  <span class="nx">shouldComponentUpdate</span><span class="p">(</span><span class="nx">nextState</span><span class="p">,</span> <span class="nx">nextProps</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">term</span> <span class="o">!==</span> <span class="nx">nextState</span><span class="p">.</span><span class="nx">term</span>
+  <span class="p">}</span>
+
+  <span class="cm">/* ... */</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Now only re-renders if its state changes â
+not just because parent re-rendered.</p>
+</div>
+<div class="admonition note">
+<p>nextContext</p>
+<p class="last"><cite>shouldComponentUpdate</cite> takes a third parameter, for <cite>nextContext</cite>.
+This is only useful if you are using the React Context API â if so,
+you may want to learn about and use this argument in any
+<cite>shouldComponentUpdate</cite> call you write.</p>
+</div>
+</div>
+<div class="section" id="when-should-our-components-re-render">
+<h3>When Should Our Components Re-Render?</h3>
+<div class="compare compare23 docutils container">
+<div class="docutils container">
+<a class="image-border reference internal image-reference" href="_images/todo.png"><img alt="_images/todo.png" class="image-border" src="_images/todo.png" style="width: 90%;" /></a>
+</div>
+<div class="docutils container">
+<dl class="docutils">
+<dt><cite>QueryInput</cite></dt>
+<dd>When <cite>state.term</cite> changes</dd>
+<dt><cite>ToDoList</cite></dt>
+<dd>When <cite>state.todos</cite> or <cite>state.query</cite> change</dd>
+<dt><cite>ToDo</cite></dt>
+<dd>Never <em>(since they canât be edited)</em></dd>
+<dt><cite>AddForm</cite></dt>
+<dd>When <cite>state.task</cite> or <cite>state.cat</cite> changes</dd>
+</dl>
+</div>
+</div>
+<p>Can write specialized <cite>shouldComponentUpdate</cite> for each component, <span class="raw-reveal"><br></span>
+checking to see if their props or state changed.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<div class="docutils container">
+<p>Often, though, you want the same logic:</p>
+<blockquote>
+<div>Re-render if and only if your state or props changed <span class="raw-reveal"><br></span>
+(when shallowly compared)</div></blockquote>
+</div>
+</div>
+<div class="section" id="purecomponent">
+<h3><cite>PureComponent</cite></h3>
+<blockquote>
+<div>Re-render if and only if your state or props changed <span class="raw-reveal"><br></span>
+(when shallowly compared)</div></blockquote>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">demo/src/v4/QueryInput.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="hll"><span class="kd">class</span> <span class="nx">QueryInput</span> <span class="k">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">PureComponent</span> <span class="p">{</span>
+</span>  <span class="nx">state</span> <span class="o">=</span> <span class="p">{</span><span class="nx">term</span><span class="p">:</span> <span class="s">&quot;&quot;</span><span class="p">}</span>
+
+  <span class="cm">/* ... */</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="should-all-components-be-pure">
+<h3>Should All Components Be Pure?</h3>
+<div class="docutils container">
+<p>No.</p>
+<p>A <cite>PureComponent</cite> only renders if state or props are <em>shallowly</em> different.</p>
+<p>If you <em>mutate</em> an item in state, that wonât trigger a render</p>
+</div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">ToDoList</span> <span class="k">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">PureComponent</span> <span class="p">{</span>
+  <span class="nx">changeTask</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">newTask</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">(</span><span class="nx">st</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="kd">let</span> <span class="nx">todoToChange</span> <span class="o">=</span> <span class="nx">st</span><span class="p">.</span><span class="nx">todos</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="nx">t</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">.</span><span class="nx">id</span> <span class="o">===</span> <span class="nx">id</span><span class="p">);</span>
+      <span class="nx">todoToChange</span><span class="p">.</span><span class="nx">task</span> <span class="o">=</span> <span class="nx">newTask</span><span class="p">;</span>
+      <span class="k">return</span> <span class="p">{</span><span class="nx">todos</span><span class="p">:</span> <span class="nx">st</span><span class="p">.</span><span class="nx">todos</span><span class="p">};</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Would this work?</p>
+<div class="docutils container">
+<p>No â <cite>ToDoList</cite> wouldnât re-render at all, since state is shallowly same.</p>
+</div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">ToDoList</span> <span class="k">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">PureComponent</span> <span class="p">{</span>
+  <span class="nx">changeTask</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">newTask</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">(</span><span class="nx">st</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="kd">let</span> <span class="nx">todoToChange</span> <span class="o">=</span> <span class="nx">st</span><span class="p">.</span><span class="nx">todos</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="nx">t</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">.</span><span class="nx">id</span> <span class="o">===</span> <span class="nx">id</span><span class="p">);</span>
+      <span class="nx">todoToChange</span><span class="p">.</span><span class="nx">task</span> <span class="o">=</span> <span class="nx">newTask</span><span class="p">;</span>
+      <span class="k">return</span> <span class="p">{</span><span class="nx">todos</span><span class="p">:</span> <span class="p">[...</span><span class="nx">st</span><span class="p">.</span><span class="nx">todos</span><span class="p">]};</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Would this work?</p>
+<div class="docutils container">
+<p>Maybe â <cite>ToDoList</cite> would re-render, but <cite>ToDo</cite> might not <span class="raw-reveal"><br></span>
+(wouldnât if pure component and was passed all data as one prop.)</p>
+</div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">ToDoList</span> <span class="k">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">changeTask</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">newTask</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">(</span><span class="nx">st</span> <span class="o">=&gt;</span> <span class="p">({</span>
+      <span class="nx">todos</span><span class="p">:</span> <span class="nx">st</span><span class="p">.</span><span class="nx">todos</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">t</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">.</span><span class="nx">id</span> <span class="o">===</span> <span class="nx">id</span>
+        <span class="p">?</span> <span class="p">{...</span><span class="nx">t</span><span class="p">,</span> <span class="nx">task</span><span class="p">:</span> <span class="nx">newTask</span><span class="p">}</span>
+        <span class="p">:</span> <span class="nx">t</span>
+    <span class="p">)}));</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Would this work?</p>
+<div class="docutils container">
+<p>Yes â <cite>ToDoList</cite> state will compare differently <span class="raw-reveal"><br></span>
+and so will <cite>ToDo</cite>, even if passed all data as one prop.</p>
+</div>
+<p>Many components can be made pure â <span class="raw-reveal"><br></span>
+but it requires carefully handling of state changes.</p>
+</div>
+</div>
+<div class="section" id="doing-less-in-render">
+<h2>Doing Less In Render</h2>
+<div class="section" id="id4">
+<p>When rendering, try to do less in it, <span class="raw-reveal"><br></span>
+(do more at instantiation or mounting)</p>
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">src/demo/v4/ToDo.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">ToDo</span> <span class="k">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="p">&lt;</span><span class="nt">li</span> <span class="na">className</span><span class="o">=</span><span class="s">&quot;list-group-item&quot;</span>
+          <span class="na">onClick</span><span class="o">=</span><span class="p">{</span><span class="nx">evt</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">delTodo</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">id</span><span class="p">)}&gt;</span>
+        <span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">task</span><span class="p">}</span>
+      <span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>Every time <cite>render()</cite> runs, it makes a <em>new anonymous function</em>
+for <cite>onClick</cite>.</p>
+</div>
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">demo/src/v5/ToDo.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">ToDo</span> <span class="k">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">PureComponent</span> <span class="p">{</span>
+<span class="hll">  <span class="nx">handleClick</span> <span class="o">=</span> <span class="nx">evt</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">delTodo</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="p">}</span>
+</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="p">&lt;</span><span class="nt">li</span> <span class="na">className</span><span class="o">=</span><span class="s">&quot;list-group-item&quot;</span>
+<span class="hll">          <span class="na">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">handleClick</span><span class="p">}&gt;</span>
+</span>        <span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">task</span><span class="p">}</span>
+      <span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<p>Now makes function only once, at instantiation.</p>
+</div>
+<div class="section" id="when-to-worry-about-this">
+<h3>When To Worry About This</h3>
+<p>Inlining function declarations in <cite>render</cite> is useful &amp; easy.</p>
+<p>Only becomes real problem with large list of things
+which re-render often.</p>
+</div>
+</div>
+<div class="section" id="reconciliation">
+<h2>Reconciliation</h2>
+<div class="section" id="virtual-dom">
+<h3>Virtual DOM</h3>
+<p>React uses âVirtual DOMâ â an in-memory representation of DOM</p>
+<p>Uses this to recognize which components are new vs re-rendering</p>
+<div class="docutils container">
+<p>(Also speeds up resulting changes to actual browser DOM)</p>
+</div>
+</div>
+<div class="section" id="reconciling-dom-changes">
+<h3>Reconciling DOM Changes</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-text">existing rendered Virtual DOM</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">ToDo</span> <span class="na">task</span><span class="o">=</span><span class="s">&quot;Cook&quot;</span> <span class="na">cat</span><span class="o">=</span><span class="s">&quot;Home&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>Cook (Home)<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">ToDo</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">ToDo</span> <span class="na">task</span><span class="o">=</span><span class="s">&quot;Clean&quot;</span> <span class="na">cat</span><span class="o">=</span><span class="s">&quot;Home&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>Clean (Home)<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">ToDo</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id16">
+<div class="code-block-caption"><span class="caption-text">new partially-rendered virtual DOM</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">ToDo</span> <span class="na">task</span><span class="o">=</span><span class="s">&quot;Cook&quot;</span> <span class="na">cat</span><span class="o">=</span><span class="s">&quot;Home&quot;</span> <span class="p">/&gt;</span>
+  <span class="p">&lt;</span><span class="nt">ToDo</span> <span class="na">task</span><span class="o">=</span><span class="s">&quot;Clean&quot;</span> <span class="na">cat</span><span class="o">=</span><span class="s">&quot;Home&quot;</span> <span class="p">/&gt;</span>
+<span class="hll">  <span class="p">&lt;</span><span class="nt">ToDo</span> <span class="na">task</span><span class="o">=</span><span class="s">&quot;Code&quot;</span> <span class="na">cat</span><span class="o">=</span><span class="s">&quot;Work&quot;</span> <span class="p">/&gt;</span>
+</span><span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>React often can recognize last <cite>ToDo</cite> is only new one</li>
+<li>Calls <cite>shouldComponentUpdate</cite> on first two to decide re-rendering<ul>
+<li>Given that <cite>ToDo</cite> is pure &amp; props arenât changing: no re-render needed!</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id5">
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id17">
+<div class="code-block-caption"><span class="caption-text">existing rendered Virtual DOM</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">ToDo</span> <span class="na">task</span><span class="o">=</span><span class="s">&quot;Cook&quot;</span> <span class="na">cat</span><span class="o">=</span><span class="s">&quot;Home&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>Cook (Home)<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">ToDo</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">ToDo</span> <span class="na">task</span><span class="o">=</span><span class="s">&quot;Clean&quot;</span> <span class="na">cat</span><span class="o">=</span><span class="s">&quot;Home&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>Clean (Home)<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">ToDo</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id18">
+<div class="code-block-caption"><span class="caption-text">new partially-rendered virtual DOM</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">ToDo</span> <span class="na">task</span><span class="o">=</span><span class="s">&quot;Cook&quot;</span> <span class="na">cat</span><span class="o">=</span><span class="s">&quot;Home&quot;</span> <span class="p">/&gt;</span>
+<span class="hll">  <span class="p">&lt;</span><span class="nt">ToDo</span> <span class="na">task</span><span class="o">=</span><span class="s">&quot;Code&quot;</span> <span class="na">cat</span><span class="o">=</span><span class="s">&quot;Work&quot;</span> <span class="p">/&gt;</span>
+</span>  <span class="p">&lt;</span><span class="nt">ToDo</span> <span class="na">task</span><span class="o">=</span><span class="s">&quot;Clean&quot;</span> <span class="na">cat</span><span class="o">=</span><span class="s">&quot;Home&quot;</span> <span class="p">/&gt;</span>
+<span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>React doesnât realize âCodeâ is an insert &amp; that âCleanâ is already there</li>
+<li>Requires re-rendering for âCleanâ <em>(and any more in list!)</em></li>
+</ul>
+</div>
+</div>
+<div class="section" id="assisting-reconciliation">
+<h3>Assisting Reconciliation</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id19">
+<div class="code-block-caption"><span class="caption-text">existing rendered Virtual DOM</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">ToDo</span> <span class="na">key</span><span class="o">=</span><span class="s">&quot;1&quot;</span> <span class="na">task</span><span class="o">=</span><span class="s">&quot;Cook&quot;</span> <span class="na">cat</span><span class="o">=</span><span class="s">&quot;Home&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>Cook (Home)<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">ToDo</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">ToDo</span> <span class="na">key</span><span class="o">=</span><span class="s">&quot;2&quot;</span> <span class="na">task</span><span class="o">=</span><span class="s">&quot;Clean&quot;</span> <span class="na">cat</span><span class="o">=</span><span class="s">&quot;Home&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>Clean (Home)<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">ToDo</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id20">
+<div class="code-block-caption"><span class="caption-text">new partially-rendered virtual DOM</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">ToDo</span> <span class="na">key</span><span class="o">=</span><span class="s">&quot;1&quot;</span> <span class="na">task</span><span class="o">=</span><span class="s">&quot;Cook&quot;</span> <span class="na">cat</span><span class="o">=</span><span class="s">&quot;Home&quot;</span> <span class="p">/&gt;</span>
+<span class="hll">  <span class="p">&lt;</span><span class="nt">ToDo</span> <span class="na">key</span><span class="o">=</span><span class="s">&quot;3&quot;</span> <span class="na">task</span><span class="o">=</span><span class="s">&quot;Code&quot;</span> <span class="na">cat</span><span class="o">=</span><span class="s">&quot;Work&quot;</span> <span class="p">/&gt;</span>
+</span>  <span class="p">&lt;</span><span class="nt">ToDo</span> <span class="na">key</span><span class="o">=</span><span class="s">&quot;2&quot;</span> <span class="na">task</span><span class="o">=</span><span class="s">&quot;Clean&quot;</span> <span class="na">cat</span><span class="o">=</span><span class="s">&quot;Home&quot;</span> <span class="p">/&gt;</span>
+<span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>React compares node identity with <cite>key</cite></li>
+<li>For existing nodes, calls <cite>shouldComponentUpdate</cite> to decide re-rendering<ul>
+<li>Given that <cite>ToDo</cite> is pure &amp; props arenât changing: no re-render needed!</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="keys">
+<h3>Keys</h3>
+<p>If you only add/edit items, can use loop index as key:</p>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="k">return</span> <span class="p">(</span>
+  <span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+    <span class="p">{</span> <span class="nx">todos</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">t</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">ToDo</span> <span class="na">key</span><span class="o">=</span><span class="p">{</span><span class="nx">i</span><span class="p">}</span> <span class="na">task</span><span class="o">=</span><span class="p">{</span><span class="nx">t</span><span class="p">.</span><span class="nx">task</span><span class="p">}</span> <span class="p">/&gt;)</span> <span class="p">}</span>
+  <span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>If order of items might change (via insertion/deletion), need stable key:</p>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="c1">// ensure todo items get stable &quot;id&quot; on creation</span>
+
+<span class="k">return</span> <span class="p">(</span>
+  <span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+    <span class="p">{</span> <span class="nx">todos</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">t</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">ToDo</span> <span class="na">key</span><span class="o">=</span><span class="p">{</span><span class="nx">t</span><span class="p">.</span><span class="nx">id</span><span class="p">}</span> <span class="na">task</span><span class="o">=</span><span class="p">{</span><span class="nx">t</span><span class="p">.</span><span class="nx">task</span><span class="p">}</span> <span class="p">/&gt;)</span> <span class="p">}</span>
+  <span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="stable-keys">
+<h3>Stable Keys</h3>
+<p>Can increment a global variable:</p>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">id</span> <span class="o">=</span> <span class="m">0</span><span class="p">;</span>
+
+<span class="kd">class</span> <span class="nx">ToDo</span> <span class="k">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">submitNewTodo</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">addTodo</span><span class="p">({</span>
+      <span class="nx">id</span><span class="p">:</span> <span class="o">++</span><span class="nx">id</span><span class="p">,</span>
+      <span class="nx">task</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">task</span><span class="p">,</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Can use a closure to make new todos:</p>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">serialGenerator</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">id</span> <span class="o">=</span> <span class="m">0</span><span class="p">;</span>
+
+  <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="o">++</span><span class="nx">id</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// use like this:</span>
+
+<span class="kd">const</span> <span class="nx">todoSerial</span> <span class="o">=</span> <span class="nx">serialGenerator</span><span class="p">();</span>   <span class="c1">// do once</span>
+<span class="kd">const</span> <span class="nx">newId</span> <span class="o">=</span> <span class="nx">toDoSerial</span><span class="p">();</span>             <span class="c1">// get next ID</span>
+</pre></div>
+</div>
+<p>If will share with others, a globally-unique ID is best:</p>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="k">import</span> <span class="p">{</span> <span class="nx">uuid</span> <span class="p">}</span> <span class="nx">from</span> <span class="s">&#39;uuid/v4&#39;</span>
+
+<span class="c1">// use like this:</span>
+
+<span class="kd">const</span> <span class="nx">newId</span> <span class="o">=</span> <span class="nx">uuid</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="summary">
+<h2>Summary</h2>
+<div class="section" id="id6">
+<div class="docutils container">
+<ul class="simple">
+<li>Profile and add logging first<ul>
+<li>Add <cite>console.log</cite> to every <cite>render()</cite> is single-best strategy</li>
+</ul>
+</li>
+<li>Strategies for improving performance<ul>
+<li>Changing state less often</li>
+<li>Running <cite>render()</cite> less often</li>
+<li>Doing less in <cite>render()</cite></li>
+<li>Assisting Virtual DOM reconciliation</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="resources">
+<h3>Resources</h3>
+<dl class="docutils">
+<dt><a class="reference external" href="https://github.com/maicki/why-did-you-update">Why Did You Update</a></dt>
+<dd>Tool that suggests needless re-rendering</dd>
+<dt><a class="reference external" href="https://reactjs.org/docs/optimizing-performance.html">Optimizing Performance</a></dt>
+<dd>Overview of performance from React docs</dd>
+</dl>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

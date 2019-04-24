@@ -1,0 +1,814 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Patterns in React Router</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Patterns in React Router</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Patterns in React Router</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#url-parameters">URL Parameters</a><ul>
+<li><a class="reference internal" href="#an-anti-pattern">An Anti-Pattern</a></li>
+<li><a class="reference internal" href="#what-s-the-problem">Whatâs the Problem?</a></li>
+<li><a class="reference internal" href="#a-better-way">A Better Way</a></li>
+<li><a class="reference internal" href="#accessing-url-parameters">Accessing URL Parameters</a></li>
+<li><a class="reference internal" href="#multiple-url-parameters">Multiple URL Parameters</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-switch-component">The <cite>Switch</cite> Component</a><ul>
+<li><a class="reference internal" href="#organizing-your-routes">Organizing Your Routes</a></li>
+<li><a class="reference internal" href="#inclusive-routing-an-example">Inclusive Routing: An Example</a></li>
+<li><a class="reference internal" href="#exclusive-routing-with-switch">Exclusive Routing with <cite>Switch</cite></a></li>
+<li><a class="reference internal" href="#exclusive-routing-an-example">Exclusive Routing: An Example</a></li>
+<li><a class="reference internal" href="#including-a-404">Including a 404</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#redirects">Redirects</a><ul>
+<li><a class="reference internal" href="#client-side-redirects">Client-side Redirects</a></li>
+<li><a class="reference internal" href="#how-to-redirect">How to Redirect</a></li>
+<li><a class="reference internal" href="#the-redirect-component-an-example">The <cite>Redirect</cite> Component: An Example</a></li>
+<li><a class="reference internal" href="#the-history-prop">The <cite>history</cite> prop</a></li>
+<li><a class="reference internal" href="#the-history-prop-an-example">The <cite>history</cite> prop: An Example</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#testing-react-router">Testing React Router</a><ul>
+<li><a class="reference internal" href="#testing-components-with-react-router">Testing Components with React Router</a></li>
+<li><a class="reference internal" href="#mocking-router-props">Mocking Router Props</a></li>
+<li><a class="reference internal" href="#mocking-router-context">Mocking Router Context</a></li>
+<li><a class="reference internal" href="#router-context-errors">Router Context Errors</a></li>
+<li><a class="reference internal" href="#memoryrouter">MemoryRouter</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id2">Patterns in React Router</a><ul>
+<li><a class="reference internal" href="#id3">Patterns in React Router</a></li>
+<li><a class="reference internal" href="#favor-render-over-component">Favor <cite>render</cite> over <cite>component</cite></a></li>
+<li><a class="reference internal" href="#consider-a-single-routes-js-file">Consider a single <cite>Routes.js</cite> file</a></li>
+<li><a class="reference internal" href="#browserrouter-inside-of-index-js"><cite>BrowserRouter</cite> inside of <cite>index.js</cite></a></li>
+<li><a class="reference internal" href="#favor-exclusive-routing-with-switch">Favor exclusive routing with <cite>Switch</cite></a></li>
+<li><a class="reference internal" href="#avoid-nested-routes">Avoid nested routes</a></li>
+<li><a class="reference internal" href="#use-history-push-for-declarative-redirection">Use <cite>history.push</cite> for declarative redirection</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#looking-ahead">Looking Ahead</a><ul>
+<li><a class="reference internal" href="#coming-up">Coming Up</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="patterns-in-react-router">
+<h1>Patterns in React Router</h1>
+<p><a class="reference external" href="../react-router-patterns-demo.zip">Download Demo Code</a></p>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Describe how router URL parameters work</li>
+<li>Understand <cite>Switch</cite> and when to use/not use it</li>
+<li>Compare different ways to redirect in React Router</li>
+<li>Learn how to test React Router components</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="url-parameters">
+<h2>URL Parameters</h2>
+<div class="section" id="an-anti-pattern">
+<h3>An Anti-Pattern</h3>
+<div class="docutils container">
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">App</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="p">&lt;</span><span class="nt">App</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/food/tacos&quot;</span>
+               <span class="na">render</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">Food</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;tacos&quot;</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/food/salad&quot;</span>
+               <span class="na">render</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">Food</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;salad&quot;</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/food/sushi&quot;</span>
+               <span class="na">render</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">Food</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;sushi&quot;</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/food/pasta&quot;</span>
+               <span class="na">render</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">Food</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;pasta&quot;</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+      <span class="p">&lt;/</span><span class="nt">App</span><span class="p">&gt;</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>ð¤¢</p>
+</div>
+</div>
+<div class="section" id="what-s-the-problem">
+<h3>Whatâs the Problem?</h3>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">App</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/food/tacos&quot;</span>
+         <span class="na">render</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">Food</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;tacos&quot;</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+  <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/food/salad&quot;</span>
+         <span class="na">render</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">Food</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;salad&quot;</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+  <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/food/sushi&quot;</span>
+         <span class="na">render</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">Food</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;sushi&quot;</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+  <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/food/pasta&quot;</span>
+         <span class="na">render</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">Food</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;pasta&quot;</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+<span class="p">&lt;/</span><span class="nt">App</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Lots of duplication</li>
+<li>What if we want to add more foods?</li>
+<li>Solution: Letâs use URL parameters!</li>
+</ul>
+</div>
+</div>
+<div class="section" id="a-better-way">
+<h3>A Better Way</h3>
+<div class="docutils container">
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="k">import</span> <span class="nx">React</span><span class="p">,</span> <span class="p">{</span> <span class="nx">Component</span> <span class="p">}</span> <span class="nx">from</span> <span class="s">&quot;react&quot;</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">Nav</span> <span class="nx">from</span> <span class="s">&quot;./Nav&quot;</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span><span class="nx">Route</span><span class="p">}</span> <span class="nx">from</span> <span class="s">&quot;react-router-dom&quot;</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">Food</span> <span class="nx">from</span> <span class="s">&quot;./Food&quot;</span><span class="p">;</span>
+
+<span class="kd">class</span> <span class="nx">App</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="p">&lt;</span><span class="nt">div</span> <span class="na">className</span><span class="o">=</span><span class="s">&quot;App&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">Nav</span> <span class="p">/&gt;</span>
+<span class="hll">        <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/food/:name&quot;</span>
+</span><span class="hll">               <span class="na">render</span><span class="o">=</span><span class="p">{</span><span class="nx">routeProps</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">Food</span> <span class="p">{...</span><span class="nx">routeProps</span><span class="p">}</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+</span>      <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="nx">App</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>Like with Express, we indicate a URL parameter with a colon <code class="docutils literal notranslate"><span class="pre">:</span></code></p>
+</div>
+</div>
+<div class="section" id="accessing-url-parameters">
+<h3>Accessing URL Parameters</h3>
+<p>The <cite>match</cite> route prop stores info on URL and associated URL parameters.</p>
+<div class="compare compare32 docutils container">
+<div class="docutils container">
+<ul class="simple">
+<li>Itâs an object with these keys:<ul>
+<li><cite>path</cite>: same as <cite>path</cite> prop passed to <cite>Route</cite></li>
+<li><cite>url</cite>: specific URL found in the URL bar</li>
+<li><cite>isExact</cite>: is match between <cite>url</cite> &amp; <cite>path</cite> exact?</li>
+<li><cite>params</cite>: object of all of the url parameters</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">example</span></div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nx">path</span><span class="o">:</span> <span class="s2">&quot;/food/:name&quot;</span><span class="p">,</span>
+  <span class="nx">url</span><span class="o">:</span> <span class="s2">&quot;/food/tacos&quot;</span><span class="p">,</span>
+  <span class="nx">isExact</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+  <span class="nx">params</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;tacos&quot;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="multiple-url-parameters">
+<h3>Multiple URL Parameters</h3>
+<div class="docutils container">
+<p>In that example, we only used one URL parameter.</p>
+</div>
+<div class="docutils container">
+<p>Itâs possible to have multiple parameters in a single route.</p>
+</div>
+<div class="docutils container">
+<p>For example, to have food and beverage pairings in route:</p>
+</div>
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="nx">Route</span> <span class="nx">path</span><span class="o">=</span><span class="s2">&quot;/food/:foodName/drink/:drinkName&quot;</span>
+       <span class="nx">render</span><span class="o">=</span><span class="p">{</span><span class="nx">routeProps</span> <span class="p">=&gt;</span> <span class="o">&lt;</span><span class="nx">Food</span> <span class="p">{...</span><span class="nx">routeProps</span><span class="p">}</span> <span class="o">/&gt;</span><span class="p">}</span> <span class="o">/&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>In this case, <cite>props.match.params</cite> would be an object with two keys:
+<cite>foodName</cite> and <cite>drinkName</cite>.</p>
+</div>
+<div class="admonition note">
+<p><strong>Cleaning up our route code</strong></p>
+<p>If the function you pass in to render starts to become too long, you can
+always define the function somewhere else to clean up your routing code.
+For example, both of these code blocks will do the same thing:</p>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">Option 1</span></div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="nx">Route</span> <span class="nx">path</span><span class="o">=</span><span class="s2">&quot;/titanic&quot;</span> <span class="nx">render</span><span class="o">=</span><span class="p">{</span><span class="nx">routeProps</span> <span class="p">=&gt;</span> <span class="p">(</span>
+  <span class="o">&lt;</span><span class="nx">Film</span> <span class="nx">location</span><span class="o">=</span><span class="p">{</span><span class="nx">routeProps</span><span class="p">.</span><span class="nx">location</span><span class="p">}</span> <span class="nx">director</span><span class="o">=</span><span class="s2">&quot;James Cameron&quot;</span><span class="o">/&gt;</span> <span class="p">)}</span> <span class="o">/&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper last docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">Option 2</span></div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">titanicComponent</span> <span class="o">=</span> <span class="nx">routeProps</span> <span class="p">=&gt;</span> <span class="p">(</span>
+  <span class="o">&lt;</span><span class="nx">Film</span> <span class="nx">location</span><span class="o">=</span><span class="p">{</span><span class="nx">routeProps</span><span class="p">.</span><span class="nx">location</span><span class="p">}</span> <span class="nx">director</span><span class="o">=</span><span class="s2">&quot;James Cameron&quot;</span><span class="o">/&gt;</span> <span class="p">);</span>
+
+<span class="c1">// later...</span>
+
+<span class="o">&lt;</span><span class="nx">Route</span> <span class="nx">path</span><span class="o">=</span><span class="s2">&quot;/titanic&quot;</span> <span class="nx">render</span><span class="o">=</span><span class="p">{</span><span class="nx">titanicComponent</span><span class="p">}</span> <span class="o">/&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="the-switch-component">
+<h2>The <cite>Switch</cite> Component</h2>
+<div class="section" id="organizing-your-routes">
+<h3>Organizing Your Routes</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>By default, <cite>Routes</cite> match paths <em>inclusively</em>.</li>
+<li>If multiple <cite>Route</cite> components match, each match will be rendered.</li>
+<li>Using <cite>exact</cite> helps, but itâs easy to make mistakes with routing logic.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="inclusive-routing-an-example">
+<h3>Inclusive Routing: An Example</h3>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">Routes</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/about&quot;</span>
+               <span class="na">render</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">About</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/contact&quot;</span>
+               <span class="na">render</span><span class="o">=</span><span class="p">{</span><span class="nx">routeProps</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">Contact</span> <span class="p">{...</span><span class="nx">routeProps</span><span class="p">}</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/blog/:slug&quot;</span>
+               <span class="na">render</span><span class="o">=</span><span class="p">{</span><span class="nx">routeProps</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">BlogPost</span> <span class="p">{...</span><span class="nx">routeProps</span><span class="p">}</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/blog&quot;</span>
+               <span class="na">render</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">BlogHome</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/&quot;</span>
+               <span class="na">render</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">Home</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+      <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>How many routes will match <em>/about</em>?</li>
+<li>How many routes will match <em>/blog</em>?</li>
+<li>How many routes will match <em>/blog/unicorns-ftw</em>?</li>
+</ul>
+</div>
+</div>
+<div class="section" id="exclusive-routing-with-switch">
+<h3>Exclusive Routing with <cite>Switch</cite></h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Often easier to understand routing when it is <em>exclusive</em>
+(find first match) instead of <em>inclusive</em> (find all).</li>
+<li>For exclusive routing: wrap all of <cite>Route</cite> components in <cite>Switch</cite> component.</li>
+<li><cite>Switch</cite> finds first child <cite>Route</cite> that matches and renders only that.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="exclusive-routing-an-example">
+<h3>Exclusive Routing: An Example</h3>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">Routes</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span>
+<span class="hll">      <span class="p">&lt;</span><span class="nt">Switch</span><span class="p">&gt;</span>
+</span>        <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">exact</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/about&quot;</span>
+               <span class="na">render</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">About</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">exact</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/contact&quot;</span>
+               <span class="na">render</span><span class="o">=</span><span class="p">{</span><span class="nx">routeProps</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">Contact</span> <span class="p">{...</span><span class="nx">routeProps</span><span class="p">}</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">exact</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/blog/:slug&quot;</span>
+               <span class="na">render</span><span class="o">=</span><span class="p">{</span><span class="nx">routeProps</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">BlogPost</span> <span class="p">{...</span><span class="nx">routeProps</span><span class="p">}</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">exact</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/blog&quot;</span>
+               <span class="na">render</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">BlogHome</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">exact</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/&quot;</span>
+               <span class="na">render</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">Home</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+<span class="hll">      <span class="p">&lt;/</span><span class="nt">Switch</span><span class="p">&gt;</span>
+</span>    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p><strong>Ordering your routes</strong></p>
+<p>Remember that when you wrap your <cite>Route</cite> components inside of a <cite>Switch</cite>,
+only the first matching <cite>Route</cite> will be rendered. This means that the
+ordering of your routes can be incredibly important. For example, if you put
+the route with the path of â/â at the top, youâll only ever see the home page:</p>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="c1">// everything will match the first Route!</span>
+
+<span class="p">&lt;</span><span class="nt">Switch</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/&quot;</span> <span class="na">render</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">Home</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+  <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/about&quot;</span> <span class="na">render</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">About</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+  <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/contact&quot;</span> <span class="na">render</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">Contact</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+  <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/blog/:slug&quot;</span> <span class="na">render</span><span class="o">=</span><span class="p">{</span><span class="nx">routeProps</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">BlogPost</span> <span class="p">{...</span><span class="nx">routeProps</span><span class="p">}</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+  <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/blog&quot;</span> <span class="na">render</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">BlogHome</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+<span class="p">&lt;/</span><span class="nt">Switch</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>Similarly, if you put the route to <cite>/blog</cite> above the route to <cite>/blog/:slug</cite>,
+youâll never hit the route that renders the <cite>BlogPost</cite> component.</p>
+<p class="last">To remedy these issues, you can either be careful with your routing
+(paths that will match more things towards the bottom), or you can use the
+<cite>exact</cite> prop inside of some of your <cite>Route</cite> components.</p>
+</div>
+</div>
+<div class="section" id="including-a-404">
+<h3>Including a 404</h3>
+<div class="docutils container">
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">Routes</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="p">&lt;</span><span class="nt">Switch</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">exact</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/about&quot;</span>
+               <span class="na">render</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">About</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">exact</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/contact&quot;</span>
+               <span class="na">render</span><span class="o">=</span><span class="p">{</span><span class="nx">routeProps</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">Contact</span> <span class="p">{...</span><span class="nx">routeProps</span><span class="p">}</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">exact</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/blog/:slug&quot;</span>
+               <span class="na">render</span><span class="o">=</span><span class="p">{</span><span class="nx">routeProps</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">BlogPost</span> <span class="p">{...</span><span class="nx">routeProps</span><span class="p">}</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">exact</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/blog&quot;</span>
+               <span class="na">render</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">BlogHome</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">exact</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/&quot;</span>
+               <span class="na">render</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">Home</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+<span class="hll">        <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">render</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">NotFound</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+</span>      <span class="p">&lt;/</span><span class="nt">Switch</span><span class="p">&gt;</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>Note the use of <cite>exact</cite> above the catch-all!</p>
+</div>
+</div>
+</div>
+<div class="section" id="redirects">
+<h2>Redirects</h2>
+<div class="section" id="client-side-redirects">
+<h3>Client-side Redirects</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>With React Router we can mimic the behavior of server-side redirects.</li>
+<li>Useful after certain user actions (e.g. submitting a form)</li>
+<li>Can be used in lieu of having a catch-all 404 component.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="how-to-redirect">
+<h3>How to Redirect</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>In React Router, there are two ways to redirect:<ul>
+<li>Using the <cite>&lt;Redirect&gt;</cite> component<ul>
+<li>Useful for âyou shouldnât have gotten here, go here insteadâ</li>
+</ul>
+</li>
+<li>Calling <cite>.push</cite> method on <cite>history</cite> route prop<ul>
+<li>Useful for âyou finished this, now go hereâ</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="the-redirect-component-an-example">
+<h3>The <cite>Redirect</cite> Component: An Example</h3>
+<div class="docutils container">
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">Routes</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="p">&lt;</span><span class="nt">Switch</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">exact</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/about&quot;</span>
+               <span class="na">render</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">About</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">exact</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/contact&quot;</span>
+               <span class="na">render</span><span class="o">=</span><span class="p">{</span><span class="nx">routeProps</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">Contact</span> <span class="p">{...</span><span class="nx">routeProps</span><span class="p">}</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">exact</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/blog/:slug&quot;</span>
+               <span class="na">render</span><span class="o">=</span><span class="p">{</span><span class="nx">routeProps</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">BlogPost</span> <span class="p">{...</span><span class="nx">routeProps</span><span class="p">}</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">exact</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/blog&quot;</span>
+               <span class="na">render</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">BlogHome</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">Route</span> <span class="na">exact</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/&quot;</span>
+               <span class="na">render</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">Home</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+<span class="hll">        <span class="p">&lt;</span><span class="nt">Redirect</span> <span class="na">to</span><span class="o">=</span><span class="s">&quot;/&quot;</span> <span class="p">/&gt;</span>
+</span>      <span class="p">&lt;/</span><span class="nt">Switch</span><span class="p">&gt;</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p><strong>Why Bother Redirecting?</strong></p>
+<p>At this point, you may be wondering why itâs worth redirecting inside of a
+<cite>Switch</cite> statement. After all, whatâs the difference between closing your
+switch with these two lines:</p>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span>&lt;Route exact path=&quot;/&quot;
+       render={() =&gt; &lt;Home /&gt;} /&gt;
+<span class="err">&lt;Redirect to=&quot;/&quot; /&gt;</span>
+</pre></div>
+</div>
+<p>and this one line?</p>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">Route</span> <span class="na">exact</span> <span class="na">path</span><span class="o">=</span><span class="s">&quot;/&quot;</span>
+       <span class="na">render</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">Home</span> <span class="p">/&gt;}</span> <span class="p">/&gt;</span>
+</pre></div>
+</div>
+<p>It turns out thereâs an important distinction. When you use <cite>Redirect</cite>, a
+client-side redirect will actually occur, meaning that the URL will change
+to the value of the <cite>to</cite> prop on the redirect. So in the first example, if
+you went to <em>localhost:3000/blargh</em>, the redirect would clean up the URL to
+just <em>localhost:3000/</em>.</p>
+<p class="last">In the second example, the lack of an <cite>exact</cite> prop means youâd still see the
+<cite>Home</cite> component, but the URL wouldnât get cleaned up. Instead, youâd still
+see <em>localhost:3000/blargh</em> in the URL bar.</p>
+</div>
+</div>
+<div class="section" id="the-history-prop">
+<h3>The <cite>history</cite> prop</h3>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>history</cite> route prop is a wrapper over the browserâs <cite>history</cite> API</li>
+<li>On <cite>history</cite> prop is <cite>.push(url)</cite>, which add URL to the session history.<ul>
+<li>So, unlike <cite>&lt;Redirect&gt;</cite>, hitting back button will return here</li>
+</ul>
+</li>
+<li>After pushing this new URL, React Router will update the view accordingly.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="the-history-prop-an-example">
+<h3>The <cite>history</cite> prop: An Example</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">demo/switch-and-redirects/src/Contact.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">Contact</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>This is the contact page.<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>To get in touch, enter email.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="hll">        <span class="p">&lt;</span><span class="nt">form</span> <span class="na">onSubmit</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">handleSubmit</span><span class="p">}&gt;</span>
+</span>          <span class="p">&lt;</span><span class="nt">input</span>
+            <span class="na">type</span><span class="o">=</span><span class="s">&quot;email&quot;</span>
+            <span class="na">name</span><span class="o">=</span><span class="s">&quot;email&quot;</span>
+            <span class="na">value</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">email</span><span class="p">}</span>
+            <span class="na">onChange</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">handleChange</span><span class="p">}</span> <span class="p">/&gt;</span>
+          <span class="p">&lt;</span><span class="nt">button</span><span class="p">&gt;</span>Submit<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+      <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">demo/switch-and-redirects/src/Contact.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span>  <span class="nx">handleSubmit</span><span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">evt</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">storeEmail</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">email</span><span class="p">);</span>
+<span class="hll">    <span class="c1">// imperatively redirect to homepage</span>
+</span><span class="hll">    <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">);</span>
+</span>  <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="admonition note">
+<p><strong>History API</strong></p>
+<ul class="simple">
+<li>All client-side routing libraries use the browserâs history API</li>
+<li>History API allows us to manipulate browser history via JS</li>
+<li>Common API methods on <cite>window.history</cite>:<ul>
+<li><cite>.back</cite>: go back one page in history</li>
+<li><cite>.forward</cite>: go forward one page in history</li>
+<li><cite>.go</cite>: go to an arbitrary page in history</li>
+<li><cite>.pushState</cite>: add new entry in history &amp; update URL <em>without</em> reloading
+page.</li>
+<li><cite>.replaceState</cite> - without adding new entry in history, update URL
+<em>without</em> reloading page.</li>
+</ul>
+</li>
+</ul>
+<p>The function signatures for <cite>back</cite>, <cite>forward</cite>, and <cite>go</cite> are all relatively
+straightforward. The first two functions donât take any parameters; the third
+accepts one parameter, indicating how far back or forward in the session
+history youâd like to travel.</p>
+<p>On the other hand, If you read about the history API on MDN, youâll see that
+the signature for <cite>pushState</cite> and <cite>replaceState</cite> are a littleâ¦ weird.
+Both accept three parameters: a <cite>state</cite> object, a <cite>title</cite> and a <cite>url</cite>.
+Letâs describe these in reverse order:</p>
+<ul class="simple">
+<li><cite>url</cite> is simply the new URL you want to put into the URL bar.</li>
+<li><cite>title</cite> parameter is, strangely, ignored by every browser. You can supply
+a string here if you want, but it does not matter.</li>
+<li><cite>state</cite> parameter is an object that you can potentially access later if
+the user navigates back to this point in the session history by clicking
+back or forward. Practically speaking, this isnât something you need to
+worry about for now.</li>
+</ul>
+<p>While these function signatures can definitely be confusing, most times you
+can ignore the first and second parameters: the most important is the third.</p>
+<p class="last">For more on the history API in general, check out
+<a class="reference external" href="https://developer.mozilla.org/en-US/docs/Web/API/History_API">MDN on History API</a></p>
+</div>
+</div>
+</div>
+<div class="section" id="testing-react-router">
+<h2>Testing React Router</h2>
+<div class="section" id="testing-components-with-react-router">
+<h3>Testing Components with React Router</h3>
+<div class="docutils container">
+<p>Components that were rendered by react-router are harder to test than regular components.</p>
+</div>
+<div class="docutils container">
+<p>There are two issues with components rendered by React Router:</p>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>components sometimes depend on Router Props that weâll have to mock, i.e. the <code class="docutils literal notranslate"><span class="pre">this.props.match.params</span></code> object</li>
+<li>components require the context of a parent router during the test</li>
+</ul>
+</div>
+</div>
+<div class="section" id="mocking-router-props">
+<h3>Mocking Router Props</h3>
+<div class="docutils container">
+<p>All we need is a simple POJO that <em>looks like</em> our Router props.</p>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">demo/url-params-example/src/Food.test.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="c1">// mock the route &quot;match&quot; prop</span>
+<span class="kd">const</span> <span class="nx">routeMatch</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">params</span><span class="p">:</span> <span class="p">{</span> <span class="nx">name</span><span class="p">:</span> <span class="s">&#39;grapefruit&#39;</span> <span class="p">}</span> <span class="p">};</span>
+
+<span class="nx">it</span><span class="p">(</span><span class="s">&#39;renders without crashing&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">shallow</span><span class="p">(&lt;</span><span class="nt">Food</span> <span class="na">match</span><span class="o">=</span><span class="p">{</span><span class="nx">routeMatch</span><span class="p">}</span> <span class="p">/&gt;);</span>
+<span class="p">});</span>
+
+<span class="nx">it</span><span class="p">(</span><span class="s">&#39;matches snapshot&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">wrapper</span> <span class="o">=</span> <span class="nx">shallow</span><span class="p">(&lt;</span><span class="nt">Food</span> <span class="na">match</span><span class="o">=</span><span class="p">{</span><span class="nx">routeMatch</span><span class="p">}</span> <span class="p">/&gt;);</span>
+  <span class="kd">let</span> <span class="nx">serialized</span> <span class="o">=</span> <span class="nx">toJson</span><span class="p">(</span><span class="nx">wrapper</span><span class="p">);</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">serialized</span><span class="p">).</span><span class="nx">toMatchSnapshot</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<p>ð</p>
+</div>
+</div>
+<div class="section" id="mocking-router-context">
+<h3>Mocking Router Context</h3>
+<div class="docutils container">
+<p>Consider our <cite>Nav</cite> component:</p>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">demo/switch-and-redirects/src/Nav.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">Nav</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;&lt;</span><span class="nt">Link</span> <span class="na">to</span><span class="o">=</span><span class="s">&quot;/&quot;</span><span class="p">&gt;</span>Home<span class="p">&lt;/</span><span class="nt">Link</span><span class="p">&gt;&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;&lt;</span><span class="nt">Link</span> <span class="na">to</span><span class="o">=</span><span class="s">&quot;/about&quot;</span><span class="p">&gt;</span>About Us<span class="p">&lt;/</span><span class="nt">Link</span><span class="p">&gt;&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;&lt;</span><span class="nt">Link</span> <span class="na">to</span><span class="o">=</span><span class="s">&quot;/contact&quot;</span><span class="p">&gt;</span>Contact<span class="p">&lt;/</span><span class="nt">Link</span><span class="p">&gt;&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;&lt;</span><span class="nt">Link</span> <span class="na">to</span><span class="o">=</span><span class="s">&quot;/blog&quot;</span><span class="p">&gt;</span>Blog<span class="p">&lt;/</span><span class="nt">Link</span><span class="p">&gt;&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;&lt;</span><span class="nt">Link</span> <span class="na">to</span><span class="o">=</span><span class="s">&quot;/blargh&quot;</span><span class="p">&gt;</span>Broken Link<span class="p">&lt;/</span><span class="nt">Link</span><span class="p">&gt;&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+      <span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span> <span class="c1">// end</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<p>At first glance, the Nav tests normally:</p>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">demo/switch-and-redirects/src/Nav.test.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="c1">// basic tests</span>
+<span class="nx">it</span><span class="p">(</span><span class="s">&#39;shallow renders without crashing&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">shallow</span><span class="p">(&lt;</span><span class="nt">Nav</span> <span class="p">/&gt;);</span>
+<span class="p">});</span>
+
+<span class="nx">it</span><span class="p">(</span><span class="s">&#39;matches snapshot&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">wrapper</span> <span class="o">=</span> <span class="nx">shallow</span><span class="p">(&lt;</span><span class="nt">Nav</span> <span class="p">/&gt;);</span>
+  <span class="kd">let</span> <span class="nx">serialized</span> <span class="o">=</span> <span class="nx">toJson</span><span class="p">(</span><span class="nx">wrapper</span><span class="p">);</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">serialized</span><span class="p">).</span><span class="nx">toMatchSnapshot</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="router-context-errors">
+<h3>Router Context Errors</h3>
+<div class="docutils container">
+<p>Problems arise when we fully <code class="docutils literal notranslate"><span class="pre">mount</span></code> the component:</p>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="nx">it</span><span class="p">(</span><span class="s">&#39;mounts without crashing&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">mount</span><span class="p">(&lt;</span><span class="nt">Nav</span> <span class="p">/&gt;);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<a class="reference internal image-reference" href="_images/test_fail.png"><img alt="_images/test_fail.png" src="_images/test_fail.png" style="width: 90%;" /></a>
+</div>
+</div>
+<div class="section" id="memoryrouter">
+<h3>MemoryRouter</h3>
+<div class="docutils container">
+<p>To avoid the <code class="docutils literal notranslate"><span class="pre">You</span> <span class="pre">should</span> <span class="pre">not</span> <span class="pre">use</span> <span class="pre">&lt;Link&gt;</span> <span class="pre">outside</span> <span class="pre">a</span> <span class="pre">&lt;Router&gt;</span></code> error, we need to use a mock router called <cite>MemoryRouter</cite> which is designed for tests:</p>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">import</span> <span class="p">{</span> <span class="nx">MemoryRouter</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;react-router-dom&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">demo/switch-and-redirects/src/Nav.test.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="c1">// full mount</span>
+<span class="nx">it</span><span class="p">(</span><span class="s">&#39;mounts without crashing&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">mount</span><span class="p">(</span>
+    <span class="p">&lt;</span><span class="nt">MemoryRouter</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">Nav</span> <span class="p">/&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">MemoryRouter</span><span class="p">&gt;</span>
+  <span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<p>ð</p>
+</div>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>Patterns in React Router</h2>
+<div class="section" id="id3">
+<div class="docutils container">
+<ul class="simple">
+<li>One of the hardest things about working with React Router is that there arenât strong community standards about the best way to do things with it.</li>
+<li>Here are patterns <em>we recommend</em> you adopt for React Router.</li>
+<li>Some of these have been mentioned alreadyâhere they are in one place.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="favor-render-over-component">
+<h3>Favor <cite>render</cite> over <cite>component</cite></h3>
+<div class="docutils container">
+<ul class="simple">
+<li>There are a different ways to tell <cite>Route</cite> âwhat to render?â<ul>
+<li><cite>render=function</cite>, <cite>component=component</cite>, or <cite>children</cite></li>
+</ul>
+</li>
+<li><cite>render</cite> is flexible and easy to understand</li>
+</ul>
+</div>
+</div>
+<div class="section" id="consider-a-single-routes-js-file">
+<h3>Consider a single <cite>Routes.js</cite> file</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Donât spread <cite>&lt;Route&gt;</cite> components across multiple files</li>
+<li>You can put all <cite>&lt;Route&gt;</cite>s directly in your <cite>App</cite></li>
+<li>When you have many, it may be overwhelming<ul>
+<li>Having a place for all routing info may be preferable</li>
+<li>May be easier to debug</li>
+<li>Make a file, <cite>Routes.js</cite>, with a <cite>Routes</cite> component</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="browserrouter-inside-of-index-js">
+<h3><cite>BrowserRouter</cite> inside of <cite>index.js</cite></h3>
+<div class="docutils container">
+<ul class="simple">
+<li>You need your <cite>&lt;BrowserRouter&gt;</cite> above all of your routes<ul>
+<li>You <em>could</em> put it in <cite>App.js</cite> or somewhere else high-up in site</li>
+</ul>
+</li>
+<li>Put it inside your <cite>index.js</cite>, wrapping your <cite>&lt;App /&gt;</cite><ul>
+<li>Do this consistently, and youâll never have to look for it</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="favor-exclusive-routing-with-switch">
+<h3>Favor exclusive routing with <cite>Switch</cite></h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Routing is easier to understand when matching is exclusive.<ul>
+<li>Use <cite>Switch</cite> to wrap your routes.</li>
+</ul>
+</li>
+<li>Only omit <cite>Switch</cite> if you <em>want</em> multiple routes to match<ul>
+<li>This is an advanced and unusual pattern.</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="avoid-nested-routes">
+<h3>Avoid nested routes</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Components rendered by a <cite>Route</cite> can themselves render <cite>Route</cite> components.</li>
+<li>An example of nested routing, and is generally confusing and error prone.</li>
+<li>Unless you need it, donât nest your routes!<ul>
+<li>Youâll often end up with spaghetti code and a headache.</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="use-history-push-for-declarative-redirection">
+<h3>Use <cite>history.push</cite> for declarative redirection</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>When you know âI want to redirect right nowâ, use <cite>history.push</cite></li>
+<li>Save <cite>Redirect</cite> for using inside your <cite>Switch</cite> for 404-like cases</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="looking-ahead">
+<h2>Looking Ahead</h2>
+<div class="section" id="coming-up">
+<h3>Coming Up</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Redux!</li>
+<li>Integrating React, React Router, and Redux together.</li>
+<li>Full-stack React for fun and profit!</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> 
+</body>
+</html>

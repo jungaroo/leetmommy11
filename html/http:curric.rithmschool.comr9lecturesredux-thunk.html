@@ -1,0 +1,475 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Redux Thunk</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Redux Thunk</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Redux Thunk</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#actions">Actions</a><ul>
+<li><a class="reference internal" href="#id2">Actions</a></li>
+<li><a class="reference internal" href="#action-creators">Action Creators</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#doing-async-stuff-with-redux">Doing Async Stuff With Redux</a><ul>
+<li><a class="reference internal" href="#loading-todos">Loading Todos</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id3">Redux-Thunk</a><ul>
+<li><a class="reference internal" href="#id4">Redux-Thunk</a></li>
+<li><a class="reference internal" href="#what-s-a-thunk">Whatâs a âthunkâ?</a></li>
+<li><a class="reference internal" href="#thunk-actions">Thunk Actions</a></li>
+<li><a class="reference internal" href="#setting-this-up">Setting This Up</a></li>
+<li><a class="reference internal" href="#id5">Actions</a></li>
+<li><a class="reference internal" href="#putting-it-together">Putting it together</a></li>
+<li><a class="reference internal" href="#extending-this">Extending This</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#review">Review</a><ul>
+<li><a class="reference internal" href="#id6">Review</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#alternatives">Alternatives</a><ul>
+<li><a class="reference internal" href="#id7">Alternatives</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="redux-thunk">
+<h1>Redux Thunk</h1>
+<p><a class="reference external" href="../redux-thunk-demo.zip">Download Demo Code</a></p>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Understand what ordinary actions &amp; action creators can/cannot do</li>
+<li>Introduce âthunkâ middleware as method to have more powerful actions</li>
+<li>Dispatch actions asynchronously</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="actions">
+<h2>Actions</h2>
+<div class="section" id="id2">
+<p>Whatâs an action?</p>
+<div class="docutils container">
+<p>An object with key of <cite>type</cite></p>
+</div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nx">type</span><span class="o">:</span> <span class="s2">&quot;LOAD_TODOS&quot;</span><span class="p">,</span>
+  <span class="nx">todos</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="action-creators">
+<h3>Action Creators</h3>
+<p>Whatâs an action creator?</p>
+<div class="docutils container">
+<p>A function that returns an action</p>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">actionCreators.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">gotTodos</span><span class="p">(</span><span class="nx">todos</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">{</span>
+    <span class="nx">type</span><span class="o">:</span> <span class="s2">&quot;LOAD_TODOS&quot;</span><span class="p">,</span>
+    <span class="nx">todos</span>
+  <span class="p">};</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Can an action creator return multiple actions?</p>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">actionCreators.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">gotTodos</span><span class="p">(</span><span class="nx">todos</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">{</span>
+    <span class="nx">type</span><span class="o">:</span> <span class="s2">&quot;LOAD_TODOS&quot;</span><span class="p">,</span>
+    <span class="nx">todos</span><span class="p">,</span>
+  <span class="p">};</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>No.</p>
+<p>It can only return a single action.</p>
+</div>
+<p>Can an action creator do something asynchronous?</p>
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">actionCreators.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">gotTodos</span><span class="p">(</span><span class="nx">todos</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">{</span>
+    <span class="nx">type</span><span class="o">:</span> <span class="s2">&quot;LOAD_TODOS&quot;</span><span class="p">,</span>
+    <span class="nx">todos</span><span class="p">,</span>
+  <span class="p">};</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>No â it needs to directly return a single action!</p>
+<p>(Redux doesnât <cite>await</cite> action creators when it calls them)</p>
+</div>
+</div>
+</div>
+<div class="section" id="doing-async-stuff-with-redux">
+<h2>Doing Async Stuff With Redux</h2>
+<div class="section" id="loading-todos">
+<h3>Loading Todos</h3>
+<p>Imagine we need to get todos from an API and then get them into Redux</p>
+<div class="docutils container">
+<p>We canât have our action creator handle the async stuff</p>
+</div>
+<div class="docutils container">
+<p>So weâd have to do this in our component</p>
+</div>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">src/TodoList.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">TodoList</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">async</span> <span class="nx">componentDidMount</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">res</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">axios</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;/api/todos&quot;</span><span class="p">);</span>
+    <span class="kd">const</span> <span class="p">{</span> <span class="nx">todos</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">res</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
+    <span class="c1">// dispatch once we get results from API</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">gotTodos</span><span class="p">(</span><span class="nx">todos</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span> <span class="cm">/* render this.props.todos */</span> <span class="p">}</span>
+<span class="p">}</span>
+
+
+<span class="kd">function</span> <span class="nx">mapStateToProps</span><span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">{</span> <span class="nx">todos</span><span class="p">:</span> <span class="nx">state</span><span class="p">.</span><span class="nx">todos</span> <span class="p">};</span>
+<span class="p">}</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="nx">connect</span><span class="p">(</span>
+    <span class="nx">mapStateToProps</span><span class="p">,</span>
+    <span class="p">{</span> <span class="nx">gotTodos</span> <span class="p">}</span>
+<span class="p">)(</span><span class="nx">TodoList</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<p>This is <em>okay</em> â¦ but:</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Itâs not great to have this logic in our component</li>
+<li>Would be nicer to extract this and have a smarter action creatorâ¦<ul>
+<li>âI can retrieve from API and <em>then</em> dispatch the data!â</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>Redux-Thunk</h2>
+<div class="section" id="id4">
+<div class="docutils container">
+<ul class="simple">
+<li>We want another type of action â one that is more flexible<ul>
+<li>It can dispatch multiple times</li>
+<li>It can dispatch asynchronously</li>
+</ul>
+</li>
+<li>To do this, weâll add <em>middleware</em> to Redux â <cite>redux-thunk</cite></li>
+</ul>
+</div>
+</div>
+<div class="section" id="what-s-a-thunk">
+<h3>Whatâs a âthunkâ?</h3>
+<p>A thunk is a function that wraps an expression to delay its evaluation.</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="c1">// calculation of 1 + 2 is immediate (ie, x === 3)</span>
+
+<span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="c1">// calculation of 1 + 2 is delayed; foo can be called later</span>
+<span class="c1">// to perform calculation --- foo is a &quot;thunk&quot;</span>
+
+<span class="kd">let</span> <span class="nx">foo</span> <span class="o">=</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="thunk-actions">
+<h3>Thunk Actions</h3>
+<p>So, instead of having an action that is a simple object with a <cite>type</cite> â¦</p>
+<div class="docutils container">
+<p>We can have actions that are âthunksâ</p>
+<div class="docutils container">
+<ul class="simple">
+<li>They can be dispatched normally</li>
+<li>But theyâre functions that can do whatever they want inside<ul>
+<li>Including dispatching multiple times/asynchronously</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="setting-this-up">
+<h3>Setting This Up</h3>
+<pre class="console literal-block">
+$ <span class="cmd">npm install redux-thunk</span>
+</pre>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">index.js</span></div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kr">import</span> <span class="p">{</span> <span class="nx">createStore</span><span class="p">,</span> <span class="nx">applyMiddleware</span><span class="p">,</span> <span class="nx">compose</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;redux&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="nx">thunk</span> <span class="nx">from</span> <span class="s1">&#39;redux-thunk&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="nx">rootReducer</span> <span class="nx">from</span> <span class="s1">&#39;./rootReducer&#39;</span><span class="p">;</span>
+
+<span class="kr">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">createStore</span><span class="p">(</span>
+  <span class="nx">rootReducer</span><span class="p">,</span>
+  <span class="nx">compose</span><span class="p">(</span>
+    <span class="nx">applyMiddleware</span><span class="p">(</span><span class="nx">thunk</span><span class="p">),</span>
+    <span class="nb">window</span><span class="p">.</span><span class="nx">__REDUX_DEVTOOLS_EXTENSION__</span>
+    <span class="o">&amp;&amp;</span> <span class="nb">window</span><span class="p">.</span><span class="nx">__REDUX_DEVTOOLS_EXTENSION__</span><span class="p">()</span>
+  <span class="p">)</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="id5">
+<h3>Actions</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Weâll make a an action creator that returns a âthunkâ action</li>
+<li>A âthunkâ action is a function <em>(not an object itself)</em><ul>
+<li>That function will make an AJAX request</li>
+<li>When the request completes, it can itself dispatch!</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="putting-it-together">
+<h3>Putting it together</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">src/actionCreators.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="c1">// &quot;thunk&quot; action creator that we</span>
+<span class="c1">// dispatch -- does async operation, then</span>
+<span class="c1">// dispatches actions when it&#39;s done</span>
+
+<span class="k">export</span> <span class="kd">function</span> <span class="nx">getTodosFromAPI</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">(</span><span class="nx">dispatch</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">res</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">axios</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;/api/todos&#39;</span><span class="p">);</span>
+    <span class="kd">const</span> <span class="p">{</span> <span class="nx">todos</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">res</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
+    <span class="nx">dispatch</span><span class="p">(</span><span class="nx">gotTodos</span><span class="p">(</span><span class="nx">todos</span><span class="p">));</span>
+  <span class="p">};</span>
+<span class="p">}</span>
+
+<span class="c1">// normal action creator &amp; action</span>
+
+<span class="kd">function</span> <span class="nx">gotTodos</span><span class="p">(</span><span class="nx">todos</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">{</span> <span class="nx">type</span><span class="p">:</span> <span class="s">&quot;LOAD_TODOS&quot;</span><span class="p">,</span> <span class="nx">todos</span> <span class="p">};</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">src/TodoList.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">TodoList</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">componentDidMount</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">getTodosFromAPI</span><span class="p">();</span>
+  <span class="p">}</span>
+
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span> <span class="cm">/* render this.props.todos */</span> <span class="p">}</span>
+<span class="p">}</span>
+
+
+<span class="kd">function</span> <span class="nx">mapStateToProps</span><span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">{</span> <span class="nx">todos</span><span class="p">:</span> <span class="nx">state</span><span class="p">.</span><span class="nx">todos</span> <span class="p">};</span>
+<span class="p">}</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="nx">connect</span><span class="p">(</span>
+    <span class="nx">mapStateToProps</span><span class="p">,</span>
+    <span class="p">{</span> <span class="nx">getTodosFromAPI</span> <span class="p">}</span>
+<span class="p">)(</span><span class="nx">TodoList</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="extending-this">
+<h3>Extending This</h3>
+<p>Can even have different dispatches in our thunk:</p>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-text">src/actionCreators.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="c1">// &quot;thunk&quot; action creator --- does async</span>
+<span class="c1">// operation, then dispatches action when</span>
+<span class="c1">// it&#39;s done</span>
+
+<span class="k">export</span> <span class="kd">function</span> <span class="nx">getTodosFromAPI</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">dispatch</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">dispatch</span><span class="p">(</span><span class="nx">startLoad</span><span class="p">());</span>
+    <span class="k">try</span> <span class="p">{</span>
+      <span class="kd">const</span> <span class="nx">res</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">axios</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;/api/todos&#39;</span><span class="p">);</span>
+      <span class="kd">const</span> <span class="p">{</span> <span class="nx">todos</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">res</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
+      <span class="nx">dispatch</span><span class="p">(</span><span class="nx">gotTodos</span><span class="p">(</span><span class="nx">todos</span><span class="p">));</span>
+    <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">const</span> <span class="nx">errorMessage</span> <span class="o">=</span> <span class="nx">err</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
+      <span class="nx">dispatch</span><span class="p">(</span><span class="nx">showErr</span><span class="p">(</span><span class="nx">errorMessage</span><span class="p">));</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id16">
+<div class="code-block-caption"><span class="caption-text">src/actionCreators.js (contâd)</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="c1">// normal action creator &amp; action</span>
+
+<span class="kd">function</span> <span class="nx">gotTodos</span><span class="p">(</span><span class="nx">todos</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">{</span> <span class="nx">type</span><span class="p">:</span> <span class="s">&quot;LOAD_TODOS&quot;</span><span class="p">,</span> <span class="nx">todos</span> <span class="p">};</span>
+<span class="p">}</span>
+
+<span class="c1">// another normal action creator &amp; action</span>
+
+<span class="kd">function</span> <span class="nx">showErr</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">{</span> <span class="nx">type</span><span class="p">:</span> <span class="s">&quot;SHOW_ERR&quot;</span><span class="p">,</span> <span class="nx">msg</span> <span class="p">};</span>
+<span class="p">}</span>
+
+<span class="c1">// another normal action creator &amp; action</span>
+
+<span class="kd">function</span> <span class="nx">startLoad</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">{</span> <span class="nx">type</span><span class="p">:</span> <span class="s">&quot;SHOW_SPINNER&quot;</span> <span class="p">};</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="review">
+<h2>Review</h2>
+<div class="section" id="id6">
+<p>A âthunkâ action is</p>
+<div class="docutils container">
+<ul class="simple">
+<li>a function</li>
+<li>that takes <cite>dispatch</cite> as an argument</li>
+<li>and can call <cite>dispatch</cite> whenever/however it wants</li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id17">
+<div class="code-block-caption"><span class="caption-text">a thunk</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span><span class="p">(</span><span class="nx">dispatch</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">dispatch</span><span class="p">(</span><span class="nx">startLoad</span><span class="p">());</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">res</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">axios</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/api/todos&quot;</span><span class="p">);</span>
+    <span class="kr">const</span> <span class="p">{</span> <span class="nx">todos</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">res</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
+    <span class="nx">dispatch</span><span class="p">(</span><span class="nx">gotTodos</span><span class="p">(</span><span class="nx">todos</span><span class="p">));</span>
+  <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">errorMessage</span> <span class="o">=</span> <span class="nx">err</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
+    <span class="nx">dispatch</span><span class="p">(</span><span class="nx">showErr</span><span class="p">(</span><span class="nx">errorMessage</span><span class="p">));</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>A âthunkâ action creator is</p>
+<div class="docutils container">
+<ul class="simple">
+<li>a function <em>(like all action creators!)</em></li>
+<li>that <em>returns a function</em> (the thunk!)</li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id18">
+<div class="code-block-caption"><span class="caption-text">action creator that returns a thunk</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">getTodosFromAPI</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">dispatch</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// this is my thunk --- it can call dispatch</span>
+    <span class="c1">// whenever it wants</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="alternatives">
+<h2>Alternatives</h2>
+<div class="section" id="id7">
+<div class="docutils container">
+<ul class="simple">
+<li><em>redux-promise</em>: uses promises to handle async actions<ul>
+<li>Simpler in scope, but limited to single promsie return</li>
+</ul>
+</li>
+<li><em>redux-saga</em>: uses generators to handle async actions<ul>
+<li>Can be more flexible, but is more complex</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="docutils container">
+<p><cite>redux-thunk</cite> is the most popular &amp; works great!</p>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> 
+</body>
+</html>

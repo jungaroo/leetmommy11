@@ -1,0 +1,656 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>JavaScript Promises</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">JavaScript Promises</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">JavaScript Promises</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#asynchronous-javascript">Asynchronous JavaScript</a><ul>
+<li><a class="reference internal" href="#id2">Asynchronous JavaScript</a></li>
+<li><a class="reference internal" href="#jquery-ajax">jQuery AJAX</a></li>
+<li><a class="reference internal" href="#takeaways">Takeaways</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#promises">Promises</a><ul>
+<li><a class="reference internal" href="#id3">Promises</a></li>
+<li><a class="reference internal" href="#promise-syntax">Promise Syntax</a></li>
+<li><a class="reference internal" href="#promise-chaining">Promise Chaining</a></li>
+<li><a class="reference internal" href="#use-arrow-functions-with-promises">Use Arrow Functions with Promises</a></li>
+<li><a class="reference internal" href="#jquery-promises">jQuery Promises</a></li>
+<li><a class="reference internal" href="#id4">Takeaways</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#how-do-functions-using-promises-work">How do Functions Using Promises Work?</a><ul>
+<li><a class="reference internal" href="#id5">How do Functions Using Promises Work?</a></li>
+<li><a class="reference internal" href="#asynchronous-function-recipe">Asynchronous Function Recipe</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#why-do-we-have-promises">Why do we have promises?</a><ul>
+<li><a class="reference internal" href="#callback-hell">Callback Hell</a></li>
+<li><a class="reference internal" href="#pokemon-callback-hell">Pokemon Callback Hell</a></li>
+<li><a class="reference internal" href="#pokemon-with-promises">Pokemon with Promises</a></li>
+<li><a class="reference internal" href="#promise-all">Promise.all</a></li>
+<li><a class="reference internal" href="#promise-race">Promise.race</a></li>
+<li><a class="reference internal" href="#id6">Takeaways</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#es2017-async-functions">ES2017 Async Functions</a><ul>
+<li><a class="reference internal" href="#id7">ES2017 Async Functions</a></li>
+<li><a class="reference internal" href="#await">Await</a></li>
+<li><a class="reference internal" href="#using-await">Using await</a></li>
+<li><a class="reference internal" href="#object-async">Object async</a></li>
+<li><a class="reference internal" href="#class-async">Class async</a></li>
+<li><a class="reference internal" href="#handling-errors">Handling errors</a></li>
+<li><a class="reference internal" href="#thinking-about-http-requests">Thinking about HTTP Requests</a></li>
+<li><a class="reference internal" href="#refactoring">Refactoring</a></li>
+<li><a class="reference internal" href="#await-with-promise-all">Await with Promise.all</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="javascript-promises">
+<h1>JavaScript Promises</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Review the callback pattern for asynchronous code in JavaScript</li>
+<li>Define what a promise is</li>
+<li>Use promises to manage asynchronous code</li>
+<li>Compare and contrast promises with the callback pattern</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="asynchronous-javascript">
+<h2>Asynchronous JavaScript</h2>
+<div class="section" id="id2">
+<div class="docutils container">
+<p>JS run synchronously, but thereâs a way to handle async code: <span class="raw-reveal"><br></span>
+asynchronous callbacks.</p>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;this prints first&#39;</span><span class="p">);</span>
+
+<span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;this prints last&#39;</span><span class="p">);</span>
+<span class="p">},</span> <span class="mi">0</span><span class="p">);</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;this prints second&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>This code doesnât run âout of orderâ. However, callback to <cite>setTimeout</cite> <span class="raw-reveal"><br></span>
+isnât executed right away, it runs after timer expires on the âevent loopâ.</p>
+</div>
+</div>
+<div class="section" id="jquery-ajax">
+<h3>jQuery AJAX</h3>
+<p>Letâs try to pull some data with jQueryâs AJAX request, which utilizes callbacks</p>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">planet</span><span class="p">;</span>
+
+<span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span>
+  <span class="s1">&#39;https://swapi.co/api/planets/1/&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">resp</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">planet</span> <span class="o">=</span> <span class="nx">resp</span><span class="p">;</span>
+<span class="p">});</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">planet</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>What is the value of planet?</li>
+<li>Why is it undefined?!</li>
+<li>The <cite>console.log</cite> was synchronous; it ran before asynchronous callback.</li>
+</ul>
+</div>
+<div class="docutils container">
+<p>Letâs fix</p>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">planet</span><span class="p">;</span>
+
+<span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span>
+  <span class="s1">&#39;https://swapi.co/api/planets/1/&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">resp</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">planet</span> <span class="o">=</span> <span class="nx">resp</span><span class="p">;</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;done&#39;</span><span class="p">,</span> <span class="nx">planet</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;waiting&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="takeaways">
+<h3>Takeaways</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>JavaScript code is executed synchronously (in-order).</li>
+<li>JS can use special asynchronous callbacks to delay execution of pieces of code.</li>
+<li>Not all callbacks are asynchronous; youâll have to consult their docs to tell.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="promises">
+<h2>Promises</h2>
+<div class="section" id="id3">
+<p>A Promise is a new global object (as of ES6) that serves as <span class="raw-reveal"><br></span>
+a placeholder for asynchronous operations.</p>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;https://httpbin.org/get&#39;</span><span class="p">);</span>
+<span class="c1">// -&gt; Promise {&lt;pending&gt;}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p><cite>fetch</cite> is a modern web API built-in to the browser that uses promises.</p>
+</div>
+</div>
+<div class="section" id="promise-syntax">
+<h3>Promise Syntax</h3>
+<div class="docutils container">
+<p>Promises provide a <cite>.then</cite> and a <cite>.catch</cite>, which both accept callbacks.</p>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;https://httpbin.org/get&#39;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// the Promise resolved successfully</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">);</span>
+  <span class="p">})</span>
+  <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// the Promise was rejected</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+  <span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="promise-chaining">
+<h3>Promise Chaining</h3>
+<div class="docutils container">
+<p>You can chain <cite>.then</cite> statements together by having more promises, <span class="raw-reveal"><br></span>
+but you only ever need one <cite>.catch</cite> method at end.</p>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;https://pokeapi.co/api/v2/pokemon/1/&#39;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span>
+  <span class="p">})</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">pokemon1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`The first pokemon is </span><span class="si">${</span><span class="nx">pokemon1</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;https://pokeapi.co/api/v2/pokemon/2/&#39;</span><span class="p">);</span>
+  <span class="p">})</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span>
+  <span class="p">})</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">pokemon2</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`The second pokemon is </span><span class="si">${</span><span class="nx">pokemon2</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+  <span class="p">})</span>
+  <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// something bad happened</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+  <span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="use-arrow-functions-with-promises">
+<h3>Use Arrow Functions with Promises</h3>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;https://pokeapi.co/api/v2/pokemon/1/&#39;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">response</span> <span class="p">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">())</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">pokemon1</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`The first pokemon is </span><span class="si">${</span><span class="nx">pokemon1</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;https://pokeapi.co/api/v2/pokemon/2/&#39;</span><span class="p">);</span>
+  <span class="p">})</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">response</span> <span class="p">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">())</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">pokemon2</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span>
+      <span class="sb">`The second pokemon is </span><span class="si">${</span><span class="nx">pokemon2</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">))</span>
+  <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">error</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="jquery-promises">
+<h3>jQuery Promises</h3>
+<div class="docutils container">
+<ul>
+<li><p class="first">jQuery AJAX methods support a Promise-like* interface as well:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="s1">&#39;https://pokeapi.co/api/v2/pokemon/&#39;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">pokemon</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`Holy crap there are </span><span class="si">${</span><span class="nx">pokemon</span><span class="p">.</span><span class="nx">count</span><span class="si">}</span><span class="sb"> now.`</span><span class="p">);</span>
+  <span class="p">})</span>
+  <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">err</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+  <span class="p">});</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">This data lives in two separate tables, so how do we pull it all together?</p>
+</li>
+<li><p class="first">These were implemented before there were standard JS promises.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id4">
+<h3>Takeaways</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Promise is a global object used for asynchronous functions</li>
+<li>A promise represents a pending value <em>(a guarantee that there will either be a resolved or rejected value)</em></li>
+<li>Standard promises all have a <cite>.then()</cite> method, which takes a callback of the resolved value, and this can be chained.</li>
+<li>Standard promises all also have a <cite>.catch()</cite> method, which takes a callback of the rejected value, and this can only be listed once at the end of a <cite>.then</cite> chain.</li>
+<li>The built-in fetch API and jQueryâs ajax method both use promises.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="how-do-functions-using-promises-work">
+<h2>How do Functions Using Promises Work?</h2>
+<div class="section" id="id5">
+<p>Roll Our Own Asynchronous Function</p>
+<p>Letâs make our own promise to see how they work:</p>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">waitForSomeTime</span><span class="p">(</span><span class="nx">ms</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+      <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">resolve</span><span class="p">(</span><span class="s1">&#39;Time is up!&#39;</span><span class="p">);</span>
+      <span class="p">},</span> <span class="nx">ms</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">reject</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+
+<span class="nx">waitForSomeTime</span><span class="p">(</span><span class="mi">1000</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="nx">res</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">res</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="asynchronous-function-recipe">
+<h3>Asynchronous Function Recipe</h3>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">myAsyncFunction</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// return a new Promise</span>
+  <span class="k">return</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="cm">/*</span>
+
+<span class="cm">      DO ASYNC STUFF HERE</span>
+
+<span class="cm">    */</span>
+
+    <span class="c1">// if it succeeds, call the resolve callback</span>
+    <span class="nx">resolve</span><span class="p">(</span><span class="cm">/* success value*/</span><span class="p">);</span>
+
+    <span class="c1">// if it fails, call the reject callback</span>
+    <span class="nx">reject</span><span class="p">(</span><span class="cm">/* fail value*/</span><span class="p">)</span>
+  <span class="p">})</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="why-do-we-have-promises">
+<h2>Why do we have promises?</h2>
+<div class="section" id="callback-hell">
+<h3>Callback Hell</h3>
+<a class="noprint reference internal image-reference" href="_images/callbackhell.png"><img alt="_images/callbackhell.png" class="noprint" src="_images/callbackhell.png" style="width: 70%;" /></a>
+</div>
+<div class="section" id="pokemon-callback-hell">
+<h3>Pokemon Callback Hell</h3>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">API</span> <span class="o">=</span> <span class="s2">&quot;https://pokeapi.co/api/v2/pokemon&quot;</span><span class="p">;</span>
+
+<span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">API</span><span class="si">}</span><span class="sb">/1/`</span><span class="p">,</span> <span class="nx">pokemon1</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`First pokemon is </span><span class="si">${</span><span class="nx">pokemon1</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">$</span>
+    <span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">API</span><span class="si">}</span><span class="sb">/2/`</span><span class="p">,</span> <span class="nx">pokemon2</span> <span class="p">=&gt;</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`Second pokemon is </span><span class="si">${</span><span class="nx">pokemon2</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+      <span class="k">return</span> <span class="nx">$</span>
+        <span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">API</span><span class="si">}</span><span class="sb">/3/`</span><span class="p">,</span> <span class="nx">pokemon3</span> <span class="p">=&gt;</span> <span class="p">{</span>
+          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`Third pokemon is </span><span class="si">${</span><span class="nx">pokemon3</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+          <span class="k">return</span> <span class="nx">$</span>
+            <span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="sb">`$(API}/4/`</span><span class="p">,</span> <span class="nx">pokemon4</span> <span class="p">=&gt;</span> <span class="p">{</span>
+              <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`Fourth pokemon </span><span class="si">${</span><span class="nx">pokemon4</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+            <span class="p">})</span>
+            <span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="nx">error</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">));</span>
+        <span class="p">})</span>
+        <span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="nx">error</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">));</span>
+    <span class="p">})</span>
+    <span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="nx">error</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">));</span>
+<span class="p">}).</span><span class="nx">fail</span><span class="p">(</span><span class="nx">error</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="pokemon-with-promises">
+<h3>Pokemon with Promises</h3>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">API</span> <span class="o">=</span> <span class="s2">&quot;https://pokeapi.co/api/v2/pokemon&quot;</span><span class="p">;</span>
+
+<span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">API</span><span class="si">}</span><span class="sb">/1/`</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">pokemon1</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`First pokemon is </span><span class="si">${</span><span class="nx">pokemon1</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">API</span><span class="si">}</span><span class="sb">/2/`</span><span class="p">);</span>
+  <span class="p">})</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">pokemon2</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`Second pokemon is </span><span class="si">${</span><span class="nx">pokemon2</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">API</span><span class="si">}</span><span class="sb">/3/`</span><span class="p">);</span>
+  <span class="p">})</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">pokemon3</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`Third pokemon is </span><span class="si">${</span><span class="nx">pokemon3</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">API</span><span class="si">}</span><span class="sb">/4/`</span><span class="p">);</span>
+  <span class="p">})</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">pokemon4</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`Fourth pokemon is </span><span class="si">${</span><span class="nx">pokemon4</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+  <span class="p">})</span>
+  <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">error</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="promise-all">
+<h3>Promise.all</h3>
+<p>Promise.all accepts an array of promises and will resolve <span class="raw-reveal"><br></span>
+when all of them pass or reject when any of them fail</p>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">fourPokemonPromises</span> <span class="o">=</span> <span class="p">[];</span>
+
+<span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">fourPokemonPromises</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span>
+    <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="sb">`https://pokeapi.co/api/v2/pokemon/</span><span class="si">${</span><span class="nx">i</span><span class="si">}</span><span class="sb">/`</span><span class="p">)</span>
+  <span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nb">Promise</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">fourPokemonPromises</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">pokemon</span> <span class="p">=&gt;</span> <span class="nx">pokemon</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">p</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">name</span><span class="p">)))</span>
+  <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">err</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="promise-race">
+<h3>Promise.race</h3>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">fourPokemonRace</span> <span class="o">=</span> <span class="p">[];</span>
+
+<span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">fourPokemonRace</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span>
+    <span class="sb">`https://pokeapi.co/api/v2/pokemon/</span><span class="si">${</span><span class="nx">i</span><span class="si">}</span><span class="sb">/`</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="nb">Promise</span><span class="p">.</span><span class="nx">race</span><span class="p">(</span><span class="nx">fourPokemonRace</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">pokemon</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">pokemon</span><span class="p">.</span><span class="nx">name</span><span class="p">))</span>
+  <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">err</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">));</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p><cite>Promise.race</cite> accepts array of promises and resolves or rejects first one to finish.</p>
+</div>
+</div>
+<div class="section" id="id6">
+<h3>Takeaways</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Promises can reduce the clutter of âcallback hellâ by utilizing promise-chaining, which has a clearer syntax</li>
+<li>Promises have advanced features like <cite>Promise.all</cite> and <cite>Promise.race</cite> that are much harder to implement using callbacks</li>
+<li>Many popular asynchronous JavaScript APIs are set up to use Promises, including jQueryâs <cite>.ajax method</cite>, fetch, axios, and more</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="es2017-async-functions">
+<h2>ES2017 Async Functions</h2>
+<div class="section" id="id7">
+<div class="docutils container">
+<ul class="simple">
+<li>A special kind of function that is created using the word <cite>async</cite></li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">first</span><span class="p">(){</span>
+    <span class="k">return</span> <span class="s2">&quot;We did it!&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nx">first</span><span class="p">();</span> <span class="c1">// returns a promise</span>
+
+<span class="nx">first</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">val</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">val</span><span class="p">));</span> <span class="c1">// &quot;We did it!&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>What makes them really special is the <cite>await</cite> keyword!</li>
+<li>The purpose of async functions is to simplify writing asynchronous code, specifically Promises.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="await">
+<h3>Await</h3>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>await</cite> pauses the execution of the async function and is followed by a Promise. The await keyword waits for the promise to resolve, and then resumes the async functionâs execution and returns the resolved value.</li>
+<li>A reserved keyword that can only be using inside async functions</li>
+<li>Think of the <cite>await</cite> keyword like a pause button <em>(similar to yield with generators)</em></li>
+</ul>
+</div>
+</div>
+<div class="section" id="using-await">
+<h3>Using await</h3>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">getMovieData</span><span class="p">(){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;starting!&quot;</span><span class="p">);</span>
+    <span class="kd">let</span> <span class="nx">movieData</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span>
+      <span class="s1">&#39;https://omdbapi.com?t=titanic&amp;apikey=thewdb&#39;</span><span class="p">);</span>
+
+    <span class="c1">// this line does NOT run until the promise is resolved!</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;all done!&quot;</span><span class="p">);</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">movieData</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">getMovieData</span><span class="p">()</span> <span class="c1">// logs an object with data about the movie!</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Letâs write a function that gets some movie data from the OMDB API!</li>
+<li>No <cite>.then</cite> or callback or <cite>yield</cite> necessary!</li>
+</ul>
+</div>
+</div>
+<div class="section" id="object-async">
+<h3>Object async</h3>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">movieCollector</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">data</span><span class="o">:</span> <span class="s2">&quot;titanic&quot;</span><span class="p">,</span>
+  <span class="nx">async</span> <span class="nx">getMovie</span><span class="p">(){</span>
+    <span class="kd">let</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span>
+      <span class="sb">`https://omdbapi.com?t=</span><span class="si">${</span><span class="k">this</span><span class="p">.</span><span class="nx">data</span><span class="si">}</span><span class="sb">&amp;apikey=thewdb`</span><span class="p">);</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">movieCollector</span><span class="p">.</span><span class="nx">getMovie</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>We can also place async functions as methods inside objects!</p>
+</div>
+<div class="docutils container">
+<p>Just make sure to prefix the name of the function with the async keyword</p>
+</div>
+</div>
+<div class="section" id="class-async">
+<h3>Class async</h3>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">MovieData</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">name</span><span class="p">){</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="nx">async</span> <span class="nx">getMovie</span><span class="p">(){</span>
+    <span class="kd">let</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span>
+      <span class="sb">`https://omdbapi.com?t=</span><span class="si">${</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">&amp;apikey=thewdb`</span><span class="p">);</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">let</span> <span class="nx">m</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MovieData</span><span class="p">(</span><span class="s1">&#39;shrek&#39;</span><span class="p">);</span>
+
+<span class="nx">m</span><span class="p">.</span><span class="nx">getMovie</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>We can place async functions as instance methods with <cite>class</cite> syntax</li>
+<li>But what happens when things go wrong?</li>
+</ul>
+</div>
+</div>
+<div class="section" id="handling-errors">
+<h3>Handling errors</h3>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">getUser</span><span class="p">(</span><span class="nx">user</span><span class="p">){</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span>
+      <span class="sb">`https://api.github.com/users/</span><span class="si">${</span><span class="nx">user</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+  <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;User does not exist!&quot;</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>If a promise is rejected using await, an error with be thrown â <span class="raw-reveal"><br></span>
+so we can easily use a try/catch statement to handle errors!</p>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">getUser</span><span class="p">(</span><span class="s1">&#39;elie&#39;</span><span class="p">);</span> <span class="c1">// Elie Schoppik</span>
+<span class="nx">getUser</span><span class="p">(</span><span class="s1">&#39;foo!!!&#39;</span><span class="p">);</span> <span class="c1">// User does not exist!</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="thinking-about-http-requests">
+<h3>Thinking about HTTP Requests</h3>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">// SEQUENTIAL NOT PARALLEL</span>
+<span class="nx">async</span> <span class="kd">function</span> <span class="nx">getMovieData</span><span class="p">(){</span>
+    <span class="kd">let</span> <span class="nx">responseOne</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span>
+      <span class="sb">`https://omdbapi.com?t=titanic&amp;apikey=thewdb`</span><span class="p">);</span>
+    <span class="kd">let</span> <span class="nx">responseTwo</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span>
+      <span class="sb">`https://omdbapi.com?t=shrek&amp;apikey=thewdb`</span><span class="p">);</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">responseOne</span><span class="p">);</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">responseTwo</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">getMovieData</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Below we are making two requests sequentially.</li>
+<li>The second HTTP request does not get made until the first promise is resolved.</li>
+<li>This can really slow down our applicationsâ¦.so how do we fix it?</li>
+</ul>
+</div>
+</div>
+<div class="section" id="refactoring">
+<h3>Refactoring</h3>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span> <span class="c1">// MUCH FASTER!</span>
+ <span class="nx">async</span> <span class="kd">function</span> <span class="nx">getMovieData</span><span class="p">(){</span>
+     <span class="kd">let</span> <span class="nx">titanicPromise</span> <span class="o">=</span> <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span>
+       <span class="sb">`https://omdbapi.com?t=titanic&amp;apikey=thewdb`</span><span class="p">);</span>
+     <span class="kd">let</span> <span class="nx">shrekPromise</span> <span class="o">=</span> <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span>
+       <span class="sb">`https://omdbapi.com?t=shrek&amp;apikey=thewdb`</span><span class="p">);</span>
+
+     <span class="kd">let</span> <span class="nx">titanicData</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">titanicPromise</span><span class="p">;</span>
+     <span class="kd">let</span> <span class="nx">shrekData</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">shrekPromise</span><span class="p">;</span>
+
+     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">titanicData</span><span class="p">);</span>
+     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">shrekData</span><span class="p">);</span>
+ <span class="p">}</span>
+
+<span class="nx">getMovieData</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>Start the HTTP requests in parallel and then await their resolved promise!</p>
+</div>
+</div>
+<div class="section" id="await-with-promise-all">
+<h3>Await with Promise.all</h3>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">getMovieData</span><span class="p">(</span><span class="nx">t1</span><span class="p">,</span> <span class="nx">t2</span><span class="p">){</span>
+    <span class="kd">let</span> <span class="nx">moviesList</span> <span class="o">=</span> <span class="nx">await</span> <span class="nb">Promise</span><span class="p">.</span><span class="nx">all</span><span class="p">([</span>
+        <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="sb">`https://omdbapi.com?t=</span><span class="si">${</span><span class="nx">t1</span><span class="si">}</span><span class="sb">&amp;apikey=thewdb`</span><span class="p">),</span>
+        <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="sb">`https://omdbapi.com?t=</span><span class="si">${</span><span class="nx">t2</span><span class="si">}</span><span class="sb">&amp;apikey=thewdb`</span><span class="p">)</span>
+    <span class="p">]);</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">moviesList</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">Year</span><span class="p">);</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">moviesList</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nx">Year</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">getMovieData</span><span class="p">(</span><span class="s1">&#39;shrek&#39;</span><span class="p">,</span> <span class="s1">&#39;blade&#39;</span><span class="p">);</span>   <span class="c1">// 2001,then 1998</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>We can use <cite>Promise.all</cite> to await multiple resolved promises</li>
+<li>Here we are simply waiting for an array of promises to resolve!</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

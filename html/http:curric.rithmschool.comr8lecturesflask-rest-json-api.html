@@ -1,0 +1,468 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>REST + JSON APIs</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">REST + JSON APIs</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">REST + JSON APIs</a><ul>
+<li><a class="reference internal" href="#building-apis">Building APIs</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a></li>
+<li><a class="reference internal" href="#get">GET</a></li>
+<li><a class="reference internal" href="#post">POST</a></li>
+<li><a class="reference internal" href="#when-would-you-use-one-or-another">When would you use one or another:</a></li>
+<li><a class="reference internal" href="#there-are-more-verbs">There are more Verbs!</a></li>
+<li><a class="reference internal" href="#put-patch-delete">PUT / PATCH / DELETE</a></li>
+<li><a class="reference internal" href="#let-s-compare-them">Letâs compare them!</a></li>
+<li><a class="reference internal" href="#why-do-we-care-about-this">Why do we care about this?</a></li>
+<li><a class="reference internal" href="#imagine-you-re-a-developer">Imagineâ¦..youâre a developer</a></li>
+<li><a class="reference internal" href="#rest">REST</a></li>
+<li><a class="reference internal" href="#restful-apis">RESTful APIs</a></li>
+<li><a class="reference internal" href="#resource">Resource</a></li>
+<li><a class="reference internal" href="#restful-routes">RESTful routes</a></li>
+<li><a class="reference internal" href="#where-do-you-see-this">Where do you see this?</a></li>
+<li><a class="reference internal" href="#nested-routes">Nested Routes</a></li>
+<li><a class="reference internal" href="#doing-this-in-flask">Doing this in Flask</a></li>
+<li><a class="reference internal" href="#jsonify">jsonify</a></li>
+<li><a class="reference internal" href="#limitations-of-jsonify">limitations of jsonify</a></li>
+<li><a class="reference internal" href="#instead-jsonify-what-does-work">Instead - jsonify what does work!</a></li>
+<li><a class="reference internal" href="#id1">jsonify</a></li>
+<li><a class="reference internal" href="#testing-our-api">Testing our API</a></li>
+<li><a class="reference internal" href="#testing-our-api-the-code">Testing our API - the code</a></li>
+<li><a class="reference internal" href="#your-turn">Your Turn!</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="rest-json-apis">
+<h1>REST + JSON APIs</h1>
+<div class="section" id="building-apis">
+<h2>Building APIs</h2>
+<div class="section" id="goals">
+<h3>Goals</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Review GET vs POST</li>
+<li>Introduce new HTTP Verbs</li>
+<li>Describe what REST is</li>
+<li>Build and Test JSON APIs</li>
+</ul>
+</div>
+</div>
+<div class="section" id="get">
+<h3>GET</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>remains in history + is cached and bookmarked</li>
+<li>never for sensitive information</li>
+<li>Data is sent in the URL in the query string</li>
+<li><cite>GET</cite> requests are repeatable</li>
+</ul>
+</div>
+</div>
+<div class="section" id="post">
+<h3>POST</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>does not remain in history + is not cached or bookmarked</li>
+<li>used for sensitive information</li>
+<li>Data is sent in body of the request</li>
+<li><cite>POST</cite> requests are not repeatable</li>
+</ul>
+</div>
+</div>
+<div class="section" id="when-would-you-use-one-or-another">
+<h3>When would you use one or another:</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Searching / Filtering? GET</li>
+<li>Sending an email? POST</li>
+<li>Updating a user? POST?</li>
+</ul>
+</div>
+</div>
+<div class="section" id="there-are-more-verbs">
+<h3>There are more Verbs!</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>We have verbs for updating, deleting and a few more!</li>
+<li>We also have other HTTP verbs you will see far less commonly</li>
+</ul>
+</div>
+</div>
+<div class="section" id="put-patch-delete">
+<h3>PUT / PATCH / DELETE</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>PUT - update the entire object</li>
+<li>PATCH - update a part of entire object (patch it up)</li>
+<li>DELETE - delete the object</li>
+</ul>
+</div>
+</div>
+<div class="section" id="let-s-compare-them">
+<h3>Letâs compare them!</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>A <cite>safe</cite> operation is an operation which does not change the data requested.</li>
+<li>An <cite>idempotent</cite> operation is one in which the result will be the same no matter how many times you request it.</li>
+</ul>
+</div>
+<div class="docutils container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="41%" />
+<col width="19%" />
+<col width="41%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">HTTP Verb</th>
+<th class="head">Safe?</th>
+<th class="head">Idempotent?</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>GET</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr class="row-odd"><td>POST</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td>PUT / PATCH</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr class="row-odd"><td>DELETE</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="why-do-we-care-about-this">
+<h3>Why do we care about this?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Better describe the routes that we create</li>
+<li>Build standards around how we define routes</li>
+<li>Do we really need this? Letâs try something out!</li>
+</ul>
+</div>
+</div>
+<div class="section" id="imagine-you-re-a-developer">
+<h3>Imagineâ¦..youâre a developer</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Hopefully this should not be imagination!</li>
+<li>Your taskâ¦.create a route that when requested, will update a user!</li>
+<li>POST <cite>/users/[id]/update</cite>? / or POST <cite>/users/[id]/change</cite>? or PATCH <cite>/users/[id]</cite>?</li>
+<li>With this much flexibility - itâs very helpful to standardize!</li>
+<li>Enter REST!</li>
+</ul>
+</div>
+</div>
+<div class="section" id="rest">
+<h3>REST</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>An architectural style that defines a set of constraints to be used for creating web services.</li>
+<li>Includes things like a client-server model, statelessness and cacheability</li>
+<li>APIs that adhere to these constraints are called RESTful APIs</li>
+</ul>
+</div>
+</div>
+<div class="section" id="restful-apis">
+<h3>RESTful APIs</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Usually defined with a base url <cite>https://api.github.com</cite></li>
+<li>Are defined using a <cite>resource</cite> after the base url</li>
+<li>Use standard HTTP verbs (GET, POST, PUT/PATCH, DELETE)</li>
+<li>Structure routes in a standardized way - RESTful routing</li>
+</ul>
+</div>
+</div>
+<div class="section" id="resource">
+<h3>Resource</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>An object with a type, associated data, relationships to other resources,</li>
+<li>A set of methods that operate on it.</li>
+<li>Similar to an object instance in an object-oriented programming language with HTTP verbs describing methods on it</li>
+<li>Not everything you do with a RESTful API will be around resources!</li>
+</ul>
+</div>
+</div>
+<div class="section" id="restful-routes">
+<h3>RESTful routes</h3>
+<p>Letâs see what the RESTful routes are for a resource called <cite>snacks</cite></p>
+<div class="docutils container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="27%" />
+<col width="29%" />
+<col width="44%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">HTTP Verb</th>
+<th class="head">Route</th>
+<th class="head">Response</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>GET</td>
+<td>/snacks</td>
+<td>Display all snacks</td>
+</tr>
+<tr class="row-odd"><td>GET</td>
+<td>/snacks/[id]</td>
+<td>Display a snack</td>
+</tr>
+<tr class="row-even"><td>POST</td>
+<td>/snacks</td>
+<td>Create a snack</td>
+</tr>
+<tr class="row-odd"><td>PUT / PATCH</td>
+<td>/snacks/[id]</td>
+<td>Update a snack</td>
+</tr>
+<tr class="row-even"><td>DELETE</td>
+<td>/snacks/[id]</td>
+<td>Delete a snack</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="docutils container">
+<p>But what about X, Y or Z?</p>
+</div>
+<div class="docutils container">
+<p>No!</p>
+</div>
+</div>
+<div class="section" id="where-do-you-see-this">
+<h3>Where do you see this?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Almost all RESTful APIs</li>
+<li>Stripe - <a class="reference external" href="https://stripe.com/docs/api?lang=curl#charges">https://stripe.com/docs/api?lang=curl#charges</a></li>
+<li>Github - <a class="reference external" href="https://developer.github.com/v3/repos/">https://developer.github.com/v3/repos/</a></li>
+<li>Yelp - <a class="reference external" href="https://www.yelp.com/developers/documentation/v3/event">https://www.yelp.com/developers/documentation/v3/event</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="nested-routes">
+<h3>Nested Routes</h3>
+<div class="docutils container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="12%" />
+<col width="43%" />
+<col width="45%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">HTTP Verb</th>
+<th class="head">Route</th>
+<th class="head">Response</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>GET</td>
+<td>/businesses</td>
+<td>Display information about all businesses</td>
+</tr>
+<tr class="row-odd"><td>GET</td>
+<td>/businesses/[id]</td>
+<td>Display information about a business</td>
+</tr>
+<tr class="row-even"><td>POST</td>
+<td>/businesses</td>
+<td>Create a busines</td>
+</tr>
+<tr class="row-odd"><td>PUT / PATCH</td>
+<td>/businesses/[id]</td>
+<td>Update a business</td>
+</tr>
+<tr class="row-even"><td>DELETE</td>
+<td>/businesses/[id]</td>
+<td>Delete a business</td>
+</tr>
+<tr class="row-odd"><td>GET</td>
+<td>/businesses/[business-id]/reviews</td>
+<td>Display all reviews for a business</td>
+</tr>
+<tr class="row-even"><td>GET</td>
+<td>/businesses/[business-id]/reviews/[id]</td>
+<td>Display a review for a business</td>
+</tr>
+<tr class="row-odd"><td>POST</td>
+<td>/businesses/[business-id]/reviews</td>
+<td>Create a review for a business</td>
+</tr>
+<tr class="row-even"><td>PUT / PATCH</td>
+<td>/businesses/[business-id]/reviews/[id]</td>
+<td>Update a review for a business</td>
+</tr>
+<tr class="row-odd"><td>DELETE</td>
+<td>/businesses/[business-id]/reviews/[id]</td>
+<td>Delete a review for a business</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="doing-this-in-flask">
+<h3>Doing this in Flask</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>You can do so much of this already!</li>
+<li>Be mindful of your response</li>
+<li><strong>NO MORE redirect or render_template</strong></li>
+</ul>
+</div>
+</div>
+<div class="section" id="jsonify">
+<h3>jsonify</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>What does it do?</li>
+<li>How does it work with SQLAlchemy?</li>
+</ul>
+</div>
+</div>
+<div class="section" id="limitations-of-jsonify">
+<h3>limitations of jsonify</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Python does not know how to just âturn your objects into JSONâ</li>
+<li>Requires a process called serialization</li>
+</ul>
+</div>
+</div>
+<div class="section" id="instead-jsonify-what-does-work">
+<h3>Instead - jsonify what does work!</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>jsonify works well with simply python data structures like lists, tuples and dictionaries (not sets!)</li>
+<li>Take your SQLAlchemy instances and convert them into dictionaries / lists</li>
+<li>Or use another tool like Marshmallow (<a class="reference external" href="https://flask-marshmallow.readthedocs.io/en/latest/">https://flask-marshmallow.readthedocs.io/en/latest/</a>)</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id1">
+<h3>jsonify</h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@app.route</span><span class="p">(</span><span class="s2">&quot;/users/&lt;int:user_id&gt;&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">show_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Display information about a user&quot;&quot;&quot;</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get_or_404</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span>
+
+    <span class="c1"># return jsonify(user) - this will not work!</span>
+
+    <span class="n">serialized_user</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+      <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">username</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">response</span><span class="o">=</span><span class="n">serialized_user</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="testing-our-api">
+<h3>Testing our API</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>We will need a different database</li>
+<li>We will be testing the JSON response not HTML</li>
+<li>This makes things even easier!</li>
+<li>We just have to be smart about how we set up and tear down</li>
+<li>We can always start using Insomnia / curl</li>
+</ul>
+</div>
+</div>
+<div class="section" id="testing-our-api-the-code">
+<h3>Testing our API - the code</h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">app</span> <span class="kn">import</span> <span class="n">app</span>
+<span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="n">db</span><span class="p">,</span> <span class="n">User</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;SQLALCHEMY_DATABASE_URI&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;postgresql:///users-app-test&#39;</span>
+<span class="n">db</span><span class="o">.</span><span class="n">create_all</span><span class="p">()</span>
+
+<span class="k">class</span> <span class="nc">ApplicationTest</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">test_client</span><span class="p">()</span>
+        <span class="n">new_user</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span>
+            <span class="n">first_name</span><span class="o">=</span><span class="s1">&#39;Bob&#39;</span><span class="p">,</span> <span class="n">last_name</span><span class="o">=</span><span class="s1">&#39;Loblaw&#39;</span> <span class="nb">id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">new_user</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">test_all_users</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/users&quot;</span><span class="p">)</span>
+        <span class="n">users</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s1">&#39;users&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">users</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">users</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;first_name&#39;</span><span class="p">],</span> <span class="s1">&#39;Bob&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">users</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;last_name&#39;</span><span class="p">],</span> <span class="s1">&#39;Loblaw&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_adding_a_user</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/users&quot;</span><span class="p">,</span>
+          <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;first_name&quot;</span><span class="p">:</span><span class="s2">&quot;mr&quot;</span><span class="p">,</span> <span class="s2">&quot;last_name&quot;</span><span class="p">:</span> <span class="s2">&quot;test&quot;</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s1">&#39;user&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">user</span><span class="p">[</span><span class="s1">&#39;first_name&#39;</span><span class="p">],</span> <span class="s1">&#39;mr&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">user</span><span class="p">[</span><span class="s1">&#39;last_name&#39;</span><span class="p">],</span> <span class="s1">&#39;test&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="your-turn">
+<h3>Your Turn!</h3>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

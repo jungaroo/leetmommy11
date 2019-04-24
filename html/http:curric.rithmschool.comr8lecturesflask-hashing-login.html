@@ -1,0 +1,618 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Hashing and Login</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Hashing and Login</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Hashing and Login</a><ul>
+<li><a class="reference internal" href="#registering-and-logging-in">Registering and Logging In</a><ul>
+<li><a class="reference internal" href="#user-class">User Class</a></li>
+<li><a class="reference internal" href="#registration">Registration</a></li>
+<li><a class="reference internal" href="#login">Login</a></li>
+<li><a class="reference internal" href="#database">Database</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hashing">Hashing</a><ul>
+<li><a class="reference internal" href="#plaintext-passwords">Plaintext Passwords</a></li>
+<li><a class="reference internal" href="#id1">Hashing</a></li>
+<li><a class="reference internal" href="#one-way-encryption">One-Way Encryption</a></li>
+<li><a class="reference internal" href="#salt">Salt</a></li>
+<li><a class="reference internal" href="#cryptographic-hash">Cryptographic Hash</a></li>
+<li><a class="reference internal" href="#bcrypt">Bcrypt</a></li>
+<li><a class="reference internal" href="#work-factor">Work Factor</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#flask-password-hashing">Flask Password Hashing</a><ul>
+<li><a class="reference internal" href="#flask-bcrypt">Flask-Bcrypt</a></li>
+<li><a class="reference internal" href="#id2">Registration</a></li>
+<li><a class="reference internal" href="#id3">Login</a></li>
+<li><a class="reference internal" href="#id4">Database</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#class-methods">Class Methods</a><ul>
+<li><a class="reference internal" href="#id5">Class Methods</a></li>
+<li><a class="reference internal" href="#registering">Registering</a></li>
+<li><a class="reference internal" href="#id6">Registering</a></li>
+<li><a class="reference internal" href="#using-class-methods">Using Class Methods</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#staying-logged-in">Staying Logged In</a><ul>
+<li><a class="reference internal" href="#how-do-we-remember-a-logged-in-user">How do we remember a logged in user?</a></li>
+<li><a class="reference internal" href="#session-review">Session Review</a></li>
+<li><a class="reference internal" href="#logging-in-a-user-using-the-session">Logging in a user using the session</a></li>
+<li><a class="reference internal" href="#ensuring-that-user-is-authenticated">Ensuring that user is authenticated</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="hashing-and-login">
+<h1>Hashing and Login</h1>
+<div class="section" id="registering-and-logging-in">
+<h2>Registering and Logging In</h2>
+<div class="section" id="user-class">
+<h3>User Class</h3>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">demo/badpasswd/app.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">BadUser</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Site user.&quot;&quot;&quot;</span>
+
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;bad_users&quot;</span>
+
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">username</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Text</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">password</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Text</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="registration">
+<h3>Registration</h3>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">demo/badpasswd/app.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/register&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">register</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Register a user: produce form and handle form submission.&quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;username&quot;</span><span class="p">)</span>
+        <span class="n">password</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;password&quot;</span><span class="p">)</span>
+
+        <span class="n">user</span> <span class="o">=</span> <span class="n">BadUser</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;/login&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;register.html&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="login">
+<h3>Login</h3>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">demo/badpasswd/app.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/login&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">login</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Produce login form or handle login.&quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;username&quot;</span><span class="p">)</span>
+        <span class="n">password</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;password&quot;</span><span class="p">)</span>
+
+        <span class="n">user</span> <span class="o">=</span> <span class="n">BadUser</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">)</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class="n">password</span> <span class="o">==</span> <span class="n">password</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;/secret&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;login.html&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="database">
+<h3>Database</h3>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">bad_users</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="46%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">username</th>
+<th class="head">password</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>rita</td>
+<td>squid-13</td>
+</tr>
+<tr class="row-odd"><td>roger</td>
+<td>meeples4ever</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="docutils container">
+<p>Ut oh.</p>
+</div>
+</div>
+</div>
+<div class="section" id="hashing">
+<h2>Hashing</h2>
+<div class="section" id="plaintext-passwords">
+<h3>Plaintext Passwords</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Access to database == knowing all passwords</li>
+<li>Users use same passwords for multiple sites</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id1">
+<h3>Hashing</h3>
+<p>âOne-way encryptionâ</p>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">demo/badhash.py</span></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">awful_hash</span><span class="p">(</span><span class="n">phrase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Truly terrible hash: simply shifts each letter (a-&gt;b, etc).</span>
+
+<span class="sd">        &gt;&gt;&gt; awful_hash(&#39;yay&#39;)</span>
+<span class="sd">        &#39;zbz&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">next_char</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">phrase</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<p>But is that really one-way?</p>
+</div>
+</div>
+<div class="section" id="one-way-encryption">
+<h3>One-Way Encryption</h3>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">demo/badhash.py</span></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">slightly_better_hash</span><span class="p">(</span><span class="n">phrase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Better hash: returns every other letter, shifted, max 4.</span>
+
+<span class="sd">        &gt;&gt;&gt; slightly_better_hash(&#39;penguin1&#39;)</span>
+<span class="sd">        &#39;qovo&#39;</span>
+
+<span class="sd">    Since this is &quot;lossy&quot;, multiple inputs can return same output:</span>
+
+<span class="sd">        &gt;&gt;&gt; slightly_better_hash(&#39;penguin1~pretzel7&#39;)</span>
+<span class="sd">        &#39;qovo&#39;</span>
+
+<span class="sd">        &gt;&gt;&gt; slightly_better_hash(&#39;p?nguinZ&#39;)</span>
+<span class="sd">        &#39;qovo&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">next_char</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">phrase</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">8</span><span class="p">:</span><span class="mi">2</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Now is one-way (non-reversible)</li>
+<li>Same input always equal same output</li>
+</ul>
+</div>
+<p>Python has this kind of hash built-in:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">hash</span><span class="p">(</span><span class="s1">&#39;penguin1&#39;</span><span class="p">)</span>
+<span class="go">6678229702981429425</span>
+</pre></div>
+</div>
+<p>(Pythonâs built in <cite>hash</cite> seeds itself randomly on startup, so the same
+input only returns the same output for any individual Python process.
+As such, itâs not suitable for storing in a database, even if it were
+designed to be cryptographically secure.)</p>
+</div>
+<div class="section" id="salt">
+<h3>Salt</h3>
+<p><strong>Salt</strong>: random element introduced before hashing</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="29%" />
+<col width="42%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">password</th>
+<th class="head">salt</th>
+<th class="head">hash</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>penguin1</td>
+<td>xab17</td>
+<td>qovoyc8|xab17</td>
+</tr>
+<tr class="row-odd"><td>penguin1</td>
+<td>meeps</td>
+<td>qovonft|meeps</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="cryptographic-hash">
+<h3>Cryptographic Hash</h3>
+<ul class="simple">
+<li>Non-reversible</li>
+<li>Change in input changes output unpredictably</li>
+</ul>
+<div class="docutils container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="29%" />
+<col width="42%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">password</th>
+<th class="head">salt</th>
+<th class="head">hash</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>penguin1</td>
+<td>xab17</td>
+<td>dsfdsfj33gw|xab17</td>
+</tr>
+<tr class="row-odd"><td>penguin2</td>
+<td>xab17</td>
+<td>ewruoi3kl1z|xab17</td>
+</tr>
+<tr class="row-even"><td>penguin2</td>
+<td>meeps</td>
+<td>kj34kjkf28z|meeps</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="compare docutils container">
+<div class="docutils container">
+<p><strong>Cryptographic Hashes</strong>:</p>
+<ul class="simple">
+<li>MD5</li>
+<li>SHA <em>(family)</em></li>
+</ul>
+<div class="docutils container">
+<p>(Fast, non-reversible, <span class="raw-reveal"><br></span> output very different)</p>
+</div>
+</div>
+<div class="docutils container">
+<p><strong>Password Hashes</strong>:</p>
+<ul class="simple">
+<li>Argon2</li>
+<li>Bcrypt</li>
+<li>Scrypt</li>
+</ul>
+<div class="docutils container">
+<p>(Same but slow and hard to optimize)</p>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="bcrypt">
+<h3>Bcrypt</h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">bcrypt</span>   <span class="c1"># pip install bcrypt</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">salt</span> <span class="o">=</span> <span class="n">bcrypt</span><span class="o">.</span><span class="n">gensalt</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">salt</span>
+<span class="go">b&#39;$2b$12$uYNRTDE7RrMvwDcF9f1Yyu&#39;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bcrypt</span><span class="o">.</span><span class="n">hashpw</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;secret&#39;</span><span class="p">,</span> <span class="n">salt</span><span class="p">)</span>
+<span class="go">b&#39;$2b$12$uYNRTDE7RrMvwDcF9f1Yyuvuu48PzANrWy88Iz3z1tRTfdXi6DlNW&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="work-factor">
+<h3>Work Factor</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Bcrypt algorithm is designed to be slow<ul>
+<li>But computers get faster all the time!</li>
+</ul>
+</li>
+<li>So, you can specify how many rounds of encryption it should use<ul>
+<li>And, over time, increase this âwork factorâ of work</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">salt</span> <span class="o">=</span> <span class="n">bcrypt</span><span class="o">.</span><span class="n">gensalt</span><span class="p">(</span><span class="n">rounds</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>   <span class="c1"># default (as of 4/2018) is 12</span>
+</pre></div>
+</div>
+</div>
+<p>This is encoded in the result:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="sa">b</span><span class="s1">&#39;$2b$12$3cy0jD1AfgcT0ipGL1UhquBZXvAxUwRrdG90Gi951AcxIXm2F2gMK&#39;</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><strong>Prefix:</strong> <code class="docutils literal notranslate"><span class="pre">2b</span></code> <em>(identifies as Bcrypt algorithm)</em></li>
+<li><strong>Work Factor:</strong> <code class="docutils literal notranslate"><span class="pre">12</span></code> rounds</li>
+<li><strong>Salt:</strong> <code class="docutils literal notranslate"><span class="pre">3cy0jD1AfgcT0ipGL1Uhqu</span></code></li>
+<li><strong>Hash:</strong> <code class="docutils literal notranslate"><span class="pre">BZXvAxUwRrdG90Gi951AcxIXm2F2gMK</span></code></li>
+</ul>
+</div>
+</div>
+<div class="section" id="flask-password-hashing">
+<h2>Flask Password Hashing</h2>
+<div class="section" id="flask-bcrypt">
+<h3>Flask-Bcrypt</h3>
+<p>A nicer API for Bcrypt:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">flask_bcrypt</span> <span class="kn">import</span> <span class="n">Bcrypt</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bcrypt</span> <span class="o">=</span> <span class="n">Bcrypt</span><span class="p">()</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">hash</span> <span class="o">=</span> <span class="n">bcrypt</span><span class="o">.</span><span class="n">generate_password_hash</span><span class="p">(</span><span class="s2">&quot;secret&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">hash</span>
+<span class="go">b&#39;$2b$12$s.tjeALK2I7rfI2gV27me.mkZu5IQd1Y1EBAXsbTvNExIEQcID/te&#39;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bcrypt</span><span class="o">.</span><span class="n">check_password_hash</span><span class="p">(</span><span class="nb">hash</span><span class="p">,</span> <span class="s2">&quot;secret&quot;</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id2">
+<h3>Registration</h3>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">demo/goodpasswd/app.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/register&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">register</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Register a user: produce form and handle form submission.&quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;username&quot;</span><span class="p">)</span>
+<span class="hll">        <span class="n">password</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;password&quot;</span><span class="p">)</span>
+</span><span class="hll">        <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+</span><span class="hll">        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+</span>        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;/login&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;register.html&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id3">
+<h3>Login</h3>
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">demo/goodpasswd/app.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/login&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">login</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Produce login form or handle login.&quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;username&quot;</span><span class="p">)</span>
+        <span class="n">password</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;password&quot;</span><span class="p">)</span>
+
+        <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">authenticate</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>  <span class="c1"># &lt;User&gt; or False</span>
+<span class="hll">        <span class="k">if</span> <span class="n">user</span><span class="p">:</span>
+</span>            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;/secret&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;login.html&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id4">
+<h3>Database</h3>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">users</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="83%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">username</th>
+<th class="head">password</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>rita</td>
+<td>$2b$12$KD6YjzB6jyDUYxS3E/QDMeaLosFsnG/G6UVv6Ls3rWolypPXmU4LO</td>
+</tr>
+<tr class="row-odd"><td>roger</td>
+<td>$2b$12$/GIp9nJDuoEinr4b1lbUKOXKfTANlABT47jJhFDX.jIhHft9taePi</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="class-methods">
+<h2>Class Methods</h2>
+<div class="section" id="id5">
+<p>Itâs good to move logic out of views</p>
+<p>Letâs make convenient class methods for registering &amp; validating</p>
+</div>
+<div class="section" id="registering">
+<h3>Registering</h3>
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">demo/goodpasswd/app.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span> <span class="c1"># ...</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Register a user, hashing their password.&quot;&quot;&quot;</span>
+
+        <span class="n">hashed</span> <span class="o">=</span> <span class="n">bcrypt</span><span class="o">.</span><span class="n">generate_password_hash</span><span class="p">(</span><span class="n">password</span><span class="p">)</span>
+        <span class="n">hashed_utf8</span> <span class="o">=</span> <span class="n">hashed</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf8&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">hashed_utf8</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id6">
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-text">demo/goodpasswd/app.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span> <span class="c1"># ...</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">authenticate</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Validate that user exists &amp; password is correct.</span>
+
+<span class="sd">        Return user if valid; else return False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">user</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">bcrypt</span><span class="o">.</span><span class="n">check_password_hash</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">password</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">user</span>
+
+        <span class="k">return</span> <span class="bp">False</span>
+
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="using-class-methods">
+<h3>Using Class Methods</h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nora</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;nora&quot;</span><span class="p">,</span> <span class="s2">&quot;cupcakes&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">nora</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">User</span><span class="o">.</span><span class="n">authenticate</span><span class="p">(</span><span class="s2">&quot;nora&quot;</span><span class="p">,</span> <span class="s2">&quot;cupcakes&quot;</span><span class="p">)</span>
+<span class="go">&lt;User 3&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="staying-logged-in">
+<h2>Staying Logged In</h2>
+<div class="section" id="how-do-we-remember-a-logged-in-user">
+<h3>How do we remember a logged in user?</h3>
+<p>A <strong>magic dictionary</strong> specific to this user - the session!</p>
+<div class="literal-block-wrapper docutils container" id="id16">
+<div class="code-block-caption"><span class="caption-text">demo/goodpasswd/app.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/color&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">color</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Remember user&#39;s favorite color.&quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;color&#39;</span><span class="p">)</span>
+        <span class="n">session</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">color</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;/color&quot;</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;color&quot;</span><span class="p">,</span> <span class="s2">&quot;(dunno)&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;color.html&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="session-review">
+<h3>Session Review</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Can store âfundamentalâ Python objects in session<ul>
+<li>Strings, integers, dictionaries, etc</li>
+</ul>
+</li>
+<li>Donât store âtransientâ things there<ul>
+<li>Database <em>objects</em>, etc</li>
+</ul>
+</li>
+<li>What can we store about a user to show theyâre logged in?<ul>
+<li>The user ID (or username, if itâs unique)</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="logging-in-a-user-using-the-session">
+<h3>Logging in a user using the session</h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/login&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">login</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Produce login form or handle login.&quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;username&quot;</span><span class="p">)</span>
+        <span class="n">password</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;password&quot;</span><span class="p">)</span>
+
+        <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">authenticate</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>  <span class="c1"># &lt;User&gt; or False</span>
+        <span class="k">if</span> <span class="n">user</span><span class="p">:</span>
+            <span class="n">session</span><span class="p">[</span><span class="s2">&quot;user_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">id</span> <span class="c1"># this is how we log a user in!</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;/secret&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;login.html&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ensuring-that-user-is-authenticated">
+<h3>Ensuring that user is authenticated</h3>
+<div class="docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">werkzeug.exceptions</span> <span class="kn">import</span> <span class="n">Unauthorized</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s2">&quot;/secret&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">secret</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Example page for logged-in-users.&quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="s2">&quot;user_id&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">session</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">Unauthorized</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;secret.html&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>How might we ensure that a user is authorized?</li>
+<li>Compare URL parameters with whatâs in the session!</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

@@ -1,0 +1,228 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Express Router + Middleware</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Express Router + Middleware</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Express Router + Middleware</a><ul>
+<li><a class="reference internal" href="#express-router">Express Router</a><ul>
+<li><a class="reference internal" href="#id1">Express Router</a></li>
+<li><a class="reference internal" href="#what-our-routes-look-like">What our routes look like</a></li>
+<li><a class="reference internal" href="#using-these-routes-in-an-app-js">Using these routes in an <cite>app.js</cite></a></li>
+<li><a class="reference internal" href="#what-just-happened-to-our-app-listen">What just happened to our app.listen?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#middleware">Middleware</a><ul>
+<li><a class="reference internal" href="#id2">Middleware</a></li>
+<li><a class="reference internal" href="#what-do-they-do">What do they do?</a></li>
+<li><a class="reference internal" href="#what-does-it-look-like">What does it look like?</a></li>
+<li><a class="reference internal" href="#what-is-next">What is <cite>next</cite>?</a></li>
+<li><a class="reference internal" href="#error-handling">Error handling</a></li>
+<li><a class="reference internal" href="#further-resources">Further resources</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="express-router-middleware">
+<h1>Express Router + Middleware</h1>
+<div class="section" id="express-router">
+<h2>Express Router</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Placing all of your routes in your <cite>app.js</cite> gets messy quickly!</li>
+<li>Express provides a tool to place routes elsewhere and <cite>use</cite> them in <cite>app.js</cite>!</li>
+</ul>
+</div>
+</div>
+<div class="section" id="what-our-routes-look-like">
+<h3>What our routes look like</h3>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">express-router-middleware-demo/routes.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;express&quot;</span><span class="p">);</span>
+<span class="kr">const</span> <span class="nx">router</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">express</span><span class="p">.</span><span class="nx">Router</span><span class="p">();</span>
+
+<span class="kr">const</span> <span class="nx">users</span> <span class="o">=</span> <span class="p">[];</span>
+
+<span class="cm">/** GET /users: get list of users */</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">users</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="cm">/** DELETE /users/[id]: delete user, return status */</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="k">delete</span><span class="p">(</span><span class="s2">&quot;/:id&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">idx</span> <span class="o">=</span> <span class="nx">users</span><span class="p">.</span><span class="nx">findIndex</span><span class="p">(</span><span class="nx">u</span> <span class="p">=&gt;</span> <span class="nx">u</span><span class="p">.</span><span class="nx">id</span> <span class="o">===</span> <span class="o">+</span><span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+  <span class="nx">users</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">idx</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span> <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;Deleted&quot;</span> <span class="p">});</span>
+<span class="p">});</span>
+
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">router</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="using-these-routes-in-an-app-js">
+<h3>Using these routes in an <cite>app.js</cite></h3>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">express-router-middleware-demo/app.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;express&quot;</span><span class="p">);</span>
+
+<span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">express</span><span class="p">();</span>
+<span class="kr">const</span> <span class="nx">userRoutes</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;./routes&quot;</span><span class="p">);</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">express</span><span class="p">.</span><span class="nx">json</span><span class="p">());</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s2">&quot;/users&quot;</span><span class="p">,</span> <span class="nx">userRoutes</span><span class="p">);</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">app</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="what-just-happened-to-our-app-listen">
+<h3>What just happened to our app.listen?</h3>
+<p>We move it to another file, <cite>server.js</cite></p>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">express-router-middleware-demo/server.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;./app&quot;</span><span class="p">);</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="mi">3000</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Server is listening on port 3000&quot;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>To start this, run <code class="docutils literal notranslate"><span class="pre">nodemon</span> <span class="pre">server.js</span></code></p>
+</div>
+</div>
+</div>
+<div class="section" id="middleware">
+<h2>Middleware</h2>
+<div class="section" id="id2">
+<div class="docutils container">
+<ul class="simple">
+<li>Middleware functions are functions in the <em>middle</em> of
+request response cycle</li>
+<li>They have access to the request object (<cite>req</cite>), the response object
+(<cite>res</cite>), and the <cite>next</cite> function in the applicationâs request-response cycle.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="what-do-they-do">
+<h3>What do they do?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Make changes to request and response objects<ul>
+<li>eg, Customize a flash message or info to be sent to user</li>
+</ul>
+</li>
+<li>End request-response cycle<ul>
+<li>eg, if you are not logged in redirect somewhere else</li>
+</ul>
+</li>
+<li>Call the next middleware in the stack</li>
+</ul>
+</div>
+</div>
+<div class="section" id="what-does-it-look-like">
+<h3>What does it look like?</h3>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">express-router-middleware-demo/app.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">// on every single request, run the following</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Middleware just ran!&quot;</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">next</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="what-is-next">
+<h3>What is <cite>next</cite>?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>next</cite> is a function in the Express router which, when invoked, executes
+the middleware succeeding the current middleware.</li>
+<li>Always, always make sure your middleware calls <cite>next</cite> or responds!</li>
+</ul>
+</div>
+</div>
+<div class="section" id="error-handling">
+<h3>Error handling</h3>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">express-router-middleware-demo/app.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** 404 handler -- passes to error handler, below */</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">err</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;Not Found&quot;</span><span class="p">);</span>
+  <span class="nx">err</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="mi">404</span><span class="p">;</span>
+
+  <span class="c1">// pass the error to the next piece of middleware</span>
+  <span class="k">return</span> <span class="nx">next</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="cm">/** general error handler */</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nx">status</span> <span class="o">||</span> <span class="mi">500</span><span class="p">);</span>
+
+  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span>
+    <span class="nx">error</span><span class="o">:</span> <span class="nx">err</span><span class="p">,</span>
+    <span class="nx">message</span><span class="o">:</span> <span class="nx">err</span><span class="p">.</span><span class="nx">message</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="further-resources">
+<h3>Further resources</h3>
+<p><a class="reference external" href="https://www.rithmschool.com/courses/node-express-fundamentals/helpful-express-middleware">Middleware</a></p>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

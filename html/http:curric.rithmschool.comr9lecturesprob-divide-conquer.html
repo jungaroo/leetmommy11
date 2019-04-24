@@ -1,0 +1,293 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Problem Solving - Divide and Conquer</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Problem Solving - Divide and Conquer</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Problem Solving - Divide and Conquer</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#an-example-searching-review">An Example: Searching Review</a><ul>
+<li><a class="reference internal" href="#linear-search">Linear Search</a></li>
+<li><a class="reference internal" href="#binary-search">Binary Search</a></li>
+<li><a class="reference internal" href="#how-many-comparisons">How Many Comparisons?</a></li>
+<li><a class="reference internal" href="#code-example">Code Example</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-general-pattern">The General Pattern</a><ul>
+<li><a class="reference internal" href="#divide-and-conquer-description">Divide and Conquer Description</a></li>
+<li><a class="reference internal" href="#why-logs">Why Logs?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#divide-and-conquer-tips">Divide and Conquer Tips</a><ul>
+<li><a class="reference internal" href="#general-tips">General Tips</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="problem-solving-divide-and-conquer">
+<h1>Problem Solving - Divide and Conquer</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Describe what a divide and conquer strategy is</li>
+<li>Discuss when itâs possible to use divide and conquer, and when not</li>
+<li>Explain how divide and conquer strategies improve time complexity</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="an-example-searching-review">
+<h2>An Example: Searching Review</h2>
+<div class="section" id="linear-search">
+<h3>Linear Search</h3>
+<p>How is <cite>indexOf</cite> implemented in JavaScript?</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Loop through your array looking for the desired value</li>
+<li>If you find it, return the index</li>
+<li>If you exhaust the array, return -1</li>
+<li>Time complexity: O(n)</li>
+</ul>
+</div>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">demo/linearSearch.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">// custom indexOf implementation</span>
+<span class="kd">function</span> <span class="nx">indexOf</span><span class="p">(</span><span class="nx">arr</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+
+  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// if you find the value, return the index</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">===</span> <span class="nx">val</span><span class="p">)</span> <span class="k">return</span> <span class="nx">i</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="c1">// if you never find the value, return -1</span>
+  <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nx">indexOf</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">42</span><span class="p">],</span> <span class="mi">15</span><span class="p">);</span> <span class="c1">// 2</span>
+<span class="nx">indexOf</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">42</span><span class="p">],</span> <span class="mi">42</span><span class="p">);</span> <span class="c1">// 5</span>
+<span class="nx">indexOf</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">42</span><span class="p">],</span> <span class="mi">100</span><span class="p">);</span> <span class="c1">// -1</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>What if your array has 100 elements? 1,000,000,000?</p>
+</div>
+</div>
+<div class="section" id="binary-search">
+<h3>Binary Search</h3>
+<p>If our array is <em>sorted</em>, we can look for values much more quickly!</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Look at the middle value in the array</li>
+<li>If the middle value is the one youâre looking for, congratulations!</li>
+<li>If the middle value is too big, you can eliminate <strong>every</strong> value to the right!</li>
+<li>If the middle value is too small, you can eliminate <strong>every</strong> value to the left!</li>
+<li>Among all remaining values, pick the middle one, and repeat.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="how-many-comparisons">
+<h3>How Many Comparisons?</h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="22%" />
+<col width="38%" />
+<col width="40%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Array size</th>
+<th class="head">Linear search</th>
+<th class="head">Binary Search</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>3</td>
+<td>Max 3 comparisons</td>
+<td>Max 2 comparisons</td>
+</tr>
+<tr class="row-odd"><td>7</td>
+<td>Max 7 comparisons</td>
+<td>Max 3 comparisons</td>
+</tr>
+<tr class="row-even"><td>15</td>
+<td>Max 15 comparisons</td>
+<td>Max 4 comparisons</td>
+</tr>
+<tr class="row-odd"><td>31</td>
+<td>Max 31 comparisons</td>
+<td>Max 5 comparisons</td>
+</tr>
+<tr class="row-even"><td>1,023</td>
+<td>Max 1,023 comparisons</td>
+<td>Max 10 comparisons</td>
+</tr>
+<tr class="row-odd"><td>1,048,575</td>
+<td>Max 1,048,575 comparisons</td>
+<td>Max 20 comparisons</td>
+</tr>
+</tbody>
+</table>
+<div class="docutils container">
+<p>Time Complexity: O(log n)</p>
+</div>
+</div>
+<div class="section" id="code-example">
+<h3>Code Example</h3>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">demo/binarySearch.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">binarySearch</span><span class="p">(</span><span class="nx">arr</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+
+  <span class="kd">let</span> <span class="nx">leftIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="kd">let</span> <span class="nx">rightIdx</span> <span class="o">=</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+
+  <span class="k">while</span> <span class="p">(</span><span class="nx">leftIdx</span> <span class="o">&lt;=</span> <span class="nx">rightIdx</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// find the middle value</span>
+    <span class="kd">let</span> <span class="nx">middleIdx</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">((</span><span class="nx">leftIdx</span> <span class="o">+</span> <span class="nx">rightIdx</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">);</span>
+    <span class="kd">let</span> <span class="nx">middleVal</span> <span class="o">=</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">middleIdx</span><span class="p">];</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">middleVal</span> <span class="o">&lt;</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">// middleVal is too small, look at the right half</span>
+      <span class="nx">leftIdx</span> <span class="o">=</span> <span class="nx">middleIdx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">middleVal</span> <span class="o">&gt;</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">// middleVal is too large, look at the left half</span>
+      <span class="nx">rightIdx</span> <span class="o">=</span> <span class="nx">middleIdx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="c1">// we found our value!</span>
+      <span class="k">return</span> <span class="nx">middleIdx</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  
+  <span class="c1">// lef and right pointers crossed, val isn&#39;t in arr</span>
+  <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="the-general-pattern">
+<h2>The General Pattern</h2>
+<div class="section" id="divide-and-conquer-description">
+<h3>Divide and Conquer Description</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Given a data set, a divide and conquer algorithm <strong>removes a large fraction of the data set</strong> from consideration at each step.</li>
+<li>Typically, the data set must have some additional structure <span class="raw-reveal"><br></span> (e.g. be sorted).</li>
+<li>Significantly improves time complexity, when itâs applicable <span class="raw-reveal"><br></span> (O(n) -&gt; O(log n))</li>
+</ul>
+</div>
+</div>
+<div class="section" id="why-logs">
+<h3>Why Logs?</h3>
+<div class="docutils container">
+<p>A base-2 log (roughly) measures the number of times <span class="raw-reveal"><br></span> you can cut a value in half before the value is less than 1.</p>
+</div>
+<div class="docutils container">
+<p>With divide and conquer, youâre often cutting your data set in half <span class="raw-reveal"><br></span> until you canât anymore!</p>
+</div>
+<div class="docutils container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="30%" />
+<col width="53%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Array size</th>
+<th class="head">Binary Search</th>
+<th class="head">Number of times you can cut array size in half</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>3</td>
+<td>Max 2 comparisons</td>
+<td>2</td>
+</tr>
+<tr class="row-odd"><td>7</td>
+<td>Max 3 comparisons</td>
+<td>3</td>
+</tr>
+<tr class="row-even"><td>15</td>
+<td>Max 4 comparisons</td>
+<td>4</td>
+</tr>
+<tr class="row-odd"><td>31</td>
+<td>Max 5 comparisons</td>
+<td>5</td>
+</tr>
+<tr class="row-even"><td>1,023</td>
+<td>Max 10 comparisons</td>
+<td>10</td>
+</tr>
+<tr class="row-odd"><td>1,048,575</td>
+<td>Max 20 comparisons</td>
+<td>20</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="divide-and-conquer-tips">
+<h2>Divide and Conquer Tips</h2>
+<div class="section" id="general-tips">
+<h3>General Tips</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>When considering whether to use divide and conquer, <span class="raw-reveal"><br></span> make sure your data is properly structured!<ul>
+<li>For example, if your array isnât sorted, binary search wonât work</li>
+</ul>
+</li>
+<li>If you can think of a linear solution quickly, can you use a divide and conquer approach to improve the complexity?</li>
+<li>Watch out for off by one errors! <span class="raw-reveal"><br></span> Managing the left / right pointers can be tricky.</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

@@ -1,0 +1,628 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>SQL Alchemy II</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">SQL Alchemy II</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">SQL Alchemy II</a><ul>
+<li><a class="reference internal" href="#intro">Intro</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a></li>
+<li><a class="reference internal" href="#our-example">Our Example</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#querying">Querying</a><ul>
+<li><a class="reference internal" href="#recap">Recap</a></li>
+<li><a class="reference internal" href="#chaining">Chaining</a></li>
+<li><a class="reference internal" href="#more-flexible-select">More Flexible SELECT</a></li>
+<li><a class="reference internal" href="#returning-tuples">Returning Tuples</a></li>
+<li><a class="reference internal" href="#fetching-records">Fetching Records</a></li>
+<li><a class="reference internal" href="#get-by-pk">Get by PK</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#common-operators">Common Operators</a><ul>
+<li><a class="reference internal" href="#operators">Operators</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#relationships">Relationships</a><ul>
+<li><a class="reference internal" href="#related-tables">Related Tables</a></li>
+<li><a class="reference internal" href="#navigating">Navigating</a></li>
+<li><a class="reference internal" href="#short-hand-defining-with-backref">Short-Hand Defining with Backref</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#using-relationships">Using Relationships</a><ul>
+<li><a class="reference internal" href="#our-goal">Our Goal</a></li>
+<li><a class="reference internal" href="#id1">Navigating</a></li>
+<li><a class="reference internal" href="#ask-in-advance">Ask In Advance</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#learning-more">Learning More</a><ul>
+<li><a class="reference internal" href="#self-learning">Self-Learning</a></li>
+<li><a class="reference internal" href="#id2">Learning More</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="sql-alchemy-ii">
+<h1>SQL Alchemy II</h1>
+<div class="section" id="intro">
+<h2>Intro</h2>
+<div class="section" id="goals">
+<h3>Goals</h3>
+<ul class="simple">
+<li>Deeper dive into SQLA querying</li>
+<li>Working with relationships</li>
+</ul>
+</div>
+<div class="section" id="our-example">
+<h3>Our Example</h3>
+<div class="graphviz">
+<img src="_images/graphviz-ba3a0dbd5df9097e3260ca29fb1d7c976aa9f69e.svg" />
+</div>
+<div class="compare docutils container">
+<div class="docutils container">
+<p><strong>Departments</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="34%" />
+<col width="37%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">dept_code</th>
+<th class="head">dept_name</th>
+<th class="head">phone</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>fin</td>
+<td>Finance</td>
+<td>555-1000</td>
+</tr>
+<tr class="row-odd"><td>legal</td>
+<td>Legal</td>
+<td>555-2222</td>
+</tr>
+<tr class="row-even"><td>mktg</td>
+<td>Marketing</td>
+<td>555-9999</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="docutils container">
+<p><strong>Employees</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="14%" />
+<col width="32%" />
+<col width="25%" />
+<col width="30%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">id</th>
+<th class="head">name</th>
+<th class="head">state</th>
+<th class="head">dept_code</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>Leonard</td>
+<td>CA</td>
+<td>legal</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>Liz</td>
+<td>CA</td>
+<td>legal</td>
+</tr>
+<tr class="row-even"><td>3</td>
+<td>Maggie</td>
+<td>DC</td>
+<td>mktg</td>
+</tr>
+<tr class="row-odd"><td>4</td>
+<td>Nadine</td>
+<td>CA</td>
+<td><span class="tan">null</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="querying">
+<h2>Querying</h2>
+<div class="section" id="recap">
+<h3>Recap</h3>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">sqla-associations-demo/models.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Employee</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Employee.&quot;&quot;&quot;</span>
+
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;employees&quot;</span>
+
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+                   <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                   <span class="n">autoincrement</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Text</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Text</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;CA&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">employees</span>
+<span class="k">WHERE</span> <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Liz&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">shorter form, for simple cases</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Employee</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Liz&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">longer form, can use other operators</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Employee</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Employee</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;Liz&#39;</span><span class="p">)</span>
+<span class="n">Employee</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Employee</span><span class="o">.</span><span class="n">id</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="chaining">
+<h3>Chaining</h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_emps</span> <span class="o">=</span> <span class="n">Employee</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Employee</span><span class="o">.</span><span class="n">id</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">just_ca</span> <span class="o">=</span> <span class="n">new_emps</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Employee</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s1">&#39;CA&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>Remember: nothing runs until we get results:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">just_ca</span>
+<span class="go">&lt;flask_sqlalchemy.BaseQuery at 0x105234750&gt;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">just_ca</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<span class="go">[&lt;Employee 2 Liz CA&gt;, &lt;Employee 4 Nadine CA&gt;]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="more-flexible-select">
+<h3>More Flexible SELECT</h3>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">employees</span>
+<span class="k">WHERE</span> <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Liz&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Simple version: <code class="docutils literal notranslate"><span class="pre">ClassName.query</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Employee</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Liz&#39;</span><span class="p">)</span>
+<span class="n">Employee</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Employee</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;Liz&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>More flexible version: <code class="docutils literal notranslate"><span class="pre">db.session(thing,</span> <span class="pre">...).query</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Employee</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Liz&#39;</span><span class="p">)</span>
+<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Employee</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Employee</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;Liz&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>This doesnât seem to gain us anything, but this general form
+of <code class="docutils literal notranslate"><span class="pre">db.session.query(...)</span></code> allows us to query more flexibly than
+a single model class.</p>
+</div>
+<div class="section" id="returning-tuples">
+<h3>Returning Tuples</h3>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="n">id</span><span class="p">,</span> <span class="n">name</span> <span class="k">FROM</span> <span class="n">employees</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Employee</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">Employee</span><span class="o">.</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<span class="go">[(1, u&#39;Leonard&#39;), (2, u&#39;Liz&#39;), (3, u&#39;Maggie&#39;), (4, u&#39;Nadine&#39;)]</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>Useful when:</p>
+<ul class="simple">
+<li>Youâre donât need full SQLA objects<ul>
+<li>Donât need all fields in table</li>
+<li>Donât have object to update</li>
+<li>Canât call useful methods on objects</li>
+</ul>
+</li>
+<li>A bit faster</li>
+</ul>
+</div>
+</div>
+<div class="section" id="fetching-records">
+<h3>Fetching Records</h3>
+<dl class="docutils">
+<dt>.all()</dt>
+<dd>Get all records</dd>
+<dt>.first()</dt>
+<dd>Get first record, ok if there is none</dd>
+<dt>.one()</dt>
+<dd>Get only record, error if 0 or more than 1</dd>
+<dt>.one_or_none()</dt>
+<dd>Get only record, error if &gt;1, None if 0</dd>
+<dt>.count()</dt>
+<dd>Get number of records found without fetching all</dd>
+</dl>
+</div>
+<div class="section" id="get-by-pk">
+<h3>Get by PK</h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Department</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">dept_code</span><span class="o">=</span><span class="s1">&#39;fin&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
+<span class="go">&lt;Department fin Finance&gt;</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Department</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fin&#39;</span><span class="p">)</span>
+<span class="go">&lt;Department fin Finance&gt;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Department</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get_or_404</span><span class="p">(</span><span class="s1">&#39;fin&#39;</span><span class="p">)</span>
+<span class="go">&lt;Department fin Finance&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="common-operators">
+<h2>Common Operators</h2>
+<div class="section" id="operators">
+<h3>Operators</h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Employee</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Employee</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;Jane&#39;</span><span class="p">)</span>
+
+<span class="n">Employee</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Employee</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s1">&#39;Jane&#39;</span><span class="p">)</span>
+
+<span class="n">Employee</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Employee</span><span class="o">.</span><span class="n">id</span> <span class="o">&gt;</span> <span class="mi">65</span><span class="p">)</span>
+
+<span class="n">Employee</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Employee</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">like</span><span class="p">(</span><span class="s1">&#39;%Jane%&#39;</span><span class="p">))</span>    <span class="c1"># LIKE</span>
+
+<span class="n">Employee</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Employee</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">in_</span><span class="p">([</span><span class="mi">22</span><span class="p">,</span> <span class="mi">33</span><span class="p">,</span> <span class="mi">44</span><span class="p">]))</span>   <span class="c1"># IN ()</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Employee</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Employee</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="kc">None</span><span class="p">)</span>     <span class="c1"># IS NULL</span>
+
+<span class="n">Employee</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Employee</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">is_</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>   <span class="c1"># IS NULL</span>
+
+
+<span class="n">Employee</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Employee</span><span class="o">.</span><span class="n">state</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">)</span>     <span class="c1"># IS NOT NULL</span>
+
+<span class="n">Employee</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Employee</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">isnot</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span> <span class="c1"># IS NOT NULL</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">q</span> <span class="o">=</span> <span class="n">Employee</span><span class="o">.</span><span class="n">query</span>
+</pre></div>
+</div>
+<p>AND:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">q</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Employee</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="n">Employee</span><span class="o">.</span><span class="n">id</span> <span class="o">&gt;</span> <span class="mi">65</span><span class="p">)</span>
+
+<span class="n">q</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span> <span class="p">(</span><span class="n">Employee</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s1">&#39;CA&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Employee</span><span class="o">.</span><span class="n">id</span> <span class="o">&gt;</span> <span class="mi">65</span><span class="p">)</span> <span class="p">)</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>OR:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">q</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span> <span class="n">db</span><span class="o">.</span><span class="n">or_</span><span class="p">(</span><span class="n">Employee</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="n">Employee</span><span class="o">.</span><span class="n">id</span> <span class="o">&gt;</span> <span class="mi">65</span><span class="p">)</span> <span class="p">)</span>
+
+<span class="n">q</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span> <span class="p">(</span><span class="n">Employee</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s1">&#39;CA&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">Employee</span><span class="o">.</span><span class="n">id</span> <span class="o">&gt;</span> <span class="mi">65</span><span class="p">)</span> <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>NOT:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Employee</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span> <span class="n">db</span><span class="o">.</span><span class="n">not_</span><span class="p">(</span><span class="n">Employee</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">in_</span><span class="p">([</span><span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;OR&#39;</span><span class="p">]))</span> <span class="p">)</span>
+
+<span class="n">Employee</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span> <span class="o">~</span> <span class="n">Employee</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">in_</span><span class="p">([</span><span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;OR&#39;</span><span class="p">])</span> <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="relationships">
+<h2>Relationships</h2>
+<div class="section" id="related-tables">
+<h3>Related Tables</h3>
+<div class="graphviz">
+<img src="_images/graphviz-ba3a0dbd5df9097e3260ca29fb1d7c976aa9f69e.svg" />
+</div>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">sqla-associations-demo/models.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Department</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Department. A department has many employees.&quot;&quot;&quot;</span>
+
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;departments&quot;</span>
+
+    <span class="n">dept_code</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Text</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">dept_name</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Text</span><span class="p">,</span>
+                          <span class="n">nullable</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                          <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">phone</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Text</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">sqla-associations-demo/models.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Employee</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>   <span class="c1"># ...</span>
+<span class="hll">    <span class="n">dept_code</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+</span><span class="hll">        <span class="n">db</span><span class="o">.</span><span class="n">Text</span><span class="p">,</span>
+</span><span class="hll">        <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;departments.dept_code&#39;</span><span class="p">))</span>
+</span></pre></div>
+</div>
+</div>
+<ul class="simple">
+<li>Add an actual field, <cite>dept_code</cite></li>
+<li><cite>ForeignKey</cite> makes primary/foreign key relationship<ul>
+<li>Parameter is string âtablename.fieldnameâ</li>
+<li>Database will handle referential integrity</li>
+</ul>
+</li>
+</ul>
+<div class="graphviz">
+<img src="_images/graphviz-ba3a0dbd5df9097e3260ca29fb1d7c976aa9f69e.svg" />
+</div>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">sqla-associations-demo/models.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Employee</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>   <span class="c1"># ...</span>
+    <span class="n">dept_code</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">Text</span><span class="p">,</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;departments.dept_code&#39;</span><span class="p">))</span>
+
+<span class="hll">    <span class="n">dept</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s1">&#39;Department&#39;</span><span class="p">)</span>
+</span></pre></div>
+</div>
+</div>
+<ul class="simple">
+<li><cite>relationship</cite> allows SQLAlchemy to ânavigateâ this relationship<ul>
+<li>Using the name <cite>dept</cite> on an <cite>Employee</cite></li>
+</ul>
+</li>
+</ul>
+<div class="graphviz">
+<img src="_images/graphviz-ba3a0dbd5df9097e3260ca29fb1d7c976aa9f69e.svg" />
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Department</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>   <span class="c1"># ...</span>
+<span class="hll">    <span class="n">employees</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s1">&#39;Employee&#39;</span><span class="p">)</span>
+</span></pre></div>
+</div>
+<ul class="simple">
+<li>Can get list of employee objects from dept with <code class="docutils literal notranslate"><span class="pre">.employees</span></code></li>
+</ul>
+<div class="admonition note">
+<p><strong>Backreference</strong></p>
+<p>You can specify both âendsâ of a database relationship as shown above:
+going from an employee to their department with <code class="docutils literal notranslate"><span class="pre">.dept</span></code> and from
+a department to their employees with <code class="docutils literal notranslate"><span class="pre">.employees</span></code>.</p>
+<p>SQLAlchemy also allows a shortcut that some people preferâthat you
+can just declare one relationship, and note the âbackreferenceâ for it.</p>
+<p>To do this, you wouldnât need <cite>.employees</cite> attribute on the
+<cite>Department</cite> class and could just put this on the
+<cite>Employee</cite> class:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dept</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span> <span class="s1">&#39;Department&#39;</span><span class="p">,</span> <span class="n">backref</span><span class="o">=</span><span class="s1">&#39;employees&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="last">Both give the same resultsâyou can navigate from an employee to their
+department and from a department to its employees, so which you use is
+a matter of aesthetic preference.</p>
+</div>
+</div>
+<div class="section" id="navigating">
+<h3>Navigating</h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Employee</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>    <span class="c1"># ...</span>
+    <span class="n">dept</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s1">&#39;Department&#39;</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Department</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>  <span class="c1"># ...</span>
+    <span class="n">employees</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s1">&#39;Employee&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">can navigate emp â dept with <cite>.dept</cite></span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">leonard</span> <span class="o">=</span> <span class="n">Employee</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Leonard&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">leonard</span><span class="o">.</span><span class="n">dept_code</span>
+<span class="go">u&#39;legal&#39;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">leonard</span><span class="o">.</span><span class="n">dept</span>
+<span class="go">&lt;Department legal Legal&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">can navigate dept â emp with <cite>.employees</cite></span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">legal</span> <span class="o">=</span> <span class="n">Department</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;legal&#39;</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">legal</span><span class="o">.</span><span class="n">employees</span>
+<span class="go">[&lt;Employee 1 Leonard CA&gt;, &lt;Employee 2 Liz CA&gt;]</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="short-hand-defining-with-backref">
+<h3>Short-Hand Defining with Backref</h3>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">longer way</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Employee</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>    <span class="c1"># ...</span>
+    <span class="n">dept</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s1">&#39;Department&#39;</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Department</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>  <span class="c1"># ...</span>
+    <span class="n">employees</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s1">&#39;Employee&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">short-hand way using <cite>backref</cite></span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Employee</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>    <span class="c1"># ...</span>
+    <span class="n">dept</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s1">&#39;Department&#39;</span><span class="p">,</span> <span class="n">backref</span><span class="o">=</span><span class="s1">&#39;employees&#39;</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Department</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>  <span class="c1"># ...</span>
+    <span class="c1"># don&#39;t need to specify here; will auto-magically get</span>
+    <span class="c1"># .employees to navigate to employees because of backref</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="using-relationships">
+<h2>Using Relationships</h2>
+<div class="section" id="our-goal">
+<h3>Our Goal</h3>
+<blockquote>
+<div>âShow phone directory of employees and their dept.â</div></blockquote>
+<div class="docutils container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="30%" />
+<col width="36%" />
+<col width="33%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Department</th>
+<th class="head">Phone</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Leonard</td>
+<td>Legal</td>
+<td>555-2222</td>
+</tr>
+<tr class="row-odd"><td>Liz</td>
+<td>Legal</td>
+<td>555-2222</td>
+</tr>
+<tr class="row-even"><td>Maggie</td>
+<td>Marketing</td>
+<td>555-9999</td>
+</tr>
+<tr class="row-odd"><td>Nadine</td>
+<td>-</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="id1">
+<h3>Navigating</h3>
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">sqla-associations-demo/models.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">phone_dir_nav</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Show phone dir of emps &amp; their depts.&quot;&quot;&quot;</span>
+
+    <span class="n">emps</span> <span class="o">=</span> <span class="n">Employee</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">emp</span> <span class="ow">in</span> <span class="n">emps</span><span class="p">:</span>  <span class="c1"># [&lt;Emp&gt;, &lt;Emp&gt;]</span>
+        <span class="k">if</span> <span class="n">emp</span><span class="o">.</span><span class="n">dept</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">emp</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">emp</span><span class="o">.</span><span class="n">dept</span><span class="o">.</span><span class="n">dept_code</span><span class="p">,</span> <span class="n">emp</span><span class="o">.</span><span class="n">dept</span><span class="o">.</span><span class="n">phone</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">emp</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Yay! So pretty! So easy!</li>
+<li>Boo! So inefficient!</li>
+</ul>
+</div>
+<p>This is inefficient because SQLAlchemy fires off several queues:</p>
+<ul class="simple">
+<li>one for the list of employees</li>
+<li>one for <em>each</em> department</li>
+</ul>
+</div>
+<div class="section" id="ask-in-advance">
+<h3>Ask In Advance</h3>
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">sqla-associations-demo/models.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">phone_dir_nav_eager</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Show phone dir of emps &amp; their depts.&quot;&quot;&quot;</span>
+
+<span class="hll">    <span class="n">emps</span> <span class="o">=</span> <span class="n">Employee</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">options</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">joinedload</span><span class="p">(</span><span class="s1">&#39;dept&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+</span>
+    <span class="k">for</span> <span class="n">emp</span> <span class="ow">in</span> <span class="n">emps</span><span class="p">:</span>  <span class="c1"># [&lt;Emp&gt;, &lt;Emp&gt;]</span>
+        <span class="k">if</span> <span class="n">emp</span><span class="o">.</span><span class="n">dept</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">emp</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">emp</span><span class="o">.</span><span class="n">dept</span><span class="o">.</span><span class="n">dept_code</span><span class="p">,</span> <span class="n">emp</span><span class="o">.</span><span class="n">dept</span><span class="o">.</span><span class="n">phone</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">emp</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>By adding <code class="docutils literal notranslate"><span class="pre">db.joinedload('dept')</span></code>, weâve signalled to SQLAlchemy
+that it should âeagerly loadâ the department for employees by using
+a join-style query.</p>
+</div>
+</div>
+<div class="section" id="learning-more">
+<h2>Learning More</h2>
+<div class="section" id="self-learning">
+<h3>Self-Learning</h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">q</span> <span class="o">=</span> <span class="n">Employee</span><span class="o">.</span><span class="n">query</span>
+
+<span class="n">q</span><span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="s1">&#39;state&#39;</span><span class="p">)</span>
+
+<span class="n">q</span><span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="s1">&#39;state&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">having</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">Employee</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="n">q</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;state&#39;</span><span class="p">)</span>
+
+<span class="n">q</span><span class="o">.</span><span class="n">offset</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="n">q</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>All described at <a class="reference external" href="http://docs.sqlalchemy.org/en/rel_1_0/orm/query.html#sqlalchemy.orm.query.Query.offset">Query Docs</a></p>
+</div>
+<div class="section" id="id2">
+<h3>Learning More</h3>
+<p><a class="reference external" href="http://docs.sqlalchemy.org/en/latest/">SQLAlchemy Docs</a></p>
+<p><a class="reference external" href="https://pythonhosted.org/Flask-SQLAlchemy/">Flask-SQLAlchemy Docs</a></p>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

@@ -1,0 +1,461 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Hashing and JWTs with Node</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Hashing and JWTs with Node</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Hashing and JWTs with Node</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#password-hashing-with-bcrypt">Password hashing with bcrypt</a><ul>
+<li><a class="reference internal" href="#id2">Password hashing with bcrypt</a></li>
+<li><a class="reference internal" href="#auth-with-bcrypt">Auth with bcrypt</a></li>
+<li><a class="reference internal" href="#logging-in">Logging in</a></li>
+<li><a class="reference internal" href="#the-code">The code</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#json-web-tokens">JSON Web Tokens</a><ul>
+<li><a class="reference internal" href="#remembering-logged-in-users">Remembering logged in users</a></li>
+<li><a class="reference internal" href="#the-workflow">The workflow</a></li>
+<li><a class="reference internal" href="#protecting-our-tokens">Protecting our tokens</a></li>
+<li><a class="reference internal" href="#jwts">JWTs</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#using-jwts-in-express">Using JWTs in Express</a><ul>
+<li><a class="reference internal" href="#how-to-create-a-token-using-the-jsonwebtoken-module">How to create a token using the jsonwebtoken module</a></li>
+<li><a class="reference internal" href="#what-login-looks-like">What login looks like:</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#protected-routes">Protected Routes</a><ul>
+<li><a class="reference internal" href="#verifying-a-token">Verifying a token</a></li>
+<li><a class="reference internal" href="#this-works-but-can-we-refactor">This works, but can we refactor?</a></li>
+<li><a class="reference internal" href="#middleware-to-authenticate">Middleware to authenticate</a></li>
+<li><a class="reference internal" href="#middleware-to-authorize">Middleware to authorize</a></li>
+<li><a class="reference internal" href="#using-middleware-review">Using Middleware: Review</a></li>
+<li><a class="reference internal" href="#using-middleware-a-new-pattern">Using Middleware: A New Pattern</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#common-configuration">Common Configuration</a><ul>
+<li><a class="reference internal" href="#moving-commonly-used-variables-to-a-config-file">Moving commonly used variables to a config file</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="hashing-and-jwts-with-node">
+<h1>Hashing and JWTs with Node</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Hash passwords with bcrypt (again!)</li>
+<li>Create JWTs for authentication/authorization</li>
+<li>Compare/contrast JWTs to cookies/sessions</li>
+<li>Pass middleware to a custom set of routes in Express</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="password-hashing-with-bcrypt">
+<h2>Password hashing with bcrypt</h2>
+<div class="section" id="id2">
+<div class="docutils container">
+<ul class="simple">
+<li>Similar to Flask!</li>
+<li>Use bcrypt again</li>
+<li>A very similar API</li>
+</ul>
+</div>
+</div>
+<div class="section" id="auth-with-bcrypt">
+<h3>Auth with bcrypt</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">demo/routes/users.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** Register user.</span>
+<span class="cm"> *   {username, password} =&gt; {username, password [hashed]} */</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s2">&quot;/users&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="p">{</span> <span class="nx">username</span><span class="p">,</span> <span class="nx">password</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">;</span>
+    <span class="kr">const</span> <span class="nx">hashedPassword</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">bcrypt</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="nx">password</span><span class="p">,</span> <span class="mi">12</span><span class="p">);</span>
+    <span class="kr">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span>
+      <span class="sb">`INSERT INTO users (username, password)</span>
+<span class="sb">             VALUES ($1, $2)</span>
+<span class="sb">             RETURNING username, password`</span><span class="p">,</span>
+      <span class="p">[</span><span class="nx">username</span><span class="p">,</span> <span class="nx">hashedPassword</span><span class="p">]);</span>
+
+    <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+  <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">next</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="logging-in">
+<h3>Logging in</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Try to find user first</li>
+<li>If user exists, compare their hashed password to a hash of provided password</li>
+<li><cite>bcrypt.compare()</cite> returns booleanâif <cite>false</cite>, passwords did not match!</li>
+</ul>
+</div>
+</div>
+<div class="section" id="the-code">
+<h3>The code</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">demo/routes/users.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** Login: returns {message} on success. */</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s2">&quot;/login-1&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="p">{</span> <span class="nx">username</span><span class="p">,</span> <span class="nx">password</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">;</span>
+    <span class="kr">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span>
+        <span class="sb">`SELECT password FROM users WHERE username = $1`</span><span class="p">,</span>
+        <span class="p">[</span><span class="nx">username</span><span class="p">]);</span>
+    <span class="kr">const</span> <span class="nx">user</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">await</span> <span class="nx">bcrypt</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="nx">password</span><span class="p">,</span> <span class="nx">user</span><span class="p">.</span><span class="nx">password</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span> <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;Logged in!&quot;</span> <span class="p">});</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">next</span><span class="p">({</span> <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;Invalid user/password&quot;</span> <span class="p">});</span>
+  <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="json-web-tokens">
+<h2>JSON Web Tokens</h2>
+<div class="section" id="remembering-logged-in-users">
+<h3>Remembering logged in users</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Weâve already implemented auth using cookies and sessions in Flask</li>
+<li>Another way to approach this is via JSON Web Tokens (JWTs)</li>
+<li>JWTs donât require you to store anything server-side (stateless)</li>
+<li>JWTs are an open standard that can is implemented across technology stacks, making it simple to share tokens across different services</li>
+<li>More on JWTs: <a class="reference external" href="https://jwt.io/">JWT.io</a></li>
+</ul>
+</div>
+<div class="admonition note">
+<p><strong>Even more on JWTs</strong></p>
+<p>JWTs are a more modern technology than cookies and sessions, but cookies and sessions arenât going anywhere, and are a completely legitimate way to persist information across requests. Weâre showing you JWTs as an alternative because they are popular, not because theyâre strictly <em>better than</em> cookies/sessions. Itâs also not the case that Python/Flask is inherently cookie/session-based, and Express is inherently JWT based - you can use either technology in either web framework.</p>
+<p class="last">For a more nuanced discussion of JWTs and server-side sessions, check out <a class="reference external" href="https://stackoverflow.com/questions/43452896/authentication-jwt-usage-vs-session">this</a> thread on StackOverflow.</p>
+</div>
+</div>
+<div class="section" id="the-workflow">
+<h3>The workflow</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Instead of cookies/sessions to authenticate users, weâll use JWTs.</li>
+<li>This involves creating a token on server &amp; sending to client.</li>
+<li>It will be stored either in cookie or localStorage <em>(more common)</em>.</li>
+<li>Token is included in future requests, <span class="raw-reveal"><br></span> and will be decoded and verified on server.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="protecting-our-tokens">
+<h3>Protecting our tokens</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Server uses secret key to sign token â so it canât be tampered with in browser</li>
+<li>This secret key is a string, but should kept secret on production apps</li>
+</ul>
+</div>
+</div>
+<div class="section" id="jwts">
+<h3>JWTs</h3>
+<div class="docutils container">
+<ul class="simple">
+<li><strong>Header:</strong> metadata about token <em>(signing algorithm used &amp; type of token)</em></li>
+<li><strong>Payload:</strong> data to be stored in token <em>(object of data to storeâeg,
+user id)</em><ul>
+<li>The payload is <em>encoded</em>, not <em>encrypted</em>, so donât put sensitive information here!</li>
+</ul>
+</li>
+<li><strong>Signature:</strong> result of algorithm specified in the header <em>(weâll use
+âHMAC-SHA256â)</em> with an encoded header, encoded payload, and a secret passed
+to it.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="using-jwts-in-express">
+<h2>Using JWTs in Express</h2>
+<div class="section" id="how-to-create-a-token-using-the-jsonwebtoken-module">
+<h3>How to create a token using the jsonwebtoken module</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Use the <cite>sign</cite> method<ul>
+<li>first parameter is object which will become the payload of token</li>
+<li>second parameter is secret key used to âsignâ or encrypt token</li>
+<li>third parameter is object where we can specify properties of token</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">demo/routes/users.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">jwt</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;jsonwebtoken&quot;</span><span class="p">);</span>
+<span class="kr">const</span> <span class="nx">SECRET</span> <span class="o">=</span> <span class="s2">&quot;NEVER MAKE THIS PUBLIC IN PRODUCTION!&quot;</span><span class="p">;</span>
+<span class="kr">const</span> <span class="nx">OPTIONS</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">expiresIn</span><span class="o">:</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="p">};</span> <span class="c1">// 1 hour</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">demo/routes/users.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">token</span> <span class="o">=</span> <span class="nx">jwt</span><span class="p">.</span><span class="nx">sign</span><span class="p">({</span> <span class="nx">username</span> <span class="p">},</span> <span class="nx">SECRET</span><span class="p">,</span> <span class="nx">OPTIONS</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="what-login-looks-like">
+<h3>What login looks like:</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">demo/routes/users.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** (Fixed) Login: returns JWT on success. */</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s2">&quot;/login&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="p">{</span> <span class="nx">username</span><span class="p">,</span> <span class="nx">password</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">;</span>
+    <span class="kr">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span>
+        <span class="s2">&quot;SELECT password FROM users WHERE username = $1&quot;</span><span class="p">,</span>
+        <span class="p">[</span><span class="nx">username</span><span class="p">]);</span>
+    <span class="kd">let</span> <span class="nx">user</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">await</span> <span class="nx">bcrypt</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="nx">password</span><span class="p">,</span> <span class="nx">user</span><span class="p">.</span><span class="nx">password</span><span class="p">))</span> <span class="p">{</span>
+<span class="hll">        <span class="kd">let</span> <span class="nx">token</span> <span class="o">=</span> <span class="nx">jwt</span><span class="p">.</span><span class="nx">sign</span><span class="p">({</span> <span class="nx">username</span> <span class="p">},</span> <span class="nx">SECRET</span><span class="p">,</span> <span class="nx">OPTIONS</span><span class="p">);</span>
+</span><span class="hll">        <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span> <span class="nx">token</span> <span class="p">});</span>
+</span>      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">next</span><span class="p">({</span> <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;Invalid user/password&quot;</span> <span class="p">});</span>
+  <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="protected-routes">
+<h2>Protected Routes</h2>
+<div class="section" id="verifying-a-token">
+<h3>Verifying a token</h3>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">demo/routes/users.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** Secret route than only users can access */</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/secret&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="c1">// try to get the token out of the body</span>
+    <span class="kr">const</span> <span class="nx">tokenFromBody</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">_token</span><span class="p">;</span>
+
+    <span class="c1">// verify this was a token signed with OUR secret key</span>
+    <span class="c1">// (jwt.verify raises error if not)</span>
+<span class="hll">    <span class="nx">jwt</span><span class="p">.</span><span class="nx">verify</span><span class="p">(</span><span class="nx">tokenFromBody</span><span class="p">,</span> <span class="nx">SECRET</span><span class="p">);</span>
+</span>
+    <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span> <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;You made it!&quot;</span> <span class="p">});</span>
+  <span class="p">}</span>
+
+  <span class="k">catch</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">next</span><span class="p">({</span> <span class="nx">status</span><span class="o">:</span> <span class="mi">401</span><span class="p">,</span> <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;Unauthorized&quot;</span> <span class="p">});</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="this-works-but-can-we-refactor">
+<h3>This works, but can we refactor?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>We donât want to repeat this one every route</li>
+<li>How can we intercept the request and verify the token?</li>
+<li><strong>Middleware!</strong></li>
+</ul>
+</div>
+</div>
+<div class="section" id="middleware-to-authenticate">
+<h3>Middleware to authenticate</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">demo/middleware/auth.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** Middleware: Requires user is logged in. */</span>
+
+<span class="kd">function</span> <span class="nx">ensureLoggedIn</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">tokenFromBody</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">_token</span><span class="p">;</span>
+    <span class="nx">jwt</span><span class="p">.</span><span class="nx">verify</span><span class="p">(</span><span class="nx">tokenFromBody</span><span class="p">,</span> <span class="nx">SECRET</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">next</span><span class="p">();</span>
+  <span class="p">}</span>
+
+  <span class="k">catch</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">next</span><span class="p">({</span> <span class="nx">status</span><span class="o">:</span> <span class="mi">401</span><span class="p">,</span> <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;Unauthorized&quot;</span> <span class="p">});</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="middleware-to-authorize">
+<h3>Middleware to authorize</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">demo/middleware/auth.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** Middleware: Requires :username is logged in. */</span>
+
+<span class="kd">function</span> <span class="nx">ensureCorrectUser</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">tokenFromBody</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">_token</span><span class="p">;</span>
+    <span class="kr">const</span> <span class="nx">token</span> <span class="o">=</span> <span class="nx">jwt</span><span class="p">.</span><span class="nx">verify</span><span class="p">(</span><span class="nx">tokenFromBody</span><span class="p">,</span> <span class="nx">SECRET</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">username</span> <span class="o">===</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">username</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">next</span><span class="p">();</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">();</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="k">catch</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">next</span><span class="p">({</span> <span class="nx">status</span><span class="o">:</span> <span class="mi">401</span><span class="p">,</span> <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;Unauthorized&quot;</span> <span class="p">});</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="using-middleware-review">
+<h3>Using Middleware: Review</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">demo/routes/users.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** example route using the middleware pattern we know */</span>
+<span class="nx">router</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s2">&quot;/users/:username&quot;</span><span class="p">,</span> <span class="nx">ensureCorrectUser</span><span class="p">);</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/users/:username&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span> <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;You made it!&quot;</span> <span class="p">});</span>
+  <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">next</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<p>But what if we want to use this middleware across several routes with different URLs?</p>
+</div>
+</div>
+<div class="section" id="using-middleware-a-new-pattern">
+<h3>Using Middleware: A New Pattern</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">demo/routes/users.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** example route using a new middleware pattern.</span>
+<span class="cm"> *  You can pass the middleware function to a router method,</span>
+<span class="cm"> *  in between the URL and the handler!</span>
+<span class="cm"> */</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/users/:username&quot;</span><span class="p">,</span>
+<span class="hll">  <span class="nx">ensureCorrectUser</span><span class="p">,</span>
+</span>  <span class="nx">async</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span> <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;You made it!&quot;</span> <span class="p">});</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">next</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>We can add middleware as optional arguments to our routing functions</li>
+<li>Gives us more flexibility in our routing</li>
+<li>Can add as many middleware functions as you want</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="common-configuration">
+<h2>Common Configuration</h2>
+<div class="section" id="moving-commonly-used-variables-to-a-config-file">
+<h3>Moving commonly used variables to a config file</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>As our application scales, we will be using variables like <cite>SECRET</cite> commonly</li>
+<li>Instead of redefining them in every file, itâs common to create a file
+called <cite>config.js</cite> and export out variables you will use in multiple files</li>
+<li>We will see this more later <span class="raw-reveal"><br></span> (e.g. when working with deployment and environment variables)</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

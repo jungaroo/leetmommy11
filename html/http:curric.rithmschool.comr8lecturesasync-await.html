@@ -1,0 +1,516 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>ES2017 Async Functions</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">ES2017 Async Functions</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">ES2017 Async Functions</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-async-keyword">The async keyword</a><ul>
+<li><a class="reference internal" href="#async-overview"><cite>async</cite> Overview</a></li>
+<li><a class="reference internal" href="#our-first-async-example">Our First <cite>async</cite> Example</a></li>
+<li><a class="reference internal" href="#similar-behavior-using-promises">Similar Behavior, Using Promises</a></li>
+<li><a class="reference internal" href="#what-about-rejection">What about Rejection?</a></li>
+<li><a class="reference internal" href="#rejection-example">Rejection Example</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-await-keyword">The <cite>await</cite> keyword</a><ul>
+<li><a class="reference internal" href="#await-overview"><cite>await</cite> Overview</a></li>
+<li><a class="reference internal" href="#using-await">Using <cite>await</cite></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#using-async-await">Using <cite>async</cite> / <cite>await</cite></a><ul>
+<li><a class="reference internal" href="#object-async">Object <cite>async</cite></a></li>
+<li><a class="reference internal" href="#class-async">Class <cite>async</cite></a></li>
+<li><a class="reference internal" href="#handling-errors">Handling errors</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#refactoring-async-code">Refactoring Async Code</a><ul>
+<li><a class="reference internal" href="#callbacks-revisited">Callbacks Revisited</a></li>
+<li><a class="reference internal" href="#promises-revisited">Promises Revisited</a></li>
+<li><a class="reference internal" href="#async-await-revisited"><cite>async</cite> / <cite>await</cite> Revisited</a></li>
+<li><a class="reference internal" href="#parallel-requests-using-async-await">Parallel Requests using <cite>async</cite> / <cite>await</cite></a></li>
+<li><a class="reference internal" href="#another-option-with-promise-all">Another option with <cite>Promise.all</cite></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#looking-ahead">Looking Ahead</a><ul>
+<li><a class="reference internal" href="#coming-up">Coming Up</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="es2017-async-functions">
+<h1>ES2017 Async Functions</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Explain what the <cite>async</cite> keyword does</li>
+<li>Explain what the <cite>await</cite> keyword does</li>
+<li>Manage asynchronous code using <cite>async</cite> / <cite>await</cite></li>
+<li>Refactor code using other patterns (e.g. callbacks, promises) to <cite>async</cite> / <cite>await</cite></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="the-async-keyword">
+<h2>The async keyword</h2>
+<div class="section" id="async-overview">
+<h3><cite>async</cite> Overview</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>The <cite>async</cite> keyword is part of ES2017</li>
+<li>You can declare any function in JavaScript as <cite>async</cite></li>
+<li><cite>async</cite> functions always return promises!</li>
+<li>Inside of an <cite>async</cite> function, you can write code that looks synchronous, <span class="raw-reveal"><br></span>
+even if it isnât <em>(more on this later)</em></li>
+</ul>
+</div>
+</div>
+<div class="section" id="our-first-async-example">
+<h3>Our First <cite>async</cite> Example</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">async-await-demo/async-examples.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">// not async, obvs</span>
+<span class="kd">function</span> <span class="nx">friendlyFn</span><span class="p">()</span> <span class="p">{</span> 
+  <span class="k">return</span> <span class="s2">&quot;hello!!! omg so nice to meet you!&quot;</span>
+<span class="p">}</span>
+
+<span class="nx">friendlyFn</span><span class="p">();</span>
+<span class="c1">// &quot;hello!!! omg so nice to meet you!&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">async-await-demo/async-examples.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">// omg async</span>
+<span class="nx">async</span> <span class="kd">function</span> <span class="nx">asyncFriendlyFn</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="s2">&quot;hello!!! omg so nice to meet you!&quot;</span>
+<span class="p">}</span>
+
+<span class="nx">asyncFriendlyFn</span><span class="p">();</span>
+<span class="c1">// PromiseÂ {&lt;resolved&gt;: &quot;hello!!! omg so nice to meet you!&quot;}</span>
+
+<span class="nx">asyncFriendlyFn</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">msg</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">msg</span><span class="p">));</span>
+<span class="c1">// &quot;hello!!! omg so nice to meet you!&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="similar-behavior-using-promises">
+<h3>Similar Behavior, Using Promises</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">async-await-demo/async-examples.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">// omg async</span>
+<span class="nx">async</span> <span class="kd">function</span> <span class="nx">asyncFriendlyFn</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="s2">&quot;hello!!! omg so nice to meet you!&quot;</span>
+<span class="p">}</span>
+
+<span class="nx">asyncFriendlyFn</span><span class="p">();</span>
+<span class="c1">// PromiseÂ {&lt;resolved&gt;: &quot;hello!!! omg so nice to meet you!&quot;}</span>
+
+<span class="nx">asyncFriendlyFn</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">msg</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">msg</span><span class="p">));</span>
+<span class="c1">// &quot;hello!!! omg so nice to meet you!&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">async-await-demo/async-examples.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">// similar behavior to async</span>
+<span class="kd">function</span> <span class="nx">friendlyFnPromise</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nb">Promise</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="s2">&quot;hello!!! omg so nice to meet you!&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="nx">friendlyFnPromise</span><span class="p">();</span>
+<span class="c1">// PromiseÂ {&lt;resolved&gt;: &quot;hello!!! omg so nice to meet you!&quot;}</span>
+
+<span class="nx">friendlyFnPromise</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">msg</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">msg</span><span class="p">));</span>
+<span class="c1">// &quot;hello!!! omg so nice to meet you!&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="what-about-rejection">
+<h3>What about Rejection?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Inside of <cite>async</cite> functions, the return value is wrapped in a resolved promise.</li>
+<li>If you want to reject instead of resolve, simply throw an error inside of the <cite>async</cite> function!</li>
+</ul>
+</div>
+</div>
+<div class="section" id="rejection-example">
+<h3>Rejection Example</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">async-await-demo/async-examples.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">oops</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">throw</span> <span class="s2">&quot;you shouldn&#39;t have invoked me!!&quot;</span>
+<span class="p">}</span>
+
+<span class="nx">oops</span><span class="p">();</span>
+<span class="c1">// PromiseÂ {&lt;rejected&gt;: &quot;you shouldn&#39;t have invoked me!!&quot;}</span>
+
+<span class="nx">oops</span><span class="p">().</span><span class="k">catch</span><span class="p">(</span><span class="nx">err</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">));</span>
+<span class="c1">// &quot;you shouldn&#39;t have invoked me!!&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="the-await-keyword">
+<h2>The <cite>await</cite> keyword</h2>
+<div class="section" id="await-overview">
+<h3><cite>await</cite> Overview</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Inside of an <cite>async</cite> function, we can use the <cite>await</cite> keyword</li>
+<li><cite>await</cite> pauses the execution of the <cite>async</cite> function</li>
+<li>Can <cite>await</cite> any async operation returning a promise (eg other <cite>async</cite> functions!)</li>
+<li>The <cite>await</cite> keyword waits for promise to resolve &amp; extracts its resolved value</li>
+<li>It then resumes the <cite>async</cite> functionâs execution</li>
+<li>Think of the <cite>await</cite> keyword like a pause button</li>
+</ul>
+</div>
+</div>
+<div class="section" id="using-await">
+<h3>Using <cite>await</cite></h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">async-await-demo/await-examples.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">getStarWarsData</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;starting!&quot;</span><span class="p">);</span>
+<span class="hll">  <span class="kd">let</span> <span class="nx">movieData</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span>
+</span><span class="hll">      <span class="s2">&quot;https://swapi.co/api/films/&quot;</span><span class="p">);</span>
+</span>  <span class="c1">// these lines do NOT run until the promise is resolved!</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;all done!&quot;</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">movieData</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">getStarWarsData</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<p>No <cite>.then</cite> or callback necessary!</p>
+</div>
+</div>
+</div>
+<div class="section" id="using-async-await">
+<h2>Using <cite>async</cite> / <cite>await</cite></h2>
+<div class="section" id="object-async">
+<h3>Object <cite>async</cite></h3>
+<div class="docutils container">
+<ul class="simple">
+<li>We can also place <cite>async</cite> functions as methods inside objects!</li>
+<li>Make sure to prefix the name of the function with the <cite>async</cite> keyword</li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">async-await-demo/await-examples.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">starWars</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">genre</span><span class="o">:</span> <span class="s2">&quot;sci-fi&quot;</span><span class="p">,</span>
+<span class="hll">  <span class="nx">async</span> <span class="nx">logMovieData</span><span class="p">()</span> <span class="p">{</span>
+</span>    <span class="kd">let</span> <span class="nx">url</span> <span class="o">=</span> <span class="s2">&quot;https://swapi.co/api/films/&quot;</span><span class="p">;</span>
+<span class="hll">    <span class="kd">let</span> <span class="nx">movieData</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="nx">url</span><span class="p">);</span>
+</span>    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">movieData</span><span class="p">.</span><span class="nx">results</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">starWars</span><span class="p">.</span><span class="nx">getMovieData</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="admonition note">
+<p><strong>Async functions and promises</strong></p>
+<p>Remember that <cite>async</cite> functions <strong>always</strong> return promises. In the example
+above, <code class="docutils literal notranslate"><span class="pre">starWars.getMovieData()</span></code> returns a resolved promise with a value of
+<cite>undefined</cite>, since the function itself has no return value.</p>
+<p>If you wanted to do something with the movie data besides <cite>console.log</cite> it,
+youâd need to <cite>return</cite> the data from the <cite>async</cite> function, and then chain a
+<cite>.then</cite> on the end of <code class="docutils literal notranslate"><span class="pre">starWars.getMovieData()</span></code>.</p>
+<p class="last">The moral here is that using <cite>async</cite> / <cite>await</cite> doesnât absolve you from
+your responsibility to learn about promises. If anything, itâs the opposite:
+if you donât understand promises well, it will be harder for you to debug
+code using <cite>async</cite> or <cite>await</cite>.</p>
+</div>
+</div>
+<div class="section" id="class-async">
+<h3>Class <cite>async</cite></h3>
+<div class="docutils container">
+<ul class="simple">
+<li>We can also make <cite>async</cite> instance methods with ES2015 <cite>class</cite> syntax</li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">async-await-demo/pokemon.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">Pokemon</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">id</span><span class="p">;</span>
+  <span class="p">}</span>
+
+<span class="hll">  <span class="nx">async</span> <span class="nx">logName</span><span class="p">()</span> <span class="p">{</span>
+</span>    <span class="kd">let</span> <span class="nx">url</span> <span class="o">=</span> <span class="sb">`https://pokeapi.co/api/v2/pokemon/</span><span class="si">${</span><span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="sb">/`</span><span class="p">;</span>
+<span class="hll">    <span class="kd">let</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="nx">url</span><span class="p">);</span>
+</span>    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">let</span> <span class="nx">pokemon</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Pokemon</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
+
+<span class="nx">pokemon</span><span class="p">.</span><span class="nx">logName</span><span class="p">();</span>
+<span class="c1">// &quot;caterpie&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="handling-errors">
+<h3>Handling errors</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>If a promise is rejected using await, an error with be thrown.</li>
+<li>We can use a <cite>try</cite>/<cite>catch</cite> statement to handle errors!</li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">async-await-demo/await-examples.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">getUser</span><span class="p">(</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">url</span> <span class="o">=</span> <span class="sb">`https://api.github.com/users/</span><span class="si">${</span><span class="nx">user</span><span class="si">}</span><span class="sb">`</span><span class="p">;</span>
+    <span class="kd">let</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="nx">url</span><span class="p">);</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">response</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">: </span><span class="si">${</span><span class="nx">response</span><span class="p">.</span><span class="nx">bio</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+  <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;User does not exist!&quot;</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">async-await-demo/await-examples.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">getUser</span><span class="p">(</span><span class="s2">&quot;mmmaaatttttt&quot;</span><span class="p">);</span>
+<span class="c1">// Matt Lane: Co-founder at @rithmschool.</span>
+<span class="c1">// Teacher of how the internet works.</span>
+<span class="c1">// Check us out at rithmschool.com</span>
+
+<span class="nx">getUser</span><span class="p">(</span><span class="s2">&quot;nopenouserhereomggoaway&quot;</span><span class="p">);</span>
+<span class="c1">// User does not exist!</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="refactoring-async-code">
+<h2>Refactoring Async Code</h2>
+<div class="section" id="callbacks-revisited">
+<h3>Callbacks Revisited</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">async-await-demo/refactoring.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">baseURL</span> <span class="o">=</span> <span class="s2">&quot;https://pokeapi.co/api/v2/pokemon&quot;</span><span class="p">;</span>
+
+<span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">baseURL</span><span class="si">}</span><span class="sb">/1/`</span><span class="p">,</span> <span class="nx">p1</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`The first pokemon is </span><span class="si">${</span><span class="nx">p1</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+  <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">baseURL</span><span class="si">}</span><span class="sb">/2/`</span><span class="p">,</span> <span class="nx">p2</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`The second pokemon is </span><span class="si">${</span><span class="nx">p2</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+    <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">baseURL</span><span class="si">}</span><span class="sb">/3/`</span><span class="p">,</span> <span class="nx">p3</span> <span class="p">=&gt;</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`The third pokemon is </span><span class="si">${</span><span class="nx">p3</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+    <span class="p">});</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="promises-revisited">
+<h3>Promises Revisited</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">async-await-demo/refactoring.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">baseURL</span> <span class="o">=</span> <span class="s2">&quot;https://pokeapi.co/api/v2/pokemon&quot;</span><span class="p">;</span>
+
+<span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">baseURL</span><span class="si">}</span><span class="sb">/1/`</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">p1</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`The first pokemon is </span><span class="si">${</span><span class="nx">p1</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">baseURL</span><span class="si">}</span><span class="sb">/2/`</span><span class="p">);</span>
+  <span class="p">})</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">p2</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`The second pokemon is </span><span class="si">${</span><span class="nx">p2</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">baseURL</span><span class="si">}</span><span class="sb">/3/`</span><span class="p">);</span>
+  <span class="p">})</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">p3</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`The third pokemon is </span><span class="si">${</span><span class="nx">p3</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">baseURL</span><span class="si">}</span><span class="sb">/3/`</span><span class="p">);</span>
+  <span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="async-await-revisited">
+<h3><cite>async</cite> / <cite>await</cite> Revisited</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">async-await-demo/refactoring.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">catchSomeOfEm</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">baseURL</span> <span class="o">=</span> <span class="s2">&quot;https://pokeapi.co/api/v2/pokemon&quot;</span><span class="p">;</span>
+<span class="hll">  <span class="kd">let</span> <span class="nx">p1</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">baseURL</span><span class="si">}</span><span class="sb">/1/`</span><span class="p">);</span>
+</span><span class="hll">  <span class="kd">let</span> <span class="nx">p2</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">baseURL</span><span class="si">}</span><span class="sb">/2/`</span><span class="p">);</span>
+</span><span class="hll">  <span class="kd">let</span> <span class="nx">p3</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">baseURL</span><span class="si">}</span><span class="sb">/3/`</span><span class="p">);</span>
+</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`The first pokemon is </span><span class="si">${</span><span class="nx">p1</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`The second pokemon is </span><span class="si">${</span><span class="nx">p2</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`The third pokemon is </span><span class="si">${</span><span class="nx">p3</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">catchSomeOfEm</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Above we are making three requests sequentially.</li>
+<li>Each request must wait for the previous request before starting.</li>
+<li>But the requests are totally independent!</li>
+<li>This can really slow down our applicationsâ¦ so how do we fix it?</li>
+</ul>
+</div>
+</div>
+<div class="section" id="parallel-requests-using-async-await">
+<h3>Parallel Requests using <cite>async</cite> / <cite>await</cite></h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-text">async-await-demo/refactoring.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">catchSomeOfEmParallel</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">baseURL</span> <span class="o">=</span> <span class="s2">&quot;https://pokeapi.co/api/v2/pokemon&quot;</span><span class="p">;</span>
+<span class="hll">  <span class="kd">let</span> <span class="nx">p1Promise</span> <span class="o">=</span> <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">baseURL</span><span class="si">}</span><span class="sb">/1/`</span><span class="p">);</span>
+</span><span class="hll">  <span class="kd">let</span> <span class="nx">p2Promise</span> <span class="o">=</span> <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">baseURL</span><span class="si">}</span><span class="sb">/2/`</span><span class="p">);</span>
+</span><span class="hll">  <span class="kd">let</span> <span class="nx">p3Promise</span> <span class="o">=</span> <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">baseURL</span><span class="si">}</span><span class="sb">/3/`</span><span class="p">);</span>
+</span>
+  <span class="kd">let</span> <span class="nx">p1</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">p1Promise</span><span class="p">;</span>
+  <span class="kd">let</span> <span class="nx">p2</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">p2Promise</span><span class="p">;</span>
+  <span class="kd">let</span> <span class="nx">p3</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">p3Promise</span><span class="p">;</span>
+
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`The first pokemon is </span><span class="si">${</span><span class="nx">p1</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`The second pokemon is </span><span class="si">${</span><span class="nx">p2</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`The third pokemon is </span><span class="si">${</span><span class="nx">p3</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">catchSomeOfEmParallel</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<p>Start the requests in parallel rather than in sequence!</p>
+</div>
+</div>
+<div class="section" id="another-option-with-promise-all">
+<h3>Another option with <cite>Promise.all</cite></h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id16">
+<div class="code-block-caption"><span class="caption-text">async-await-demo/refactoring.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">catchSomeOfEmParallel2</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">baseURL</span> <span class="o">=</span> <span class="s2">&quot;https://pokeapi.co/api/v2/pokemon&quot;</span><span class="p">;</span>
+<span class="hll">  <span class="kd">let</span> <span class="nx">pokemon</span> <span class="o">=</span> <span class="nx">await</span> <span class="nb">Promise</span><span class="p">.</span><span class="nx">all</span><span class="p">([</span>
+</span><span class="hll">    <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">baseURL</span><span class="si">}</span><span class="sb">/1/`</span><span class="p">),</span>
+</span><span class="hll">    <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">baseURL</span><span class="si">}</span><span class="sb">/2/`</span><span class="p">),</span>
+</span><span class="hll">    <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">baseURL</span><span class="si">}</span><span class="sb">/3/`</span><span class="p">)</span>
+</span><span class="hll">  <span class="p">]);</span>
+</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`The first pokemon is </span><span class="si">${</span><span class="nx">pokemon</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`The second pokemon is </span><span class="si">${</span><span class="nx">pokemon</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`The third pokemon is </span><span class="si">${</span><span class="nx">pokemon</span><span class="p">[</span><span class="mi">2</span><span class="p">].</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">catchSomeOfEmParallel2</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>We can use <cite>Promise.all</cite> to await multiple resolved promises</li>
+<li>Here we are simply waiting for an array of promises to resolve!</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="looking-ahead">
+<h2>Looking Ahead</h2>
+<div class="section" id="coming-up">
+<h3>Coming Up</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Practice with <cite>async</cite> / <cite>await</cite></li>
+<li>An introduction to Node.js!</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

@@ -1,6 +1,7 @@
 import requests
 import bs4
 import re
+from fuzzywuzzy import fuzz
 
 BASE_LINKS = {
     'r11': "http://curric.rithmschool.com/r11/lectures/",

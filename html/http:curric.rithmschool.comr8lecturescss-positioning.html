@@ -1,0 +1,476 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>CSS Positioning</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">CSS Positioning</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">CSS Positioning</a><ul>
+<li><a class="reference internal" href="#box-models">Box Models</a><ul>
+<li><a class="reference internal" href="#id1">Box Models</a></li>
+<li><a class="reference internal" href="#box-sizing">Box Sizing</a></li>
+<li><a class="reference internal" href="#outline">Outline</a></li>
+<li><a class="reference internal" href="#learning-more">Learning More</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#display">Display</a><ul>
+<li><a class="reference internal" href="#id2">Display</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#position">Position</a><ul>
+<li><a class="reference internal" href="#id3">Position</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#flexbox">Flexbox</a><ul>
+<li><a class="reference internal" href="#id4">Flexbox</a></li>
+<li><a class="reference internal" href="#parent-properties">Parent Properties</a></li>
+<li><a class="reference internal" href="#child-properties">Child Properties</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#css-specificity">CSS Specificity</a><ul>
+<li><a class="reference internal" href="#id5">CSS Specificity</a></li>
+<li><a class="reference internal" href="#last-one-wins">Last One Wins</a></li>
+<li><a class="reference internal" href="#more-specific-wins">More âSpecificâ Wins</a></li>
+<li><a class="reference internal" href="#important">Important</a></li>
+<li><a class="reference internal" href="#directly-targeted-wins">Directly Targeted Wins</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#responsive-design">Responsive Design</a><ul>
+<li><a class="reference internal" href="#id6">Responsive Design</a></li>
+<li><a class="reference internal" href="#media-queries">Media Queries</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#transitions">Transitions</a><ul>
+<li><a class="reference internal" href="#id7">Transitions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#professional-css">Professional CSS</a><ul>
+<li><a class="reference internal" href="#id8">Professional CSS</a></li>
+<li><a class="reference internal" href="#class-names">Class Names</a></li>
+<li><a class="reference internal" href="#meta-css-systems">âMeta-CSSâ Systems</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="css-positioning">
+<h1>CSS Positioning</h1>
+<div class="section" id="box-models">
+<h2>Box Models</h2>
+<div class="section" id="id1">
+<a class="reference internal image-reference" href="_images/box-models.png"><img alt="_images/box-models.png" src="_images/box-models.png" style="width: 30%;" /></a>
+<ul class="simple">
+<li>Margin is outside of border <em>(âspace betweenâ)</em></li>
+<li>Paddding is inside of border <em>(âspace insideâ)</em></li>
+</ul>
+</div>
+<div class="section" id="box-sizing">
+<h3>Box Sizing</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="highlight-css notranslate"><div class="highlight"><pre><span></span><span class="nt">div</span> <span class="p">{</span>
+<span class="hll">   <span class="k">box-sizing</span><span class="p">:</span> <span class="kc">content-box</span><span class="p">;</span>
+</span>   <span class="k">width</span><span class="p">:</span> <span class="mi">100</span><span class="kt">px</span><span class="p">;</span>
+   <span class="k">padding</span><span class="p">:</span> <span class="mi">1</span><span class="kt">em</span><span class="p">;</span>
+   <span class="k">border</span><span class="p">:</span> <span class="kc">solid</span> <span class="mi">5</span><span class="kt">px</span> <span class="kc">black</span><span class="p">;</span>
+ <span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>content-box</cite> is the default</li>
+<li>Content area is 100px</li>
+<li>Donât know how wide element is</li>
+</ul>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-css notranslate"><div class="highlight"><pre><span></span><span class="nt">div</span> <span class="p">{</span>
+<span class="hll">   <span class="k">box-sizing</span><span class="p">:</span> <span class="kc">border-box</span><span class="p">;</span>
+</span>   <span class="k">width</span><span class="p">:</span> <span class="mi">100</span><span class="kt">px</span><span class="p">;</span>
+   <span class="k">padding</span><span class="p">:</span> <span class="mi">1</span><span class="kt">em</span><span class="p">;</span>
+   <span class="k">border</span><span class="p">:</span> <span class="kc">solid</span> <span class="mi">5</span><span class="kt">px</span> <span class="kc">black</span><span class="p">;</span>
+ <span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Element width is 100px</li>
+<li>Donât know width of content area</li>
+<li>Often, easier to work with</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="outline">
+<h3>Outline</h3>
+<p>Outlines are like borders â¦</p>
+<ul class="simple">
+<li>but are outside of borders</li>
+<li>but never take up space</li>
+</ul>
+<div class="highlight-css notranslate"><div class="highlight"><pre><span></span><span class="nt">div</span><span class="p">:</span><span class="nd">hover</span> <span class="p">{</span>
+  <span class="k">outline</span><span class="p">:</span> <span class="kc">solid</span> <span class="mi">5</span><span class="kt">px</span> <span class="kc">red</span><span class="p">;</span>
+  <span class="k">outline-offset</span><span class="p">:</span> <span class="mi">5</span><span class="kt">px</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Often most used for hover effects, so things donât âmoveâ</p>
+</div>
+<div class="section" id="learning-more">
+<h3>Learning More</h3>
+<p><a class="reference external" href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Box_Model/Introduction_to_the_CSS_box_model">Intro to the Box Model</a></p>
+</div>
+</div>
+<div class="section" id="display">
+<h2>Display</h2>
+<div class="section" id="id2">
+<p>âHow should this be displayed?â</p>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>inline</cite><ul>
+<li>Only takes as much space as needed</li>
+<li>Next inline item is side-by-side</li>
+<li>Examples: <code class="docutils literal notranslate"><span class="pre">&lt;i&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;image&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;span&gt;</span></code></li>
+</ul>
+</li>
+<li><cite>block</cite><ul>
+<li>100% of parent width <em>unless</em> set via <cite>width</cite> or <cite>max-width</cite></li>
+<li>Next item is on a separate line</li>
+<li>Examples: <code class="docutils literal notranslate"><span class="pre">&lt;form&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;div&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;section&gt;</span></code></li>
+</ul>
+</li>
+<li><cite>inline-block</cite><ul>
+<li>Just like block, but side-by-side</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>none</cite><ul>
+<li>Donât show, donât take up any space</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="docutils container">
+<p>Plus lots of specific ones related to lists, tables, and so on</p>
+<p><a class="reference external" href="https://developer.mozilla.org/en-US/docs/Web/CSS/display">Display Docs</a></p>
+</div>
+</div>
+</div>
+<div class="section" id="position">
+<h2>Position</h2>
+<div class="section" id="id3">
+<p>âHow should this be positioned?â</p>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>static</cite><ul>
+<li>Default until you say otherwise</li>
+<li>Appears at normal place in âflowâ</li>
+</ul>
+</li>
+<li>âPositionedâ<ul>
+<li>All non-static are considered âpositionedâ</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>relative</cite><ul>
+<li><em>relative</em> to normal position (via <cite>top</cite>, <cite>left</cite>, <cite>bottom</cite>, <cite>right</cite>)</li>
+<li>takes up space as if it were static and in normal flow</li>
+</ul>
+</li>
+<li><cite>absolute</cite><ul>
+<li><em>absolute</em> position from <em>closest positioned ancestor</em></li>
+<li>removed from flow, takes up no space</li>
+</ul>
+</li>
+<li><cite>fixed</cite><ul>
+<li>absolutely positioned from viewport</li>
+<li>removed from flow, takes up no space</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="flexbox">
+<h2>Flexbox</h2>
+<div class="section" id="id4">
+<a class="reference internal image-reference" href="_images/flexbox-model.png"><img alt="_images/flexbox-model.png" src="_images/flexbox-model.png" style="width: 60%;" /></a>
+<p><a class="reference external" href="https://css-tricks.com/snippets/css/a-guide-to-flexbox/">https://css-tricks.com/snippets/css/a-guide-to-flexbox/</a></p>
+</div>
+<div class="section" id="parent-properties">
+<h3>Parent Properties</h3>
+<ul class="simple">
+<li><cite>flex-flow</cite>: <em>direction</em> <em>wrap</em><ul>
+<li><em>direction:</em> <cite>row</cite>, <cite>column</cite>, <cite>row-reverse</cite>, <cite>column-reverse</cite></li>
+<li><em>wrap:</em> <cite>nowrap</cite>, <cite>wrap</cite>, <cite>wrap-reverse</cite></li>
+</ul>
+</li>
+</ul>
+<div class="compare docutils container">
+<div class="docutils container">
+<ul>
+<li><p class="first"><cite>justify-content</cite>: <em>along main axis</em></p>
+<a class="reference internal image-reference" href="_images/justify-content.svg"><img alt="_images/justify-content.svg" src="_images/justify-content.svg" width="70%" /></a>
+</li>
+</ul>
+</div>
+<div class="docutils container">
+<ul>
+<li><p class="first"><cite>align-items</cite>: <em>along cross axis</em></p>
+<a class="reference internal image-reference" href="_images/align-items.svg"><img alt="_images/align-items.svg" src="_images/align-items.svg" width="90%" /></a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="child-properties">
+<h3>Child Properties</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<ul>
+<li><p class="first"><cite>flex</cite>: <em>flex-grow</em> <em>flex-shrink</em> <em>flex-basis</em></p>
+<ul>
+<li><p class="first"><em>flex-grow:</em> relative size (not given takes rest)</p>
+<a class="reference internal image-reference" href="_images/flex-grow.svg"><img alt="_images/flex-grow.svg" src="_images/flex-grow.svg" width="80%" /></a>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="docutils container">
+<ul>
+<li><p class="first"><cite>align-self</cite>: override of align-items for this item</p>
+<a class="reference internal image-reference" href="_images/align-self.svg"><img alt="_images/align-self.svg" src="_images/align-self.svg" width="80%" /></a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="css-specificity">
+<h2>CSS Specificity</h2>
+<div class="section" id="id5">
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;important interesting&quot;</span><span class="p">&gt;</span> Oh hai <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<div class="highlight-css notranslate"><div class="highlight"><pre><span></span><span class="p">.</span><span class="nc">important</span> <span class="p">{</span>
+  <span class="k">background-color</span><span class="p">:</span> <span class="kc">red</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">interesting</span> <span class="p">{</span>
+  <span class="k">background-color</span><span class="p">:</span> <span class="kc">blue</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>What color will that div be?</p>
+</div>
+<div class="section" id="last-one-wins">
+<h3>Last One Wins</h3>
+<p>All else equal: later <em>declaration</em> wins</p>
+<div class="highlight-css notranslate"><div class="highlight"><pre><span></span><span class="p">.</span><span class="nc">important</span> <span class="p">{</span>
+  <span class="k">background-color</span><span class="p">:</span> <span class="kc">red</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">interesting</span> <span class="p">{</span>
+  <span class="k">background-color</span><span class="p">:</span> <span class="kc">blue</span><span class="p">;</span>  <span class="c">/* winner */</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="more-specific-wins">
+<h3>More âSpecificâ Wins</h3>
+<p>Even more important:</p>
+<div class="docutils container">
+<ul class="simple">
+<li>ID &gt; Class &gt; Element<ul>
+<li><code class="docutils literal notranslate"><span class="pre">.important</span></code> more specific than <code class="docutils literal notranslate"><span class="pre">div</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">#page-header</span></code> more specific than classes or elements</li>
+</ul>
+</li>
+<li>Count number of each category, each ranked independently</li>
+<li>Sometimes this leads to <code class="docutils literal notranslate"><span class="pre">html</span> <span class="pre">i</span></code> for âartificial specificityâ</li>
+<li>âPseudo-classesâ (<code class="docutils literal notranslate"><span class="pre">:hover</span></code>) count as classes</li>
+</ul>
+</div>
+</div>
+<div class="section" id="important">
+<h3>Important</h3>
+<p>Most important:</p>
+<ul>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">!important</span></code> after a declaration wins</p>
+<div class="highlight-css notranslate"><div class="highlight"><pre><span></span><span class="nt">h1</span> <span class="p">{</span>
+  <span class="k">color</span><span class="p">:</span> <span class="kc">red</span> <span class="cp">!important</span><span class="p">;</span>  <span class="c">/* always! */</span>
+  <span class="k">margin-bottom</span><span class="p">:</span> <span class="mi">1</span><span class="kt">em</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first"><em>Generally</em> not a good idea, but sometimes is the best way</p>
+</li>
+</ul>
+</div>
+<div class="section" id="directly-targeted-wins">
+<h3>Directly Targeted Wins</h3>
+<div class="highlight-css notranslate"><div class="highlight"><pre><span></span><span class="p">#</span><span class="nn">my-div</span> <span class="p">{</span> <span class="k">color</span><span class="p">:</span> <span class="kc">red</span> <span class="cp">!important</span><span class="p">;</span> <span class="p">}</span>
+<span class="nt">h1</span> <span class="p">{</span> <span class="k">color</span><span class="p">:</span> <span class="kc">blue</span><span class="p">;</span> <span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;my-div&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>My Title<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+  Here is some text.
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">&lt;h1&gt;</span></code> will be blue â itâs what youâre targeting!</p>
+</div>
+</div>
+<div class="section" id="responsive-design">
+<h2>Responsive Design</h2>
+<div class="section" id="id6">
+<ul class="simple">
+<li>Bad old days: separate sites for desktop &amp; mobile</li>
+<li>Semi-bad semi-old days: every site should have a native app</li>
+<li>Responsive design: same site with adjustments in CSS</li>
+</ul>
+</div>
+<div class="section" id="media-queries">
+<h3>Media Queries</h3>
+<div class="highlight-css notranslate"><div class="highlight"><pre><span></span><span class="c">/* default to smaller devices (&quot;mobile-first&quot;) */</span>
+
+<span class="nt">img</span><span class="p">.</span><span class="nc">headshot</span> <span class="p">{</span>
+  <span class="k">display</span><span class="p">:</span> <span class="kc">block</span><span class="p">;</span>
+  <span class="k">width</span><span class="p">:</span> <span class="mi">70</span><span class="kt">%</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">@</span><span class="k">media</span> <span class="o">(</span><span class="nt">min-width</span><span class="o">:</span> <span class="nt">800px</span><span class="o">)</span> <span class="p">{</span>
+  <span class="nt">img</span><span class="p">.</span><span class="nc">headshots</span> <span class="p">{</span>
+    <span class="k">display</span><span class="p">:</span> <span class="kc">inline</span><span class="p">;</span>
+    <span class="k">width</span><span class="p">:</span> <span class="mi">10</span><span class="kt">em</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="c">/* other &quot;desktop-size&quot; stuff here...*/</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>Mostly, weâll use Bootstrap for this</p>
+</div>
+</div>
+</div>
+<div class="section" id="transitions">
+<h2>Transitions</h2>
+<div class="section" id="id7">
+<p><cite>transition</cite>: <em>property</em> <em>duration</em> <em>function</em> <em>delay</em> [, â¦]</p>
+<ul class="simple">
+<li>What property changes? (<cite>all</cite> for all)</li>
+<li>Over what time (eg, <cite>3s</cite>)</li>
+<li>What function determines values? (<cite>ease</cite>, <cite>linear</cite>)</li>
+<li>What delay before this? (eg, <cite>0.5s</cite>)</li>
+<li>Can list several properties</li>
+</ul>
+<p><a class="reference external" href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Transitions/Using_CSS_transitions#Simple_example">Transition Intro</a></p>
+</div>
+</div>
+<div class="section" id="professional-css">
+<h2>Professional CSS</h2>
+<div class="section" id="id8">
+<p>Industry practice varies here!</p>
+<div class="docutils container">
+<p>Common ideas:</p>
+<ul class="simple">
+<li>avoid <code class="docutils literal notranslate"><span class="pre">!important</span></code> where reasonable</li>
+<li>generally, prefer classes over IDs (IDs for JS is fine!)</li>
+<li>âwhyâ comments in CSS can be even more important</li>
+<li>adopt &amp; use a naming scheme</li>
+</ul>
+</div>
+</div>
+<div class="section" id="class-names">
+<h3>Class Names</h3>
+<div class="docutils container">
+<ul>
+<li><p class="first">CSS about a âcomponentâ is named (via class) after component:</p>
+<div class="highlight-css notranslate"><div class="highlight"><pre><span></span><span class="p">.</span><span class="nc">Byline</span> <span class="p">{</span> <span class="c">/* ...declarations go here ... */</span> <span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Variations/small subcomponents get âdashedâ name:</p>
+<div class="highlight-css notranslate"><div class="highlight"><pre><span></span><span class="p">.</span><span class="nc">Byline-photo</span> <span class="p">{</span> <span class="c">/* stuff about the photo ... */</span> <span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Used-lots-of-places âutilitiesâ get lowercase classes:</p>
+<div class="highlight-css notranslate"><div class="highlight"><pre><span></span><span class="p">.</span><span class="nc">muted</span> <span class="p">{</span>
+  <span class="k">font-size</span><span class="p">:</span> <span class="mi">80</span><span class="kt">%</span><span class="p">;</span>
+  <span class="k">color</span><span class="p">:</span> <span class="kc">gray</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">This is a light version of style called <a class="reference external" href="http://getbem.com/introduction/">BEM</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="meta-css-systems">
+<h3>âMeta-CSSâ Systems</h3>
+<p>There are meta-systems for CSS, doing things like:</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Letting you associate colors with names (eg, âour logo colorâ)</li>
+<li>Factor out common CSS declarations</li>
+<li>Calculate things (âour logo color, but 10% darkerâ)</li>
+<li>Common systems are: SASS and LESS</li>
+<li>You may meet one of these during company projects</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

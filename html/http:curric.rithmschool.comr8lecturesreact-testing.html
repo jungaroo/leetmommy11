@@ -1,0 +1,550 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>React Testing</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">React Testing</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">React Testing</a><ul>
+<li><a class="reference internal" href="#id1">React Testing</a><ul>
+<li><a class="reference internal" href="#id2">React Testing</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#enzyme">Enzyme</a><ul>
+<li><a class="reference internal" href="#id3">Enzyme</a></li>
+<li><a class="reference internal" href="#settings-up">Settings Up</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#smoke-tests">Smoke Tests</a><ul>
+<li><a class="reference internal" href="#testing-broken-component">Testing Broken Component</a></li>
+<li><a class="reference internal" href="#testing-app">Testing App</a></li>
+<li><a class="reference internal" href="#mount">Mount</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#snapshot-tests">Snapshot Tests</a><ul>
+<li><a class="reference internal" href="#id5">Snapshot Tests</a></li>
+<li><a class="reference internal" href="#takeaway">Takeaway</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#specialized-testing">Specialized Testing</a><ul>
+<li><a class="reference internal" href="#id6">Specialized Testing</a></li>
+<li><a class="reference internal" href="#complex-component">Complex Component</a></li>
+<li><a class="reference internal" href="#output-debugging-api">Output/Debugging API</a></li>
+<li><a class="reference internal" href="#finding-matching-api">Finding/Matching API</a></li>
+<li><a class="reference internal" href="#state-props-api">State/Props API</a></li>
+<li><a class="reference internal" href="#simulation-api">Simulation API</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#debugging-tests">Debugging Tests</a><ul>
+<li><a class="reference internal" href="#id7">Debugging Tests</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#wrap-up">Wrap Up</a><ul>
+<li><a class="reference internal" href="#id8">Wrap Up</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="react-testing">
+<h1>React Testing</h1>
+<div class="section" id="id1">
+<div class="section" id="id2">
+<div class="docutils container">
+<ul class="simple">
+<li>React can use any testing framework</li>
+<li><cite>create-react-app</cite> ships with <cite>jest</cite></li>
+<li><cite>npm test</cite> is set up to find &amp; run jest tests<ul>
+<li>Files like <em>.test</em>, <em>.spec</em>, or in <cite>__tests__</cite> folder</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="enzyme">
+<h2>Enzyme</h2>
+<div class="section" id="id3">
+<div class="docutils container">
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/airbnb/enzyme">Enzyme</a> is popular testing add-on for
+React</li>
+<li>Allows us to test React components in isolation</li>
+<li>Provides âjQuery-likeâ API for checking results of component rendering</li>
+</ul>
+</div>
+</div>
+<div class="section" id="settings-up">
+<h3>Settings Up</h3>
+<pre class="console literal-block">
+$ <span class="cmd">npm install enzyme enzyme-adapter-react-16 enzyme-to-json</span>
+</pre>
+<div class="docutils container">
+<p>Must add file to setup Enzyme for testing:</p>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">demo/test-me/src/setupTests.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="k">import</span> <span class="p">{</span> <span class="nx">configure</span> <span class="p">}</span> <span class="nx">from</span> <span class="s">&#39;enzyme&#39;</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">Adapter</span> <span class="nx">from</span> <span class="s">&#39;enzyme-adapter-react-16&#39;</span><span class="p">;</span>
+
+<span class="nx">configure</span><span class="p">({</span> <span class="nx">adapter</span><span class="p">:</span> <span class="k">new</span> <span class="nx">Adapter</span><span class="p">()</span> <span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="smoke-tests">
+<h2>Smoke Tests</h2>
+<div class="section" id="testing-broken-component">
+<h3>Testing Broken Component</h3>
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">demo/test-me/src/BrokenComponent.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">BrokenComponent</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// here be the bug</span>
+    <span class="k">this</span><span class="p">[</span><span class="s">&quot;not-here&quot;</span><span class="p">]();</span>
+
+    <span class="k">return</span> <span class="p">&lt;</span><span class="nt">div</span> <span class="na">className</span><span class="o">=</span><span class="s">&#39;BrokenComponent&#39;</span><span class="p">&gt;</span>ok!<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;;</span>
+  <span class="p">}</span>
+<span class="p">}</span> <span class="c1">// end</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">demo/test-me/src/BrokenComponent.test.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="k">import</span> <span class="nx">React</span> <span class="nx">from</span> <span class="s">&#39;react&#39;</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span><span class="nx">shallow</span><span class="p">}</span> <span class="nx">from</span> <span class="s">&#39;enzyme&#39;</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">BrokenComponent</span> <span class="nx">from</span> <span class="s">&#39;./BrokenComponent&#39;</span><span class="p">;</span>
+
+<span class="nx">it</span><span class="p">(</span><span class="s">&#39;renders without crashing&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="nx">shallow</span><span class="p">(&lt;</span><span class="nt">BrokenComponent</span><span class="p">/&gt;);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<pre class="console literal-block">
+$ <span class="cmd">npm test BrokenComponent.test.js</span>
+
+<span class="inv-red">FAIL</span>  src/BrokenComponent.test.js
+ <span class="red">â</span> renders without crashing (7ms)
+
+ <span class="red">â renders without crashing</span>
+
+  TypeError: this.not-here is not a function
+
+     6 |   render() {
+     7 |     // here be the bug
+  &gt;  8 |     this[&quot;not-here&quot;]();
+       |     ^
+     9 |
+    10 |     return &quot;&lt;div&gt;ok!&lt;/div&gt;&quot;;
+    11 |   }
+
+    at BrokenComponent.render (src/BrokenComponent.js:8:5)
+
+Test Suites: <span class="red">1 failed</span>, 1 total
+Tests:       <span class="red">1 failed</span>, 1 total
+Ran all test suites matching /BrokenComponent.test.js/i.
+</pre>
+<div class="docutils container">
+<p>Re-runs automatically when code changes; <strong>q</strong> to quit</p>
+</div>
+</div>
+<div class="section" id="testing-app">
+<h3>Testing App</h3>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">demo/test-me/src/App.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">App</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="p">&lt;</span><span class="nt">div</span> <span class="na">className</span><span class="o">=</span><span class="s">&quot;App&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">BrokenComponent</span> <span class="p">/&gt;</span>
+      <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span> <span class="c1">// end</span>
+</pre></div>
+</div>
+</div>
+<pre class="console literal-block">
+$ <span class="cmd">jest App.test.js</span>
+
+<span class="green">PASS</span> src/App.test.js
+  â renders without crashing (4ms)
+
+Test Suites: <span class="green">1 passed</span>, 1 total
+Tests:       <span class="green">1 passed</span>, 1 total
+Time:        0.933s, estimated 1s
+Ran all test suites matching /App.test.js/i.
+</pre>
+<div class="docutils container">
+<p>Wait â why did that pass? <cite>App</cite> renders <cite>BrokenComponent</cite>!</p>
+</div>
+<p><cite>shallow()</cite> renders <em>just this component</em> â not children!</p>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">demo/test-me/src/App.test.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="k">import</span> <span class="nx">React</span> <span class="nx">from</span> <span class="s">&#39;react&#39;</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span><span class="nx">shallow</span><span class="p">}</span> <span class="nx">from</span> <span class="s">&#39;enzyme&#39;</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">App</span> <span class="nx">from</span> <span class="s">&#39;./App&#39;</span><span class="p">;</span>
+
+<span class="nx">it</span><span class="p">(</span><span class="s">&#39;renders without crashing&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">wrapper</span> <span class="o">=</span> <span class="nx">shallow</span><span class="p">(&lt;</span><span class="nt">App</span> <span class="p">/&gt;);</span>
+<span class="hll">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">wrapper</span><span class="p">.</span><span class="nx">debug</span><span class="p">());</span>
+</span><span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">result of that <cite>console.log()</cite></span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">className</span><span class="o">=</span><span class="s">&quot;App&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">BrokenComponent</span> <span class="p">/&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="mount">
+<h3>Mount</h3>
+<p><cite>mount()</cite> renders component &amp; children</p>
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-text">demo/test-me/src/App-mount.test.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="k">import</span> <span class="nx">React</span> <span class="nx">from</span> <span class="s">&#39;react&#39;</span><span class="p">;</span>
+<span class="hll"><span class="k">import</span> <span class="p">{</span><span class="nx">mount</span><span class="p">}</span> <span class="nx">from</span> <span class="s">&#39;enzyme&#39;</span><span class="p">;</span>
+</span><span class="k">import</span> <span class="nx">App</span> <span class="nx">from</span> <span class="s">&#39;./App&#39;</span><span class="p">;</span>
+
+<span class="nx">it</span><span class="p">(</span><span class="s">&#39;renders without crashing&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<span class="hll">  <span class="kd">let</span> <span class="nx">wrapper</span> <span class="o">=</span> <span class="nx">mount</span><span class="p">(&lt;</span><span class="nt">App</span> <span class="p">/&gt;);</span>
+</span>  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">wrapper</span><span class="p">.</span><span class="nx">debug</span><span class="p">());</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p><span class="red">Fails!</span> And if <cite>BrokenComponent</cite> worked, would show:</p>
+<div class="literal-block-wrapper docutils container" id="id16">
+<div class="code-block-caption"><span class="caption-text">result of that <cite>console.log()</cite></span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">className</span><span class="o">=</span><span class="s">&quot;App&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">className</span><span class="o">=</span><span class="s">&#39;BrokenComponent&#39;</span><span class="p">&gt;</span>ok!<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="snapshot-tests">
+<h2>Snapshot Tests</h2>
+<div class="section" id="id5">
+<p>Smoke tests are easy to write, but only test that component renders.</p>
+<p>Snapshot tests are also easy, but go a bit further: did rendering change?</p>
+<div class="literal-block-wrapper docutils container" id="id17">
+<div class="code-block-caption"><span class="caption-text">demo/test-me/src/GoodComponent.test.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="k">import</span> <span class="nx">React</span> <span class="nx">from</span> <span class="s">&#39;react&#39;</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span><span class="nx">shallow</span><span class="p">}</span> <span class="nx">from</span> <span class="s">&#39;enzyme&#39;</span><span class="p">;</span>
+<span class="hll"><span class="k">import</span> <span class="nx">toJson</span> <span class="nx">from</span> <span class="s">&#39;enzyme-to-json&#39;</span><span class="p">;</span>
+</span><span class="k">import</span> <span class="nx">GoodComponent</span> <span class="nx">from</span> <span class="s">&#39;./GoodComponent&#39;</span><span class="p">;</span>
+
+<span class="nx">it</span><span class="p">(</span><span class="s">&#39;matches snapshot&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">wrapper</span> <span class="o">=</span> <span class="nx">shallow</span><span class="p">(&lt;</span><span class="nt">GoodComponent</span> <span class="p">/&gt;);</span>
+<span class="hll">  <span class="kd">let</span> <span class="nx">serialized</span> <span class="o">=</span> <span class="nx">toJson</span><span class="p">(</span><span class="nx">wrapper</span><span class="p">);</span>
+</span><span class="hll">  <span class="nx">expect</span><span class="p">(</span><span class="nx">serialized</span><span class="p">).</span><span class="nx">toMatchSnapshot</span><span class="p">();</span>
+</span><span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<pre class="console literal-block">
+$ <span class="cmd">npm test GoodComponent.test.js</span>
+
+<span class="green">PASS</span>  src/GoodComponent.test.js
+<span class="green">â</span> matches snapshot (8ms)
+
+ âº 1 snapshot written.
+ Snapshot Summary
+ âº 1 snapshot written from 1 test suite.
+
+Test Suites: <span class="green">1 passed</span>, 1 total
+Tests:       <span class="green">1 passed</span>, 1 total
+Snapshots:   1 written, 1 total
+</pre>
+<p>Jest compares the current snapshot with the saved snapshot, <span class="raw-reveal"><br></span>
+and throws a test error if they are different.</p>
+<p>Jest stores these in <cite>__snapshots__</cite>.</p>
+<div class="docutils container">
+<p>Letâs change <cite>GoodComponent</cite> rendering slightlyâ¦</p>
+</div>
+<pre class="console literal-block">
+$ <span class="cmd">npm test GoodComponent.test.js</span>
+
+<span class="inv-red">FAIL</span>  src/GoodComponent.test.js
+<span class="red">â</span> matches snapshot (16ms)
+
+ <span class="red">â matches snapshot</span>
+
+  <span class="green">- Snapshot</span>
+  <span class="red">+ Received</span>
+
+    &lt;div className=&quot;GoodComponent&quot; &gt;
+  <span class="green">-   ok!</span>
+  <span class="red">+   ok!!</span>
+    &lt;/div&gt;
+
+Test Suites: <span class="red">1 failed</span>, 1 total
+Tests:       <span class="red">1 failed</span>, 1 total
+Snapshots:   <span class="red">1 failed</span>, 1 total
+</pre>
+<p>If you intended change, press <strong>u</strong> to tell Jest to update snapshot.</p>
+</div>
+<div class="section" id="takeaway">
+<h3>Takeaway</h3>
+<p>Snapshot tests are almost as easy to write as smoke tests â¦</p>
+<p>â¦ while offering a great benefit: did you change the output?</p>
+</div>
+</div>
+<div class="section" id="specialized-testing">
+<h2>Specialized Testing</h2>
+<div class="section" id="id6">
+<p>Snapshot testing is great!</p>
+<p>But sometimes youâll need to hand-test functionality</p>
+</div>
+<div class="section" id="complex-component">
+<h3>Complex Component</h3>
+<div class="literal-block-wrapper docutils container" id="id18">
+<div class="code-block-caption"><span class="caption-text">demo/test-me/src/Complex.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">Complex</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span><span class="nx">nclicks</span><span class="p">:</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="m">10</span><span class="p">)};</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">handleClick</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">handleClick</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="nx">handleClick</span><span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">(</span><span class="nx">st</span> <span class="o">=&gt;</span> <span class="p">({</span><span class="nx">nclicks</span><span class="p">:</span> <span class="nx">st</span><span class="p">.</span><span class="nx">nclicks</span> <span class="o">+</span> <span class="m">1</span><span class="p">}));</span>
+  <span class="p">}</span>
+
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="p">&lt;</span><span class="nt">button</span> <span class="na">className</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">btnType</span><span class="p">}</span>
+                <span class="na">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">handleClick</span><span class="p">}</span>
+                <span class="na">data-clicks</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">nclicks</span><span class="p">}&gt;</span>
+          <span class="p">&lt;</span><span class="nt">b</span><span class="p">&gt;</span>Clicks:<span class="p">&lt;/</span><span class="nt">b</span><span class="p">&gt;</span>
+          <span class="p">&lt;</span><span class="nt">i</span><span class="p">&gt;{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">nclicks</span><span class="p">}&lt;/</span><span class="nt">i</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span> <span class="c1">// end</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Has prop, <cite>btnType</cite> â make sure it puts that as button class</li>
+<li>Initial state is random â how can we test this?</li>
+<li>Want to make sure <cite>&lt;b&gt;</cite> and <cite>&lt;i&gt;</cite> children are in there</li>
+<li>Want to test functionality of clicking</li>
+</ul>
+</div>
+<p>We can make specialized tests with methods on results of <cite>shallow()</cite></p>
+</div>
+<div class="section" id="output-debugging-api">
+<h3>Output/Debugging API</h3>
+<div class="docutils container">
+<dl class="docutils">
+<dt>.debug()</dt>
+<dd>Useful for debugging tests â shows what <cite>shallow()</cite> got</dd>
+<dt>.html()</dt>
+<dd>Rendered HTML of component</dd>
+</dl>
+</div>
+<div class="literal-block-wrapper docutils container" id="id19">
+<div class="code-block-caption"><span class="caption-text">demo/test-me/src/Complex.test.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="nx">it</span><span class="p">(</span><span class="s">&#39;can use output tests&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">wrapper</span> <span class="o">=</span> <span class="nx">shallow</span><span class="p">(&lt;</span><span class="nt">Complex</span> <span class="na">btnType</span><span class="o">=</span><span class="s">&quot;btn-ok&quot;</span><span class="p">/&gt;);</span>
+
+  <span class="c1">// show what this looks like in jest console</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">wrapper</span><span class="p">.</span><span class="nx">debug</span><span class="p">());</span>
+
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">wrapper</span><span class="p">.</span><span class="nx">html</span><span class="p">()).</span><span class="nx">toContain</span><span class="p">(</span><span class="s">&quot;btn-ok&quot;</span><span class="p">);</span>
+<span class="p">});</span> <span class="c1">// end</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id20">
+<div class="code-block-caption"><span class="caption-text">result of <cite>console.log()</cite></span></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&lt;button className=&quot;btn-ok&quot; onClick=... data-clicks={6}&gt;
+  &lt;b&gt;
+    Num Clicks:
+  &lt;/b&gt;
+  &lt;i&gt;
+    6
+  &lt;/i&gt;
+&lt;/button&gt;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="finding-matching-api">
+<h3>Finding/Matching API</h3>
+<div class="docutils container">
+<dl class="docutils">
+<dt>.exists(selector)</dt>
+<dd>Can we find <em>selector</em>?</dd>
+<dt>.find(selector)</dt>
+<dd>Find all nodes matching selector</dd>
+<dt>.matchesElement(node)</dt>
+<dd>Does this match element <em>(donât have to provide all attributes!)</em></dd>
+</dl>
+</div>
+<div class="literal-block-wrapper docutils container" id="id21">
+<div class="code-block-caption"><span class="caption-text">demo/test-me/src/Complex.test.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="nx">it</span><span class="p">(</span><span class="s">&#39;can use matching tests&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">wrapper</span> <span class="o">=</span> <span class="nx">shallow</span><span class="p">(&lt;</span><span class="nt">Complex</span> <span class="na">btnType</span><span class="o">=</span><span class="s">&quot;btn-ok&quot;</span><span class="p">/&gt;);</span>
+
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">wrapper</span><span class="p">.</span><span class="nx">exists</span><span class="p">(</span><span class="s">&#39;b&#39;</span><span class="p">)).</span><span class="nx">toBe</span><span class="p">(</span><span class="k">true</span><span class="p">);</span>
+
+  <span class="kd">let</span> <span class="nx">b_elem</span> <span class="o">=</span> <span class="nx">wrapper</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;b&#39;</span><span class="p">).</span><span class="nx">first</span><span class="p">();</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">b_elem</span><span class="p">.</span><span class="nx">equals</span><span class="p">(&lt;</span><span class="nt">b</span><span class="p">&gt;</span>Clicks:<span class="p">&lt;/</span><span class="nt">b</span><span class="p">&gt;)).</span><span class="nx">toBe</span><span class="p">(</span><span class="k">true</span><span class="p">);</span>
+
+  <span class="c1">// matches even w/o attrs (data-nclicks, onClick)</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">wrapper</span><span class="p">.</span><span class="nx">matchesElement</span><span class="p">(</span>
+      <span class="p">&lt;</span><span class="nt">button</span> <span class="na">className</span><span class="o">=</span><span class="s">&quot;btn-ok&quot;</span><span class="p">/&gt;</span>
+  <span class="p">));</span>
+<span class="p">});</span> <span class="c1">// end</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="state-props-api">
+<h3>State/Props API</h3>
+<div class="docutils container">
+<dl class="docutils">
+<dt>.props()</dt>
+<dd>Get props of component</dd>
+<dt>.prop(key)</dt>
+<dd>Get a single prop of component</dd>
+<dt>.setProps(props)</dt>
+<dd>Set properties of component</dd>
+<dt>.state()</dt>
+<dd>Get state of component</dd>
+<dt>.setState(state)</dt>
+<dd>Set state of component</dd>
+</dl>
+</div>
+<div class="literal-block-wrapper docutils container" id="id22">
+<div class="code-block-caption"><span class="caption-text">demo/test-me/src/Complex.test.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="nx">it</span><span class="p">(</span><span class="s">&#39;can be props/state tested&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">wrapper</span> <span class="o">=</span> <span class="nx">shallow</span><span class="p">(&lt;</span><span class="nt">Complex</span> <span class="na">btnType</span><span class="o">=</span><span class="s">&quot;btn-ok&quot;</span><span class="p">/&gt;);</span>
+
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">wrapper</span><span class="p">.</span><span class="nx">prop</span><span class="p">(</span><span class="s">&#39;className&#39;</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s">&#39;btn-ok&#39;</span><span class="p">);</span>
+
+  <span class="nx">wrapper</span><span class="p">.</span><span class="nx">setProps</span><span class="p">({</span><span class="nx">btnType</span><span class="p">:</span> <span class="s">&quot;btn-red&quot;</span><span class="p">});</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">wrapper</span><span class="p">.</span><span class="nx">html</span><span class="p">()).</span><span class="nx">toContain</span><span class="p">(</span><span class="s">&quot;btn-red&quot;</span><span class="p">);</span>
+
+  <span class="nx">wrapper</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span><span class="nx">nclicks</span><span class="p">:</span> <span class="m">42</span><span class="p">});</span>
+  <span class="kd">let</span> <span class="nx">i_elem</span> <span class="o">=</span> <span class="nx">wrapper</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;i&#39;</span><span class="p">).</span><span class="nx">first</span><span class="p">();</span>
+  <span class="c1">// note {42}, not just 42 --- has to match exactly</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">i_elem</span><span class="p">.</span><span class="nx">equals</span><span class="p">(&lt;</span><span class="nt">i</span><span class="p">&gt;{</span><span class="m">42</span><span class="p">}&lt;/</span><span class="nt">i</span><span class="p">&gt;)).</span><span class="nx">toBe</span><span class="p">(</span><span class="k">true</span><span class="p">);</span>
+<span class="p">});</span> <span class="c1">// end</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="simulation-api">
+<h3>Simulation API</h3>
+<div class="docutils container">
+<dl class="docutils">
+<dt>.simulate(eventName, data)</dt>
+<dd>Simulate event on wrapper object</dd>
+</dl>
+</div>
+<div class="literal-block-wrapper docutils container" id="id23">
+<div class="code-block-caption"><span class="caption-text">demo/test-me/src/Complex.test.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="nx">it</span><span class="p">(</span><span class="s">&#39;can be event tested&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">wrapper</span> <span class="o">=</span> <span class="nx">shallow</span><span class="p">(&lt;</span><span class="nt">Complex</span> <span class="na">btnType</span><span class="o">=</span><span class="s">&quot;btn-ok&quot;</span><span class="p">/&gt;);</span>
+
+  <span class="nx">wrapper</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span><span class="nx">nclicks</span><span class="p">:</span> <span class="m">42</span><span class="p">});</span>
+  <span class="nx">wrapper</span><span class="p">.</span><span class="nx">simulate</span><span class="p">(</span><span class="s">&quot;click&quot;</span><span class="p">);</span>
+  <span class="kd">let</span> <span class="nx">i_elem</span> <span class="o">=</span> <span class="nx">wrapper</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;i&#39;</span><span class="p">).</span><span class="nx">first</span><span class="p">();</span>
+  <span class="c1">// note {42}, not just 42 --- has to match exactly</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">i_elem</span><span class="p">.</span><span class="nx">equals</span><span class="p">(&lt;</span><span class="nt">i</span><span class="p">&gt;{</span><span class="m">43</span><span class="p">}&lt;/</span><span class="nt">i</span><span class="p">&gt;)).</span><span class="nx">toBe</span><span class="p">(</span><span class="k">true</span><span class="p">);</span>
+<span class="p">});</span> <span class="c1">// end</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="debugging-tests">
+<h2>Debugging Tests</h2>
+<div class="section" id="id7">
+<p>Tests can be tricky to figure out.</p>
+<p>Edit your package JSON to include:</p>
+<div class="literal-block-wrapper docutils container" id="id24">
+<div class="code-block-caption"><span class="caption-text">package.json</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;scripts&quot;</span><span class="o">:</span> <span class="p">{</span>
+  <span class="c1">// ... keep other things and add this</span>
+  <span class="s2">&quot;test:debug&quot;</span><span class="o">:</span> <span class="s2">&quot;react-scripts --inspect-brk test --runInBand&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<p>Add <cite>debugger</cite> line in test or component you want to test</p>
+<p>And now <code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">run</span> <span class="pre">test:debug</span></code> will run tests where you can use Chrome debugger!</p>
+</div>
+</div>
+<div class="section" id="wrap-up">
+<h2>Wrap Up</h2>
+<div class="section" id="id8">
+<div class="docutils container">
+<ul class="simple">
+<li>Use Enzyme for <cite>shallow()</cite> testing â great for testing in isolation!<ul>
+<li>When you want to test with children components, use <cite>mount()</cite> instead</li>
+</ul>
+</li>
+<li>Smoke tests are incredibly simple â always make one!</li>
+<li>Snapshot tests are very easy if output is predictable</li>
+<li>Use specialized testing if you need more specific tests or to test interactions</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

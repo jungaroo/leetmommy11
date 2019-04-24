@@ -1,0 +1,452 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Stacks and Queues</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Stacks and Queues</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Stacks and Queues</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#lists-adt-revisited">Lists ADT Revisited</a><ul>
+<li><a class="reference internal" href="#lists-adt">Lists ADT</a></li>
+<li><a class="reference internal" href="#where-s-the-bug">Whereâs the Bug?</a></li>
+<li><a class="reference internal" href="#what-s-the-performance-problem">Whatâs the Performance Problem?</a></li>
+<li><a class="reference internal" href="#constraints-are-useful">Constraints Are Useful</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#queues">Queues</a><ul>
+<li><a class="reference internal" href="#id2">Queues</a></li>
+<li><a class="reference internal" href="#like-a-list-except">Like a List, Exceptâ¦</a></li>
+<li><a class="reference internal" href="#typical-methods">Typical methods</a></li>
+<li><a class="reference internal" href="#implementation">Implementation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stacks">Stacks</a><ul>
+<li><a class="reference internal" href="#id3">Stacks</a></li>
+<li><a class="reference internal" href="#id4">Like a List, Exceptâ¦</a></li>
+<li><a class="reference internal" href="#id5">Typical methods</a></li>
+<li><a class="reference internal" href="#id6">Implementation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#deques">Deques</a><ul>
+<li><a class="reference internal" href="#id7">Deques</a></li>
+<li><a class="reference internal" href="#use-case">Use Case</a></li>
+<li><a class="reference internal" href="#id8">Typical Methods</a></li>
+<li><a class="reference internal" href="#id9">Implementation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#priority-queue">Priority Queue</a><ul>
+<li><a class="reference internal" href="#id10">Priority Queue</a></li>
+<li><a class="reference internal" href="#id11">Typical Methods</a></li>
+<li><a class="reference internal" href="#id12">Implementation</a></li>
+<li><a class="reference internal" href="#heaps">Heaps</a></li>
+<li><a class="reference internal" href="#resources">Resources</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="stacks-and-queues">
+<h1>Stacks and Queues</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Describe a queue data structure</li>
+<li>Describe a stack data structure</li>
+<li>Compare and contrast stacks / queues</li>
+<li>Implement stacks and queues in JavaScript</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="lists-adt-revisited">
+<h2>Lists ADT Revisited</h2>
+<div class="section" id="lists-adt">
+<h3>Lists ADT</h3>
+<p>Remember: an <em>abstract data type</em> defines requirements.</p>
+<div class="docutils container">
+<p>ADT for list:</p>
+<ul class="simple">
+<li>Keep multiple items</li>
+<li>Can insert or delete items at any position</li>
+<li>Can contain duplicates</li>
+<li>Preserves order of items</li>
+</ul>
+</div>
+</div>
+<div class="section" id="where-s-the-bug">
+<h3>Whereâs the Bug?</h3>
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">movieTicketSales.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">// list, in order, of people who want tickets</span>
+<span class="nx">ticketBuyers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Elie&quot;</span><span class="p">,</span> <span class="s2">&quot;Alissa&quot;</span><span class="p">,</span> <span class="s2">&quot;Matt&quot;</span><span class="p">,</span> <span class="s2">&quot;Michael&quot;</span><span class="p">];</span>
+
+<span class="c1">// ... lots of code</span>
+
+<span class="c1">// sell tickets, in order</span>
+<span class="k">while</span> <span class="p">(</span><span class="nx">ticketBuyers</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">buyer</span> <span class="o">=</span> <span class="nx">ticketBuyers</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
+  <span class="nx">purchase</span><span class="p">(</span><span class="nx">buyer</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Is it right to sell tickets out of order?</li>
+<li>Of course: itâs hard to see this bug 500 lines later</li>
+</ul>
+</div>
+</div>
+<div class="section" id="what-s-the-performance-problem">
+<h3>Whatâs the Performance Problem?</h3>
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">printJob.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">// list of print jobs</span>
+<span class="nx">jobs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;resume.doc&quot;</span><span class="p">,</span> <span class="s2">&quot;budget.xls&quot;</span><span class="p">,</span> <span class="s2">&quot;plan.pdf&quot;</span><span class="p">,</span> <span class="s2">&quot;css.css&quot;</span><span class="p">];</span>
+
+<span class="c1">// process list of print jobs in order</span>
+<span class="k">while</span> <span class="p">(</span><span class="nx">jobs</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">job</span> <span class="o">=</span> <span class="nx">jobs</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
+  <span class="nx">printJob</span><span class="p">(</span><span class="nx">job</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Itâs <cite>O(n)</cite> to remove from start of array<ul>
+<li>Given that weâre removing from end, a LL would be better</li>
+</ul>
+</li>
+<li>Of course: itâs hard to know <em>how</em> a general list will be used</li>
+</ul>
+</div>
+</div>
+<div class="section" id="constraints-are-useful">
+<h3>Constraints Are Useful</h3>
+<p>In both cases, we only need <em>some</em> of the capability of the List ADT</p>
+<ul class="simple">
+<li>add new item (ticket buyer or print job) to end</li>
+<li>remove first item (buyer or job) from start</li>
+</ul>
+<div class="docutils container">
+<p>Knowing this, we could pick better data structure!</p>
+<p>If done well, we could prevent mis-use (like buying out of order)</p>
+</div>
+<p>Letâs meet two new <em>ADTs</em> for collections</p>
+</div>
+</div>
+<div class="section" id="queues">
+<h2>Queues</h2>
+<div class="section" id="id2">
+<p>Add at end, remove from beginning</p>
+</div>
+<div class="section" id="like-a-list-except">
+<h3>Like a List, Exceptâ¦</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Items are <em>only</em> added to a queue by <strong>enqueueing</strong> them at the <em>back</em></li>
+<li>Items are <em>only</em> removed from a queue by <strong>dequeueing</strong> them at the <em>front</em></li>
+<li>Thus, newer items are near the back of the queue, older items are near the front</li>
+<li><strong>FIFO</strong> for âFirst-in, first-outâ</li>
+</ul>
+</div>
+</div>
+<div class="section" id="typical-methods">
+<h3>Typical methods</h3>
+<dl class="docutils">
+<dt><cite>enqueue(item)</cite></dt>
+<dd>Add to end</dd>
+<dt><cite>dequeue()</cite></dt>
+<dd>Remove &amp; return first item</dd>
+<dt><cite>peek()</cite></dt>
+<dd>Return first item, but donât remove</dd>
+<dt><cite>isEmpty()</cite></dt>
+<dd>Are there items in the queue?</dd>
+</dl>
+<div class="docutils container">
+<p>Sometimes there are other common methods, like <cite>.length()</cite></p>
+<p>Sometimes <cite>enqueue</cite> and <cite>dequeue</cite> are called <cite>push</cite> and <cite>pop</cite></p>
+</div>
+</div>
+<div class="section" id="implementation">
+<h3>Implementation</h3>
+<p>Whatâs a good implementation for queues?</p>
+<ul class="simple">
+<li>Arrays?</li>
+<li>Linked Lists?</li>
+<li>Doubly Linked List?</li>
+<li>Objects?</li>
+</ul>
+<div class="docutils container">
+<ul class="simple">
+<li><em>Array</em>: <span class="red">no</span>, dequeing would be <cite>O(n)</cite></li>
+<li><em>Linked List</em>: <span class="green">yes</span>, both enqueue &amp; dequeue are <cite>O(1)</cite> <em>(head is top)</em></li>
+<li><em>Doubly Linked List</em>: <span class="green">yes</span>, both enqueue &amp; dequeue are <cite>O(1)</cite></li>
+<li><em>Object</em>: <span class="red">no</span>, dequeuing is <cite>O(n)</cite> <em>(have to scan whole obj to find low key)</em></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="stacks">
+<h2>Stacks</h2>
+<div class="section" id="id3">
+<div class="docutils container">
+<ul class="simple">
+<li>âI want to order pizza for our party!â<ul>
+<li>In order to do that, I call the pizza place<ul>
+<li>They ask me how many I want<ul>
+<li>I put them on hold to ask my boss the budget<ul>
+<li>She gives amount in CAD, but pizza place takes USD<ul>
+<li>I look up USDâCAD conversion rates in my web browser</li>
+</ul>
+</li>
+<li>Now I can convert budget to CAD</li>
+</ul>
+</li>
+<li>Now I can tell pizza place my budget</li>
+</ul>
+</li>
+<li>â¦</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="docutils container">
+<p>Like function calls â you return to âprevious stateâ when you pop top task</p>
+</div>
+</div>
+<div class="section" id="id4">
+<h3>Like a List, Exceptâ¦</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Items are <em>only</em> added to a stack by <strong>pushing</strong> them onto the <em>top</em></li>
+<li>Items are <em>only</em> removed from a stack by <strong>popping</strong> them off the <em>top</em></li>
+<li>Thus, newer items are near the top of the stack, older items are near the bottom</li>
+<li><strong>LIFO</strong> for <em>Last-in, first-out</em></li>
+<li>Examples: the function call stack, most laundry hampers</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id5">
+<h3>Typical methods</h3>
+<dl class="docutils">
+<dt><cite>push(item)</cite></dt>
+<dd>Add to âtopâ of stack</dd>
+<dt><cite>pop()</cite></dt>
+<dd>Remove &amp; return top item</dd>
+<dt><cite>peek()</cite></dt>
+<dd>Return (but donât remove) top item</dd>
+<dt><cite>isEmpty()</cite></dt>
+<dd>Are there items in the stack?</dd>
+</dl>
+</div>
+<div class="section" id="id6">
+<h3>Implementation</h3>
+<p>Whatâs a good implementation for stacks?</p>
+<ul class="simple">
+<li>Arrays?</li>
+<li>Linked Lists?</li>
+<li>Doubly Linked List?</li>
+<li>Objects?</li>
+</ul>
+<div class="docutils container">
+<ul class="simple">
+<li><em>Array</em>: <span class="green">yes</span>, both push &amp; pop are <cite>O(1)</cite></li>
+<li><em>Linked List</em>: <span class="green">yes</span>, both push &amp; pop are <cite>O(1)</cite></li>
+<li><em>Doubly Linked List</em>: <span class="green">yes</span>, both push &amp; pop are <cite>O(1)</cite></li>
+<li><em>Object</em>: <span class="red">no</span>, popping is <cite>O(n)</cite> <em>(have to scan whole obj to find high key)</em></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="deques">
+<h2>Deques</h2>
+<div class="section" id="id7">
+<p>An <em>ADT</em> for a âdouble-ended queueâ â push, pop, shift &amp; unshift</p>
+<div class="docutils container">
+<p>Less common than stack or queue</p>
+</div>
+</div>
+<div class="section" id="use-case">
+<h3>Use Case</h3>
+<p>A ticket buying application:</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Get in queue to buy ticket: added to end</li>
+<li>Buy ticket: removed from front</li>
+<li>Have question/concern about purchase:<ul>
+<li>Would be unfair to have to go to end of line for question</li>
+<li>Should be next helped: pushed to front</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="docutils container">
+<p>Some task-allocation systems work this way.</p>
+</div>
+</div>
+<div class="section" id="id8">
+<h3>Typical Methods</h3>
+<p>Method names vary across implementations, but one set:</p>
+<div class="compare docutils container">
+<div class="docutils container">
+<dl class="docutils">
+<dt><cite>appendleft()</cite></dt>
+<dd>Add to beginning</dd>
+<dt><cite>appendright()</cite></dt>
+<dd>Add to end</dd>
+<dt><cite>popleft()</cite></dt>
+<dd>Remove &amp; return from beginning</dd>
+<dt><cite>popright()</cite></dt>
+<dd>Remove &amp; return from end</dd>
+</dl>
+</div>
+<div class="docutils container">
+<dl class="docutils">
+<dt><cite>peekleft()</cite></dt>
+<dd>Return (donât remove) beginning</dd>
+<dt><cite>peekright()</cite></dt>
+<dd>Return (donât remove) end</dd>
+<dt><cite>isEmpty()</cite></dt>
+<dd>Are there items in the deque?</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="section" id="id9">
+<h3>Implementation</h3>
+<p>Whatâs a good implementation for queues?</p>
+<ul class="simple">
+<li>Arrays?</li>
+<li>Linked Lists?</li>
+<li>Doubly Linked List?</li>
+<li>Objects?</li>
+</ul>
+<div class="docutils container">
+<ul class="simple">
+<li><em>Array</em>: <span class="red">no</span>, appendleft &amp; popleft would be <cite>O(n)</cite></li>
+<li><em>Linked List</em>: <span class="red">no</span>, popright would be <cite>O(n)</cite></li>
+<li><em>Doubly Linked List</em>: <span class="green">yes</span> â everything is <cite>O(1)</cite></li>
+<li><em>Object</em>: <span class="red">no</span>, popleft &amp; popright would be <cite>O(n)</cite></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="priority-queue">
+<h2>Priority Queue</h2>
+<div class="section" id="id10">
+<p>An <em>ADT</em> for a collection:</p>
+<ul class="simple">
+<li>Add item (with priority)</li>
+<li>Remove highest-priority item</li>
+</ul>
+</div>
+<div class="section" id="id11">
+<h3>Typical Methods</h3>
+<dl class="docutils">
+<dt><cite>add(pri, item)</cite></dt>
+<dd>Add item to queue</dd>
+<dt><cite>poll()</cite></dt>
+<dd>Remove &amp; return top-priority item</dd>
+<dt><cite>peek()</cite></dt>
+<dd>Return (donât remove) top-priority item</dd>
+<dt><cite>isEmpty()</cite></dt>
+<dd>Are there items in queue?</dd>
+</dl>
+</div>
+<div class="section" id="id12">
+<h3>Implementation</h3>
+<p>Whatâs a good implementation for priority queues?</p>
+<ul class="simple">
+<li>Arrays?</li>
+<li>Linked Lists?</li>
+<li>Doubly Linked List?</li>
+</ul>
+<p>Consider with two strategies:</p>
+<ul class="simple">
+<li>Keep unsorted, add to end, find top priority on poll</li>
+<li>Keep sorted, add at right place, top priority is first</li>
+</ul>
+<p>Keep unsorted, add to end, find top priority on poll:</p>
+<div class="docutils container">
+<ul class="simple">
+<li><em>Array</em>: <span class="red">no</span>, peek &amp; poll would be <cite>O(n)</cite></li>
+<li><em>Linked List</em>: <span class="red">no</span>, peek &amp; poll would be <cite>O(n)</cite></li>
+<li><em>Doubly Linked List</em>: <span class="red">no</span>, peek &amp; poll would be <cite>O(n)</cite></li>
+</ul>
+</div>
+<div class="docutils container">
+<p>Keep sorted, add at right place, top priority is first:</p>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li><em>Array</em>: <span class="red">no</span>, add &amp; poll would be <cite>O(n)</cite></li>
+<li><em>Linked List</em>: <span class="red">no</span>, add would be <cite>O(n)</cite></li>
+<li><em>Doubly Linked List</em>: <span class="red">no</span>, add would be <cite>O(n)</cite></li>
+</ul>
+</div>
+</div>
+<div class="section" id="heaps">
+<h3>Heaps</h3>
+<p>Data structure optimized for priority queues: <em>heap</em></p>
+<div class="graphviz">
+<img src="_images/graphviz-a51093189562af6403047cdc10533794e2a1876a.svg" />
+</div>
+</div>
+<div class="section" id="resources">
+<h3>Resources</h3>
+<p><a class="reference external" href="https://medium.com/basecs/stacks-and-overflows-dbcf7854dc67">Stacks and Overflows</a></p>
+<p><a class="reference external" href="https://medium.com/basecs/to-queue-or-not-to-queue-2653bcde5b04">To Queue or Not To Queue</a></p>
+<p><a class="reference external" href="https://medium.com/basecs/learning-to-love-heaps-cef2b273a238">Learning to Love Heaps</a></p>
+<p><a class="reference external" href="http://curric.rithmschool.com/r9/slides/dsa-pqueues/">Rithm School Lecture on Heaps</a></p>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

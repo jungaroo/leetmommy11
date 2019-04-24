@@ -1,0 +1,395 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Flask Wrap-Up</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Flask Wrap-Up</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Flask Wrap-Up</a><ul>
+<li><a class="reference internal" href="#flask-features">Flask Features</a><ul>
+<li><a class="reference internal" href="#id1">Flask Features</a></li>
+<li><a class="reference internal" href="#what-we-covered">What We Covered</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#what-we-didn-t-cover">What We Didnât Cover</a><ul>
+<li><a class="reference internal" href="#url-for">url_for</a></li>
+<li><a class="reference internal" href="#blueprints">Blueprints</a></li>
+<li><a class="reference internal" href="#signals">Signals</a></li>
+<li><a class="reference internal" href="#lots-of-jinja-stuff">Lots of Jinja Stuff</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#popular-add-ons">Popular Add-Ons</a><ul>
+<li><a class="reference internal" href="#wtforms-sqla">WTForms &amp; SQLA</a></li>
+<li><a class="reference internal" href="#wtforms-alchemy">WTForms-Alchemy</a></li>
+<li><a class="reference internal" href="#flask-login">Flask-Login</a></li>
+<li><a class="reference internal" href="#flask-mail">Flask-Mail</a></li>
+<li><a class="reference internal" href="#flask-admin">Flask-Admin</a></li>
+<li><a class="reference internal" href="#flask-restless">Flask-Restless</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#will-you-use-flask">Will You Use Flask?</a><ul>
+<li><a class="reference internal" href="#id2">Will You Use Flask?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#flask-versus">Flask Versus â¦</a><ul>
+<li><a class="reference internal" href="#flask-v-node-express">Flask v Node-Express</a></li>
+<li><a class="reference internal" href="#flask-v-django">Flask v Django</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="flask-wrap-up">
+<h1>Flask Wrap-Up</h1>
+<div class="section" id="flask-features">
+<h2>Flask Features</h2>
+<div class="section" id="id1">
+<p>A scalable, powerful, general-purpose web application framework.</p>
+</div>
+<div class="section" id="what-we-covered">
+<h3>What We Covered</h3>
+<ul class="simple">
+<li>Routes</li>
+<li>Jinja templates</li>
+<li>Flask-SQLAlchemy</li>
+<li>Flask Testing</li>
+<li>Cookies &amp; Sessions</li>
+<li>JSON and flask</li>
+<li>Flask-WTForms</li>
+</ul>
+<div class="docutils container">
+<p>We left a lot out â intentionally</p>
+</div>
+</div>
+</div>
+<div class="section" id="what-we-didn-t-cover">
+<h2>What We Didnât Cover</h2>
+<div class="section" id="url-for">
+<h3>url_for</h3>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">you did this onceâ¦</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@app.route</span><span class="p">(</span><span class="s2">&quot;/users/&lt;int:id&gt;&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">user_profile</span><span class="p">(</span><span class="nb">id</span><span class="p">):</span> <span class="o">...</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">you did this a dozen placesâ¦</span></div>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/users/{{ user.id }}&quot;</span><span class="p">&gt;</span>See user<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">and this in lots of places</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">some_other_view</span><span class="p">():</span>
+    <span class="o">...</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;/users/{user.id}&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>What if you wanted to change that URL?</p>
+<ul class="simple">
+<li>Perhaps to <cite>/profiles/[user-id]</cite>?</li>
+<li>Perhaps to <cite>/warbler/users/[user-ud]</cite>?</li>
+</ul>
+</div>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">you still do this onceâ¦</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@app.route</span><span class="p">(</span><span class="s2">&quot;/users/&lt;int:id&gt;&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">user_profile</span><span class="p">(</span><span class="nb">id</span><span class="p">):</span> <span class="o">...</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">but now you donât need to hardcode URL</span></div>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;{{ url_for(&#39;user_profile&#39;, id=user.id) }}&quot;</span><span class="p">&gt;</span>go<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">and this in lots of places</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">url_for</span>
+
+<span class="k">def</span> <span class="nf">some_other_view</span><span class="p">():</span>
+    <span class="o">...</span>
+    <span class="n">redirect_to</span> <span class="o">=</span> <span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;user_profile&#39;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">redirect_to</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="blueprints">
+<h3>Blueprints</h3>
+<p>Build âapplicationsâ in Flask:</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Each app can have own models, forms, tests, views</li>
+<li>Can re-use an app in many sites<ul>
+<li>Many sites could use âbloglyâ app</li>
+</ul>
+</li>
+<li>Useful for larger/more complex sites</li>
+</ul>
+</div>
+</div>
+<div class="section" id="signals">
+<h3>Signals</h3>
+<p>âWhen [this thing] happens, do [this other] thing.â</p>
+<p>(eg send an email when a user registers, no matter how they register)</p>
+</div>
+<div class="section" id="lots-of-jinja-stuff">
+<h3>Lots of Jinja Stuff</h3>
+<p>Lots of additional features in Jinja:</p>
+<ul class="simple">
+<li>sharing parts of templates/repeated code</li>
+<li>formatting of numbers, dates, lists in the template</li>
+<li>caching parts of templates (âthis part only changes every 5 minsâ)</li>
+<li>and more!</li>
+</ul>
+</div>
+</div>
+<div class="section" id="popular-add-ons">
+<h2>Popular Add-Ons</h2>
+<div class="section" id="wtforms-sqla">
+<h3>WTForms &amp; SQLA</h3>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">you did this a lot</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">edit_pet</span><span class="p">(</span><span class="n">pet_id</span><span class="p">):</span>
+    <span class="n">pet</span> <span class="o">=</span> <span class="n">Pet</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pet_id</span><span class="p">)</span>
+    <span class="n">form</span> <span class="o">=</span> <span class="n">EditPetForm</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">pet</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">validate_on_submit</span><span class="p">():</span>
+<span class="hll">        <span class="n">pet</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+</span><span class="hll">        <span class="n">pet</span><span class="o">.</span><span class="n">species</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;species&#39;</span><span class="p">]</span>
+</span><span class="hll">        <span class="n">pet</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span>
+</span><span class="hll">        <span class="n">pet</span><span class="o">.</span><span class="n">age</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">]</span>
+</span><span class="hll">        <span class="n">pet</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">]</span>
+</span><span class="hll">        <span class="n">pet</span><span class="o">.</span><span class="n">num_legs</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;num_legs&#39;</span><span class="p">]</span>
+</span>        <span class="o">...</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">you can do this</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">edit_pet</span><span class="p">(</span><span class="n">pet_id</span><span class="p">):</span>
+    <span class="n">pet</span> <span class="o">=</span> <span class="n">Pet</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pet_id</span><span class="p">)</span>
+    <span class="n">form</span> <span class="o">=</span> <span class="n">EditPetForm</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">pet</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">validate_on_submit</span><span class="p">():</span>
+<span class="hll">        <span class="n">form</span><span class="o">.</span><span class="n">populate_obj</span><span class="p">(</span><span class="n">pet</span><span class="p">)</span>
+</span></pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="wtforms-alchemy">
+<h3>WTForms-Alchemy</h3>
+<p>Can generate WTForms from SQLAlchemy model:</p>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">forms.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask_wtf</span> <span class="kn">import</span> <span class="n">FlaskForm</span>
+<span class="kn">from</span> <span class="nn">wtforms_alchemy</span> <span class="kn">import</span> <span class="n">model_form_factory</span>
+<span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="n">db</span><span class="p">,</span> <span class="n">Pet</span><span class="p">,</span> <span class="n">Owner</span>
+
+<span class="n">BaseModelForm</span> <span class="o">=</span> <span class="n">model_form_factory</span><span class="p">(</span><span class="n">FlaskForm</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">ModelForm</span><span class="p">(</span><span class="n">BaseModelForm</span><span class="p">):</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_session</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span>
+
+<span class="hll"><span class="k">class</span> <span class="nc">PetForm</span><span class="p">(</span><span class="n">ModelForm</span><span class="p">):</span>
+</span><span class="hll">    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+</span><span class="hll">        <span class="n">model</span> <span class="o">=</span> <span class="n">Pet</span>
+</span><span class="hll">
+</span><span class="hll"><span class="k">class</span> <span class="nc">OwnerForm</span><span class="p">(</span><span class="n">ModelForm</span><span class="p">):</span>
+</span><span class="hll">    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+</span><span class="hll">        <span class="n">model</span> <span class="o">=</span> <span class="n">Owner</span>
+</span></pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="flask-login">
+<h3>Flask-Login</h3>
+<p>Product that provides common parts of user/passwords/login/logout</p>
+<p>Similar to what you built, but out-of-box.</p>
+</div>
+<div class="section" id="flask-mail">
+<h3>Flask-Mail</h3>
+<p>Can send email from Flask!</p>
+</div>
+<div class="section" id="flask-admin">
+<h3>Flask-Admin</h3>
+<p>Can get decent CRUD admin views from SQLAlchemy models:</p>
+<a class="reference internal image-reference" href="_images/flask-admin.png"><img alt="_images/flask-admin.png" src="_images/flask-admin.png" style="width: 25em;" /></a>
+</div>
+<div class="section" id="flask-restless">
+<h3>Flask-Restless</h3>
+<p>Get CRUD API endpoints from SQLAlchemy models:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask.restless</span> <span class="kn">import</span> <span class="n">APIManager</span>
+
+<span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Unicode</span><span class="p">)</span>
+    <span class="n">birth_date</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Date</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Computer</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Unicode</span><span class="p">)</span>
+    <span class="n">vendor</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Unicode</span><span class="p">)</span>
+    <span class="n">purchase_time</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">)</span>
+    <span class="n">owner_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;user.id&#39;</span><span class="p">))</span>
+    <span class="n">owner</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s1">&#39;Person&#39;</span><span class="p">)</span>
+
+<span class="c1"># Create the Flask-Restless API manager.</span>
+<span class="hll"><span class="n">manager</span> <span class="o">=</span> <span class="n">APIManager</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">flask_sqlalchemy_db</span><span class="o">=</span><span class="n">db</span><span class="p">)</span>
+</span>
+<span class="c1"># API endpoints, available at /api/&lt;tablename&gt;</span>
+<span class="hll"><span class="n">manager</span><span class="o">.</span><span class="n">create_api</span><span class="p">(</span><span class="n">User</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">,</span> <span class="s1">&#39;DELETE&#39;</span><span class="p">])</span>
+</span><span class="hll"><span class="n">manager</span><span class="o">.</span><span class="n">create_api</span><span class="p">(</span><span class="n">Computer</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+</span></pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="will-you-use-flask">
+<h2>Will You Use Flask?</h2>
+<div class="section" id="id2">
+<p>Maybe.</p>
+<div class="docutils container">
+<p>Itâs popular and used by real companies, large and small.</p>
+</div>
+<div class="docutils container">
+<p>Itâs also a great choice for personal projects, code challenges, etc.</p>
+</div>
+</div>
+</div>
+<div class="section" id="flask-versus">
+<h2>Flask Versus â¦</h2>
+<div class="section" id="flask-v-node-express">
+<h3>Flask v Node-Express</h3>
+<p>Pretty similar, actually.</p>
+<p>Both work at same âlevel of conceptsâ, and share lots of ideas.</p>
+<p>You can even use Jinja to make templates with Express!</p>
+</div>
+<div class="section" id="flask-v-django">
+<h3>Flask v Django</h3>
+<p>Django is a popular, larger, more featureful Python Framework.</p>
+<p>Itâs a <em>higher level</em> and <em>more opinionated</em></p>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">Flask <cite>model.py</cite></span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Pet</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="o">...</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="o">...</span>
+    <span class="n">color</span> <span class="o">=</span> <span class="o">...</span>
+    <span class="n">owner_id</span> <span class="o">=</span> <span class="o">...</span>
+
+    <span class="n">owner</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;Owner&quot;</span><span class="p">,</span> <span class="n">backref</span><span class="o">=</span><span class="s2">&quot;pets&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">Django <cite>model.py</cite></span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Pet</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="o">...</span>
+    <span class="n">color</span> <span class="o">=</span> <span class="o">...</span>
+    <span class="n">owner</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;Owner&quot;</span><span class="p">)</span>
+
+    <span class="c1"># assumes &quot;id&quot; of auto-incrementing int</span>
+    <span class="c1"># defines relationship &amp; make &quot;owner_id&quot; column</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">Flask <cite>app.py</cite></span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@app.route</span><span class="p">(</span><span class="s2">&quot;/pets/&lt;int:id&gt;/edit&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">edit_pet</span><span class="p">(</span><span class="nb">id</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Show pet edit form / handle edit.&quot;&quot;&quot;</span>
+
+    <span class="n">pet</span> <span class="o">=</span> <span class="n">Pet</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+    <span class="n">form</span> <span class="o">=</span> <span class="n">PetEditForm</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>    <span class="c1"># need to make form!</span>
+
+    <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">validation_on_submit</span><span class="p">():</span>
+        <span class="n">pet</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+        <span class="n">pet</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="n">redirect</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;/pets/{id}&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;pet_edit.html&quot;</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="n">form</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-text">Django <cite>views.py</cite></span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">PetEditView</span><span class="p">(</span><span class="n">generic</span><span class="o">.</span><span class="n">UpdateView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Show pet edit form / handle edit.&quot;&quot;&quot;</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Pet</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>So, is Django âbetterâ?</p>
+<div class="docutils container">
+<p>Nope.</p>
+<p>If you like Djangoâs patterns &amp; they fit your use cases, <span class="raw-reveal"><br></span>
+you can build an app faster by following those patterns.</p>
+</div>
+<div class="docutils container">
+<p>But:</p>
+<ul class="simple">
+<li>they take a longer amount of time to learn</li>
+<li>if things break, it can be harder to understand</li>
+<li>if you want to change how things work, it can be harder</li>
+</ul>
+</div>
+<p>Flask is like a really nice bicycle:</p>
+<p>Itâs great for easy trips, can scale up to long journeys, <span class="raw-reveal"><br></span>
+isnât too opinionated about where you use it, <span class="raw-reveal"><br></span>
+and itâs relatively easy to understand and fix.</p>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

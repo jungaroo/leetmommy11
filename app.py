@@ -34,7 +34,7 @@ def render_code_snip_search():
 @app.route('/codeSnipSearch')
 def list_snipit_links():
 
-    search_word = request.args.get('search-word', None).lower()
+    search_word = request.args.get('search-word', None)
 
     checks = [request.args.get('r11', False), request.args.get('r10', False), request.args.get('r9', False), request.args.get('r8', False)]
 
@@ -57,7 +57,7 @@ def list_snipit_links():
 def list_lecture_links():
     """Retrun all lecture links with word"""
 
-    search_word = request.args.get('search-word', None).lower()
+    search_word = request.args.get('search-word', None)
 
     checks = [request.args.get('r11', False), request.args.get('r10', False), request.args.get('r9', False), request.args.get('r8', False)]
 

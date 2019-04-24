@@ -1,0 +1,570 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Introduction to Databases</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Introduction to Databases</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Introduction to Databases</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#what-is-a-database">What is a database?</a><ul>
+<li><a class="reference internal" href="#id2">What is a database?</a></li>
+<li><a class="reference internal" href="#a-typical-web-stack">A Typical Web Stack</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#relational-databases">Relational Databases</a><ul>
+<li><a class="reference internal" href="#id3">Relational Databases</a></li>
+<li><a class="reference internal" href="#visualizing-relational-databases">Visualizing Relational Databases</a></li>
+<li><a class="reference internal" href="#example-1-a-books-table">Example 1: A Books Table</a></li>
+<li><a class="reference internal" href="#example-2-a-movies-table">Example 2: A Movies Table</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#postgresql">PostgreSQL</a><ul>
+<li><a class="reference internal" href="#id4">PostgreSQL</a></li>
+<li><a class="reference internal" href="#installing-homebrew">Installing Homebrew</a></li>
+<li><a class="reference internal" href="#installing-postgresql">Installing PostgreSQL</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#managing-databases">Managing Databases</a><ul>
+<li><a class="reference internal" href="#create-databases">Create Databases</a></li>
+<li><a class="reference internal" href="#where-is-that-database">Where Is That Database?</a></li>
+<li><a class="reference internal" href="#backing-up-a-database">Backing Up a Database</a></li>
+<li><a class="reference internal" href="#restoring-a-database-dump">Restoring a Database Dump</a></li>
+<li><a class="reference internal" href="#deleting-databases">Deleting Databases</a></li>
+<li><a class="reference internal" href="#postgresql-shell">PostgreSQL Shell</a></li>
+<li><a class="reference internal" href="#common-commands">Common Commands</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sql">SQL</a><ul>
+<li><a class="reference internal" href="#id5">SQL</a></li>
+<li><a class="reference internal" href="#types-of-sql-statements">Types of SQL statements</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ddl">DDL</a><ul>
+<li><a class="reference internal" href="#ddl-creating-and-dropping-tables">DDL: Creating and dropping tables</a></li>
+<li><a class="reference internal" href="#ddl-creating-tables">DDL: Creating tables</a></li>
+<li><a class="reference internal" href="#column-data-types">Column Data Types</a></li>
+<li><a class="reference internal" href="#null">NULL</a></li>
+<li><a class="reference internal" href="#primary-keys">Primary Keys</a></li>
+<li><a class="reference internal" href="#constraints">Constraints</a></li>
+<li><a class="reference internal" href="#ddl-dropping-tables">DDL: Dropping tables</a></li>
+<li><a class="reference internal" href="#ddl-column-manipulation">DDL: Column Manipulation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="introduction-to-databases">
+<h1>Introduction to Databases</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Define what a database is &amp; give examples</li>
+<li>Describe and visualize a relational database</li>
+<li>Introduce PostgreSQL</li>
+<li>Create, list, and drop databases in PostgreSQL</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="what-is-a-database">
+<h2>What is a database?</h2>
+<div class="section" id="id2">
+<div class="docutils container">
+<ul class="simple">
+<li>A database is just an organized collection of data.</li>
+<li>A database server is<ul>
+<li>a program that lets us interact with the database</li>
+<li>a computer running that program</li>
+</ul>
+</li>
+<li>Often, we use a database to persist information over time.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="a-typical-web-stack">
+<h3>A Typical Web Stack</h3>
+<div class="compare compare21 docutils container">
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="docutils container">
+<p>Client</p>
+<a class="reference internal image-reference" href="_images/client.svg"><img alt="_images/client.svg" src="_images/client.svg" width="50%" /></a>
+</div>
+<ul class="simple">
+<li>HTML/DOM</li>
+<li>CSS</li>
+<li>JS</li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="docutils container">
+<p>Server</p>
+<a class="reference internal image-reference" href="_images/server.svg"><img alt="_images/server.svg" src="_images/server.svg" width="40%" /></a>
+</div>
+<ul class="simple">
+<li>Python</li>
+<li>Ruby</li>
+<li>JS via Node</li>
+<li>Java</li>
+<li>Go</li>
+<li>â¦ and more!</li>
+</ul>
+</div>
+</div>
+<div class="docutils container">
+<div class="docutils container">
+<p>Database</p>
+<a class="reference internal image-reference" href="_images/database.svg"><img alt="_images/database.svg" src="_images/database.svg" width="35%" /></a>
+</div>
+<ul class="simple">
+<li>PostgreSQL</li>
+<li>MySQL</li>
+<li>SQLite</li>
+<li>MongoDB</li>
+<li>â¦ and more!</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="relational-databases">
+<h2>Relational Databases</h2>
+<div class="section" id="id3">
+<p>âRelational Database Management Systemsâ (RDMS)</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Model data as rows and columns of tabular data</li>
+<li>Key terms include:<ul>
+<li><strong>tables</strong> <em>(sometimes called ârelationsâ)</em></li>
+<li><strong>rows</strong></li>
+<li><strong>columns</strong></li>
+<li><strong>schema</strong></li>
+</ul>
+</li>
+<li>Nearly all use SQL to modify/query data</li>
+</ul>
+</div>
+<div class="admonition note">
+<p>How Do I Pronounce âSQLâ?</p>
+<p class="last">Both âsequelâ and âess-queue-ellâ are common pronunciations for this.</p>
+</div>
+</div>
+<div class="section" id="visualizing-relational-databases">
+<h3>Visualizing Relational Databases</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>For now, think of a relational database as a collection of spreadsheets.</li>
+<li>Each spreadsheet is a table, with rows and columns of data.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="example-1-a-books-table">
+<h3>Example 1: A Books Table</h3>
+<div class="docutils container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="4%" />
+<col width="65%" />
+<col width="17%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">id</th>
+<th class="head">title</th>
+<th class="head">author</th>
+<th class="head">page_count</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>The Design of Everyday Things</td>
+<td>Don Norman</td>
+<td>368</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>Flatland</td>
+<td>Edwin Abbott</td>
+<td>96</td>
+</tr>
+<tr class="row-even"><td>3</td>
+<td>Power-Up: Unlocking Hidden Math in Video Games</td>
+<td>Matt Lane</td>
+<td>264</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="example-2-a-movies-table">
+<h3>Example 2: A Movies Table</h3>
+<div class="docutils container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="5%" />
+<col width="50%" />
+<col width="21%" />
+<col width="13%" />
+<col width="11%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">id</th>
+<th class="head">title</th>
+<th class="head">release_year</th>
+<th class="head">runtime</th>
+<th class="head">rating</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>Star Wars: The Force Awakens</td>
+<td>2015</td>
+<td>136</td>
+<td>PG-13</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>Avatar</td>
+<td>2009</td>
+<td>160</td>
+<td>PG-13</td>
+</tr>
+<tr class="row-even"><td>3</td>
+<td>Titanic</td>
+<td>1997</td>
+<td>194</td>
+<td>PG-13</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="postgresql">
+<h2>PostgreSQL</h2>
+<div class="section" id="id4">
+<p>PostgreSQL is the Open Source RDBMS weâll use here</p>
+<ul class="simple">
+<li>Powerful</li>
+<li>Popular</li>
+<li>Follows the SQL standard closely</li>
+</ul>
+<p>On its website, PosgreSQL describes itself as an ORDBMS, that is, an
+object relational database management system. However the distinction
+between these two isnât important for us. If youâre curious, you can
+read more about the difference here:
+<a class="reference external" href="https://en.wikipedia.org/wiki/Object-relational_database#Comparison_to_RDBMS">https://en.wikipedia.org/wiki/Object-relational_database#Comparison_to_RDBMS</a></p>
+</div>
+<div class="section" id="installing-homebrew">
+<h3>Installing Homebrew</h3>
+<p>Weâll get PostgreSQL from <a class="reference external" href="https://brew.sh/">Homebrew</a>, a package manager for OSX</p>
+<pre class="console literal-block">
+$ <span class="cmd">which brew</span>
+</pre>
+<p>If that doesnât find anything, you need to install Homebrew!</p>
+</div>
+<div class="section" id="installing-postgresql">
+<h3>Installing PostgreSQL</h3>
+<pre class="console literal-block">
+$ <span class="cmd">brew install postgres</span>
+$ <span class="cmd">brew services start postgresql</span>
+</pre>
+</div>
+</div>
+<div class="section" id="managing-databases">
+<h2>Managing Databases</h2>
+<div class="section" id="create-databases">
+<h3>Create Databases</h3>
+<p>Each project will have a separate database</p>
+<p>Creating a database:</p>
+<pre class="console literal-block">
+$ <span class="cmd">createdb my_database_name</span>
+</pre>
+<div class="docutils container">
+<p>Good database names are short and straightforward, and in <cite>lower_snake_case</cite>.</p>
+</div>
+</div>
+<div class="section" id="where-is-that-database">
+<h3>Where Is That Database?</h3>
+<p>The database <strong>is not</strong> a file in your current directory</p>
+<div class="docutils container">
+<p>Itâs a series of bunch of files/folder elsewhere on your computer</p>
+<p>These arenât human-readable <em>(theyâre optimized for speed!)</em></p>
+</div>
+<div class="docutils container">
+<p>So: saving your project in Git wonât save your database!</p>
+</div>
+</div>
+<div class="section" id="backing-up-a-database">
+<h3>Backing Up a Database</h3>
+<p>You can make a backup of your database by âdumping itâ to a file:</p>
+<pre class="console literal-block">
+$ <span class="cmd">pg_dump -C -c -O my_database_name &gt; my_database.sql</span>
+</pre>
+<div class="docutils container">
+<p>This make a file in the current directory, <cite>my_database.sql</cite></p>
+<p>It contains all of the commands to re-create the current database</p>
+</div>
+</div>
+<div class="section" id="restoring-a-database-dump">
+<h3>Restoring a Database Dump</h3>
+<p>You can feed that file into the program <cite>psql</cite>:</p>
+<pre class="console literal-block">
+$ <span class="cmd">psql &lt; my_database.sql</span>
+</pre>
+<div class="docutils container">
+<p>That recreates that database from that file.</p>
+</div>
+</div>
+<div class="section" id="deleting-databases">
+<h3>Deleting Databases</h3>
+<pre class="console literal-block">
+$ <span class="cmd">dropdb my_database_name</span>
+</pre>
+<div class="docutils container">
+<p>This deletes the entire database, including all data â be careful!</p>
+</div>
+</div>
+<div class="section" id="postgresql-shell">
+<h3>PostgreSQL Shell</h3>
+<p>PostgreSQL includes <cite>psql</cite>, terminal program for issuing database commands</p>
+<pre class="console literal-block">
+$ <span class="cmd">psql my_database_name</span>
+psql (10.5)
+Type &quot;help&quot; for help.
+
+my_database_name=#
+</pre>
+</div>
+<div class="section" id="common-commands">
+<h3>Common Commands</h3>
+<div class="docutils container">
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">\l</span></code> â List all databases</li>
+<li><code class="docutils literal notranslate"><span class="pre">\c</span> <span class="pre">DB_NAME</span></code> â connect to <em>DB_NAME</em></li>
+<li><code class="docutils literal notranslate"><span class="pre">\dt</span></code> â- List all tables (in current db)</li>
+<li><code class="docutils literal notranslate"><span class="pre">\d</span> <span class="pre">TABLE_NAME</span></code> â Get details about <em>TABLE_NAME</em> (in current db)</li>
+<li><code class="docutils literal notranslate"><span class="pre">\q</span></code> â Quit <cite>psql</cite> (can also type <cite>&lt;Control-D&gt;</cite>)</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="sql">
+<h2>SQL</h2>
+<div class="section" id="id5">
+<div class="docutils container">
+<ul class="simple">
+<li>Standardized language to query and manipulate data in a relational database</li>
+<li>First appeared in 1976, making it a long-term survivor</li>
+<li>Thereâs a lot you can do with SQL â weâll only scratch the surface</li>
+</ul>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>SQL itself is case-insensitive<ul>
+<li><code class="docutils literal notranslate"><span class="pre">SELECT</span> <span class="pre">price</span> <span class="pre">FROM</span> <span class="pre">books</span></code> same as <code class="docutils literal notranslate"><span class="pre">select</span> <span class="pre">price</span> <span class="pre">from</span> <span class="pre">books</span></code></li>
+<li>Strings in SQL are case-sensitive: <code class="docutils literal notranslate"><span class="pre">'Bob'</span></code> not same as <code class="docutils literal notranslate"><span class="pre">'bob'</span></code></li>
+</ul>
+</li>
+<li>Use single-quotes, not double, around strings</li>
+<li>Commands end with a semicolon</li>
+</ul>
+</div>
+</div>
+<div class="section" id="types-of-sql-statements">
+<h3>Types of SQL statements</h3>
+<div class="docutils container">
+<dl class="docutils">
+<dt>DDL: Data Definition Language</dt>
+<dd><p class="first">Commands to create, modify, or delete tables, columns &amp;  databases.</p>
+<p class="last">Examples: <cite>CREATE</cite>, <cite>ALTER</cite>, <cite>DROP</cite></p>
+</dd>
+<dt>DML: Data Manipulation Language</dt>
+<dd><p class="first">Commands to create, read, modify, or delete rows.</p>
+<p class="last">Examples: <cite>SELECT</cite>, <cite>INSERT</cite>, <cite>UPDATE</cite>, <cite>DELETE</cite></p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="section" id="ddl">
+<h2>DDL</h2>
+<div class="section" id="ddl-creating-and-dropping-tables">
+<h3>DDL: Creating and dropping tables</h3>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">CREATE</span> <span class="k">DATABASE</span> <span class="n">yet_another_db</span><span class="p">;</span>
+
+<span class="k">DROP</span> <span class="k">DATABASE</span> <span class="n">yet_another_db</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>Same as shell commands <cite>createdb</cite> and <cite>dropdb</cite></p>
+</div>
+</div>
+<div class="section" id="ddl-creating-tables">
+<h3>DDL: Creating tables</h3>
+<div class="docutils container">
+<pre class="console literal-block">
+jane=# <span class="cmd">CREATE DATABASE library;</span>
+CREATE DATABASE
+
+jane=# <span class="cmd">\c library</span>
+You are now connected to database &quot;library&quot; as user &quot;jane&quot;.
+library=#
+</pre>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">books</span> <span class="p">(</span>
+  <span class="n">id</span> <span class="nb">SERIAL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+  <span class="n">title</span> <span class="nb">TEXT</span><span class="p">,</span>
+  <span class="n">author</span> <span class="nb">TEXT</span><span class="p">,</span>
+  <span class="n">price</span> <span class="nb">FLOAT</span><span class="p">,</span>
+  <span class="n">page_count</span> <span class="nb">INTEGER</span><span class="p">,</span>
+  <span class="n">publisher</span> <span class="nb">TEXT</span><span class="p">,</span>
+  <span class="n">publication_date</span> <span class="nb">DATE</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="column-data-types">
+<h3>Column Data Types</h3>
+<dl class="docutils">
+<dt>Integer</dt>
+<dd>Integer numbers</dd>
+<dt>Float</dt>
+<dd>Floating-point numbers</dd>
+<dt>Text</dt>
+<dd>Text Strings</dd>
+<dt>Varchar</dt>
+<dd>Text Strings, but limited to a certain size</dd>
+</dl>
+<dl class="docutils">
+<dt>Boolean</dt>
+<dd>True or False</dd>
+<dt>Date</dt>
+<dd>Date (without time)</dd>
+<dt>Timestamp</dt>
+<dd>Date and time</dd>
+<dt>Serial</dt>
+<dd>Auto-incrementing numbers</dd>
+</dl>
+<div class="admonition note">
+<p>Other Types</p>
+<p class="last">There are lots of other types, including specialized, less-common types
+for fixed-precision math (<cite>NUMERIC</cite> or <cite>DECIMAL</cite>),  handling geospatial
+information, and more!</p>
+</div>
+</div>
+<div class="section" id="null">
+<h3>NULL</h3>
+<p><cite>NULL</cite> is a special value in SQL for âunknownâ</p>
+<p>Itâs <strong>not</strong> the same thing as 0 or an empty string!</p>
+<div class="docutils container">
+<p>NULL values are ok when you really might have missing/unknown data</p>
+<p>But generally, theyâre a pain, so best to make most fields unable to hold them</p>
+</div>
+</div>
+<div class="section" id="primary-keys">
+<h3>Primary Keys</h3>
+<p>Every table should have a âprimary keyâ, a unique way to identify rows</p>
+<div class="docutils container">
+<p>Primary keys <em>must be</em>:</p>
+<ul class="simple">
+<li>Unique</li>
+<li>Not Null</li>
+</ul>
+</div>
+<div class="docutils container">
+<p>Primary keys <em>should be</em>:</p>
+<ul class="simple">
+<li>Unchanging (itâs a pain when primary keys change)</li>
+</ul>
+</div>
+</div>
+<div class="section" id="constraints">
+<h3>Constraints</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Primary Key</li>
+<li>Unique</li>
+<li>Not Null</li>
+<li>Check</li>
+<li>Foreign Key (weâll get to this later!)</li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">users</span> <span class="p">(</span>
+    <span class="n">id</span> <span class="nb">SERIAL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+    <span class="n">phone_number</span> <span class="nb">TEXT</span> <span class="k">UNIQUE</span><span class="p">,</span>
+    <span class="n">password</span> <span class="nb">TEXT</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+    <span class="n">account_balance</span> <span class="nb">FLOAT</span> <span class="k">CHECK</span> <span class="p">(</span><span class="n">account_balance</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="ddl-dropping-tables">
+<h3>DDL: Dropping tables</h3>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">DROP</span> <span class="k">TABLE</span> <span class="n">users</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ddl-column-manipulation">
+<h3>DDL: Column Manipulation</h3>
+<p>Adding / Removing / Renaming columns</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="n">books</span> <span class="k">ADD</span> <span class="k">COLUMN</span> <span class="n">in_paperback</span> <span class="nb">BOOLEAN</span><span class="p">;</span>
+
+<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="n">books</span> <span class="k">DROP</span> <span class="k">COLUMN</span> <span class="n">in_paperback</span><span class="p">;</span>
+
+<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="n">books</span> <span class="k">RENAME</span> <span class="k">COLUMN</span> <span class="n">page_count</span> <span class="k">TO</span> <span class="n">num_pages</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>You can modify constraints too, but the syntax depends on the constraint.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

@@ -1,0 +1,388 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Flask with External Web APIs</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Flask with External Web APIs</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Flask with External Web APIs</a><ul>
+<li><a class="reference internal" href="#api-requests">API Requests</a><ul>
+<li><a class="reference internal" href="#id1">API Requests</a></li>
+<li><a class="reference internal" href="#why-use-client-side-requests">Why Use Client-Side Requests?</a></li>
+<li><a class="reference internal" href="#why-use-server-side-requests">Why Use Server-Side Requests?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#itunes-api">iTunes API</a><ul>
+<li><a class="reference internal" href="#id2">iTunes API</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#python-requests">Python Requests</a><ul>
+<li><a class="reference internal" href="#id3">Python Requests</a></li>
+<li><a class="reference internal" href="#get-requests">GET Requests</a></li>
+<li><a class="reference internal" href="#post-requests">POST Requests</a></li>
+<li><a class="reference internal" href="#responses">Responses</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api-keys-secrets">API Keys/Secrets</a><ul>
+<li><a class="reference internal" href="#id4">API Keys/Secrets</a></li>
+<li><a class="reference internal" href="#why-do-they-need-these">Why Do They Need These?</a></li>
+<li><a class="reference internal" href="#where-do-you-get-these">Where Do You Get These?</a></li>
+<li><a class="reference internal" href="#how-do-you-use-these">How Do You Use These</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#keeping-your-secrets">Keeping Your Secrets</a><ul>
+<li><a class="reference internal" href="#id5">Keeping Your Secrets</a></li>
+<li><a class="reference internal" href="#example">Example</a></li>
+<li><a class="reference internal" href="#using-in-flask">Using In Flask</a></li>
+<li><a class="reference internal" href="#id6">Using In Flask</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api-libraries">API Libraries</a><ul>
+<li><a class="reference internal" href="#id7">API Libraries</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="flask-with-external-web-apis">
+<h1>Flask with External Web APIs</h1>
+<div class="section" id="api-requests">
+<h2>API Requests</h2>
+<div class="section" id="id1">
+<p>Two ways to talk with APIs:</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Client-side requests (via AJAX)</li>
+<li>Server-side requests</li>
+</ul>
+</div>
+</div>
+<div class="section" id="why-use-client-side-requests">
+<h3>Why Use Client-Side Requests?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>You can do easily using AJAX libraries</li>
+<li>Donât have to involve Flask in the API</li>
+<li>Can be faster: browser could talk directly to, say, Google Maps</li>
+</ul>
+</div>
+</div>
+<div class="section" id="why-use-server-side-requests">
+<h3>Why Use Server-Side Requests?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Same-Origin Policy may prevent browser requests</li>
+<li>Easier for server to store/process the data<ul>
+<li>e.g. have Flask requests restaurants and store in SQL database</li>
+</ul>
+</li>
+<li>Need password to access API<ul>
+<li>If API uses password &amp; we make request in browser JS, <span class="raw-reveal"><br></span>
+people could learn password from reading JS</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="itunes-api">
+<h2>iTunes API</h2>
+<div class="section" id="id2">
+<pre class="console literal-block">
+$ <span class="cmd">curl -i `:cmd:
+  `'https://itunes.apple.com/search?term=billy+bragg&amp;limit=3'</span>
+{
+ &quot;resultCount&quot;:5,
+ &quot;results&quot;: [
+  {&quot;wrapperType&quot;:&quot;track&quot;, &quot;kind&quot;:&quot;song&quot;, &quot;artistId&quot;:&quot;163251&quot;,
+ ...
+</pre>
+<p><a class="reference external" href="https://affiliate.itunes.apple.com/resources/documentation/itunes-store-web-service-search-api/#searchexamples">iTunes API Help</a></p>
+<p>Returns JSON responses</p>
+</div>
+</div>
+<div class="section" id="python-requests">
+<h2>Python Requests</h2>
+<div class="section" id="id3">
+<pre class="console literal-block">
+(venv) $ <span class="cmd">pip install requests</span>
+</pre>
+</div>
+<div class="section" id="get-requests">
+<h3>GET Requests</h3>
+<p><code class="docutils literal notranslate"><span class="pre">requests.get(url,</span> <span class="pre">params)</span></code></p>
+<div class="docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s2">&quot;https://itunes.apple.com/search&quot;</span><span class="p">,</span>
+            <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;term&quot;</span><span class="p">:</span> <span class="s2">&quot;billy bragg&quot;</span><span class="p">,</span> <span class="s2">&quot;limit&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
+       <span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="post-requests">
+<h3>POST Requests</h3>
+<p><code class="docutils literal notranslate"><span class="pre">requests.post(url,</span> <span class="pre">data,</span> <span class="pre">json)</span></code></p>
+<div class="docutils container">
+<dl class="docutils">
+<dt>data</dt>
+<dd>Dictionary of request body parameters</dd>
+<dt>json</dt>
+<dd><p class="first">JSON to send as request body</p>
+<p class="last">(some APIs prefer to get JSON bodies rather <span class="raw-reveal"><br></span>
+than traditional simple key-value pair bodies)</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="responses">
+<h3>Responses</h3>
+<p>Both <cite>.get()</cite> and <cite>.post()</cite> return a Response instance</p>
+<div class="docutils container">
+<dl class="docutils">
+<dt>.text</dt>
+<dd>Text of response</dd>
+<dt>.status_code</dt>
+<dd>Numeric status code (200, 404, etc)</dd>
+<dt>.json()</dt>
+<dd>Convert JSON response text to Python dictionary</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="section" id="api-keys-secrets">
+<h2>API Keys/Secrets</h2>
+<div class="section" id="id4">
+<p>Many APIs require âkeysâ and âsecretsâ</p>
+<p>(similar to a âusernameâ and âpasswordâ)</p>
+</div>
+<div class="section" id="why-do-they-need-these">
+<h3>Why Do They Need These?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>The API provides access to confidential data or sensitive methods</li>
+</ul>
+<div class="docutils container">
+<ul class="simple">
+<li>Only you should be able to send tweets from your Twitter account</li>
+</ul>
+</div>
+<ul class="simple">
+<li>The API costs money to use</li>
+</ul>
+<div class="docutils container">
+<ul class="simple">
+<li>They need to know who to charge</li>
+</ul>
+</div>
+<ul class="simple">
+<li>They want to limit abuse</li>
+</ul>
+<div class="docutils container">
+<ul class="simple">
+<li>Google Maps is free, but they want to keep you to from abusing it</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="where-do-you-get-these">
+<h3>Where Do You Get These?</h3>
+<p>Typically: you register on their site.</p>
+<p>The process is different for every site.</p>
+<div class="docutils container">
+<p>Example: <a class="reference external" href="https://console.developers.google.com/apis/credentials/">YouTube API Key</a></p>
+<a class="reference internal image-reference" href="_images/api_key.png"><img alt="_images/api_key.png" src="_images/api_key.png" style="width: 75%;" /></a>
+</div>
+</div>
+<div class="section" id="how-do-you-use-these">
+<h3>How Do You Use These</h3>
+<p>It varies by different APIs</p>
+<div class="docutils container">
+<p>Sometimes you might send as a parameter:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://some-api.com/search&quot;</span><span class="p">,</span>
+    <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="s2">&quot;dhf489tuhdfhdskfsdfsd34tg&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;isbn&quot;</span><span class="p">:</span> <span class="s2">&quot;4675436632&quot;</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>Or, they might need complex encoding â varies by API!</p>
+<p>Read the API docs!</p>
+</div>
+</div>
+</div>
+<div class="section" id="keeping-your-secrets">
+<h2>Keeping Your Secrets</h2>
+<div class="section" id="id5">
+<p>Whatâs the potential problem?</p>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">app.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
+
+<span class="n">API_SECRET_KEY</span> <span class="o">=</span> <span class="s2">&quot;jdfghfkgdg9345dkjfgdfg&quot;</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="o">...</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>Youâll want to store this file in Git â and probably GitHub</p>
+<p>You donât want the world to learn your API key!</p>
+</div>
+<p>Strategy: store the key info in a small, separate file</p>
+<div class="docutils container">
+<p>Import <em>that</em> file into your <cite>app.py</cite></p>
+</div>
+<div class="docutils container">
+<p>Donât check that file into Git!</p>
+</div>
+</div>
+<div class="section" id="example">
+<h3>Example</h3>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">secrets.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">API_SECRET_KEY</span> <span class="o">=</span> <span class="s2">&quot;jdfghfkgdg9345dkjfgdfg&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">app.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
+<span class="kn">from</span> <span class="nn">secrets</span> <span class="kn">import</span> <span class="n">API_SECRET_KEY</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="o">...</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">.gitignore</span></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>secrets.py
+</pre></div>
+</div>
+</div>
+</div>
+<p>Make sure it <em>never</em> gets into your Git!</p>
+<pre class="console literal-block">
+$ <span class="cmd">git status</span>
+<span class="tan"># Should NOT show up here at all</span>
+
+$ <span class="cmd">git add .</span>
+
+$ <span class="cmd">git status</span>
+<span class="tan"># Should NOT show up here at all</span>
+
+$ <span class="cmd">git commit ...</span>
+</pre>
+</div>
+<div class="section" id="using-in-flask">
+<h3>Using In Flask</h3>
+<p>Sometimes Flask gets data and templates:</p>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">app.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@app.route</span><span class="p">(</span><span class="s2">&quot;/book-info&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">show_book_info</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Return page about book.&quot;&quot;&quot;</span>
+
+    <span class="n">isbn</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s2">&quot;isbn&quot;</span><span class="p">]</span>
+
+    <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://some-book-api.com/search&quot;</span><span class="p">,</span>
+        <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;isbn&quot;</span><span class="p">:</span> <span class="n">isbn</span><span class="p">,</span> <span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">API_SECRET_KEY</span><span class="p">})</span>
+
+    <span class="n">book_data</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;book_info.html&quot;</span><span class="p">,</span> <span class="n">book</span><span class="o">=</span><span class="n">book_data</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id6">
+<p>Sometimes Flask gets data returns JSON to front end:</p>
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">app.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@app.route</span><span class="p">(</span><span class="s2">&quot;/book-data&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">show_book_info</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Return info about book.&quot;&quot;&quot;</span>
+
+    <span class="n">isbn</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s2">&quot;isbn&quot;</span><span class="p">]</span>
+
+    <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://some-book-api.com/search&quot;</span><span class="p">,</span>
+        <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;isbn&quot;</span><span class="p">:</span> <span class="n">isbn</span><span class="p">,</span> <span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">API_SECRET_KEY</span><span class="p">})</span>
+
+    <span class="n">book_data</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">book_data</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>This is helpful if you canât make request info directly from browser â <span class="raw-reveal"><br></span>
+because of Same-Origin-Policy or need to keep key/secret out of browser</p>
+</div>
+</div>
+</div>
+<div class="section" id="api-libraries">
+<h2>API Libraries</h2>
+<div class="section" id="id7">
+<div class="docutils container">
+<p>Some popular APIs have specialized libraries (sometimes known as SDKs) written for a specific programming language that can help out.</p>
+</div>
+<div class="docutils container">
+<p>For example, there is a Python library for calling the Twitter API:</p>
+</div>
+<div class="docutils container">
+<p><a class="reference external" href="https://github.com/bear/python-twitter">Python-Twitter</a></p>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> 
+</body>
+</html>

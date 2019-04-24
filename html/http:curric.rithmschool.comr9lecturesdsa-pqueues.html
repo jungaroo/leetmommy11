@@ -1,0 +1,577 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Priority Queues &amp; Heaps</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Priority Queues &amp; Heaps</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Priority Queues &amp; Heaps</a><ul>
+<li><a class="reference internal" href="#priority-queues">Priority Queues</a><ul>
+<li><a class="reference internal" href="#id1">Priority Queues</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#implementations">Implementations</a><ul>
+<li><a class="reference internal" href="#id2">Implementations</a></li>
+<li><a class="reference internal" href="#continual-sorting">Continual Sorting</a></li>
+<li><a class="reference internal" href="#swap-next-item">Swap Next Item</a></li>
+<li><a class="reference internal" href="#linked-list">Linked List</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#heap">Heap</a><ul>
+<li><a class="reference internal" href="#id3">Heap</a></li>
+<li><a class="reference internal" href="#max-heap">Max Heap</a></li>
+<li><a class="reference internal" href="#adding-item">Adding Item</a></li>
+<li><a class="reference internal" href="#removing-top-item">Removing Top Item</a></li>
+<li><a class="reference internal" href="#runtime">Runtime</a></li>
+<li><a class="reference internal" href="#implementation">Implementation</a></li>
+<li><a class="reference internal" href="#enqueue">Enqueue</a></li>
+<li><a class="reference internal" href="#dequeue">Dequeue</a></li>
+<li><a class="reference internal" href="#awesome-resource">Awesome Resource</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#heap-sort">Heap Sort</a><ul>
+<li><a class="reference internal" href="#id4">Heap Sort</a></li>
+<li><a class="reference internal" href="#heapify">Heapify</a></li>
+<li><a class="reference internal" href="#id5">Awesome Resource</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="priority-queues-heaps">
+<h1>Priority Queues &amp; Heaps</h1>
+<div class="section" id="priority-queues">
+<h2>Priority Queues</h2>
+<div class="section" id="id1">
+<p>An <strong>abstract data type</strong></p>
+<div class="docutils container">
+<ul class="simple">
+<li>Items are added with a priority</li>
+<li>Dequeueing returns the highest-priority item</li>
+</ul>
+</div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">pq</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PQueue</span><span class="p">()</span>
+
+<span class="nx">pq</span><span class="p">.</span><span class="nx">enqueue</span><span class="p">(</span><span class="s2">&quot;preheat oven&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="nx">pq</span><span class="p">.</span><span class="nx">enqueue</span><span class="p">(</span><span class="s2">&quot;buy ingredients&quot;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="nx">pq</span><span class="p">.</span><span class="nx">enqueue</span><span class="p">(</span><span class="s2">&quot;mix&quot;</span><span class="p">,</span>  <span class="mi">7</span><span class="p">)</span>
+<span class="nx">pq</span><span class="p">.</span><span class="nx">enqueue</span><span class="p">(</span><span class="s2">&quot;bake&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">pq</span><span class="p">.</span><span class="nx">dequeue</span><span class="p">()</span>
+<span class="c1">// {item: &quot;buy ingredients&quot;, pri: 100}</span>
+
+<span class="nx">pq</span><span class="p">.</span><span class="nx">dequeue</span><span class="p">()</span>
+<span class="c1">// {item: &quot;preheat oven&quot;, pri: 10}</span>
+</pre></div>
+</div>
+<p>Used by:</p>
+<div class="docutils container">
+<ul class="simple">
+<li>servicing jobs (eg, print queues)</li>
+<li>sending network packets</li>
+<li>sorting (just keep taking highest item)</li>
+<li>sub-part of other algorithms (eg, shortest path)</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="implementations">
+<h2>Implementations</h2>
+<div class="section" id="id2">
+<p>What are possible implementations?</p>
+</div>
+<div class="section" id="continual-sorting">
+<h3>Continual Sorting</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Keep an array of items: <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">4,</span> <span class="pre">7]</span></code></li>
+<li>Enqueue: add item at end: <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">4,</span> <span class="pre">7,</span> <span class="pre">2]</span></code></li>
+<li>Dequeue: sort, then pop last (highest) item<ul>
+<li><code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">2,</span> <span class="pre">4,</span> <span class="pre">7]</span></code> â <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">2,</span> <span class="pre">4]</span></code></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">PQueue</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">_list</span> <span class="o">=</span> <span class="p">[];</span>
+<span class="p">}</span>
+
+<span class="nx">PQueue</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">enqueue</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">,</span> <span class="nx">pri</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">_list</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span><span class="nx">val</span><span class="p">,</span> <span class="nx">pri</span><span class="p">});</span>
+<span class="p">}</span>
+
+<span class="nx">PQueue</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">dequeue</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">_list</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_list</span><span class="p">.</span><span class="nx">sort</span><span class="p">(</span>	  
+    <span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">a</span><span class="p">.</span><span class="nx">pri</span> <span class="o">-</span> <span class="nx">b</span><span class="p">.</span><span class="nx">pri</span>  <span class="c1">// higher pri wins</span>
+  <span class="p">);</span>
+
+  <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_list</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Runtime?</p>
+<div class="docutils container">
+<ul class="simple">
+<li><strong>Enqueue:</strong> O(1)</li>
+<li><strong>Dequeue:</strong> O(n log n)</li>
+</ul>
+</div>
+</div>
+<div class="section" id="swap-next-item">
+<h3>Swap Next Item</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Keep an array of items: <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">4,</span> <span class="pre">7]</span></code></li>
+<li>Enqueue: add item at end: <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">4,</span> <span class="pre">7,</span> <span class="pre">2]</span></code></li>
+<li>Dequeue: swap high item with end item, pop last item<ul>
+<li><code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">4,</span> <span class="pre">2,</span> <span class="pre">7]</span></code> â <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">4,</span> <span class="pre">2]</span></code></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">PQueue</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">_list</span> <span class="o">=</span> <span class="p">[];</span>
+<span class="p">}</span>
+
+<span class="nx">PQueue</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">enqueue</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">val</span><span class="p">,</span> <span class="nx">pri</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">_list</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> <span class="nx">pri</span><span class="p">,</span> <span class="nx">val</span> <span class="p">});</span>
+<span class="p">}</span>
+
+<span class="nx">PQueue</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">dequeue</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">lst</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_list</span><span class="p">;</span>
+  <span class="kd">let</span> <span class="nx">bestI</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>  <span class="c1">// first item starts as highest</span>
+
+  <span class="c1">// find index of best (highest pri) item</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">lst</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">lst</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">pri</span> <span class="o">&gt;</span> <span class="nx">lst</span><span class="p">[</span><span class="nx">bestI</span><span class="p">].</span><span class="nx">pri</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">bestI</span> <span class="o">=</span> <span class="nx">i</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="c1">// swap best item to end &amp; pop it off</span>
+  <span class="kd">let</span> <span class="nx">best</span> <span class="o">=</span> <span class="nx">lst</span><span class="p">[</span><span class="nx">lst</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span>
+  <span class="nx">lst</span><span class="p">[</span><span class="nx">lst</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">lst</span><span class="p">[</span><span class="nx">bestI</span><span class="p">];</span>
+  <span class="nx">lst</span><span class="p">[</span><span class="nx">bestI</span><span class="p">]</span> <span class="o">=</span> <span class="nx">best</span><span class="p">;</span>
+  <span class="k">return</span> <span class="nx">lst</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Runtime?</p>
+<div class="docutils container">
+<ul class="simple">
+<li><strong>Enqueue:</strong> O(1)</li>
+<li><strong>Dequeue:</strong> O(n)</li>
+</ul>
+</div>
+</div>
+<div class="section" id="linked-list">
+<h3>Linked List</h3>
+<div class="docutils container">
+<ul>
+<li><p class="first">Keep a linked list of items</p>
+<div class="graphviz">
+<img src="_images/graphviz-13dabd211285aee8f432c3f46f6e1c766b31445d.svg" />
+</div>
+</li>
+<li><p class="first">Enqueue: add item at ârightâ place</p>
+<div class="graphviz">
+<img src="_images/graphviz-c76a28ba3ffb374c1aecaada31444edaba6bc37a.svg" />
+</div>
+</li>
+<li><p class="first">Dequeue: return &amp; remove head</p>
+<div class="graphviz">
+<img src="_images/graphviz-b9ad0aaa0a7492d34206979644949c9f75184458.svg" />
+</div>
+</li>
+</ul>
+</div>
+<div class="compare compare23 docutils container">
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">PQueue</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">head</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nx">PQueue</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">dequeue</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">n</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">head</span><span class="p">;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">head</span> <span class="o">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">next</span><span class="p">;</span>
+  <span class="k">return</span> <span class="p">{</span><span class="nx">pri</span><span class="o">:</span> <span class="nx">n</span><span class="p">.</span><span class="nx">pri</span><span class="p">,</span> <span class="nx">val</span><span class="o">:</span> <span class="nx">n</span><span class="p">.</span><span class="nx">val</span><span class="p">};</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">PQueue</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">enqueue</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">pri</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">newNode</span> <span class="o">=</span> <span class="p">{</span><span class="nx">pri</span><span class="p">,</span> <span class="nx">val</span><span class="p">,</span> <span class="nx">next</span><span class="o">:</span> <span class="kc">null</span><span class="p">};</span>
+  <span class="kd">let</span> <span class="nx">n</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">head</span><span class="p">;</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="nx">n</span> <span class="o">===</span> <span class="kc">null</span> <span class="o">||</span> <span class="nx">pri</span> <span class="o">&lt;</span> <span class="nx">n</span><span class="p">.</span><span class="nx">pri</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// LL is empty or new item should be first</span>
+    <span class="nx">newNode</span><span class="p">.</span><span class="nx">next</span> <span class="o">=</span> <span class="nx">n</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">head</span> <span class="o">=</span> <span class="nx">newNode</span><span class="p">;</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="k">while</span> <span class="p">(</span><span class="nx">n</span><span class="p">.</span><span class="nx">next</span> <span class="o">!==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">pri</span> <span class="o">&lt;</span> <span class="nx">n</span><span class="p">.</span><span class="nx">next</span><span class="p">.</span><span class="nx">pri</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">// found spot in middle; splice in</span>
+      <span class="nx">newNode</span><span class="p">.</span><span class="nx">next</span> <span class="o">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">next</span><span class="p">;</span>
+      <span class="nx">n</span><span class="p">.</span><span class="nx">next</span> <span class="o">=</span> <span class="nx">newNode</span><span class="p">;</span>
+      <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nx">n</span> <span class="o">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">next</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="c1">// got here? item goes at end of LL</span>
+  <span class="nx">n</span><span class="p">.</span><span class="nx">next</span> <span class="o">=</span> <span class="nx">newNode</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Runtime?</p>
+<div class="docutils container">
+<ul class="simple">
+<li><strong>Enqueue:</strong> O(n)</li>
+<li><strong>Dequeue:</strong> O(1)</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="heap">
+<h2>Heap</h2>
+<div class="section" id="id3">
+<p>A new data structure!</p>
+</div>
+<div class="section" id="max-heap">
+<h3>Max Heap</h3>
+<p>Each parent must be greater than children</p>
+<div class="graphviz">
+<img src="_images/graphviz-793524be3072d23a5a582e9b1fe0799ca29b1bac.svg" />
+</div>
+<p>Weâll use a âcomplete max binary heapâ</p>
+<div class="compare compare23 docutils container">
+<div class="docutils container">
+<div class="graphviz">
+<img src="_images/graphviz-ece41c39110df6ba99c4fde1f1a0dec766feaf83.svg" />
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li><strong>complete</strong>: filled top â bottom, left â right</li>
+<li><strong>max</strong>: each parent is greater than children</li>
+<li><strong>binary</strong>: parent can have at most two children</li>
+<li><strong>heap</strong>: tree with rule between parent/children</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="adding-item">
+<h3>Adding Item</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<p><strong>Add at bottom right</strong></p>
+<div class="graphviz">
+<img src="_images/graphviz-e64795dea7a91dcb5b102f0ec234060be5e91993.svg" />
+</div>
+</div>
+<div class="docutils container">
+<p><strong>Swap upward until correct</strong></p>
+<div class="graphviz">
+<img src="_images/graphviz-a1cfd57d2f3555af6e9a6b57968fefbb19c5d6c9.svg" />
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="removing-top-item">
+<h3>Removing Top Item</h3>
+<p>Highest-priority item is top of tree!</p>
+<div class="graphviz">
+<img src="_images/graphviz-148d60b2f697c96fea18256ba83d712c45d0b2d9.svg" />
+</div>
+<div class="docutils container">
+<p>If we just remove it, our tree wonât have a head</p>
+</div>
+<div class="compare docutils container">
+<div class="docutils container">
+<p><strong>Put bottom right node at top</strong></p>
+<div class="graphviz">
+<img src="_images/graphviz-d0c339e3c841cebe14c75ef60848b2a99a0e0a65.svg" />
+</div>
+</div>
+<div class="docutils container">
+<p><strong>Swap downward until correct</strong></p>
+<div class="graphviz">
+<img src="_images/graphviz-c25d02026c28e0c02f997df3a399702d2fa91823.svg" />
+</div>
+<div class="docutils container">
+<p>(Swapped with 36, not 19, as 19 &lt; 36)</p>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="runtime">
+<h3>Runtime</h3>
+<p>Adding to bottom right is O(1)</p>
+<p>Swapping top &amp; bottom right is O(1)</p>
+<p>The swapping up &amp; down limits the runtime</p>
+<div class="docutils container">
+<ul class="simple">
+<li><strong>Enqueue:</strong> O(log n)  <em>(max # swap up = height)</em></li>
+<li><strong>Dequeue:</strong> O(log n)  <em>(max # swap down = height)</em></li>
+</ul>
+</div>
+</div>
+<div class="section" id="implementation">
+<h3>Implementation</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="graphviz">
+<img src="_images/graphviz-daa87aaf46475dd953c0e9561fc5d05e00efaa2a.svg" />
+</div>
+</div>
+<div class="docutils container">
+<ul>
+<li><p class="first">Can represent as an array</p>
+<pre class="literal-block">
+[<span class="green">36</span>, <span class="red">19, 25</span>, <span class="blue">17, 9, 3, 1</span>, <span class="orange">2, 7</span>]
+<span class="gray">[#0,  1,  2,  3, 4, 5, 6, 7, 8]</span>
+</pre>
+</li>
+<li><p class="first">Can easily find <cite>i</cite>âs children:</p>
+<ul class="simple">
+<li>Left: <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">*</span> <span class="pre">i</span> <span class="pre">+</span> <span class="pre">1</span></code></li>
+<li>Right: <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">*</span> <span class="pre">i</span> <span class="pre">+</span> <span class="pre">2</span></code></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="enqueue">
+<h3>Enqueue</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<p><strong>Add at bottom right</strong></p>
+<div class="graphviz">
+<img src="_images/graphviz-c77f58ac6494422eecdf8d6ed8bc203a2d7aab67.svg" />
+</div>
+</div>
+<div class="docutils container">
+<p><strong>Swap upward until correct</strong></p>
+<div class="graphviz">
+<img src="_images/graphviz-b084dd8401c2595d84bf4c4e1ab2a38d6695eeb1.svg" />
+</div>
+</div>
+</div>
+<div class="compare docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">PQueue</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">enqueue</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">val</span><span class="p">,</span> <span class="nx">pri</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">newNode</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">val</span><span class="p">,</span> <span class="nx">pri</span> <span class="p">};</span>
+
+  <span class="c1">// Add to bottom right; bubble up to correct</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">newNode</span><span class="p">);</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">_bubbleUp</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">PQueue</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">_bubbleUp</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">idx</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">item</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">[</span><span class="nx">idx</span><span class="p">];</span>
+
+  <span class="c1">// Bubble until fixed or reaches top</span>
+  <span class="k">while</span> <span class="p">(</span><span class="nx">idx</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">parentIdx</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">((</span><span class="nx">idx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">);</span>
+    <span class="kd">let</span> <span class="nx">parent</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">[</span><span class="nx">parentIdx</span><span class="p">];</span>
+
+    <span class="c1">// Parent priority higher? Fixed; quit</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">pri</span> <span class="o">&lt;=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">pri</span><span class="p">)</span>
+      <span class="k">break</span><span class="p">;</span>
+
+    <span class="c1">// Swap parent &lt;-&gt; curr item</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">[</span><span class="nx">parentIdx</span><span class="p">]</span> <span class="o">=</span> <span class="nx">item</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">[</span><span class="nx">idx</span><span class="p">]</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">;</span>
+
+    <span class="c1">// Continue, bubbling up item at new loc</span>
+    <span class="nx">idx</span> <span class="o">=</span> <span class="nx">parentIdx</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="dequeue">
+<h3>Dequeue</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<p><strong>Put bottom right node at top</strong></p>
+<div class="graphviz">
+<img src="_images/graphviz-19738457478a4b4a70d5f22e666c394c360cb5bb.svg" />
+</div>
+</div>
+<div class="docutils container">
+<p><strong>Swap downward until correct</strong></p>
+<div class="graphviz">
+<img src="_images/graphviz-aa09f621adb25f79cbd01681cfe41461922231f3.svg" />
+</div>
+<div class="docutils container">
+<p>(Swapped with 36, not 19, as 19 &lt; 36)</p>
+</div>
+</div>
+</div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">PQueue</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">dequeue</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">max</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+  <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Move last item to root, sink down</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">_sinkDown</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">max</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<div class="compare docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">PQueue</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">_sinkDown</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">idx</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">item</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">[</span><span class="nx">idx</span><span class="p">];</span>
+
+  <span class="k">while</span> <span class="p">(</span><span class="kc">true</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">leftIdx</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="nx">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="kd">let</span> <span class="nx">left</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">[</span><span class="nx">leftIdx</span><span class="p">];</span>
+    <span class="kd">let</span> <span class="nx">rightIdx</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="nx">idx</span> <span class="o">+</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="kd">let</span> <span class="nx">right</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">[</span><span class="nx">rightIdx</span><span class="p">];</span>
+
+    <span class="kd">let</span> <span class="nx">swap</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>  <span class="c1">// Idx of item to swap</span>
+
+    <span class="c1">// If L exists &amp; higher pri, swap w/L</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">left</span> <span class="o">&amp;&amp;</span> <span class="nx">left</span><span class="p">.</span><span class="nx">pri</span> <span class="o">&gt;</span> <span class="nx">item</span><span class="p">.</span><span class="nx">pri</span><span class="p">)</span>
+      <span class="nx">swap</span> <span class="o">=</span> <span class="nx">leftIdx</span><span class="p">;</span>
+
+    <span class="c1">// If R exists &amp; higher pri, swap w/R</span>
+    <span class="c1">// ... but only if R is higher of children</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">right</span> <span class="o">&amp;&amp;</span> <span class="nx">right</span><span class="p">.</span><span class="nx">pri</span> <span class="o">&gt;</span> <span class="nx">item</span><span class="p">.</span><span class="nx">pri</span> <span class="o">&amp;&amp;</span>
+      <span class="nx">right</span><span class="p">.</span><span class="nx">pri</span> <span class="o">&gt;</span> <span class="nx">left</span><span class="p">.</span><span class="nx">pri</span><span class="p">)</span>
+      <span class="nx">swap</span> <span class="o">=</span> <span class="nx">rightIdx</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span>    <span class="c1">// No need to swap further, we&#39;re done </span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">swap</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="k">break</span>
+
+    <span class="c1">// Else, swap items[idx] &lt;-&gt; items[swap]</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">[</span><span class="nx">idx</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">[</span><span class="nx">swap</span><span class="p">];</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">[</span><span class="nx">swap</span><span class="p">]</span> <span class="o">=</span> <span class="nx">item</span><span class="p">;</span>
+
+    <span class="c1">// Continue</span>
+    <span class="nx">idx</span> <span class="o">=</span> <span class="nx">swap</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="awesome-resource">
+<h3>Awesome Resource</h3>
+<p><a class="reference external" href="https://medium.com/basecs/learning-to-love-heaps-cef2b273a238">https://medium.com/basecs/learning-to-love-heaps-cef2b273a238</a></p>
+<div class="docutils container">
+<p>The whole BaseCS series is terrific</p>
+</div>
+</div>
+</div>
+<div class="section" id="heap-sort">
+<h2>Heap Sort</h2>
+<div class="section" id="id4">
+<p>One use for a heap is to sort data:</p>
+<ul class="simple">
+<li>Add items into a heap (<cite>n</cite> items Ã <cite>log n</cite> operations)</li>
+<li>Remove items, one at time, in order (<cite>n</cite> items Ã <cite>log n</cite> operations)</li>
+</ul>
+<div class="docutils container">
+<p><cite>O(n log n)</cite> + <cite>(n log n)</cite> = <cite>O(n log n)</cite></p>
+</div>
+</div>
+<div class="section" id="heapify">
+<h3>Heapify</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Can build heap by enqueing item a time<ul>
+<li><cite>O(n log n)</cite></li>
+</ul>
+</li>
+<li>Algorithm for building from existing list<ul>
+<li>âFloydâs Methodâ: <cite>heapify</cite></li>
+<li><cite>O(n)</cite></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">maxHeapify</span><span class="p">(</span><span class="nx">lst</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">mid</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">lst</span><span class="p">.</span><span class="nx">length</span> <span class="o">/</span> <span class="mi">2</span><span class="p">);</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">mid</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">innerHeapify</span><span class="p">(</span><span class="nx">lst</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">lst</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">innerHeapify</span><span class="p">(</span><span class="nx">lst</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">max</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">left</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="kr">const</span> <span class="nx">right</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="nx">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">;</span>
+  <span class="kd">let</span> <span class="nx">largest</span> <span class="o">=</span> <span class="nx">i</span><span class="p">;</span>  <span class="c1">// largest item seen</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="nx">left</span> <span class="o">&lt;</span> <span class="nx">max</span> <span class="o">&amp;&amp;</span> <span class="nx">lst</span><span class="p">[</span><span class="nx">left</span><span class="p">]</span> <span class="o">&gt;</span> <span class="nx">lst</span><span class="p">[</span><span class="nx">largest</span><span class="p">])</span> <span class="p">{</span>
+    <span class="nx">largest</span> <span class="o">=</span> <span class="nx">left</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="nx">right</span> <span class="o">&lt;</span> <span class="nx">max</span> <span class="o">&amp;&amp;</span> <span class="nx">lst</span><span class="p">[</span><span class="nx">right</span><span class="p">]</span> <span class="o">&gt;</span> <span class="nx">lst</span><span class="p">[</span><span class="nx">largest</span><span class="p">])</span> <span class="p">{</span>
+    <span class="nx">largest</span> <span class="o">=</span> <span class="nx">right</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="nx">largest</span> <span class="o">!==</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// swap items at i &lt;-&gt; largest</span>
+    <span class="p">[</span><span class="nx">lst</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">lst</span><span class="p">[</span><span class="nx">largest</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="nx">lst</span><span class="p">[</span><span class="nx">largest</span><span class="p">],</span> <span class="nx">lst</span><span class="p">[</span><span class="nx">i</span><span class="p">]];</span>
+    <span class="nx">innerHeapify</span><span class="p">(</span><span class="nx">lst</span><span class="p">,</span> <span class="nx">largest</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h3>Awesome Resource</h3>
+<p><a class="reference external" href="https://medium.com/basecs/heapify-all-the-things-with-heap-sort-55ee1c93af82">https://medium.com/basecs/heapify-all-the-things-with-heap-sort-55ee1c93af82</a></p>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

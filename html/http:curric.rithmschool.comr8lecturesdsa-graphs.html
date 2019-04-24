@@ -1,0 +1,495 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Graphs</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Graphs</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Graphs</a><ul>
+<li><a class="reference internal" href="#intro">Intro</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a></li>
+<li><a class="reference internal" href="#what-is-a-graph">What is a Graph?</a></li>
+<li><a class="reference internal" href="#terminology">Terminology</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#examples">Examples</a><ul>
+<li><a class="reference internal" href="#food-chain">Food Chain</a></li>
+<li><a class="reference internal" href="#facebook-friends-or-linkedin">Facebook Friends (or LinkedIn)</a></li>
+<li><a class="reference internal" href="#processes">Processes</a></li>
+<li><a class="reference internal" href="#markov-chains">Markov Chains</a></li>
+<li><a class="reference internal" href="#airline-route-map">Airline Route Map</a></li>
+<li><a class="reference internal" href="#carpooling">Carpooling</a></li>
+<li><a class="reference internal" href="#id1">Graphs</a></li>
+<li><a class="reference internal" href="#linked-lists-trees-and-graphs">Linked Lists, Trees, and Graphs</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#code">Code</a><ul>
+<li><a class="reference internal" href="#representing-a-graph">Representing a Graph</a></li>
+<li><a class="reference internal" href="#representing-a-graph-adjacency-lists">Representing a Graph - Adjacency Lists</a></li>
+<li><a class="reference internal" href="#representing-a-graph-adjacency-matrix">Representing a Graph - Adjacency Matrix</a></li>
+<li><a class="reference internal" href="#we-re-going-to-use-adjacency-lists">Weâre going to use Adjacency Lists!</a></li>
+<li><a class="reference internal" href="#friend-graph">Friend Graph</a></li>
+<li><a class="reference internal" href="#node-and-graph-class">Node and Graph Class</a></li>
+<li><a class="reference internal" href="#demo-friends-js">Demo: <cite>friends.js</cite></a></li>
+<li><a class="reference internal" href="#problem">Problem:</a></li>
+<li><a class="reference internal" href="#is-marge-connected-to-grampa">Is Marge connected to Grampa?</a></li>
+<li><a class="reference internal" href="#is-marge-connected-to-moe">Is Marge connected to Moe?</a></li>
+<li><a class="reference internal" href="#how-do-we-figure-this-out">How do we figure this out?</a></li>
+<li><a class="reference internal" href="#not-like-your-tree-traversal">Not like your tree traversal</a></li>
+<li><a class="reference internal" href="#solution">Solution</a></li>
+<li><a class="reference internal" href="#another-iterative-approach">Another Iterative Approach</a></li>
+<li><a class="reference internal" href="#recursive-solution">Recursive Solution</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#further-study">Further Study</a><ul>
+<li><a class="reference internal" href="#id2">Further Study</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="graphs">
+<h1>Graphs</h1>
+<div class="section" id="intro">
+<h2>Intro</h2>
+<div class="section" id="goals">
+<h3>Goals</h3>
+<ul class="simple">
+<li>Learn what a graph is</li>
+<li>Compare and contrast different types of graphs</li>
+<li>Code a graph implementation</li>
+<li>Check if two nodes are connected</li>
+</ul>
+</div>
+<div class="section" id="what-is-a-graph">
+<h3>What is a Graph?</h3>
+<div class="graphviz">
+<img src="_images/graphviz-e75c4a0f68bb2e4af0c4e8c35f84db3234339f3d.svg" />
+</div>
+<p>Graphs are like trees, except they can contain loops (âcyclesâ).</p>
+<div class="docutils container">
+<p>Also, the relationships can be directed or un-directed.</p>
+</div>
+</div>
+<div class="section" id="terminology">
+<h3>Terminology</h3>
+<dl class="docutils">
+<dt>Node (or Vertex)</dt>
+<dd>basic unit</dd>
+<dt>Edge (or Arc)</dt>
+<dd>connects two nodes</dd>
+<dt>Adjacent</dt>
+<dd>two nodes are âadjacentâ if they share an edge</dd>
+<dt><span class="red">Weight (optional)</span></dt>
+<dd>each edge can have a weight (ex: price, or distance)</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="examples">
+<h2>Examples</h2>
+<div class="section" id="food-chain">
+<h3>Food Chain</h3>
+<div class="graphviz">
+<img src="_images/graphviz-2b0a2dfa64d5998c08d9455c84dde89ce6511e20.svg" />
+</div>
+<div class="docutils container">
+<p>This graph is <strong>directed</strong>, showing âwhat eats whatâ</p>
+</div>
+<div class="docutils container">
+<p>Penguinsâ adjacency list: <code class="docutils literal notranslate"><span class="pre">[Squid,</span> <span class="pre">Krill]</span></code></p>
+</div>
+</div>
+<div class="section" id="facebook-friends-or-linkedin">
+<h3>Facebook Friends (or LinkedIn)</h3>
+<div class="graphviz">
+<img src="_images/graphviz-2918c82066d16fb448f72ca20acec0082299617d.svg" />
+</div>
+<div class="docutils container">
+<p>This graph is <strong>undirected</strong></p>
+</div>
+<div class="docutils container">
+<p>Homerâs adjacency list: <code class="docutils literal notranslate"><span class="pre">[Bart,</span> <span class="pre">Lisa,</span> <span class="pre">Maggie,</span> <span class="pre">Marge]</span></code></p>
+</div>
+<div class="docutils container">
+<p>Lisaâs adjacency list: <code class="docutils literal notranslate"><span class="pre">[Maggie,</span> <span class="pre">Bart,</span> <span class="pre">Homer]</span></code></p>
+</div>
+</div>
+<div class="section" id="processes">
+<h3>Processes</h3>
+<p>Making Cupcakes:</p>
+<div class="graphviz">
+<img src="_images/graphviz-5e13287538bd43841ad1a97e53e0ef47e47f2b50.svg" />
+</div>
+<div class="docutils container">
+<p>Donât want to do a step until the necessary prerequisites are done!</p>
+</div>
+<div class="docutils container">
+<p>Similar idea for manufacturing processes, supply chains, etc.</p>
+</div>
+</div>
+<div class="section" id="markov-chains">
+<h3>Markov Chains</h3>
+<div class="graphviz">
+<img src="_images/graphviz-92cbb1d48fa3ced58f46b58b3d395408b059c56c.svg" />
+</div>
+<div class="docutils container">
+<p>Other Markov chains: states of health and disease, finance</p>
+</div>
+</div>
+<div class="section" id="airline-route-map">
+<h3>Airline Route Map</h3>
+<p>Each node is an airport.  Each edge is a flight.</p>
+<p>The weight of each edge is the price.</p>
+<p>What is the cheapest way to go from New York to San Francisco?</p>
+<div class="graphviz">
+<img src="_images/graphviz-fafedbd0b0b139288d5d5033c34b159d87796a30.svg" />
+</div>
+</div>
+<div class="section" id="carpooling">
+<h3>Carpooling</h3>
+<p>Each node is a rider, and edges represent possible carpooling matches. <span class="raw-reveal"><br></span>
+Only two people can carpool together at a time. <span class="raw-reveal"><br></span>
+How can we match the maximum number of pairs of riders?</p>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="graphviz">
+<img src="_images/graphviz-392f7bfccef260f79a8919774889f71f115ade45.svg" />
+</div>
+</div>
+<div class="docutils container">
+<div class="graphviz">
+<img src="_images/graphviz-481faa7b748c4e2a581a0665c69991581f9e9aaa.svg" />
+</div>
+</div>
+</div>
+<p>There exists a solution
+where everyone gets a pair. Can you find it?</p>
+</div>
+<div class="section" id="id1">
+<h3>Graphs</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Graphs are often used to model relationships between things</li>
+<li>Trees are <strong>directed</strong>, <strong>acyclic</strong> graphs</li>
+<li>All trees are graphs, but not all graphs are trees</li>
+<li>Trees have hierarchy, graphs do not</li>
+</ul>
+</div>
+</div>
+<div class="section" id="linked-lists-trees-and-graphs">
+<h3>Linked Lists, Trees, and Graphs</h3>
+<p>Linked lists, trees, and graphs are all structures that have a relationship,
+much like squares, rectangles, and parallelograms do. A linked list is a special,
+more-restricted form of a tree, and a tree is a special, more-restricted
+form of a graph.</p>
+<dl class="docutils">
+<dt>Linked List</dt>
+<dd>Nodes have 0 or 1 child; acyclic and directed</dd>
+<dt>Tree</dt>
+<dd>Nodes have 0+ children; acyclic and directed; only one designated root node</dd>
+<dt>Graphs</dt>
+<dd>Nodes have 0+ connections; cyclic or acyclic; directed or undirected; disconnected or connected; optional weights</dd>
+</dl>
+<p>There are other possibilities, including:</p>
+<ul class="simple">
+<li>there are âcircular linked lists,â where the linked
+list can contain a cycle (A points to B points to C which points to B). These do not
+have tails, as thereâs no single end-point.</li>
+<li>there are âforests,â which are collections of directed, acyclic graphs but without
+a single root node. This essentially is a set of trees, hence a âforest.â</li>
+</ul>
+</div>
+</div>
+<div class="section" id="code">
+<h2>Code</h2>
+<div class="section" id="representing-a-graph">
+<h3>Representing a Graph</h3>
+<dl class="docutils">
+<dt>Adjacency List</dt>
+<dd>for node, a list of every node it is directly connected to</dd>
+<dt>Adjacency Matrix</dt>
+<dd>for node, a list of every node and a 1 if connected otherwise a 0</dd>
+</dl>
+</div>
+<div class="section" id="representing-a-graph-adjacency-lists">
+<h3>Representing a Graph - Adjacency Lists</h3>
+<a class="reference internal image-reference" href="_images/adj-list.png"><img alt="_images/adj-list.png" src="_images/adj-list.png" style="width: 70%;" /></a>
+</div>
+<div class="section" id="representing-a-graph-adjacency-matrix">
+<h3>Representing a Graph - Adjacency Matrix</h3>
+<a class="reference internal image-reference" href="_images/adj-matrix.png"><img alt="_images/adj-matrix.png" src="_images/adj-matrix.png" style="width: 70%;" /></a>
+</div>
+<div class="section" id="we-re-going-to-use-adjacency-lists">
+<h3>Weâre going to use Adjacency Lists!</h3>
+<p>Theyâre more common.</p>
+<p>Adjacency matrices can be preferred for graphs that are highly connected.</p>
+</div>
+<div class="section" id="friend-graph">
+<h3>Friend Graph</h3>
+<div class="graphviz">
+<img src="_images/graphviz-a8d6f7ef04893b0b56a92bc661713ffae8df7f48.svg" />
+</div>
+</div>
+<div class="section" id="node-and-graph-class">
+<h3>Node and Graph Class</h3>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">PersonNode</span> <span class="p">{</span>
+
+  <span class="nx">constructor</span> <span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">adjacent</span><span class="p">)</span> <span class="p">{</span>
+   <span class="c1">// Create a person node with friends adjacent</span>
+
+    <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">adjacent</span> <span class="o">=</span> <span class="nx">adjacent</span> <span class="o">||</span> <span class="k">new</span> <span class="nx">Set</span><span class="p">()</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">// Graph holding people and their friendships.</span>
+<span class="kr">class</span> <span class="nx">FriendGraph</span> <span class="p">{</span>
+
+  <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">nodes</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Set</span><span class="p">();</span>
+  <span class="p">}</span>
+
+  <span class="nx">addPerson</span><span class="p">(</span><span class="nx">person</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Add a person to our graph</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">nodes</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">person</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="nx">setFriends</span><span class="p">(</span><span class="nx">person1</span><span class="p">,</span> <span class="nx">person2</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Set two people as friends</span>
+    <span class="nx">person1</span><span class="p">.</span><span class="nx">adjacent</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">person2</span><span class="p">);</span>
+    <span class="nx">person2</span><span class="p">.</span><span class="nx">adjacent</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">person1</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="nx">addPeople</span><span class="p">(</span><span class="nx">people_list</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Add a list of people to our graph</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">person</span> <span class="k">of</span> <span class="nx">people_list</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">addPerson</span><span class="p">(</span><span class="nx">person</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="demo-friends-js">
+<h3>Demo: <cite>friends.js</cite></h3>
+<div class="compare compare23 docutils container">
+<div class="docutils container">
+<div class="graphviz">
+<img src="_images/graphviz-41560e18cd5686fc629d9d7d12a0944edda4dd1b.svg" />
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="friend-graph-data">
+<div class="code-block-caption"><span class="caption-text">graph-demo/friends.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">homer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PersonNode</span><span class="p">(</span><span class="s2">&quot;Homer&quot;</span><span class="p">)</span>
+<span class="kd">let</span> <span class="nx">marge</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PersonNode</span><span class="p">(</span><span class="s2">&quot;Marge&quot;</span><span class="p">)</span>
+<span class="kd">let</span> <span class="nx">maggie</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PersonNode</span><span class="p">(</span><span class="s2">&quot;Maggie&quot;</span><span class="p">)</span>
+<span class="kd">let</span> <span class="nx">lisa</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PersonNode</span><span class="p">(</span><span class="s2">&quot;Lisa&quot;</span><span class="p">)</span>
+<span class="kd">let</span> <span class="nx">grampa</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PersonNode</span><span class="p">(</span><span class="s2">&quot;Grampa&quot;</span><span class="p">)</span>
+
+<span class="kd">let</span> <span class="nx">friends</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FriendGraph</span><span class="p">()</span>
+<span class="nx">friends</span><span class="p">.</span><span class="nx">addPeople</span><span class="p">([</span><span class="nx">homer</span><span class="p">,</span> <span class="nx">marge</span><span class="p">,</span> <span class="nx">maggie</span><span class="p">,</span> <span class="nx">lisa</span><span class="p">,</span> <span class="nx">grampa</span><span class="p">])</span>
+
+<span class="nx">friends</span><span class="p">.</span><span class="nx">setFriends</span><span class="p">(</span><span class="nx">homer</span><span class="p">,</span> <span class="nx">marge</span><span class="p">)</span>
+<span class="nx">friends</span><span class="p">.</span><span class="nx">setFriends</span><span class="p">(</span><span class="nx">homer</span><span class="p">,</span> <span class="nx">maggie</span><span class="p">)</span>
+<span class="nx">friends</span><span class="p">.</span><span class="nx">setFriends</span><span class="p">(</span><span class="nx">homer</span><span class="p">,</span> <span class="nx">lisa</span><span class="p">)</span>
+<span class="nx">friends</span><span class="p">.</span><span class="nx">setFriends</span><span class="p">(</span><span class="nx">marge</span><span class="p">,</span> <span class="nx">maggie</span><span class="p">)</span>
+<span class="nx">friends</span><span class="p">.</span><span class="nx">setFriends</span><span class="p">(</span><span class="nx">lisa</span><span class="p">,</span> <span class="nx">grampa</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="problem">
+<h3>Problem:</h3>
+<p>Write a function that checks if two people are connected.</p>
+</div>
+<div class="section" id="is-marge-connected-to-grampa">
+<h3>Is Marge connected to Grampa?</h3>
+<div class="docutils container">
+<div class="graphviz">
+<img src="_images/graphviz-d22d87fc9e354ee1fefd304282143df0e51cd511.svg" />
+</div>
+</div>
+</div>
+<div class="section" id="is-marge-connected-to-moe">
+<h3>Is Marge connected to Moe?</h3>
+<div class="docutils container">
+<div class="graphviz">
+<img src="_images/graphviz-d3a67cb205ac124b8b53aba9a44721ccbfc8df46.svg" />
+</div>
+</div>
+</div>
+<div class="section" id="how-do-we-figure-this-out">
+<h3>How do we figure this out?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>We need to traverse through the graph</li>
+<li>We want to make sure we only visit each vertex once, letâs be efficient!</li>
+<li>But how do we search through it?<ul>
+<li><em>BFS</em> - go to all closest neighbors and work your way outwards</li>
+<li><em>DFS</em> - go towards a path and work your way back</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="not-like-your-tree-traversal">
+<h3>Not like your tree traversal</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>This one is a bit different!</li>
+<li>Since graphs can have cycles, we need to be sure not visit same node again!</li>
+<li>How can we mark a node as visited?</li>
+</ul>
+</div>
+</div>
+<div class="section" id="solution">
+<h3>Solution</h3>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">areConnected_BFS</span><span class="p">(</span><span class="nx">person1</span><span class="p">,</span> <span class="nx">person2</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// Are two people friends? Iterative BFS</span>
+
+  <span class="kd">let</span> <span class="nx">toVisitQueue</span> <span class="o">=</span> <span class="p">[</span><span class="nx">person1</span><span class="p">];</span>  <span class="c1">// poor man&#39;s queue</span>
+  <span class="kd">let</span> <span class="nx">seen</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Set</span><span class="p">();</span>          <span class="c1">// nodes seen so far</span>
+
+  <span class="k">while</span> <span class="p">(</span><span class="nx">toVisitQueue</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">currVertex</span> <span class="o">=</span> <span class="nx">toVisitQueue</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
+    <span class="nx">seen</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">currVertex</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">currVertex</span> <span class="o">===</span> <span class="nx">person2</span><span class="p">)</span> <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">adj</span> <span class="k">of</span> <span class="nx">currVertex</span><span class="p">.</span><span class="nx">adjacent</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">seen</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">adj</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nx">toVisitQueue</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">adj</span><span class="p">);</span>
+        <span class="nx">seen</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">adj</span><span class="p">);</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>This is a <em>breadth-first</em> search (would be <em>depth-first</em> if we used a stack)</p>
+</div>
+</div>
+<div class="section" id="another-iterative-approach">
+<h3>Another Iterative Approach</h3>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">areConnected_DFS</span><span class="p">(</span><span class="nx">person1</span><span class="p">,</span> <span class="nx">person2</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// Are two people friends? Iterative DFS</span>
+
+  <span class="kd">let</span> <span class="nx">toVisitStack</span> <span class="o">=</span> <span class="p">[</span><span class="nx">person1</span><span class="p">];</span>    <span class="c1">// poor man&#39;s stack</span>
+  <span class="kd">let</span> <span class="nx">seen</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Set</span><span class="p">();</span>       <span class="c1">// nodes seen so far</span>
+
+  <span class="k">while</span> <span class="p">(</span><span class="nx">toVisitStack</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">currVertex</span> <span class="o">=</span> <span class="nx">toVisitStack</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
+    <span class="nx">seen</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">currVertex</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">currVertex</span> <span class="o">===</span> <span class="nx">person2</span><span class="p">)</span> <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">adj</span> <span class="k">of</span> <span class="nx">currVertex</span><span class="p">.</span><span class="nx">adjacent</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">seen</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">adj</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nx">toVisitStack</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">adj</span><span class="p">);</span>
+        <span class="nx">seen</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">adj</span><span class="p">);</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="recursive-solution">
+<h3>Recursive Solution</h3>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">areConnected_recursive</span><span class="p">(</span><span class="nx">person1</span><span class="p">,</span> <span class="nx">person2</span><span class="p">,</span> <span class="nx">seen</span><span class="o">=</span><span class="k">new</span> <span class="nx">Set</span><span class="p">())</span> <span class="p">{</span>
+  <span class="c1">// Are two people friends? Recursive depth-first search.</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="nx">person1</span> <span class="o">===</span> <span class="nx">person2</span><span class="p">)</span> <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+
+  <span class="nx">seen</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">person1</span><span class="p">);</span>
+
+  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">adj</span> <span class="k">of</span> <span class="nx">person1</span><span class="p">.</span><span class="nx">adjacent</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">seen</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">adj</span><span class="p">))</span> <span class="k">continue</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">areConnected_recursive</span><span class="p">(</span><span class="nx">adj</span><span class="p">,</span> <span class="nx">person2</span><span class="p">,</span> <span class="nx">seen</span><span class="p">))</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>This is a recursive <em>depth-first</em> search</p>
+</div>
+</div>
+</div>
+<div class="section" id="further-study">
+<h2>Further Study</h2>
+<div class="section" id="id2">
+<p><a class="reference external" href="https://medium.com/basecs/a-gentle-introduction-to-graph-theory-77969829ead8">Gentle Introduction to Graph Theory</a></p>
+<p><a class="reference external" href="https://medium.com/basecs/going-broad-in-a-graph-bfs-traversal-959bd1a09255">BFS Graph Traversal</a></p>
+<p><a class="reference external" href="https://medium.com/basecs/from-theory-to-practice-representing-graphs-cfd782c5be38">From Theory to Practice: Representing Graphs</a></p>
+<div class="docutils container">
+<ul class="simple">
+<li>Visualizations: <a class="reference external" href="https://visualgo.net/en">Visualgo.net</a></li>
+<li><a class="reference external" href="http://interactivepython.org/courselib/static/pythonds/index.html">Problem Solving with Algorithms and Data Structures</a> (awesome FREE book!)</li>
+<li>Graph Database: Neo4j</li>
+<li>Joe Celko, <em>SQL for Smarties</em> (graphs and trees in SQL)</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

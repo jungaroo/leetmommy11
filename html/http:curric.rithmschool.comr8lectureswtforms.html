@@ -1,0 +1,488 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Flask Forms</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Flask Forms</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Flask Forms</a><ul>
+<li><a class="reference internal" href="#id1">Flask Forms</a><ul>
+<li><a class="reference internal" href="#id2">Flask Forms</a></li>
+<li><a class="reference internal" href="#wtform">WTForm</a></li>
+<li><a class="reference internal" href="#flask-wtf">Flask-WTF</a></li>
+<li><a class="reference internal" href="#install">Install</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#basic-example">Basic Example</a><ul>
+<li><a class="reference internal" href="#id3">Basic Example</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#models-vs-forms">Models vs Forms</a><ul>
+<li><a class="reference internal" href="#id4">Models vs Forms</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#field-types">Field Types</a><ul>
+<li><a class="reference internal" href="#id5">Field Types</a></li>
+<li><a class="reference internal" href="#selection-from-choices">Selection From Choices</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#validation">Validation</a><ul>
+<li><a class="reference internal" href="#id6">Validation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#update-forms">Update Forms</a><ul>
+<li><a class="reference internal" href="#id7">Update Forms</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#csrf-security">CSRF Security</a><ul>
+<li><a class="reference internal" href="#id8">CSRF Security</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#best-practices">Best Practices</a><ul>
+<li><a class="reference internal" href="#id9">Best Practices</a></li>
+<li><a class="reference internal" href="#flash-messages">Flash Messages</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#debugging">Debugging</a><ul>
+<li><a class="reference internal" href="#id10">Debugging</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="flask-forms">
+<h1>Flask Forms</h1>
+<div class="section" id="id1">
+<div class="section" id="id2">
+<p>You can make forms yourself!</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Do all the HTML (including labels, etc)</li>
+<li>Write validating code for each field</li>
+<li>Add logic for form for showing validation messages</li>
+<li>Add protection against security attacks</li>
+</ul>
+</div>
+<div class="docutils container">
+<p>This is tedious.</p>
+</div>
+</div>
+<div class="section" id="wtform">
+<h3>WTForm</h3>
+<p>WTForm is a Python library providing:</p>
+<ul class="simple">
+<li>Validation</li>
+<li>HTML production</li>
+<li>Security</li>
+</ul>
+</div>
+<div class="section" id="flask-wtf">
+<h3>Flask-WTF</h3>
+<p>Flask-WTF is built on top of that, and adds:</p>
+<ul class="simple">
+<li>Integration with Flask (get data from request, etc)</li>
+</ul>
+</div>
+<div class="section" id="install">
+<h3>Install</h3>
+<pre class="console literal-block">
+(env) $ <span class="cmd">pip install flask-wtf</span>
+</pre>
+</div>
+</div>
+<div class="section" id="basic-example">
+<h2>Basic Example</h2>
+<div class="section" id="id3">
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">wtforms-demo/app.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask_wtf</span> <span class="kn">import</span> <span class="n">FlaskForm</span>
+<span class="kn">from</span> <span class="nn">flask_debugtoolbar</span> <span class="kn">import</span> <span class="n">DebugToolbarExtension</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">wtforms-demo/app.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">AddSnackForm</span><span class="p">(</span><span class="n">FlaskForm</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Form for adding snacks.&quot;&quot;&quot;</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="s2">&quot;Snack Name&quot;</span><span class="p">)</span>
+    <span class="n">price</span> <span class="o">=</span> <span class="n">FloatField</span><span class="p">(</span><span class="s2">&quot;Price in USD&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">wtforms-demo/app.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@app.route</span><span class="p">(</span><span class="s2">&quot;/add-form&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">show_add_form</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Show form to add snack.&quot;&quot;&quot;</span>
+
+    <span class="n">form</span> <span class="o">=</span> <span class="n">AddSnackForm</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span>
+        <span class="s2">&quot;snack_add_form.html&quot;</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="n">form</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>This makes an instance of the form and passes this to template.</p>
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">wtforms-demo/templates/snack_add_form.html</span></div>
+<div class="highlight-jinja notranslate"><div class="highlight"><pre><span></span><span class="x">&lt;form method=&quot;POST&quot;&gt;</span>
+
+<span class="x">  </span><span class="cp">{{</span> <span class="nv">form.hidden_tag</span><span class="o">()</span> <span class="cp">}}</span><span class="x"></span>
+
+<span class="x">  </span><span class="cp">{%</span> <span class="k">for</span> <span class="nv">field</span> <span class="k">in</span> <span class="nv">form</span>
+         <span class="k">if</span> <span class="nv">field.widget.input_type</span> <span class="p">!</span><span class="o">=</span> <span class="s1">&#39;hidden&#39;</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">  &lt;p&gt;</span>
+<span class="x">    </span><span class="cp">{{</span> <span class="nv">field.label</span> <span class="cp">}}</span><span class="x"></span>
+<span class="x">    </span><span class="cp">{{</span> <span class="nv">field</span> <span class="cp">}}</span><span class="x"></span>
+
+<span class="x">    </span><span class="cp">{%</span> <span class="k">for</span> <span class="nv">error</span> <span class="k">in</span> <span class="nv">field.errors</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">    </span><span class="cp">{{</span> <span class="nv">error</span> <span class="cp">}}</span><span class="x"></span>
+<span class="x">    </span><span class="cp">{%</span> <span class="k">endfor</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">  &lt;/p&gt;</span>
+<span class="x">  </span><span class="cp">{%</span> <span class="k">endfor</span> <span class="cp">%}</span><span class="x"></span>
+
+<span class="x">  &lt;button type=&quot;submit&quot;&gt;Submit&lt;/button&gt;</span>
+
+<span class="x">&lt;/form&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-text">wtforms-demo/app.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@app.route</span><span class="p">(</span><span class="s2">&quot;/add&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">add_snack</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Snack add form; handle adding.&quot;&quot;&quot;</span>
+
+    <span class="n">form</span> <span class="o">=</span> <span class="n">AddSnackForm</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">validate_on_submit</span><span class="p">():</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+        <span class="n">price</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;price&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">f</span><span class="s2">&quot;Add {name} at {price}&quot;</span>
+        <span class="c1"># redirect(&quot;/&quot;)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span>
+            <span class="s2">&quot;snack_add_form.html&quot;</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="n">form</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id16">
+<div class="code-block-caption"><span class="caption-text">wtforms-demo/app.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@app.route</span><span class="p">(</span><span class="s2">&quot;/add-form&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">show_add_form</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Show form to add snack.&quot;&quot;&quot;</span>
+
+    <span class="n">form</span> <span class="o">=</span> <span class="n">AddSnackForm</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span>
+        <span class="s2">&quot;snack_add_form.html&quot;</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="n">form</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id17">
+<div class="code-block-caption"><span class="caption-text">wtforms-demo/app.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@app.route</span><span class="p">(</span><span class="s2">&quot;/add&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">add_snack</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Snack add form; handle adding.&quot;&quot;&quot;</span>
+
+    <span class="n">form</span> <span class="o">=</span> <span class="n">AddSnackForm</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">validate_on_submit</span><span class="p">():</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+        <span class="n">price</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;price&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">f</span><span class="s2">&quot;Add {name} at {price}&quot;</span>
+        <span class="c1"># redirect(&quot;/&quot;)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span>
+            <span class="s2">&quot;snack_add_form.html&quot;</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="n">form</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<p>Donât need separate function for showing form!</p>
+</div>
+</div>
+</div>
+<div class="section" id="models-vs-forms">
+<h2>Models vs Forms</h2>
+<div class="section" id="id4">
+<div class="docutils container">
+<ul class="simple">
+<li>SQLAlchemy provides <strong>model</strong>: class for logical object</li>
+<li>WTForm provides <strong>form class</strong></li>
+<li>A single model may have different forms<ul>
+<li>Not all fields on add form might appear on edit form</li>
+<li>Different validation might apply on add/edit</li>
+<li>Different kinds of users (public v admin) have different fields</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="docutils container">
+<p>Youâll often take the result of a form and create/edit
+an SQLAlchemy object.</p>
+</div>
+</div>
+</div>
+<div class="section" id="field-types">
+<h2>Field Types</h2>
+<div class="section" id="id5">
+<div class="docutils container">
+<dl class="docutils">
+<dt><cite>BooleanField</cite></dt>
+<dd>Normally appears as a checkbox</dd>
+<dt><cite>DateField</cite> / <cite>DateTimeField</cite></dt>
+<dd>Date or Date &amp; Time</dd>
+<dt><cite>IntegerField</cite> / <cite>FloatField</cite></dt>
+<dd>Numeric types</dd>
+<dt><cite>StringField</cite> / <cite>TextAreaField</cite></dt>
+<dd>Single line of text / larger text area</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="selection-from-choices">
+<h3>Selection From Choices</h3>
+<div class="docutils container">
+<dl class="docutils">
+<dt><cite>RadioField</cite></dt>
+<dd>Series of radio buttons from <cite>choices</cite></dd>
+<dt><cite>SelectField</cite></dt>
+<dd>Drop-down menu from <cite>choices</cite></dd>
+<dt><cite>SelectMultipleField</cite></dt>
+<dd>Multi-select box from <cite>choices</cite></dd>
+</dl>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">weather</span> <span class="o">=</span> <span class="n">SelectField</span><span class="p">(</span><span class="s1">&#39;Weather&#39;</span><span class="p">,</span>
+  <span class="n">choices</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;rain&#39;</span><span class="p">,</span> <span class="s1">&#39;Rain&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;nice&#39;</span><span class="p">,</span> <span class="s1">&#39;Nice Weather&#39;</span><span class="p">)],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>To convert result to integer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">priority</span> <span class="o">=</span> <span class="n">SelectField</span><span class="p">(</span><span class="s1">&#39;Priority Code&#39;</span><span class="p">,</span>
+  <span class="n">choices</span><span class="o">=</span><span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;High&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;Low&#39;</span><span class="p">)],</span>
+  <span class="nb">coerce</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Can set dynamic choices:</p>
+<div class="literal-block-wrapper docutils container" id="id18">
+<div class="code-block-caption"><span class="caption-text">forms.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">AddFriendForm</span><span class="p">(</span><span class="n">FlasForm</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Form to pick a friend.&quot;&quot;&quot;</span>
+
+    <span class="n">friend_id</span> <span class="o">=</span> <span class="n">SelectField</span><span class="p">(</span><span class="s2">&quot;Friend&quot;</span><span class="p">,</span> <span class="nb">coerce</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id19">
+<div class="code-block-caption"><span class="caption-text">app.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@app.route</span><span class="p">(</span><span class="s2">&quot;/get-friend&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">handle_friend_form</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Handle the add-friend form.&quot;&quot;&quot;</span>
+
+    <span class="n">form</span> <span class="o">=</span> <span class="n">AddFriendForm</span><span class="p">()</span>
+
+    <span class="c1"># get current list of users</span>
+    <span class="n">users</span> <span class="o">=</span> <span class="p">[(</span><span class="n">u</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">all</span><span class="p">()]</span>
+
+    <span class="c1"># dynamically set friend choices</span>
+    <span class="n">form</span><span class="o">.</span><span class="n">friend</span><span class="o">.</span><span class="n">choices</span> <span class="o">=</span> <span class="n">users</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="validation">
+<h2>Validation</h2>
+<div class="section" id="id6">
+<p>WTForm provides âvalidatorsâ:</p>
+<div class="literal-block-wrapper docutils container" id="id20">
+<div class="code-block-caption"><span class="caption-text">wtforms-demo/app.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">wtforms.validators</span> <span class="kn">import</span> <span class="n">InputRequired</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Email</span>
+<span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="n">db</span><span class="p">,</span> <span class="n">connect_db</span><span class="p">,</span> <span class="n">User</span>
+
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id21">
+<div class="code-block-caption"><span class="caption-text">wtforms-demo/app.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">UserForm</span><span class="p">(</span><span class="n">FlaskForm</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Form for adding/editing friend.&quot;&quot;&quot;</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="s2">&quot;Name&quot;</span><span class="p">,</span>
+                       <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">InputRequired</span><span class="p">()])</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="s2">&quot;Email Address&quot;</span><span class="p">,</span>
+                        <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">Optional</span><span class="p">(),</span> <span class="n">Email</span><span class="p">()])</span>
+</pre></div>
+</div>
+</div>
+<p>See <a class="reference external" href="http://wtforms.readthedocs.io/en/latest/validators.html">http://wtforms.readthedocs.io/en/latest/validators.html</a></p>
+</div>
+</div>
+<div class="section" id="update-forms">
+<h2>Update Forms</h2>
+<div class="section" id="id7">
+<div class="literal-block-wrapper docutils container" id="id22">
+<div class="code-block-caption"><span class="caption-text">wtforms-demo/app.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@app.route</span><span class="p">(</span><span class="s2">&quot;/user/&lt;int:uid&gt;&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">edit_user</span><span class="p">(</span><span class="n">uid</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Show user edit form and handle edit.&quot;&quot;&quot;</span>
+
+    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get_or_404</span><span class="p">(</span><span class="n">uid</span><span class="p">)</span>
+    <span class="n">form</span> <span class="o">=</span> <span class="n">UserForm</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">user</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">validate_on_submit</span><span class="p">():</span>
+        <span class="n">user</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+        <span class="n">user</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;email&quot;</span><span class="p">]</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="k">return</span> <span class="s2">&quot;User edited.&quot;</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;user_form.html&quot;</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="n">form</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Passing <code class="docutils literal notranslate"><span class="pre">obj=data-obj</span></code> provides form with defaults from object</p>
+</div>
+</div>
+<div class="section" id="csrf-security">
+<h2>CSRF Security</h2>
+<div class="section" id="id8">
+<p><strong>Cross-Site Request Forgery</strong></p>
+<p>A form on any site can submit to any other site!</p>
+<div class="docutils container">
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">form</span> <span class="na">action</span><span class="o">=</span><span class="s">&quot;http://yourbank.com/transfer&quot;</span> <span class="na">method</span><span class="o">=</span><span class="s">&quot;POST&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;hidden&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;from&quot;</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;your-acct&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;hidden&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;to&quot;</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;my-acct&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;hidden&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;amt&quot;</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;$1,000,000&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">button</span> <span class="na">type</span><span class="o">=</span><span class="s">submit&quot;</span><span class="p">&gt;</span>I Love Kittens!<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+<p>Therefore, most sites use a âCSRF Tokenâ:</p>
+<ul class="simple">
+<li>This is generated by the server when a form is shown</li>
+<li>It is included in the HTML of the form</li>
+<li>It is checked by the server on form submission</li>
+</ul>
+<p>Flask-WTF uses CSRF out-of-the-box:</p>
+<ul class="simple">
+<li>All forms include a hidden CSRF field</li>
+<li>The <cite>validate_on_submit</cite> method checks for this</li>
+</ul>
+</div>
+</div>
+<div class="section" id="best-practices">
+<h2>Best Practices</h2>
+<div class="section" id="id9">
+<div class="docutils container">
+<ul class="simple">
+<li>Make distinct add/edit forms, if sensible</li>
+<li>Add lots of form validation, if appropriate</li>
+<li>All non-GET requests should end with redirect, not <cite>render_template</cite></li>
+</ul>
+</div>
+</div>
+<div class="section" id="flash-messages">
+<h3>Flash Messages</h3>
+<p>Convenient way to send status message, even through redirects.</p>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id23">
+<div class="code-block-caption"><span class="caption-text">flash() in your route</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">flash</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s2">&quot;/handle&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">handle_form</span><span class="p">():</span>
+   <span class="o">...</span>
+   <span class="n">flash</span><span class="p">(</span><span class="s2">&quot;It worked!&quot;</span><span class="p">)</span>
+   <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;/somewhere-else&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id24">
+<div class="code-block-caption"><span class="caption-text">retrieve in template</span></div>
+<div class="highlight-jinja notranslate"><div class="highlight"><pre><span></span><span class="cp">{%</span> <span class="k">for</span> <span class="nv">msg</span> <span class="k">in</span> <span class="nv">get_flashed_messages</span><span class="o">()</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">  &lt;div&gt;</span><span class="cp">{{</span> <span class="nv">msg</span> <span class="cp">}}</span><span class="x">&lt;/div&gt;</span>
+<span class="cp">{%</span> <span class="k">endfor</span> <span class="cp">%}</span><span class="x"></span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Messages are retained until retrieved</li>
+<li>Uses Flask âsessionsâ to power this</li>
+<li>Very useful: put template code in a <cite>base.html</cite> template</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="debugging">
+<h2>Debugging</h2>
+<div class="section" id="id10">
+<p>Printing is a good start, but itâs sometimes hard to find it in your console!</p>
+<p>Use a better debugging tool to pause code - itâs just like <cite>debugger</cite> in JavaScript!</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@app.route</span><span class="p">(</span><span class="s2">&quot;/secret&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">secret</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Our super secret page for debugging&quot;&quot;&quot;</span>
+
+    <span class="kn">import</span> <span class="nn">pdb</span><span class="p">;</span> <span class="n">pdb</span><span class="o">.</span><span class="n">set_trace</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;secret.html&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

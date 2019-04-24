@@ -1,0 +1,868 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Testing</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Testing</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Testing</a><ul>
+<li><a class="reference internal" href="#whys-and-wherefores">Whys and Wherefores</a><ul>
+<li><a class="reference internal" href="#can-t-i-just-test-code-myself">Canât I Just Test Code Myself?</a></li>
+<li><a class="reference internal" href="#testing-is">Testing is</a></li>
+<li><a class="reference internal" href="#automated-tests-are-particularly-good-for">Automated Tests Are Particularly Good For</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#kinds-of-tests">Kinds of Tests</a><ul>
+<li><a class="reference internal" href="#testing-a-dryer">Testing a Dryer</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#unit-tests">Unit Tests</a><ul>
+<li><a class="reference internal" href="#id2">Unit Tests</a></li>
+<li><a class="reference internal" href="#you-can-do-this-by-hand">You Can Do This By Hand</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#doctests">DocTests</a><ul>
+<li><a class="reference internal" href="#id3">DocTests</a></li>
+<li><a class="reference internal" href="#our-adder">Our Adder</a></li>
+<li><a class="reference internal" href="#running-doctests">Running DocTests</a></li>
+<li><a class="reference internal" href="#running-verbosely">Running Verbosely</a></li>
+<li><a class="reference internal" href="#let-s-make-it-fail">Letâs Make it Fail</a></li>
+<li><a class="reference internal" href="#id4">Running DocTests</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#python-unittest-module">Python unittest module</a><ul>
+<li><a class="reference internal" href="#unittest-module">unittest module</a></li>
+<li><a class="reference internal" href="#testcase-assertions">TestCase assertions</a></li>
+<li><a class="reference internal" href="#doctest-or-unittest-class">DocTest or unittest Class?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#integration-tests">Integration Tests</a><ul>
+<li><a class="reference internal" href="#id5">Integration Tests</a></li>
+<li><a class="reference internal" href="#integration-testing-flask-app">Integration Testing Flask App</a></li>
+<li><a class="reference internal" href="#writing-integration-tests">Writing Integration Tests</a></li>
+<li><a class="reference internal" href="#test-client">test_client</a></li>
+<li><a class="reference internal" href="#get-request">GET request</a></li>
+<li><a class="reference internal" href="#post-and-form-data">POST and form data</a></li>
+<li><a class="reference internal" href="#testing-redirects">Testing Redirects</a></li>
+<li><a class="reference internal" href="#testing-the-session">Testing the Session</a></li>
+<li><a class="reference internal" href="#variables-in-your-testing-environment">Variables in your testing environment</a></li>
+<li><a class="reference internal" href="#pulling-it-together">Pulling It Together</a></li>
+<li><a class="reference internal" href="#setup-and-teardown">setUp and tearDown</a></li>
+<li><a class="reference internal" href="#resources">Resources</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#breaking-down-code">Breaking Down Code</a><ul>
+<li><a class="reference internal" href="#intermixed-concerns">Intermixed Concerns</a></li>
+<li><a class="reference internal" href="#id6">Breaking Down Code</a></li>
+<li><a class="reference internal" href="#how-many-tests">How many tests??</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#looking-ahead">Looking Ahead</a><ul>
+<li><a class="reference internal" href="#future-topics">Future Topics</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="testing">
+<h1>Testing</h1>
+<div class="section" id="whys-and-wherefores">
+<h2>Whys and Wherefores</h2>
+<div class="section" id="can-t-i-just-test-code-myself">
+<h3>Canât I Just Test Code Myself?</h3>
+<div class="docutils container">
+<p>Yes. You probably do so now.</p>
+</div>
+<div class="docutils container">
+<a class="noprint reference internal image-reference" href="_images/typing.gif"><img alt="_images/typing.gif" class="noprint" src="_images/typing.gif" style="width: 65%;" /></a>
+</div>
+</div>
+<div class="section" id="testing-is">
+<h3>Testing is</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>#1 thing employers ask us about</li>
+<li>Something ALL engineers do</li>
+<li>Automating the boring stuff</li>
+<li>Fascinating and highly skilled art</li>
+<li>Peace of mind: develop with confidence!</li>
+</ul>
+</div>
+</div>
+<div class="section" id="automated-tests-are-particularly-good-for">
+<h3>Automated Tests Are Particularly Good For</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Testing things that âshould workâ</li>
+<li>Testing the edge cases (anticipate the unexpected)</li>
+<li>New things donât break things that were working (âregressionâ)</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="kinds-of-tests">
+<h2>Kinds of Tests</h2>
+<div class="section" id="testing-a-dryer">
+<h3>Testing a Dryer</h3>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li><strong>Unit Test</strong>: does this individual component work?</li>
+<li><strong>Integration Tests</strong>: do the parts work together?</li>
+<li><strong>Functional Test</strong>: wet clothes â dry clothes?</li>
+</ul>
+</div>
+<p>Some people call and include other notions of
+testing levels, like âacceptance testsâ, âend-to-end testsâ, and others.</p>
+</div>
+</div>
+<div class="section" id="unit-tests">
+<h2>Unit Tests</h2>
+<div class="section" id="id2">
+<div class="docutils container">
+<ul class="simple">
+<li>Test one âunitâ of functionality<ul>
+<li>Typically, one function or method</li>
+</ul>
+</li>
+<li>Donât test integration of components<ul>
+<li>Donât test framework itself <em>(eg, Flask)</em></li>
+</ul>
+</li>
+<li>Promote modular code<ul>
+<li>Write code with testing in mind</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="you-can-do-this-by-hand">
+<h3>You Can Do This By Hand</h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">adder</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Add two numbers together.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+
+<span class="hll"><span class="k">assert</span> <span class="n">adder</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;1 + 1 is not 2&#39;</span>
+</span></pre></div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">assert</span></code> raises <cite>AssertionError</cite> if expression is False</li>
+<li>Can provide optional exception message</li>
+<li>Code exits as soon as an exception is raised</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="doctests">
+<h2>DocTests</h2>
+<div class="section" id="id3">
+<p>DocTests are awesome!</p>
+<div class="compare docutils container">
+<div class="docutils container">
+<p>âTestable documentationâ</p>
+</div>
+<div class="docutils container">
+<p>âDocumented testingâ</p>
+</div>
+</div>
+<div class="docutils container">
+<p><code class="docutils literal notranslate"><span class="pre">doctest</span></code> module in Python standard library</p>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="section" id="our-adder">
+<h3>Our Adder</h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">adder</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Add two numbers together.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>Letâs try it out!</p>
+<pre class="console literal-block">
+$ <span class="cmd">python</span>
+&gt;&gt;&gt; <span class="cmd">from arithmetic import adder</span>
+&gt;&gt;&gt; <span class="cmd">adder(1, 1)</span>
+2
+&gt;&gt;&gt; <span class="cmd">adder(-1, 1)</span>
+0
+</pre>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">adder</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Adds two numbers together.</span>
+
+<span class="sd">        &gt;&gt;&gt; adder(1, 1)</span>
+<span class="sd">        2</span>
+
+<span class="sd">        &gt;&gt;&gt; adder(-1, 1)</span>
+<span class="sd">        0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="running-doctests">
+<h3>Running DocTests</h3>
+<pre class="console literal-block">
+$ <span class="cmd">python -m doctest arithmetic.py</span>
+$ <span class="tan">(nothing output for success)</span>
+</pre>
+<div class="docutils container">
+<p>Everything worked!</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+</div>
+<div class="section" id="running-verbosely">
+<h3>Running Verbosely</h3>
+<pre class="console literal-block">
+$ <span class="cmd">python -m doctest -v arithmetic.py</span>
+Trying:
+    adder(1, 1)
+Expecting:
+    2
+ok
+Trying:
+    adder(-1, 1)
+Expecting:
+    0
+ok
+1 items had no tests:
+    arithmetic
+1 items passed all tests:
+2 tests in arithmetic.adder
+2 tests in 2 items.
+2 passed and 0 failed.
+Test passed.
+</pre>
+</div>
+<div class="section" id="let-s-make-it-fail">
+<h3>Letâs Make it Fail</h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">adder</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Adds two numbers together.</span>
+
+<span class="sd">        &gt;&gt;&gt; adder(1, 1)</span>
+<span class="sd">        2</span>
+
+<span class="sd">        &gt;&gt;&gt; adder(-1, 1)</span>
+<span class="sd">        0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<span class="hll">    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="o">+</span> <span class="mi">1</span> <span class="c1"># this is wrong</span>
+</span></pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h3>Running DocTests</h3>
+<pre class="console literal-block">
+  $ <span class="cmd">python -m doctest arithmetic.py</span>
+  <strong>******************************************************************</strong>
+  File &quot;arithmetic.py&quot;, line 10, in arithmetic.adder
+  Failed example:
+      adder(1, 1)
+  Expected:
+      2
+  Got:
+      3
+  <strong>******************************************************************</strong>
+  File &quot;arithmetic.py&quot;, line 15, in arithmetic.adder
+  Failed example:
+      adder(-1, 1)
+  Expected:
+      0
+  Got:
+      1
+  <strong>******************************************************************</strong>
+  1 items had failures:
+     2 of   2 in arithmetic.adder
+  <strong>*Test Failed*</strong> 2 failures.
+</pre>
+<div class="admonition note">
+<p><strong>Running Code Automatically</strong></p>
+<p>You can always run the doctests in a module from the command-line.</p>
+<p>Sometimes, itâs helpful to have the tests run automatically when
+you run the script. For example, hereâs a snippet that runs the
+doctests in itself and only starts a Flask server if they all succeed:</p>
+<div class="last highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Rest of your code ...</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">doctest</span> <span class="kn">import</span> <span class="n">testmod</span>
+    <span class="k">if</span> <span class="n">testmod</span><span class="p">()</span><span class="o">.</span><span class="n">failed</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Tests pass, so we can start our server! Tests FTW!</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p><strong>Testing output</strong></p>
+<p>Sometimes, the output from a function isnât something easily
+predictable. For example, dictionaries donât always return
+their keys/values in the same order, so a test like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">inventory</span> <span class="o">=</span> <span class="n">pettings_zoo_inventory</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">inventory</span>
+<span class="go">{&#39;duck&#39;: 14, &#39;pony&#39;: 1}</span>
+</pre></div>
+</div>
+<p>might not work, since it might also output that as
+<code class="docutils literal notranslate"><span class="pre">{'pony':</span> <span class="pre">1,</span> <span class="pre">`duck':</span> <span class="pre">14}</span></code>.</p>
+<p>Therefore, you will sometimes want to massage the output a
+bit before printing it.</p>
+<p>A common thing to do is to short a predictable version of
+this by turning it into the item tuples and sorting those:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">sorted</span><span class="p">(</span><span class="n">inventory</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+<span class="go">[(&#39;duck&#39;, 14), (&#39;pony&#39;, 1)]</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p><strong>DocTest options</strong></p>
+<p>You can also add special comments in your doctests to say
+âbe a little less strict about how the output matchesâ.</p>
+<p>For example, sometimes you might have so much output
+it would be overwhelming to show it all:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">range</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
+<span class="go">[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]</span>
+</pre></div>
+</div>
+<p>By using the <code class="docutils literal notranslate"><span class="pre">ELLIPSIS</span></code> option, you can elide part of that
+in your test, like this:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&gt;&gt;&gt; print range(16)  # doctest: +ELLIPSIS
+[0, 1, ..., 14, 15]
+</pre></div>
+</div>
+</div></blockquote>
+<p>Or, if your output may have awkward linebreaks and whitespace
+that might make it hard to use in a test, you can use
+<code class="docutils literal notranslate"><span class="pre">NORMALIZE_WHITESPACE</span></code> to ignore all whitespace differences
+between the expected output and the real output:</p>
+<blockquote class="last">
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&gt;&gt;&gt; poem_line  # doctest: +NORMALIZE_WHITESPACE
+&#39;My father moved through
+dooms of love&#39;
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+</div>
+</div>
+<div class="section" id="python-unittest-module">
+<h2>Python unittest module</h2>
+<div class="section" id="unittest-module">
+<h3>unittest module</h3>
+<p>Unit testing via classes! In the Python standard library.</p>
+<div class="compare docutils container">
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">flask-testing-demo/test_arithmetic.py</span></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">arithmetic</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+
+
+<span class="k">class</span> <span class="nc">MyAppUnitTestCase</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Examples of unit tests.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">test_adder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">arithmetic</span><span class="o">.</span><span class="n">adder</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Test cases are a bundle of tests<ul>
+<li>In a class that subclasses <code class="docutils literal notranslate"><span class="pre">TestCase</span></code></li>
+<li>Test methods <strong>must</strong> start with <code class="docutils literal notranslate"><span class="pre">test_</span></code></li>
+</ul>
+</li>
+<li><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">unittest</span> <span class="pre">NAME_OF_FILE</span></code> runs all cases</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="testcase-assertions">
+<h3>TestCase assertions</h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">arithmetic</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+
+
+<span class="k">class</span> <span class="nc">MyAppUnitTestCase</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Examples of unit tests.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">test_adder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">arithmetic</span><span class="o">.</span><span class="n">adder</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span>
+
+    <span class="k">def</span> <span class="nf">test_adder_2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># instead of assert arithmetic.adder(2, 2) == 4</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">arithmetic</span><span class="o">.</span><span class="n">adder</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Provides better output, including expected value</li>
+</ul>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="55%" />
+<col width="45%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Method</th>
+<th class="head">Checks that</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>assertEqual(a, b)</td>
+<td>a == b</td>
+</tr>
+<tr class="row-odd"><td>assertNotEqual(a, b)</td>
+<td>a != b</td>
+</tr>
+<tr class="row-even"><td>assertTrue(x)</td>
+<td>bool(x) is True</td>
+</tr>
+<tr class="row-odd"><td>assertFalse(x)</td>
+<td>bool(x) is False</td>
+</tr>
+<tr class="row-even"><td>assertIs(a, b)</td>
+<td>a is b</td>
+</tr>
+<tr class="row-odd"><td>assertIsNot(a, b)</td>
+<td>a is not b</td>
+</tr>
+<tr class="row-even"><td>assertIsNone(x)</td>
+<td>x is None</td>
+</tr>
+<tr class="row-odd"><td>assertIsNotNone(x)</td>
+<td>x is not None</td>
+</tr>
+<tr class="row-even"><td>assertIn(a, b)</td>
+<td>a in b</td>
+</tr>
+<tr class="row-odd"><td>assertNotIn(a, b)</td>
+<td>a not in b</td>
+</tr>
+<tr class="row-even"><td>assertIsInstance(a, b)</td>
+<td>isinstance(a, b)</td>
+</tr>
+<tr class="row-odd"><td>assertNotIsInstance(a, b) &nbsp;</td>
+<td>not isinstance(a, b)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="doctest-or-unittest-class">
+<h3>DocTest or unittest Class?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>DocTests keep tests close to code<ul>
+<li>Too many tests can drown out code</li>
+</ul>
+</li>
+<li><code class="docutils literal notranslate"><span class="pre">unittest</span></code> classes good for when you have lots of tests<ul>
+<li>Or interesting hierarchies of tests</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="integration-tests">
+<h2>Integration Tests</h2>
+<div class="section" id="id5">
+<p>Test that components work together</p>
+</div>
+<div class="section" id="integration-testing-flask-app">
+<h3>Integration Testing Flask App</h3>
+<p>What kinds of things do we want to test in our Flask applications?</p>
+<div class="docutils container">
+<ul class="simple">
+<li>âDoes our view function return the correct status code?â</li>
+<li>âAfter a POST request, are we redirecting and getting the correct HTML on a page?â</li>
+<li>âIs there information in the session which we expect to exist or be updated?â</li>
+<li>âDoes this URL path map to a route function?â</li>
+<li>âDoes this route function return the right HTML?â</li>
+</ul>
+</div>
+</div>
+<div class="section" id="writing-integration-tests">
+<h3>Writing Integration Tests</h3>
+<p>You write them with <code class="docutils literal notranslate"><span class="pre">unittest</span></code> framework.</p>
+<div class="docutils container">
+<p>Yeah, I know. Weird.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+</div>
+<div class="section" id="test-client">
+<h3>test_client</h3>
+<div class="line-block">
+<div class="line">Your Flask app has a <code class="docutils literal notranslate"><span class="pre">test_client</span></code> method on it,</div>
+<div class="line">which returns a pretend web browser.</div>
+<div class="line"><br /></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">app</span> <span class="k">import</span> <span class="n">app</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+
+
+<span class="k">class</span> <span class="nc">MyAppIntegrationTestCase</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Examples of integration tests: testing Flask app.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">test_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Make sure that the form heading exists on the index page&quot;&quot;&quot;</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">test_client</span><span class="p">()</span>
+
+        <span class="c1"># test client makes a &quot;request&quot; to app</span>
+        <span class="c1"># note: app is NOT actually running</span>
+
+        <span class="c1"># make an assertion about the response</span>
+</pre></div>
+</div>
+<p>Technically, this comes from âWerkzeugâ, a library
+that Flask uses.</p>
+</div>
+<div class="section" id="get-request">
+<h3>GET request</h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">test_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Make sure that the form heading exists on the index page&quot;&quot;&quot;</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">test_client</span><span class="p">()</span>
+
+        <span class="c1"># test client makes a &quot;request&quot; to app</span>
+        <span class="c1"># note: app is NOT actually running</span>
+
+        <span class="c1"># make an assertion about the response</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEquals</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+<span class="hll">        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;&lt;h1&gt;Color Form&lt;/h1&gt;&#39;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+</span></pre></div>
+</div>
+<p>Note the <code class="docutils literal notranslate"><span class="pre">b'String'</span></code> for non-Unicode âbytestringâ.</p>
+</div>
+<div class="section" id="post-and-form-data">
+<h3>POST and form data</h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">test_favorite_color_form</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Make sure the response contains the newly added color&quot;&quot;&quot;</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">test_client</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;/fav-color&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="s1">&#39;blue&#39;</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEquals</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;Woah! I like blue, too&#39;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">result.data</span></code> is the response string (html)</li>
+</ul>
+</div>
+<div class="section" id="testing-redirects">
+<h3>Testing Redirects</h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">test_user_creation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Make sure that a user can successfully be created.&quot;&quot;&quot;</span>
+
+    <span class="n">client</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">test_client</span><span class="p">()</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;/create-user&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;student1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="s2">&quot;secret&quot;</span>
+    <span class="p">),</span> <span class="n">follow_redirects</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;User successfully created!&#39;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Use the <cite>follow_redirects</cite> keyword argument if you want to make an additional request to the endpoint you are redirecting to</li>
+</ul>
+</div>
+</div>
+<div class="section" id="testing-the-session">
+<h3>Testing the Session</h3>
+<p>This is a little bit âhand waveyâ, do not worry in detail what it does for now!</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">session</span>
+<span class="kn">from</span> <span class="nn">app</span> <span class="k">import</span> <span class="n">app</span>
+
+<span class="k">def</span> <span class="nf">test_session_information</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="hll"><span class="sd">&quot;&quot;&quot; Test information is correctly being stored in the session on the / route&quot;&quot;&quot;</span>
+</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">test_client</span><span class="p">()</span>
+<span class="k">with</span> <span class="n">client</span><span class="p">:</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">session</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">],</span> <span class="s1">&#39;bob&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="variables-in-your-testing-environment">
+<h3>Variables in your testing environment</h3>
+<p>So far weâve only imported <code class="docutils literal notranslate"><span class="pre">app</span></code> from our <code class="docutils literal notranslate"><span class="pre">app.py</span></code>. If you need other variables defined in that file, you can call them out specifically, or write <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">app</span> <span class="pre">import</span> <span class="pre">*</span></code> to snag everything.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">flask</span>
+<span class="kn">from</span> <span class="nn">app</span> <span class="k">import</span> <span class="n">app</span><span class="p">,</span> <span class="n">numbers</span>
+<span class="c1"># numbers could be a list of numbers</span>
+
+<span class="k">def</span> <span class="nf">test_app_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">assertIsInstance</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">numbers</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="pulling-it-together">
+<h3>Pulling It Together</h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">app</span> <span class="k">import</span> <span class="n">app</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+
+
+<span class="k">class</span> <span class="nc">MyAppIntegrationTestCase</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Examples of integration tests: testing Flask app.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">test_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Make sure that the form heading exists on the index page&quot;&quot;&quot;</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">test_client</span><span class="p">()</span>
+
+        <span class="c1"># test client makes a &quot;request&quot; to app</span>
+        <span class="c1"># note: app is NOT actually running</span>
+
+        <span class="c1"># make an assertion about the response</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEquals</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;&lt;h1&gt;Color Form&lt;/h1&gt;&#39;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_favorite_color_form</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Make sure the response contains the newly added color&quot;&quot;&quot;</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">test_client</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;/fav-color&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="s1">&#39;blue&#39;</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEquals</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;Woah! I like blue, too&#39;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The response from a get or post request of the test_client includes the
+following attributes:</p>
+<ul class="simple">
+<li>status_code
+HTTP status code (200, 404, etc)</li>
+<li>headers
+HTTP headers (âContent-Typeâ, etc)</li>
+<li>data
+HTTP body (typically, HTML)</li>
+</ul>
+<p>Note that usually people donât check all the HTML in <code class="docutils literal notranslate"><span class="pre">result.data</span></code>, but will often just
+check for a few key words.</p>
+<div class="admonition note">
+<p><strong>Seeing Errors In Tests</strong></p>
+<p>If a route raises an error, it can be hard to debug this in a test.</p>
+<p>For example, in your <cite>server.py</cite>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">homepage</span><span class="p">():</span>
+    <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Foo&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In your <cite>test_server.py</cite>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyTest</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">test_home</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">test_client</span><span class="p">()</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>When you run your tests, it will fail, as that route returns a
+500 (Internal Server Error), not a 200 (Ok). However, you wonât see the
+error message of the server.</p>
+<p>To fix this, you can set the Flask appâs configuration to be a in <cite>TESTING</cite>
+mode, and it will print all Flask errors to the console:</p>
+<div class="last highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyTest</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">test_home</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+      <span class="n">client</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">test_client</span><span class="p">()</span>
+<span class="hll">      <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;TESTING&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p><strong>Reducing Repetition</strong></p>
+<p>Tests often contain repetitive code to set up the test client
+(and put Flask in <cite>TESTING</cite> mode; see above):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyAppIntegrationTestCase</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">test_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">test_client</span><span class="p">()</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;TESTING&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="s1">&#39;&lt;h1&gt;Color Form&lt;/h1&gt;&#39;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_favorite_color_form</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">test_client</span><span class="p">()</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;TESTING&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;/fav-color&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="s1">&#39;blue&#39;</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="s1">&#39;Woah! I like blue, too&#39;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To reduce this repetition, you can use the <cite>setUp</cite> method, a
+specially-named method on test case that gets called before each test:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyAppIntegrationTestCase</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">test_client</span><span class="p">()</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;TESTING&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="k">def</span> <span class="nf">test_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="s1">&#39;&lt;h1&gt;Color Form&lt;/h1&gt;&#39;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_favorite_color_form</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;/fav-color&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="s1">&#39;blue&#39;</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="s1">&#39;Woah! I like blue, too&#39;</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="last">Similarly, if you add a method called <code class="docutils literal notranslate"><span class="pre">tearDown(self)</span></code>, this
+will get run <em>after</em> each test. This is less common, but might
+be helpful if you had to delete some added-by-the-test data
+from your database after each test.</p>
+</div>
+</div>
+<div class="section" id="setup-and-teardown">
+<h3>setUp and tearDown</h3>
+<p><code class="docutils literal notranslate"><span class="pre">setUp</span></code> and <code class="docutils literal notranslate"><span class="pre">tearDown</span></code> methods are called before/after each test.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unittest</span> <span class="kn">import</span> <span class="n">TestCase</span>
+<span class="kn">from</span> <span class="nn">app</span> <span class="kn">import</span> <span class="n">app</span>
+
+<span class="k">class</span> <span class="nc">FlaskTests</span><span class="p">(</span><span class="n">TestCase</span><span class="p">):</span>
+
+  <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+      <span class="sd">&quot;&quot;&quot;Stuff to do before every test.&quot;&quot;&quot;</span>
+
+      <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">test_client</span><span class="p">()</span>
+      <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;TESTING&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+
+  <span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+      <span class="sd">&quot;&quot;&quot;Stuff to do after each test.&quot;&quot;&quot;</span>
+
+  <span class="k">def</span> <span class="nf">test_1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+      <span class="sd">&quot;&quot;&quot;Some test...&quot;&quot;&quot;</span>
+
+  <span class="k">def</span> <span class="nf">test_2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+      <span class="sd">&quot;&quot;&quot;Some other test&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>Running this file would call: setUp, test_1, tearDown, setUp, test_2, tearDown</p>
+</div>
+</div>
+<div class="section" id="resources">
+<h3>Resources</h3>
+<ul class="simple">
+<li>Doctests: <a class="reference external" href="https://docs.python.org/2/library/doctest.html">https://docs.python.org/2/library/doctest.html</a></li>
+<li>Unittest: <a class="reference external" href="https://docs.python.org/2/library/unittest.html">https://docs.python.org/2/library/unittest.html</a></li>
+<li>Flask Testing  <a class="reference external" href="http://flask.pocoo.org/docs/1.0/testing/">http://flask.pocoo.org/docs/1.0/testing/</a></li>
+<li>Test Client  <a class="reference external" href="http://werkzeug.pocoo.org/docs/0.14/test/">http://werkzeug.pocoo.org/docs/0.14/test/</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="breaking-down-code">
+<h2>Breaking Down Code</h2>
+<div class="section" id="intermixed-concerns">
+<h3>Intermixed Concerns</h3>
+<p>How do we test this?</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/taxes&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">taxes</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Calculate taxes from web form.&quot;&quot;&quot;</span>
+
+    <span class="n">income</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;income&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Calculate the taxes owed</span>
+    <span class="n">owed</span> <span class="o">=</span> <span class="n">income</span> <span class="o">/</span> <span class="mf">45.3</span> <span class="o">*</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span> <span class="o">/</span> <span class="n">other_stuff</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;taxes.html&quot;</span><span class="p">,</span> <span class="n">owed</span><span class="o">=</span><span class="n">owed</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h3>Breaking Down Code</h3>
+<p>Very often, youâll want to separate web interface from logic</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">calculate_taxes</span><span class="p">(</span><span class="n">income</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate taxes owed for this income.&quot;&quot;&quot;</span>
+
+    <span class="o">...</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/taxes&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">taxes</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Calculate taxes from web form.&quot;&quot;&quot;</span>
+
+    <span class="n">income</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;income&#39;</span><span class="p">)</span>
+    <span class="n">owed</span> <span class="o">=</span> <span class="n">calculate_taxes</span><span class="p">(</span><span class="n">income</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;taxes.html&quot;</span><span class="p">,</span> <span class="n">owed</span><span class="o">=</span><span class="n">owed</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="how-many-tests">
+<h3>How many tests??</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Make sure you ask yourself, is there too much code in your view function?</li>
+<li>When you test, you donât need one assertion per test function</li>
+<li>Test the whole part of things (does your server return the correct status code and response)</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="looking-ahead">
+<h2>Looking Ahead</h2>
+<div class="section" id="future-topics">
+<h3>Future Topics</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Unit &amp; Integration Testing for JS</li>
+<li>Functional Tests<ul>
+<li>Does it work? In a real browser? For real?</li>
+</ul>
+</li>
+<li>âTest-driven developmentâ</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> 
+</body>
+</html>

@@ -1,0 +1,770 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Maps / HashTables</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Maps / HashTables</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Maps / HashTables</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#maps">Maps</a><ul>
+<li><a class="reference internal" href="#id2">Maps</a></li>
+<li><a class="reference internal" href="#typical-api">Typical API</a></li>
+<li><a class="reference internal" href="#simple-implementation">Simple Implementation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hash-tables">Hash Tables</a><ul>
+<li><a class="reference internal" href="#id3">Hash Tables</a></li>
+<li><a class="reference internal" href="#hashing">Hashing</a></li>
+<li><a class="reference internal" href="#runtime-of-hash">Runtime of Hash</a></li>
+<li><a class="reference internal" href="#fast-hashes-vs-crypto-hashes">Fast Hashes vs Crypto Hashes</a></li>
+<li><a class="reference internal" href="#hash-table">Hash Table</a></li>
+<li><a class="reference internal" href="#hashtable-set-key-val">HashTable <cite>set(key, val)</cite></a></li>
+<li><a class="reference internal" href="#hashtable-get-key">HashTable <cite>get(key)</cite></a></li>
+<li><a class="reference internal" href="#hashtable-keys">HashTable <cite>keys()</cite></a></li>
+<li><a class="reference internal" href="#hashtable-delete-key">HashTable <cite>delete(key)</cite></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hashtable-runtimes">HashTable Runtimes</a><ul>
+<li><a class="reference internal" href="#id4">HashTable Runtimes</a></li>
+<li><a class="reference internal" href="#wtf-does-mostly-mean">WTF Does âMostlyâ Mean???</a></li>
+<li><a class="reference internal" href="#resizing">Resizing</a></li>
+<li><a class="reference internal" href="#collisions">Collisions</a></li>
+<li><a class="reference internal" href="#open-addressing">Open Addressing</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sets">Sets</a><ul>
+<li><a class="reference internal" href="#id5">Sets</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#javascript-types">Javascript Types</a><ul>
+<li><a class="reference internal" href="#map">Map</a></li>
+<li><a class="reference internal" href="#object">Object</a></li>
+<li><a class="reference internal" href="#set">Set</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#python-types">Python Types</a><ul>
+<li><a class="reference internal" href="#dictionary">Dictionary</a></li>
+<li><a class="reference internal" href="#id6">Set</a></li>
+<li><a class="reference internal" href="#frozenset">Frozenset</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#learning-more">Learning More</a><ul>
+<li><a class="reference internal" href="#id7">Learning More</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="maps-hashtables">
+<h1>Maps / HashTables</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Define what a hash table is</li>
+<li>Describe how hash tables are implemented</li>
+<li>Describe what a hash function is, and what properties it should have</li>
+<li>Handle hashing collisions</li>
+<li>Identify time complexities of common hash table operations</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="maps">
+<h2>Maps</h2>
+<div class="section" id="id2">
+<p><strong>Abstract Data Type</strong> for mapping <em>key</em> â <em>value</em></p>
+<div class="compare docutils container">
+<div class="big highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">petsToAges</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s2">&quot;Whiskey&quot;</span><span class="o">:</span> <span class="mi">6</span><span class="p">,</span>
+  <span class="s2">&quot;Fluffy&quot;</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
+  <span class="s2">&quot;Dr. Slitherscale&quot;</span><span class="o">:</span> <span class="mi">2</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Javascript: <cite>Map</cite> or <cite>{}</cite></li>
+<li>Python: <cite>dict</cite></li>
+<li>Ruby: <cite>Hash</cite></li>
+<li>Java: <cite>HashMap</cite></li>
+<li>Go: <cite>map</cite></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="typical-api">
+<h3>Typical API</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<dl class="docutils">
+<dt><cite>set(key, val)</cite></dt>
+<dd>Sets <cite>key</cite> to <cite>val</cite></dd>
+<dt><cite>get(key)</cite></dt>
+<dd>Retrieve values for <cite>key</cite></dd>
+<dt><cite>delete(key)</cite></dt>
+<dd>Delete entry for <cite>key</cite></dd>
+<dt><cite>has(key)</cite></dt>
+<dd>Is there an entry for <cite>key</cite>?</dd>
+</dl>
+</div>
+<div class="docutils container">
+<dl class="docutils">
+<dt><cite>keys()</cite></dt>
+<dd>Iterable of keys</dd>
+<dt><cite>values()</cite></dt>
+<dd>Iterable of values</dd>
+<dt><cite>entries()</cite></dt>
+<dd>Iterable of key/value pairs</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="section" id="simple-implementation">
+<h3>Simple Implementation</h3>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">SimpleMap</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">_items</span> <span class="o">=</span> <span class="p">[];</span> <span class="p">}</span>
+
+  <span class="nx">set</span><span class="p">(</span><span class="nx">k</span><span class="p">,</span> <span class="nx">v</span><span class="p">)</span> <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="nx">k</span><span class="p">,</span> <span class="nx">v</span><span class="p">]);</span> <span class="p">}</span>
+
+  <span class="nx">get</span><span class="p">(</span><span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">kv</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="nx">kv</span> <span class="p">=&gt;</span> <span class="nx">k</span> <span class="o">===</span> <span class="nx">kv</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+    <span class="k">return</span> <span class="nx">kv</span> <span class="o">?</span> <span class="nx">kv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">:</span> <span class="kc">undefined</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="nx">has</span><span class="p">(</span><span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="nx">kv</span> <span class="p">=&gt;</span> <span class="nx">k</span> <span class="o">===</span> <span class="nx">kv</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="k">delete</span><span class="p">(</span><span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">.</span><span class="nx">findIndex</span><span class="p">(</span><span class="nx">kv</span> <span class="p">=&gt;</span> <span class="nx">k</span> <span class="o">===</span> <span class="nx">kv</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="nx">keys</span><span class="p">()</span>    <span class="p">{</span> <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">kv</span> <span class="p">=&gt;</span> <span class="nx">kv</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span> <span class="p">}</span>
+  <span class="nx">values</span><span class="p">()</span>  <span class="p">{</span> <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">kv</span> <span class="p">=&gt;</span> <span class="nx">kv</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span> <span class="p">}</span>
+  <span class="nx">entries</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Runtime for our simple implementation:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="71%" />
+<col width="29%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Operation</th>
+<th class="head">Runtime</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>set</td>
+<td>O(1)</td>
+</tr>
+<tr class="row-odd"><td>get</td>
+<td>O(n)</td>
+</tr>
+<tr class="row-even"><td>has</td>
+<td>O(n)</td>
+</tr>
+<tr class="row-odd"><td>delete</td>
+<td>O(n)</td>
+</tr>
+<tr class="row-even"><td>keys</td>
+<td>O(n)</td>
+</tr>
+<tr class="row-odd"><td>values</td>
+<td>O(n)</td>
+</tr>
+<tr class="row-even"><td>entries</td>
+<td>O(n)</td>
+</tr>
+</tbody>
+</table>
+<div class="docutils container">
+<p>We can do better with a different implementation!</p>
+</div>
+</div>
+</div>
+<div class="section" id="hash-tables">
+<h2>Hash Tables</h2>
+<div class="section" id="id3">
+<div class="big highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">fruits</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;apple&quot;</span><span class="o">:</span> <span class="s2">&quot;red&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;berry&quot;</span><span class="o">:</span> <span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;cherry&quot;</span><span class="o">:</span> <span class="s2">&quot;red&quot;</span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Itâd be awesome to keep this in some sort of magic array<ul>
+<li>Get <cite>O(1)</cite> time for many operations</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="graphviz">
+<img src="_images/graphviz-83f822f9294398559caca0240a47dfd988a1d5bb.svg" />
+</div>
+</div>
+<div class="docutils container">
+<p>But how could we know that âappleâ is index #7?</p>
+</div>
+</div>
+<div class="section" id="hashing">
+<h3>Hashing</h3>
+<p>We can hash a string to a number using <cite>charCode</cite></p>
+<pre class="big literal-block">
+<span class="gray">str:</span> <span class="red">a    p    p    l    e</span>
+<span class="gray">cC :</span> 97  112  112  108  101 = 530
+</pre>
+<div class="docutils container">
+<p>We could store âappleâ in index #530!</p>
+</div>
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">hash</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">from</span><span class="p">(</span><span class="nx">key</span><span class="p">).</span><span class="nx">reduce</span><span class="p">(</span>
+    <span class="p">(</span><span class="nx">accum</span><span class="p">,</span> <span class="kr">char</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">accum</span> <span class="o">+</span> <span class="kr">char</span><span class="p">.</span><span class="nx">charCodeAt</span><span class="p">(),</span>
+    <span class="mi">0</span>
+  <span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>We might get huge index #s, though</li>
+<li>For âsupercalifragiliciousexpialadociousâ, weâd get #3,747</li>
+<li>If we only needed to map 10 different words, weâd waste space</li>
+<li>Solution: Use modulo (<code class="docutils literal notranslate"><span class="pre">%</span></code>) to truncate: <code class="docutils literal notranslate"><span class="pre">hash</span> <span class="pre">%</span> <span class="pre">array.length</span></code></li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">hash</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">arrayLen</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">hash</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">from</span><span class="p">(</span><span class="nx">key</span><span class="p">).</span><span class="nx">reduce</span><span class="p">(</span>
+    <span class="p">(</span><span class="nx">accum</span><span class="p">,</span> <span class="kr">char</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">accum</span> <span class="o">+</span> <span class="kr">char</span><span class="p">.</span><span class="nx">charCodeAt</span><span class="p">(),</span>
+    <span class="mi">0</span>
+  <span class="p">);</span>
+
+<span class="hll">  <span class="k">return</span> <span class="nx">hash</span> <span class="o">%</span> <span class="nx">arrayLen</span><span class="p">;</span>
+</span><span class="p">};</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>This would hash âactâ and âcatâ to the same number</li>
+<li>Weâll use âHornerâs Methodâ to make order meaningful:<ul>
+<li>For each letter, we add <code class="docutils literal notranslate"><span class="pre">H</span> <span class="pre">*</span> <span class="pre">currHash</span> <span class="pre">+</span> <span class="pre">currLetter</span></code></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">hash</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+<span class="hll">  <span class="c1">// Prime number to use with Horner&#39;s method</span>
+</span><span class="hll">  <span class="kr">const</span> <span class="nx">H_PRIME</span> <span class="o">=</span> <span class="mi">31</span><span class="p">;</span>
+</span>
+  <span class="kd">let</span> <span class="nx">numKey</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">from</span><span class="p">(</span><span class="nx">key</span><span class="p">).</span><span class="nx">reduce</span><span class="p">(</span>
+<span class="hll">    <span class="p">(</span><span class="nx">accum</span><span class="p">,</span> <span class="kr">char</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">accum</span> <span class="o">*</span> <span class="nx">H_PRIME</span> <span class="o">+</span> <span class="kr">char</span><span class="p">.</span><span class="nx">charCodeAt</span><span class="p">(),</span>
+</span>    <span class="mi">0</span>
+  <span class="p">);</span>
+
+  <span class="k">return</span> <span class="nx">numKey</span> <span class="o">%</span> <span class="nx">array_len</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p>Why 31?</p>
+<p class="last">Prime numbers tend to be used to make hashes â and particular
+prime numbes are better than others. The explanation is
+interesting, but delves deeply into math theory, and is not
+something most developers will ever learn. If youâre interested,
+though: <a class="reference external" href="https://computinglife.wordpress.com/2008/11/20/why-do-hash-functions-use-prime-numbers/">Why Do Hash Functions Use Prime Numbers?</a></p>
+</div>
+</div>
+<div class="section" id="runtime-of-hash">
+<h3>Runtime of Hash</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Amount of work to hash key isnât related to # items in map</li>
+<li>In our implementation: it is related to length of input string<ul>
+<li>So we can call it <cite>O(k)</cite>, where <cite>k</cite> is #-chars-in-string</li>
+</ul>
+</li>
+<li>Real-world versions often use part of string <em>(eg first 100 chars)</em><ul>
+<li>These then could be <cite>O(1)</cite>, as length-of-key doesnât affect worst case</li>
+</ul>
+</li>
+<li>Weâll assume hash is <cite>O(1)</cite> in discussion of runtime for hash tables</li>
+</ul>
+</div>
+</div>
+<div class="section" id="fast-hashes-vs-crypto-hashes">
+<h3>Fast Hashes vs Crypto Hashes</h3>
+<p>Hash functions for hash tables, prioritize:</p>
+<ul class="simple">
+<li>speed (must be fast!)</li>
+<li>wide distribution (spread out values so there are fewer collisions)</li>
+</ul>
+<div class="docutils container">
+<p>For cryptologic hashes, like SHA or Bcrypt, prioritize:</p>
+<ul class="simple">
+<li>dfficulty of reversing output</li>
+</ul>
+</div>
+<div class="docutils container">
+<p>For crypto uses, always use a proven crypto hash, not your own!</p>
+</div>
+</div>
+<div class="section" id="hash-table">
+<h3>Hash Table</h3>
+<div class="compare compare23 docutils container">
+<div class="docutils container">
+<pre class="big literal-block">
+apple â 7
+berry â 4
+cherry â 1
+</pre>
+</div>
+<div class="docutils container">
+<div class="graphviz">
+<img src="_images/graphviz-f2d741e203b88c6918675ad84599c55c7edf5fbe.svg" />
+</div>
+</div>
+</div>
+<div class="compare compare23 docutils container">
+<div class="docutils container">
+<p><em>Oh no!</em> Two keys hash same?</p>
+<pre class="big literal-block">
+apple â 7
+berry â <span class="red">4</span>
+cherry â 1
+durian â <span class="red">4</span>
+</pre>
+</div>
+<div class="docutils container">
+<p><em>Solution:</em> Each <em>bin</em> is array of <code class="docutils literal notranslate"><span class="pre">[key,</span> <span class="pre">val]</span></code>s</p>
+<div class="graphviz">
+<img src="_images/graphviz-7285f578bf0c6937f054b5b3d1eb9d520c7ba080.svg" />
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="hashtable-set-key-val">
+<h3>HashTable <cite>set(key, val)</cite></h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="graphviz">
+<img src="_images/graphviz-f5bfa385d23e3b1dfcd0c163bd608fe67a8c136e.svg" />
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Hash key</li>
+<li>If bin is empty: set to <code class="docutils literal notranslate"><span class="pre">[key,</span> <span class="pre">val]</span></code></li>
+<li>Else: add <code class="docutils literal notranslate"><span class="pre">[key,</span> <span class="pre">val]</span></code> to end</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="hashtable-get-key">
+<h3>HashTable <cite>get(key)</cite></h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="graphviz">
+<img src="_images/graphviz-991e29bbd03cec3089b4a925e3cc090db1cba60d.svg" />
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Hash key</li>
+<li>If bin is empty: return <cite>undefined</cite></li>
+<li>Search array, returning value if found</li>
+<li>If not in array, return <cite>undefined</cite></li>
+<li><cite>has()</cite>: same idea, returns true/false</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="hashtable-keys">
+<h3>HashTable <cite>keys()</cite></h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="graphviz">
+<img src="_images/graphviz-723d82667659562d5e2c4952780f25d032611c44.svg" />
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Loop over bins</li>
+<li>For each bin, loop over pairs</li>
+<li><cite>values()</cite> and <cite>entries()</cite> are same idea</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="hashtable-delete-key">
+<h3>HashTable <cite>delete(key)</cite></h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="graphviz">
+<img src="_images/graphviz-754d06a9c68788e927a03cea0efea3b504625dc1.svg" />
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Hash key</li>
+<li>If bin is empty: return</li>
+<li>Search array for index of item</li>
+<li>Splice array to remove item</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="hashtable-runtimes">
+<h2>HashTable Runtimes</h2>
+<div class="section" id="id4">
+<table border="1" class="docutils">
+<colgroup>
+<col width="58%" />
+<col width="42%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>set</td>
+<td>O(1)</td>
+</tr>
+<tr class="row-even"><td>get, has</td>
+<td>mostly O(1)</td>
+</tr>
+<tr class="row-odd"><td>delete</td>
+<td>mostly O(1)</td>
+</tr>
+<tr class="row-even"><td>keys, values, entries</td>
+<td>O(n)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="wtf-does-mostly-mean">
+<h3>WTF Does âMostlyâ Mean???</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Fundamentally, hash tables can be <cite>O(1)</cite><ul>
+<li>If we donât have collision &amp; array is right size</li>
+</ul>
+</li>
+<li>You can get close to <cite>O(1)</cite> by:<ul>
+<li>Choosing array size large enough to minimize collisions</li>
+<li>Choosing hash function that spreads keys evenly in array</li>
+</ul>
+</li>
+<li>If you have predictable number of collisions, it can be <cite>O(1)</cite><ul>
+<li>Remember: <cite>O(3)</cite> is the same as <cite>O(1)</cite> in runtime!</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="resizing">
+<h3>Resizing</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>To ensure efficiency, good implementation shrink/grow array<ul>
+<li>Often aiming to keep it ~75% occupied</li>
+</ul>
+</li>
+<li>This means <em>some</em> <cite>.set()</cite> and <cite>.delete()</cite> calls will take longer<ul>
+<li>If shrink/grown by proportion <em>(eg, double/halve)</em>,
+will be âamortized <cite>O(1)</cite>â</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="collisions">
+<h3>Collisions</h3>
+<ul class="simple">
+<li>Our first implementation made each bin (spot in array) an array</li>
+<li>This is a common implementation; itâs called âchainingâ</li>
+<li>Thereâs another possibility</li>
+</ul>
+</div>
+<div class="section" id="open-addressing">
+<h3>Open Addressing</h3>
+<ul class="simple">
+<li>We can make each bin just a single <code class="docutils literal notranslate"><span class="pre">[key,</span> <span class="pre">value]</span></code> pair</li>
+<li>If collision: look at the ânextâ place<ul>
+<li>This can be the next bin (this is âlinear probingâ)</li>
+<li>Or there are smarter algorithms to reduce clumping</li>
+</ul>
+</li>
+<li>We should keep array size large enough to minimize when this happens</li>
+<li>If we do and we have a good hash function, we can get amortized <cite>O(1)</cite></li>
+</ul>
+</div>
+</div>
+<div class="section" id="sets">
+<h2>Sets</h2>
+<div class="section" id="id5">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">fruits</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Set</span><span class="p">([</span><span class="s1">&#39;apple&#39;</span><span class="p">,</span> <span class="s1">&#39;berry&#39;</span><span class="p">,</span> <span class="s1">&#39;cherry&#39;</span><span class="p">,</span> <span class="s1">&#39;durian&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="graphviz">
+<img src="_images/graphviz-d462e2bdc081efd2863152a9b7a4e419f4083be2.svg" />
+</div>
+<ul class="simple">
+<li>A <cite>Set</cite> is just a <cite>Map</cite> without values</li>
+<li>Same runtime characteristics</li>
+</ul>
+</div>
+</div>
+<div class="section" id="javascript-types">
+<h2>Javascript Types</h2>
+<div class="section" id="map">
+<h3>Map</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<ul class="simple">
+<li>Built-in type for mapping</li>
+<li>Keys can be any type<ul>
+<li>Retrieval uses <cite>===</cite> to match</li>
+</ul>
+</li>
+<li>Keeps keys in order of insertion</li>
+<li>Amortized <cite>O(1)</cite> for set/get/delete</li>
+</ul>
+</div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">fruits</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Map</span><span class="p">(</span>
+  <span class="p">[[</span><span class="s2">&quot;apple&quot;</span><span class="p">,</span> <span class="s2">&quot;red&quot;</span><span class="p">],[</span><span class="s2">&quot;berry&quot;</span><span class="p">,</span> <span class="s2">&quot;blue&quot;</span><span class="p">]])</span>
+
+<span class="nx">fruits</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">&quot;cherry&quot;</span><span class="p">,</span> <span class="s2">&quot;red&quot;</span><span class="p">)</span>
+
+<span class="c1">// some methods return map, so can chain</span>
+<span class="nx">fruits</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">&quot;cherry&quot;</span><span class="p">,</span> <span class="s2">&quot;red&quot;</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">&quot;durian&quot;</span><span class="p">,</span> <span class="s2">&quot;yellow&quot;</span><span class="p">)</span>
+      <span class="p">.</span><span class="k">delete</span><span class="p">(</span><span class="s2">&quot;apple&quot;</span><span class="p">)</span>
+
+<span class="kd">let</span> <span class="nx">berry_color</span> <span class="o">=</span> <span class="nx">fruits</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;berry&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="object">
+<h3>Object</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<ul class="simple">
+<li>Generic object; can use for mapping</li>
+<li>Prior to <cite>Map</cite> (2015), was only way!</li>
+<li>Keys can only be strings or numbers<ul>
+<li>Numbers stringified: <cite>1</cite> â <cite>â1â</cite></li>
+</ul>
+</li>
+<li>Keeps keys in order of insertion</li>
+<li>Amortized <cite>O(1)</cite> for set/get/delete</li>
+<li>Better to use <cite>Map</cite> for mapping</li>
+</ul>
+</div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">fruits</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;apple&quot;</span><span class="o">:</span> <span class="s2">&quot;red&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;berry&quot;</span><span class="o">:</span> <span class="s2">&quot;blue&quot;</span><span class="p">}</span>
+
+<span class="nx">fruits</span><span class="p">.</span><span class="nx">cherry</span> <span class="o">=</span> <span class="s2">&quot;red&quot;</span>
+<span class="nx">fruits</span><span class="p">[</span><span class="s2">&quot;durian&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;yellow&quot;</span>
+
+<span class="kd">let</span> <span class="nx">berry_color</span> <span class="o">=</span> <span class="nx">fruits</span><span class="p">.</span><span class="nx">berry</span>
+<span class="kd">let</span> <span class="nx">cherry_color</span> <span class="o">=</span> <span class="nx">fruits</span><span class="p">[</span><span class="s2">&quot;cherry&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<p>Keys can be a few other less common things, such as Javascript âSymbolâ types,
+though these are uncommon for use in mapping (this is more common when making
+special methods for OO). The ordering of keys can also at times be a bit
+complex when you have different types of keys.</p>
+</div>
+<div class="section" id="set">
+<h3>Set</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<ul class="simple">
+<li>Built-in type for sets</li>
+<li>Keys can be any type<ul>
+<li>Retrieval uses <cite>===</cite> to match</li>
+</ul>
+</li>
+<li>Keeps keys in order of insertion</li>
+<li>Amortized <cite>O(1)</cite> for set/get/delete</li>
+</ul>
+</div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">fruits</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Set</span><span class="p">([</span><span class="s2">&quot;apple&quot;</span><span class="p">,</span> <span class="s2">&quot;berry&quot;</span><span class="p">])</span>
+
+<span class="nx">fruits</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s2">&quot;cherry&quot;</span><span class="p">)</span>
+<span class="nx">fruits</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s2">&quot;apple&quot;</span><span class="p">)</span>  <span class="c1">// true</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="python-types">
+<h2>Python Types</h2>
+<div class="section" id="dictionary">
+<h3>Dictionary</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<ul class="simple">
+<li>Built-in type for mapping</li>
+<li>Keys can be any <em>immutable</em> type</li>
+<li>Keeps keys in order of insertion <em>(Python &gt; 3.6)</em></li>
+<li>Amortized <cite>O(1)</cite> for set/get/delete</li>
+</ul>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fruits</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;apple&quot;</span><span class="p">:</span> <span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="s2">&quot;berry&quot;</span><span class="p">:</span> <span class="s2">&quot;blue&quot;</span><span class="p">}</span>
+
+<span class="n">also_can</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">apple</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">berry</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+
+<span class="n">fruits</span><span class="p">[</span><span class="s2">&quot;cherry&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;red&quot;</span>
+
+<span class="n">fruits</span><span class="p">[</span><span class="s2">&quot;berry&quot;</span><span class="p">]</span>      <span class="c1"># error if not there</span>
+<span class="n">fruits</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cherry&quot;</span><span class="p">)</span> <span class="c1"># or None</span>
+
+<span class="c1"># dict comprehension</span>
+<span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">numbers</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id6">
+<h3>Set</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<ul class="simple">
+<li>Built-in type for sets</li>
+<li>Keys can be any <em>immutable</em> type</li>
+<li>Key order not guaranteed</li>
+<li>Amortized <cite>O(1)</cite> for set/get/delete</li>
+<li>Has awesome built-in set operations<ul>
+<li>Union, intersection, symmetric difference, subtraction</li>
+<li>For JS, can get these with awesome <cite>lodash</cite> library</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">moods</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;happy&quot;</span><span class="p">,</span> <span class="s2">&quot;sad&quot;</span><span class="p">,</span> <span class="s2">&quot;grumpy&quot;</span><span class="p">}</span>
+
+<span class="n">dwarfs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="s2">&quot;happy&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">,</span> <span class="s2">&quot;grumpy&quot;</span><span class="p">])</span>
+
+<span class="c1"># union, intersection, and symmetric diff:</span>
+<span class="n">moods</span> <span class="o">|</span> <span class="n">dwarfs</span>  <span class="c1"># {happy, sad, grumpy, doc}</span>
+<span class="n">moods</span> <span class="o">&amp;</span> <span class="n">dwarfs</span>  <span class="c1"># {happy, grumpy}</span>
+<span class="n">moods</span> <span class="o">^</span> <span class="n">dwarfs</span>  <span class="c1"># {sad, doc}</span>
+
+<span class="c1"># subtraction</span>
+<span class="n">moods</span> <span class="o">-</span> <span class="n">dwarfs</span>  <span class="c1"># {sad}</span>
+<span class="n">dwarfs</span> <span class="o">-</span> <span class="n">moods</span>  <span class="c1"># {doc}</span>
+
+<span class="c1"># set comprehension</span>
+<span class="p">{</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">some_list</span> <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="frozenset">
+<h3>Frozenset</h3>
+<div class="compare compare23 docutils container">
+<div class="docutils container">
+<ul class="simple">
+<li>Same as <cite>set()</cite>, but immutable<ul>
+<li>Useful to use as a key in a <cite>dict</cite></li>
+</ul>
+</li>
+<li>Same runtime, same API, same set functions</li>
+</ul>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">moods</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">([</span><span class="s2">&quot;happy&quot;</span><span class="p">,</span> <span class="s2">&quot;sad&quot;</span><span class="p">,</span> <span class="s2">&quot;grumpy&quot;</span><span class="p">])</span>
+
+<span class="n">dwarfs</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">([</span><span class="s2">&quot;happy&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">,</span> <span class="s2">&quot;grumpy&quot;</span><span class="p">])</span>
+
+<span class="c1"># union, intersection, and symmetric diff:</span>
+<span class="n">moods</span> <span class="o">|</span> <span class="n">dwarfs</span>  <span class="c1"># {happy, sad, grumpy, doc}</span>
+<span class="n">moods</span> <span class="o">&amp;</span> <span class="n">dwarfs</span>  <span class="c1"># {happy, grumpy}</span>
+<span class="n">moods</span> <span class="o">^</span> <span class="n">dwarfs</span>  <span class="c1"># {sad, doc}</span>
+
+<span class="c1"># subtraction</span>
+<span class="n">moods</span> <span class="o">-</span> <span class="n">dwarfs</span>  <span class="c1"># {sad}</span>
+<span class="n">dwarfs</span> <span class="o">-</span> <span class="n">moods</span>  <span class="c1"># {doc}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="learning-more">
+<h2>Learning More</h2>
+<div class="section" id="id7">
+<div class="docutils container">
+<ul class="simple">
+<li>Awesome writeups from Base CS:<ul>
+<li><a class="reference external" href="https://medium.com/basecs/taking-hash-tables-off-the-shelf-139cbf4752f0">Taking Hash Tables Off the Shelf</a></li>
+<li><a class="reference external" href="https://medium.com/basecs/hashing-out-hash-functions-ea5dd8beb4dd">Hashing Out Hash Functions</a></li>
+</ul>
+</li>
+<li><a class="reference external" href="https://morepypy.blogspot.jp/2015/01/faster-more-memory-efficient-and-more.html">Pythonâs method for ordered dictionaries</a></li>
+<li>Perfect hash tables<ul>
+<li>If you know your keys in advance, you can have a hash table without
+chains <em>or</em> open addressing (just simple bins)</li>
+<li>There are algorithms that can discover a âperfect hash functionâ
+for your keys that produce a unique hash for each key</li>
+<li>Useful for small, fast, simple lookup tables than donât change</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

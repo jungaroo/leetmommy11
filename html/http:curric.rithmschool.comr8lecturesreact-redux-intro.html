@@ -1,0 +1,296 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>React Redux</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">React Redux</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">React Redux</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#react-and-redux-together">React and Redux Together</a><ul>
+<li><a class="reference internal" href="#id2">React-Redux</a></li>
+<li><a class="reference internal" href="#first-we-need-a-reducer">First â we need a reducer!</a></li>
+<li><a class="reference internal" href="#provider"><cite>&lt;Provider&gt;</cite></a></li>
+<li><a class="reference internal" href="#connect"><cite>connect()</cite></a></li>
+<li><a class="reference internal" href="#mapstatetoprops"><cite>mapStateToProps</cite></a></li>
+<li><a class="reference internal" href="#what-about-dispatching">What about dispatching?</a></li>
+<li><a class="reference internal" href="#data-flow-with-react-redux">Data flow with React-Redux</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#redux-dev-tools">Redux Dev Tools</a><ul>
+<li><a class="reference internal" href="#id3">Redux Dev Tools</a></li>
+<li><a class="reference internal" href="#including-the-redux-dev-tools">Including the Redux Dev Tools</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="react-redux">
+<h1>React Redux</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Include React and Redux</li>
+<li>Describe what <cite>connect()</cite> and <cite>&lt;Provider&gt;</cite> do</li>
+<li>Explain what <cite>mapStateToProps()</cite> does</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="react-and-redux-together">
+<h2>React and Redux Together</h2>
+<div class="section" id="id2">
+<h3>React-Redux</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Weâll use a library for integrating react and redux</li>
+<li>Install it using <code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">install</span> <span class="pre">react-redux</span></code></li>
+<li>Use a higher level component called <cite>&lt;Provider&gt;</cite></li>
+<li>Use a few functions to make it all happen!</li>
+</ul>
+</div>
+</div>
+<div class="section" id="first-we-need-a-reducer">
+<h3>First â we need a reducer!</h3>
+<div class="docutils container">
+<p>Letâs build our reducer â we wonât get far without this!</p>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">demo/counter/src/rootReducer.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">rootReducer</span><span class="p">(</span><span class="nx">state</span><span class="o">=</span><span class="p">{</span> <span class="nx">count</span><span class="p">:</span> <span class="m">0</span> <span class="p">},</span> <span class="nx">action</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s">&quot;reducer ran; state &amp; action:&quot;</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">action</span><span class="p">);</span>
+
+  <span class="k">switch</span> <span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>   
+    <span class="k">case</span> <span class="s">&quot;INCREMENT&quot;</span><span class="p">:</span>
+      <span class="k">return</span> <span class="p">{</span> <span class="p">...</span><span class="nx">state</span><span class="p">,</span> <span class="nx">count</span><span class="p">:</span> <span class="nx">state</span><span class="p">.</span><span class="nx">count</span> <span class="o">+</span> <span class="m">1</span> <span class="p">};</span>
+
+    <span class="k">case</span> <span class="s">&quot;DECREMENT&quot;</span><span class="p">:</span>
+      <span class="k">return</span> <span class="p">{</span> <span class="p">...</span><span class="nx">state</span><span class="p">,</span> <span class="nx">count</span><span class="p">:</span> <span class="nx">state</span><span class="p">.</span><span class="nx">count</span> <span class="o">-</span> <span class="m">1</span> <span class="p">};</span>
+
+    <span class="k">default</span><span class="p">:</span>  
+      <span class="k">return</span> <span class="nx">state</span><span class="p">;</span>
+  <span class="p">}</span>      
+<span class="p">}</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="nx">rootReducer</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="provider">
+<h3><cite>&lt;Provider&gt;</cite></h3>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>react-redux</cite> gives us <cite>Provider</cite> component<ul>
+<li><cite>Provider</cite> accepts a prop of a Redux store.</li>
+</ul>
+</li>
+<li>Make sure you import that!</li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">demo/counter/src/index.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="k">import</span> <span class="nx">React</span> <span class="nx">from</span> <span class="s">&quot;react&quot;</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">ReactDOM</span> <span class="nx">from</span> <span class="s">&quot;react-dom&quot;</span><span class="p">;</span>
+
+<span class="k">import</span> <span class="nx">App</span> <span class="nx">from</span> <span class="s">&quot;./App&quot;</span><span class="p">;</span>
+
+<span class="k">import</span> <span class="nx">rootReducer</span> <span class="nx">from</span> <span class="s">&quot;./rootReducer&quot;</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">createStore</span> <span class="p">}</span> <span class="nx">from</span> <span class="s">&quot;redux&quot;</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">Provider</span> <span class="p">}</span> <span class="nx">from</span> <span class="s">&quot;react-redux&quot;</span><span class="p">;</span>
+
+<span class="kd">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">createStore</span><span class="p">(</span><span class="nx">rootReducer</span><span class="p">);</span>
+
+<span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span>
+  <span class="p">&lt;</span><span class="nt">Provider</span> <span class="na">store</span><span class="o">=</span><span class="p">{</span><span class="nx">store</span><span class="p">}&gt;</span>
+    <span class="p">&lt;</span><span class="nt">App</span> <span class="p">/&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">Provider</span><span class="p">&gt;,</span>
+  <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s">&quot;root&quot;</span><span class="p">)</span>
+<span class="p">);</span> 
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="connect">
+<h3><cite>connect()</cite></h3>
+<div class="docutils container">
+<ul class="simple">
+<li>After specifiying store to send actions to, connect component to store</li>
+<li>For this, use <cite>connect()</cite> â which returns a function<ul>
+<li>Once component connected, it can dispatch actions</li>
+</ul>
+</li>
+<li>Instead of store dispatching actions, connected components will<ul>
+<li>Using <cite>this.props.dispatch</cite></li>
+</ul>
+</li>
+</ul>
+</div>
+<p>Letâs build our counter component, which weâll hook up to Redux:</p>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">demo/counter/src/Counter.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="k">import</span> <span class="nx">React</span><span class="p">,</span> <span class="p">{</span><span class="nx">Component</span><span class="p">}</span> <span class="nx">from</span> <span class="s">&#39;react&#39;</span>
+<span class="k">import</span> <span class="p">{</span><span class="nx">connect</span><span class="p">}</span> <span class="nx">from</span> <span class="s">&#39;react-redux&#39;</span>
+
+<span class="kd">class</span> <span class="nx">Counter</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">up</span><span class="p">()</span>   <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">({</span> <span class="nx">type</span><span class="p">:</span> <span class="s">&quot;INCREMENT&quot;</span> <span class="p">});</span> <span class="p">}</span>
+  <span class="nx">down</span><span class="p">()</span> <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">({</span> <span class="nx">type</span><span class="p">:</span> <span class="s">&quot;DECREMENT&quot;</span> <span class="p">});</span> <span class="p">}</span>
+
+  <span class="nx">render</span><span class="p">(){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s">&quot;render ran; props&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">);</span>
+    <span class="k">return</span> <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">h2</span><span class="p">&gt;</span>Count is: <span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">count</span><span class="p">}&lt;/</span><span class="nt">h2</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">button</span> <span class="na">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">up</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">)}&gt;</span> + <span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">button</span> <span class="na">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">down</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">)}&gt;</span> - <span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+      <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">demo/counter/src/Counter.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="c1">// Place redux state onto react props ---</span>
+<span class="c1">// this function runs every time an action is dispatched!</span>
+
+<span class="kd">function</span> <span class="nx">mapStateToProps</span><span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s">&quot;mapStateToProps ran; redux state:&quot;</span><span class="p">,</span> <span class="nx">state</span><span class="p">);</span>
+  <span class="k">return</span> <span class="p">{</span> <span class="nx">count</span><span class="p">:</span> <span class="nx">state</span><span class="p">.</span><span class="nx">count</span> <span class="p">};</span>
+<span class="p">}</span>
+
+<span class="kd">const</span> <span class="nx">connectedComponent</span> <span class="o">=</span> <span class="nx">connect</span><span class="p">(</span><span class="nx">mapStateToProps</span><span class="p">);</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="nx">connectedComponent</span><span class="p">(</span><span class="nx">Counter</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="mapstatetoprops">
+<h3><cite>mapStateToProps</cite></h3>
+<p>Whatâs this <cite>mapStateToProps</cite> thing?</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Itâs how we get our state from Redux and send it to our react component</li>
+<li>Redux state is placed on React <cite>props</cite></li>
+<li>You can call function whatever you want, <cite>mapStateToProps</cite> is official</li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="c1">// we now will have access to this.props.keyToAddToReactProps</span>
+<span class="c1">// in our component once we connect them using the</span>
+<span class="c1">// `connect` function.</span>
+
+<span class="kd">function</span> <span class="nx">mapStateToProps</span><span class="p">(</span><span class="nx">reduxState</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">{</span>
+    <span class="c1">// state comes from the Redux store</span>
+    <span class="nx">keyToAddToReactProps</span><span class="o">:</span> <span class="nx">reduxState</span><span class="p">.</span><span class="nx">someValue</span>
+  <span class="p">};</span>
+<span class="p">}</span>
+
+<span class="kr">const</span> <span class="nx">connectToReduxStore</span> <span class="o">=</span> <span class="nx">connect</span><span class="p">(</span><span class="nx">mapStateToProps</span><span class="p">);</span>
+
+<span class="kr">export</span> <span class="k">default</span> <span class="nx">connectToReduxStore</span><span class="p">(</span><span class="nx">YourComponent</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="what-about-dispatching">
+<h3>What about dispatching?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Connected components can dispatch via <cite>this.props.dispatch</cite></li>
+<li>Redux state is placed on React <cite>props</cite></li>
+<li>Instead of the <cite>store</cite> dispatching, connected components will dispatch!</li>
+</ul>
+</div>
+</div>
+<div class="section" id="data-flow-with-react-redux">
+<h3>Data flow with React-Redux</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Store is created which dispatches an action</li>
+<li>Reducers returns the initial state</li>
+<li><cite>mapStateToProps</cite> runs for all connected components<ul>
+<li>Provides the state for these components</li>
+<li>Triggers <cite>render</cite></li>
+</ul>
+</li>
+<li>Connected components have the ability to dispatch actions</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="redux-dev-tools">
+<h2>Redux Dev Tools</h2>
+<div class="section" id="id3">
+<p><a class="reference external" href="https://github.com/zalmoxisus/redux-devtools-extension">Download the Redux Dev Tools</a></p>
+</div>
+<div class="section" id="including-the-redux-dev-tools">
+<h3>Including the Redux Dev Tools</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">src/index.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">createStore</span><span class="p">(</span><span class="nx">rootReducer</span><span class="p">,</span>
+  <span class="nb">window</span><span class="p">.</span><span class="nx">__REDUX_DEVTOOLS_EXTENSION__</span>
+  <span class="o">&amp;&amp;</span> <span class="nb">window</span><span class="p">.</span><span class="nx">__REDUX_DEVTOOLS_EXTENSION__</span><span class="p">()</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Once this is done, go to Chrome to see your Redux state!</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

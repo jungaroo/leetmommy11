@@ -1,0 +1,141 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Associations and Data Modeling</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Associations and Data Modeling</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Associations and Data Modeling</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+<li><a class="reference internal" href="#data-modeling">Data Modeling</a></li>
+<li><a class="reference internal" href="#data-modeling-example">Data Modeling Example</a></li>
+<li><a class="reference internal" href="#data-modeling-solution">Data Modeling Solution</a></li>
+<li><a class="reference internal" href="#crows-feet">Crows Feet</a></li>
+<li><a class="reference internal" href="#guides-for-data-modeling">Guides for data-modeling</a></li>
+<li><a class="reference internal" href="#normalization">Normalization</a></li>
+<li><a class="reference internal" href="#let-s-practice">Letâs Practice!</a></li>
+<li><a class="reference internal" href="#your-turn">Your Turn!</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="associations-and-data-modeling">
+<h1>Associations and Data Modeling</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Describe what data modeling is</li>
+<li>Diagram the schema of a database</li>
+<li>Prepare for very common interview questions</li>
+</ul>
+</div>
+</div>
+<div class="section" id="data-modeling">
+<h3>Data Modeling</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>When building applications, one of the big questions youâll need to think about is: what is your schema?</li>
+<li>What tables do you need? What columns should they have? What constraints should you place on the data?</li>
+<li>What relationships should exist between tables? Are they one-to-many? Many-to-many?</li>
+<li>Sketching out a visual model of your schema can help provide answers to many of these questions</li>
+<li>Data modeling is the process of documenting a complex software system design as an easily understood diagram, using text and symbols to represent the way data needs to flow.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="data-modeling-example">
+<h3>Data Modeling Example</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>The app lets users create accounts</li>
+<li>Users can write articles</li>
+<li>Users can comment on articles</li>
+<li>Users can like comments</li>
+<li>Letâs model this data?<ul>
+<li>What kinds of columns do we need?</li>
+<li>What kinds of relationship do we need?</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="data-modeling-solution">
+<h3>Data Modeling Solution</h3>
+<div class="graphviz">
+<img src="_images/graphviz-f98f48debcbcd0162b953133310db5ed55ad4efa.svg" />
+</div>
+</div>
+<div class="section" id="crows-feet">
+<h3>Crows Feet</h3>
+<a class="reference internal image-reference" href="_images/crows-feet.png"><img alt="_images/crows-feet.png" src="_images/crows-feet.png" style="width: 80%;" /></a>
+</div>
+<div class="section" id="guides-for-data-modeling">
+<h3>Guides for data-modeling</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>avoid redundancy</li>
+<li>avoid too many columns</li>
+<li>how?</li>
+</ul>
+</div>
+</div>
+<div class="section" id="normalization">
+<h3>Normalization</h3>
+<p>Normalization is a database design technique which organizes tables in a manner that reduces redundancy and dependency of data. It divides larger tables to smaller tables and links them using relationships.</p>
+</div>
+<div class="section" id="let-s-practice">
+<h3>Letâs Practice!</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>movie theatre</li>
+<li>publishing company</li>
+</ul>
+</div>
+</div>
+<div class="section" id="your-turn">
+<h3>Your Turn!</h3>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

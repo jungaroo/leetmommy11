@@ -1,0 +1,801 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Recursion</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Recursion</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Recursion</a><ul>
+<li><a class="reference internal" href="#id1">Recursion</a><ul>
+<li><a class="reference internal" href="#id2">Recursion</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-tiniest-review">The Tiniest Review</a><ul>
+<li><a class="reference internal" href="#functions-calling-functions">Functions Calling Functions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#loops-and-recursion">Loops and Recursion</a><ul>
+<li><a class="reference internal" href="#loops-versus-recursion">Loops versus Recursion</a></li>
+<li><a class="reference internal" href="#count-to-3">Count to 3</a></li>
+<li><a class="reference internal" href="#call-frames-stack">Call Frames / Stack</a></li>
+<li><a class="reference internal" href="#more-counting">More Counting</a></li>
+<li><a class="reference internal" href="#id3">Loops versus Recursion</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#requirements">Requirements</a><ul>
+<li><a class="reference internal" href="#base-case">Base Case</a></li>
+<li><a class="reference internal" href="#no-base-case">No Base Case</a></li>
+<li><a class="reference internal" href="#explicit-vs-hidden-base-cases">Explicit vs. Hidden Base Cases</a></li>
+<li><a class="reference internal" href="#progress">Progress</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#returning-data">Returning Data</a><ul>
+<li><a class="reference internal" href="#finding-sum-of-list">Finding Sum of List</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#list-doubler">List Doubler</a><ul>
+<li><a class="reference internal" href="#the-problem">The Problem</a></li>
+<li><a class="reference internal" href="#the-challenge">The Challenge</a></li>
+<li><a class="reference internal" href="#oh-no">Oh No!</a></li>
+<li><a class="reference internal" href="#arbitrary-depth-with-loop">Arbitrary Depth with Loop</a></li>
+<li><a class="reference internal" href="#non-recursively">Non-Recursively</a></li>
+<li><a class="reference internal" href="#recursively">Recursively</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#loops-with-recursion">Loops with Recursion</a><ul>
+<li><a class="reference internal" href="#loops-or-no-loops">Loops or No Loops?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#recognizing-recursion">Recognizing Recursion</a><ul>
+<li><a class="reference internal" href="#filesystems">Filesystems</a></li>
+<li><a class="reference internal" href="#fractals">Fractals</a></li>
+<li><a class="reference internal" href="#parsing">Parsing</a></li>
+<li><a class="reference internal" href="#nested-data">Nested Data</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#runtime">Runtime</a><ul>
+<li><a class="reference internal" href="#id4">Runtime</a></li>
+<li><a class="reference internal" href="#improving-runtime">Improving Runtime</a></li>
+<li><a class="reference internal" href="#accumulating-output">Accumulating Output</a></li>
+<li><a class="reference internal" href="#accumulators">Accumulators</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#resources">Resources</a><ul>
+<li><a class="reference internal" href="#id5">Resources</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="recursion">
+<h1>Recursion</h1>
+<div class="section" id="id1">
+<div class="section" id="id2">
+<div class="docutils container">
+<p>Having a function call itself</p>
+</div>
+<div class="docutils container">
+<p>Also: a very powerful programming technique</p>
+</div>
+<div class="docutils container">
+<p>Also: a popular interview question topic</p>
+</div>
+</div>
+</div>
+<div class="section" id="the-tiniest-review">
+<h2>The Tiniest Review</h2>
+<div class="section" id="functions-calling-functions">
+<h3>Functions Calling Functions</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">function</span> <span class="n">a</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;hello&quot;</span><span class="p">);</span>
+  <span class="n">b</span><span class="p">();</span>
+  <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;coding&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">function</span> <span class="n">b</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;world&quot;</span><span class="p">);</span>
+  <span class="n">c</span><span class="p">();</span>
+  <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;love&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">function</span> <span class="n">c</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;i&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<pre class="console literal-block">
+| â <span class="green">a()</span>
+| <span class="cmd">hello</span>
+|
+| | â <span class="green">b()</span>
+| | <span class="cmd">world</span>
+| |
+| | | â <span class="green">c()</span>
+| | | <span class="cmd">i</span>
+| | | â <span class="red">undefined from c()</span>
+| |
+| | <span class="cmd">love</span>
+| | â <span class="red">undefined from b()</span>
+|
+| <span class="cmd">codiing</span>
+| â <span class="red">undefined from a()</span>
+</pre>
+</div>
+</div>
+<div class="docutils container">
+<p>â âhello world i love codingâ</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<p>Remember, when you call a function, you âfreezeâ where you are
+until that function returns, and then continue where you left off.</p>
+<p>So <cite>a</cite> prints <code class="docutils literal notranslate"><span class="pre">hello</span></code>, calls <cite>b</cite> which prints <code class="docutils literal notranslate"><span class="pre">world</span></code>, calls <cite>c</cite>
+which prints <code class="docutils literal notranslate"><span class="pre">i</span></code> and returns back to <cite>b</cite> which then prints <code class="docutils literal notranslate"><span class="pre">love</span></code>
+which then returns back to <cite>a</cite> which prints <code class="docutils literal notranslate"><span class="pre">coding</span></code>.</p>
+</div>
+</div>
+<div class="section" id="loops-and-recursion">
+<h2>Loops and Recursion</h2>
+<div class="section" id="loops-versus-recursion">
+<h3>Loops versus Recursion</h3>
+<p>Any loop can be written instead with recursion</p>
+<div class="docutils container">
+<p>Any recursion can be written instead with a loop</p>
+</div>
+<div class="docutils container">
+<p>â¦ but often, one way is easier for a problem</p>
+</div>
+</div>
+<div class="section" id="count-to-3">
+<h3>Count to 3</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<p>Using a <cite>while</cite> loop:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">count</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">n</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+  <span class="k">while</span> <span class="p">(</span><span class="nx">n</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span>
+    <span class="nx">n</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="p">}</span>
+
+<span class="nx">count</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>Using recursion:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">count</span><span class="p">(</span><span class="nx">n</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">n</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span>
+  <span class="nx">count</span><span class="p">(</span><span class="nx">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">count</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="call-frames-stack">
+<h3>Call Frames / Stack</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">count</span><span class="p">(</span><span class="nx">n</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">n</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span>
+  <span class="nx">count</span><span class="p">(</span><span class="nx">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">count</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<pre class="console literal-block">
+| â <span class="green">count(n=1)</span>
+| <span class="cmd">1</span>
+|
+| | â <span class="green">count(n=2)</span>
+| | <span class="cmd">2</span>
+| |
+| | | â <span class="green">count(n=3)</span>
+| | | <span class="cmd">3</span>
+| | |
+| | | | â <span class="green">count(n=4)</span>
+| | | | â <span class="red">undefined from count(n=4)</span>
+| | |
+| | | â <span class="red">undefined from count(n=3)</span>
+| |
+| | â <span class="red">undefined from count(n=2)</span>
+|
+| â <span class="red">undefined from count(n=1)</span>
+</pre>
+</div>
+</div>
+</div>
+<div class="section" id="more-counting">
+<h3>More Counting</h3>
+<div class="compare docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">count</span><span class="p">(</span><span class="nx">n</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">n</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span>
+  <span class="nx">count</span><span class="p">(</span><span class="nx">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+<span class="hll">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span>
+</span><span class="p">}</span>
+
+<span class="nx">count</span><span class="p">();</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<pre class="console literal-block">
+| â <span class="green">count(n=1)</span>
+| <span class="cmd">1</span>
+|
+| | â <span class="green">count(n=2)</span>
+| | <span class="cmd">2</span>
+| |
+| | | â <span class="green">count(n=3)</span>
+| | | <span class="cmd">3</span>
+| | |
+| | | | â <span class="green">count(n=4)</span>
+| | | | â <span class="red">undefined from count(n=4)</span>
+| | |
+| | | <span class="cmd">3</span>
+| | | â <span class="red">undefined from count(n=3)</span>
+| |
+| | <span class="cmd">2</span>
+| | â <span class="red">undefined from count(n=2)</span>
+|
+| <span class="cmd">1</span>
+| â <span class="red">undefined from count(n=1)</span>
+</pre>
+</div>
+</div>
+</div>
+<div class="section" id="id3">
+<h3>Loops versus Recursion</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<p>Using a <cite>while</cite> loop:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">count</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">n</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+  <span class="k">while</span> <span class="p">(</span><span class="nx">n</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span>
+    <span class="nx">n</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="p">}</span>
+
+<span class="nx">count</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>Using recursion:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">count</span><span class="p">(</span><span class="nx">n</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">n</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span>
+  <span class="nx">count</span><span class="p">(</span><span class="nx">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">count</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<p>Which do you prefer?</p>
+</div>
+</div>
+</div>
+<div class="section" id="requirements">
+<h2>Requirements</h2>
+<div class="section" id="base-case">
+<h3>Base Case</h3>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">count</span><span class="p">(</span><span class="nx">n</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+<span class="hll">  <span class="k">if</span> <span class="p">(</span><span class="nx">n</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span>
+  <span class="nx">count</span><span class="p">(</span><span class="nx">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>Every recursive function needs a <cite>base case</cite><ul>
+<li>How do we know when weâre done?</li>
+</ul>
+</li>
+</ul>
+<p>Often a base case is a âdegenerate caseâ.</p>
+<div class="docutils container">
+<ul class="simple">
+<li>concat([1, 2, 3]) â</li>
+<li>â1â + concat([2, 3]) â</li>
+<li>â1â + â2â + concat([3]) â</li>
+<li>â1â + â2â + â3â + concat([])  â <span class="red">degenerate: empty array</span></li>
+</ul>
+</div>
+<div class="admonition note">
+<p>Degenerate Cases</p>
+<p>A âdegenerate caseâ is one that is so reduced that itâs fundamentally
+different from the others and would need to be treated differently.</p>
+<p>Consider counting up to 3 recursively:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">count</span><span class="p">(</span><span class="nx">n</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">n</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span>
+  <span class="nx">count</span><span class="p">(</span><span class="nx">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Here, our base case is âwhen we hit 3, donât keep recursingâ. This
+is a base case, but itâs not âdegenerateâ â we <em>could</em> keep counting
+up after 3; thereâs nothing preventing us from doing so besides our goal
+to stop.</p>
+<p>Compare this with finding the length of a list recursively:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">lenlist</span><span class="p">(</span><span class="nx">nums</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">nums</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">===</span> <span class="kc">undefined</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span>
+
+  <span class="k">return</span> <span class="mi">1</span> <span class="o">+</span> <span class="nx">lenlist</span><span class="p">(</span><span class="nx">nums</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Here, our base case is âthe length of an empty list is 0, so return that
+and donât recurseâ. This base is âdegenerateâ â thereâs no possible way
+for us to find the length of a list with -1 items in it! It wouldnât even
+be possible for us to keep recursing; this base case is a hard limit on
+whatâs possible.</p>
+<p class="last">Not all recursive problems have a degenerate base case, but thinking about
+if one is possible is often helpful in figuring what your base case is
+and how the recursion should work.</p>
+</div>
+</div>
+<div class="section" id="no-base-case">
+<h3>No Base Case</h3>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">count</span><span class="p">(</span><span class="nx">n</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span>
+  <span class="nx">count</span><span class="p">(</span><span class="nx">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">count</span><span class="p">();</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p><span class="red">Stack Overflow!</span></p>
+</div>
+</div>
+<div class="section" id="explicit-vs-hidden-base-cases">
+<h3>Explicit vs. Hidden Base Cases</h3>
+<div class="compare docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">count</span><span class="p">(</span><span class="nx">n</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">n</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span>
+  <span class="nx">count</span><span class="p">(</span><span class="nx">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">function</span> <span class="n">count</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+    <span class="n">count</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>Which do you prefer?</p>
+</div>
+</div>
+<div class="section" id="progress">
+<h3>Progress</h3>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">count</span><span class="p">(</span><span class="nx">n</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">n</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span>
+<span class="hll">  <span class="nx">count</span><span class="p">(</span><span class="nx">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="returning-data">
+<h2>Returning Data</h2>
+<div class="section" id="finding-sum-of-list">
+<h3>Finding Sum of List</h3>
+<p>âReturn sum of list using recursionâ</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Whatâs our base case?<ul>
+<li>An empty list has sum = 0!</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">sum</span><span class="p">(</span><span class="nx">nums</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">nums</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+
+  <span class="k">return</span> <span class="nx">nums</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nx">sum</span><span class="p">(</span><span class="nx">nums</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="nx">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="list-doubler">
+<h2>List Doubler</h2>
+<div class="section" id="the-problem">
+<h3>The Problem</h3>
+<p>âFor every number in array, print the value, doubledâ</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">data</span> <span class="o">=</span> <span class="p">[</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span> <span class="p">]</span>  <span class="c1">//  =&gt; 2 4 6</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">doubler</span><span class="p">(</span><span class="nx">nums</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">n</span> <span class="k">of</span> <span class="nx">nums</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">n</span> <span class="o">*</span> <span class="mi">2</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="the-challenge">
+<h3>The Challenge</h3>
+<div class="docutils container">
+<ul>
+<li><p class="first">Some items can be lists themselves</p>
+</li>
+<li><p class="first">We want to âflattenâ them and still print doubled</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">data</span> <span class="o">=</span> <span class="p">[</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="mi">4</span> <span class="p">]</span>  <span class="c1">//   =&gt; 2 4 6 8</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">doubler</span><span class="p">(</span><span class="nx">nums</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">n</span> <span class="k">of</span> <span class="nx">nums</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">o</span> <span class="k">of</span> <span class="nx">n</span><span class="p">)</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">o</span> <span class="o">*</span> <span class="mi">2</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">n</span> <span class="o">*</span> <span class="mi">2</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="oh-no">
+<h3>Oh No!</h3>
+<p>Some of <em>those</em> items can be lists!</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">data</span> <span class="o">=</span> <span class="p">[</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="mi">4</span><span class="p">],</span> <span class="mi">5</span> <span class="p">]</span>  <span class="c1">//   =&gt; 2 4 6 8 10</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">doubler</span><span class="p">(</span><span class="nx">nums</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">n</span> <span class="k">of</span> <span class="nx">nums</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">o</span> <span class="k">of</span> <span class="nx">nums</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">p</span> <span class="k">of</span> <span class="nx">o</span><span class="p">)</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">p</span> <span class="o">*</span> <span class="mi">2</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">n</span> <span class="o">*</span> <span class="mi">2</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="arbitrary-depth-with-loop">
+<h3>Arbitrary Depth with Loop</h3>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">data</span> <span class="o">=</span> <span class="p">[</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="mi">4</span><span class="p">],</span> <span class="mi">5</span> <span class="p">]</span>  <span class="c1">//   =&gt; 2 4 6 8 10</span>
+
+<span class="kd">function</span> <span class="nx">doubler</span><span class="p">(</span><span class="nx">nums</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">stack</span> <span class="o">=</span> <span class="nx">nums</span><span class="p">.</span><span class="nx">reverse</span><span class="p">();</span>
+
+  <span class="k">while</span> <span class="p">(</span><span class="nx">stack</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">n</span> <span class="o">=</span> <span class="nx">stack</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
+    <span class="k">if</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">// If array, add it to stack, reversed</span>
+      <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">inner</span> <span class="k">of</span> <span class="nx">n</span><span class="p">.</span><span class="nx">reverse</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">stack</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">inner</span><span class="p">);</span>
+      <span class="p">}</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">n</span> <span class="o">*</span> <span class="mi">2</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>It works, but itâs pretty hairy!</p>
+</div>
+<p>This solution uses a data structure called a âstackâ, adding new
+work to the end and popping them off the end.</p>
+<p>This code may be worth study, even though this problem is more easily
+solved with recursion.</p>
+</div>
+<div class="section" id="non-recursively">
+<h3>Non-Recursively</h3>
+<div class="graphviz">
+<img src="_images/graphviz-d3cfbb02d7b188bf745b5e4009c287dd45f8ef41.svg" />
+</div>
+</div>
+<div class="section" id="recursively">
+<h3>Recursively</h3>
+<div class="graphviz">
+<img src="_images/graphviz-8e01fbe93fa4507e387058b48f72a8d40490f697.svg" />
+</div>
+<div class="compare23 compare docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">data</span> <span class="o">=</span> <span class="p">[</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="mi">4</span><span class="p">],</span> <span class="mi">5</span> <span class="p">]</span>
+
+<span class="kd">function</span> <span class="nx">doubler</span><span class="p">(</span><span class="nx">nums</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">n</span> <span class="k">of</span> <span class="nx">nums</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">doubler</span><span class="p">(</span><span class="nx">x</span><span class="p">);</span>
+    <span class="p">}</span>   <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">n</span> <span class="o">*</span> <span class="mi">2</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<pre class="console literal-block">
+| â <span class="green">doubler(nums=[1, [2, [3], 4], 5])</span>
+| <span class="cmd">2</span>
+|
+| | â <span class="green">doubler(nums=[2, [3], 4])</span>
+| | <span class="cmd">4</span>
+| |
+| | | â <span class="green">doubler(nums=[3])</span>
+| | | <span class="cmd">6</span>
+| | |
+| | | â <span class="red">undefined from doubler(nums=[3])</span>
+| |
+| | <span class="cmd">8</span>
+| | â <span class="red">undefined from doubler(nums=[2, [3], 4])</span>
+|
+| <span class="cmd">10</span>
+| â <span class="red">undefined from</span>
+|      <span class="red">doubler(nums=[1, [2, [3], 4], 5])</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="loops-with-recursion">
+<h2>Loops with Recursion</h2>
+<div class="section" id="loops-or-no-loops">
+<h3>Loops or No Loops?</h3>
+<div class="compare docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">recur_loop</span><span class="p">(</span><span class="nx">nums</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">n</span> <span class="k">of</span> <span class="nx">nums</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">recur_loop</span><span class="p">(</span><span class="nx">x</span><span class="p">);</span>
+    <span class="p">}</span>   <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">n</span> <span class="o">*</span> <span class="mi">2</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">recur_no_loop</span><span class="p">(</span><span class="nx">nums</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">nums</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+
+  <span class="kd">let</span> <span class="p">[</span><span class="nx">n</span><span class="p">,</span> <span class="p">...</span><span class="nx">rest</span><span class="p">]</span> <span class="o">=</span> <span class="nx">nums</span><span class="p">;</span>
+
+  <span class="k">if</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">recur_no_loop</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span> <span class="p">}</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">n</span> <span class="o">*</span> <span class="mi">2</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="nx">recur_no_loop</span><span class="p">(</span><span class="nx">rest</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>Which do you prefer?</p>
+</div>
+</div>
+</div>
+<div class="section" id="recognizing-recursion">
+<h2>Recognizing Recursion</h2>
+<div class="section" id="filesystems">
+<h3>Filesystems</h3>
+<div class="graphviz">
+<img src="_images/graphviz-4aa5aeb572707f97c66afe4a00572cc0ad2f6755.svg" />
+</div>
+</div>
+<div class="section" id="fractals">
+<h3>Fractals</h3>
+<a class="reference internal image-reference" href="_images/fractal.png"><img alt="_images/fractal.png" src="_images/fractal.png" style="width: 20em;" /></a>
+</div>
+<div class="section" id="parsing">
+<h3>Parsing</h3>
+<p>1 Ã ( 2 + 3 Ã ( 4 + 5 Ã 6 ) + 7 )</p>
+<div class="docutils container">
+<p>This is a particularly good, hard exercise to give yourself.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+</div>
+<div class="section" id="nested-data">
+<h3>Nested Data</h3>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Title<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Body<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>One<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>Two
+        <span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>Two A<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>Two B<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+      <span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="runtime">
+<h2>Runtime</h2>
+<div class="section" id="id4">
+<p>Whatâs the runtime?</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">sum</span><span class="p">(</span><span class="nx">nums</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">nums</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+
+  <span class="k">return</span> <span class="nx">nums</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nx">sum</span><span class="p">(</span><span class="nx">nums</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p><cite>O(n ^ 2)</cite> â we keep making new lists!</p>
+</div>
+<div class="docutils container">
+<p>It also has <cite>O(n ^ 2)</cite> <em>runspace</em> â keeping all lists in memory!</p>
+</div>
+</div>
+<div class="section" id="improving-runtime">
+<h3>Improving Runtime</h3>
+<p>Often, you can keep track of position in array, rather than slice:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">sum</span><span class="p">(</span><span class="nx">nums</span><span class="p">,</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">===</span> <span class="nx">nums</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+
+  <span class="k">return</span> <span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">+</span> <span class="nx">sum</span><span class="p">(</span><span class="nx">nums</span><span class="p">,</span> <span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>Now runtime and runspace are <cite>O(n)</cite></p>
+</div>
+</div>
+<div class="section" id="accumulating-output">
+<h3>Accumulating Output</h3>
+<blockquote>
+<div>Given array of numbers, return even numbers</div></blockquote>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">evens</span><span class="p">(</span><span class="nx">nums</span><span class="p">,</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">nums</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="nx">i</span><span class="p">)</span> <span class="k">return</span> <span class="p">[];</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">[</span><span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="p">...</span><span class="nx">evens</span><span class="p">(</span><span class="nx">nums</span><span class="p">,</span> <span class="nx">i</span> <span class="o">+</span><span class="mi">1</span><span class="p">)];</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="nx">evens</span><span class="p">(</span><span class="nx">nums</span><span class="p">,</span> <span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>Back to <cite>O(n ^ 2)</cite> â making all those lists!</p>
+</div>
+<p>Can solve with âhelper recursionâ:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">evens</span><span class="p">(</span><span class="nx">nums</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">out</span> <span class="o">=</span> <span class="p">[];</span>
+
+  <span class="kd">function</span> <span class="nx">_evens</span><span class="p">(</span><span class="nx">nums</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">nums</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="nx">i</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="nx">out</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+    <span class="nx">_evens</span><span class="p">(</span><span class="nx">nums</span><span class="p">,</span> <span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="nx">_evens</span><span class="p">(</span><span class="nx">nums</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">out</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>Back to <cite>O(n)</cite></p>
+</div>
+</div>
+<div class="section" id="accumulators">
+<h3>Accumulators</h3>
+<p>Often, can also solve with âaccumulatorâ:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">evens</span><span class="p">(</span><span class="nx">nums</span><span class="p">,</span> <span class="nx">out</span><span class="o">=</span><span class="p">[],</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">nums</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="nx">i</span><span class="p">)</span> <span class="k">return</span> <span class="nx">out</span><span class="p">;</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="nx">out</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+
+  <span class="k">return</span> <span class="nx">evens3</span><span class="p">(</span><span class="nx">nums</span><span class="p">,</span> <span class="nx">out</span><span class="p">,</span> <span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>Back to <cite>O(n)</cite></p>
+</div>
+<div class="docutils container">
+<p>In some browsers, this can be âtail-call optimizedâ</p>
+</div>
+</div>
+</div>
+<div class="section" id="resources">
+<h2>Resources</h2>
+<div class="section" id="id5">
+<p><a class="reference external" href="https://medium.freecodecamp.org/how-recursion-works-explained-with-flowcharts-and-a-video-de61f40cb7f9">How Recursion Works</a></p>
+<p><a class="reference external" href="http://2ality.com/2015/06/tail-call-optimization.html">Advanced: Tail Call Optimization</a></p>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

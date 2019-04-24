@@ -1,0 +1,470 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Systems Design</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Systems Design</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Systems Design</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+<li><a class="reference internal" href="#big-picture-goal">Big Picture Goal</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#reliability">Reliability</a><ul>
+<li><a class="reference internal" href="#id2">Reliability</a></li>
+<li><a class="reference internal" href="#expectations-of-reliable-systems">Expectations of Reliable Systems</a></li>
+<li><a class="reference internal" href="#faults-and-failures">Faults and Failures</a></li>
+<li><a class="reference internal" href="#importance-of-reliability">Importance of Reliability</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#scalability">Scalability</a><ul>
+<li><a class="reference internal" href="#id3">Scalability</a></li>
+<li><a class="reference internal" href="#load-parameters">Load Parameters</a></li>
+<li><a class="reference internal" href="#two-types-of-scaling">Two Types of Scaling</a></li>
+<li><a class="reference internal" href="#vertical-scaling">Vertical Scaling</a></li>
+<li><a class="reference internal" href="#horizontal-scaling">Horizontal Scaling</a></li>
+<li><a class="reference internal" href="#elasticity">Elasticity</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#techniques-for-improved-performance">Techniques for Improved Performance</a><ul>
+<li><a class="reference internal" href="#id4">Techniques for Improved Performance</a></li>
+<li><a class="reference internal" href="#load-balancing">Load Balancing</a></li>
+<li><a class="reference internal" href="#how-load-balancers-work">How Load Balancers Work</a></li>
+<li><a class="reference internal" href="#content-caching">Content Caching</a></li>
+<li><a class="reference internal" href="#database-indexing">Database Indexing</a></li>
+<li><a class="reference internal" href="#logs-are-is-legit">Logs Are is Legit</a></li>
+<li><a class="reference internal" href="#trade-off-with-indexing">Trade-Off with Indexing</a></li>
+<li><a class="reference internal" href="#how-to-create-an-index-with-postgresql">How to Create an Index with PostgreSQL</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#system-architecture">System Architecture</a><ul>
+<li><a class="reference internal" href="#monolithic">Monolithic</a></li>
+<li><a class="reference internal" href="#service-oriented-architecture-soa">Service Oriented Architecture (SOA)</a></li>
+<li><a class="reference internal" href="#monolith-to-soa">Monolith to SOA</a></li>
+<li><a class="reference internal" href="#microservices">Microservices</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#data-storage">Data Storage</a><ul>
+<li><a class="reference internal" href="#relational-databases-sql">Relational Databases (SQL)</a></li>
+<li><a class="reference internal" href="#nosql-databases">NoSQL Databases</a></li>
+<li><a class="reference internal" href="#nosql-vs-sql">NoSQL vs SQL</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#looking-ahead">Looking Ahead</a><ul>
+<li><a class="reference internal" href="#coming-up">Coming Up</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="systems-design">
+<h1>Systems Design</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Define <strong>reliability</strong> and <strong>scalability</strong> in your own words</li>
+<li>Discuss differences between <strong>horizontal</strong> &amp; <strong>vertical</strong> scaling</li>
+<li>Describe what <strong>elasticity</strong> is</li>
+<li>Learn some practical techniques for building more robust, efficient, &amp; scalable web apps, including: <strong>load balancing</strong>, <strong>content caching</strong>, and <strong>database indexing</strong></li>
+<li>Be able to give a high-level overview of <strong>monolithic</strong> system architecture vs. <strong>service-oriented</strong> architecture</li>
+<li>Be able to give a high-level overview of <strong>SQL</strong> vs <strong>NoSQL</strong></li>
+</ul>
+</div>
+</div>
+<div class="section" id="big-picture-goal">
+<h3>Big Picture Goal</h3>
+<p><strong>Basically, this lecture strives to fill in the conceptual gaps between the apps youâve built so far and production apps at massive scale.</strong></p>
+<div class="docutils container">
+<p>The goal here is <strong>exposure</strong>, not <strong>mastery</strong>.</p>
+</div>
+</div>
+</div>
+<div class="section" id="reliability">
+<h2>Reliability</h2>
+<div class="section" id="id2">
+<p class="text-heavy">A reliable system <em>âcontinues to work correctly even when things go wrong.â</em></p>
+</div>
+<div class="section" id="expectations-of-reliable-systems">
+<h3>Expectations of Reliable Systems</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>The application performs what the user expects</li>
+<li>It tolerates the user making mistakes or using the software in unexpected ways</li>
+<li>Its performance is good enough for the required use case, under the expected load and data volume</li>
+<li>The system prevents any unauthorized access and abuse</li>
+</ul>
+</div>
+</div>
+<div class="section" id="faults-and-failures">
+<h3>Faults and Failures</h3>
+<div class="docutils container">
+<p>A <span class="orange">fault</span> is a specific deviation from the spec or a specific instance of something bad happening.</p>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Hardware faults include: hard disks failing, RAM failing, power outage, someone unplugs the wrong cable.</li>
+<li>Software faults include: servers crashing, runaway processes taking up too much memory / CPU, certain user inputs triggering unexpected behavior or errors.</li>
+</ul>
+</div>
+<div class="docutils container">
+<p>A <span class="red">failure</span> is when a system stops its required service to the user.</p>
+</div>
+<div class="docutils container">
+<p>Reliable systems should be <span class="blue">fault-tolerant</span> or <span class="blue">resilient</span>.</p>
+</div>
+</div>
+<div class="section" id="importance-of-reliability">
+<h3>Importance of Reliability</h3>
+<div class="docutils container">
+<p>Reliability is important for all systems.</p>
+</div>
+<div class="docutils container">
+<p>Reliability affects every companyâs brand / reputation. (see Equifax)</p>
+</div>
+<div class="docutils container">
+<p>The extreme case is human life being at risk (airline software, car software, nuclear power plant software).</p>
+</div>
+<div class="docutils container">
+<p>A lot of Software As A Service (SaaS) companies have contractual Service Level Agreement (SLA) requirements, e.g. âthe company guarantees our web app will be available 99.9% of the time.â</p>
+</div>
+</div>
+</div>
+<div class="section" id="scalability">
+<h2>Scalability</h2>
+<div class="section" id="id3">
+<p><em>One possible definition</em>:</p>
+<p class="text-heavy">The ability for a system to efficiently handle increased load.</p>
+</div>
+<div class="section" id="load-parameters">
+<h3>Load Parameters</h3>
+<div class="docutils container">
+<p>First you must define the critical factors that will interfere with your systemâs ability to perform reliably.</p>
+</div>
+<div class="docutils container">
+<p>Examples:</p>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Requests per second to a web API</li>
+<li>Ratio of reads / writes to a database</li>
+<li>Number of active users in a chat room</li>
+<li>Anything that bottlenecks your system</li>
+</ul>
+</div>
+</div>
+<div class="section" id="two-types-of-scaling">
+<h3>Two Types of Scaling</h3>
+<div class="docutils container">
+<ol class="arabic simple">
+<li>Vertical Scaling</li>
+<li>Horizontal Scaling</li>
+</ol>
+</div>
+</div>
+<div class="section" id="vertical-scaling">
+<h3>Vertical Scaling</h3>
+<div class="docutils container">
+<p><strong>Scale Up</strong> your system by increasing its available computing resources (typically CPU, RAM, or Disk Space)</p>
+</div>
+<div class="docutils container">
+<a class="reference internal image-reference" href="_images/vertical-scaling.png"><img alt="_images/vertical-scaling.png" src="_images/vertical-scaling.png" style="width: 50%;" /></a>
+</div>
+<div class="docutils container">
+<p><em>âYouâre gonna need a bigger boat.â</em></p>
+</div>
+</div>
+<div class="section" id="horizontal-scaling">
+<h3>Horizontal Scaling</h3>
+<div class="docutils container">
+<p><strong>Scale Out</strong> your system by inserting additional (redundant) nodes. Sometimes requires architectural adjustments.</p>
+</div>
+<div class="docutils container">
+<a class="reference internal image-reference" href="_images/horizontal-scaling.png"><img alt="_images/horizontal-scaling.png" src="_images/horizontal-scaling.png" style="width: 50%;" /></a>
+</div>
+<div class="docutils container">
+<p><em>âYouâre gonna needâ¦ some more boats?â</em></p>
+</div>
+</div>
+<div class="section" id="elasticity">
+<h3>Elasticity</h3>
+<div class="docutils container">
+<p>Some systems can automatically scale when they detect increased load.</p>
+</div>
+<div class="docutils container">
+<a class="reference internal image-reference" href="_images/elasticity.png"><img alt="_images/elasticity.png" src="_images/elasticity.png" style="width: 40%;" /></a>
+</div>
+<div class="docutils container">
+<p>This is why youâll see the word âelasticâ everywhere in AWS:</p>
+<ul class="simple">
+<li>EC2 -&gt; Elastic Compute Cloud</li>
+<li>Elastic Beanstalk</li>
+<li>ELB -&gt; Elastic Load Balancer</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="techniques-for-improved-performance">
+<h2>Techniques for Improved Performance</h2>
+<div class="section" id="id4">
+<p>Three must-know techniques to increase performance and scalability:</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Load Balancing âï¸</li>
+<li>Content Caching ð·</li>
+<li>DB Indexing ð</li>
+</ul>
+</div>
+</div>
+<div class="section" id="load-balancing">
+<h3>Load Balancing</h3>
+<div class="docutils container">
+<p><strong>Load balancing</strong> refers to efficiently distributing incoming network traffic across a group of servers, also known as a <em>server farm</em> or <em>server pool</em>.</p>
+</div>
+<div class="docutils container">
+<a class="reference internal image-reference" href="_images/load-balance-diagram.png"><img alt="_images/load-balance-diagram.png" src="_images/load-balance-diagram.png" style="width: 60%;" /></a>
+</div>
+</div>
+<div class="section" id="how-load-balancers-work">
+<h3>How Load Balancers Work</h3>
+<div class="docutils container">
+<p>A load balancer:</p>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Distributes client requests or network load efficiently across multiple servers</li>
+<li>Ensures high availability and reliability by sending requests only to servers that are online</li>
+<li>Provides the flexibility to add or subtract servers as demand dictates</li>
+</ul>
+</div>
+<div class="docutils container">
+<p>Here are three different load balancing algorithms:</p>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li><strong>Round Robin</strong> â Requests are distributed across the group of servers sequentially.</li>
+<li><strong>Least Connections</strong> â A new request is sent to the server with the fewest current connections to clients.</li>
+<li><strong>IP Hash</strong> â The IP address of the client is used to determine which server receives the request.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="content-caching">
+<h3>Content Caching</h3>
+<div class="docutils container">
+<p>Web APIs are susceptible to issuing tons of redundant responses that would each typically require round-trips to the database and application-level processing.</p>
+</div>
+<div class="docutils container">
+<p>However, if the content is unlikely to change too often, we can implement a lightweight proxy server (e.g. <a class="reference external" href="https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/">NGINX</a>) that caches a response for a certain period of time (Time To Live - TTL).</p>
+</div>
+<div class="docutils container">
+<a class="reference internal image-reference" href="_images/nginx.png"><img alt="_images/nginx.png" src="_images/nginx.png" style="width: 60%;" /></a>
+</div>
+<p><strong>Content Caching can drastically reduce load on servers.</strong></p>
+<div class="docutils container">
+<p>Hereâs a simple NGINX setup:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>http {
+    ...
+    proxy_cache_path /data/nginx/cache keys_zone=one:10m;
+
+    server {
+
+        location / {
+            proxy_pass http://localhost:8000;
+            proxy_cache mycache;
+            proxy_cache_methods GET HEAD;
+            proxy_cache_valid 200 302 10m;
+            proxy_cache_valid 404      1m;
+        }
+    }
+}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="database-indexing">
+<h3>Database Indexing</h3>
+<div class="docutils container">
+<p>Reading from a database gets slower and slower as the table gets larger.</p>
+</div>
+<div class="docutils container">
+<p>If you want to constantly query a users table by <cite>first_name</cite> or <cite>last_name</cite>, this might take O(<em>n</em>) time to scan through all <em>n</em> records.</p>
+</div>
+<div class="docutils container">
+<p>You might consider creating an index on those columns.</p>
+</div>
+<div class="docutils container">
+<p>An index copies references to those columns into a balanced binary tree data structure called a BTREE, which gets you O(log(<em>n</em>)) look-ups.</p>
+</div>
+</div>
+<div class="section" id="logs-are-is-legit">
+<h3>Logs Are is Legit</h3>
+<div class="docutils container">
+<p>If have 1,000,000 rows in our table, and are looking for a single column value, instead of examining every row, we can examine approximately <span class="raw-reveal"><br></span> log <sub>2</sub> (1000000) â 20 rows.</p>
+</div>
+</div>
+<div class="section" id="trade-off-with-indexing">
+<h3>Trade-Off with Indexing</h3>
+<div class="docutils container">
+<p>Why donât we index everything?</p>
+</div>
+<div class="docutils container">
+<p>Creating an index means you have to copy a bunch of data into a new data structure, a BTREE, which means O(<em>n</em>) additional space.</p>
+</div>
+<div class="docutils container">
+<p>Furthermore, every INSERT, UPDATE, and DELETE query now has to work on two different structures. This can noticeably slow down those operations.</p>
+</div>
+<div class="docutils container">
+<p><strong>Conclusion: you should usually only index columns in tables that are READ-heavy. In other words, more reads than anything else.</strong></p>
+</div>
+</div>
+<div class="section" id="how-to-create-an-index-with-postgresql">
+<h3>How to Create an Index with PostgreSQL</h3>
+<div class="docutils container">
+<p>To create a B-tree index on the column title in the table films:</p>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">CREATE</span> <span class="k">UNIQUE</span> <span class="k">INDEX</span> <span class="n">title_idx</span> <span class="k">ON</span> <span class="n">films</span> <span class="p">(</span><span class="n">title</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>You can also create different kinds of indexes for different use cases, as well as compound indexes (one index for multiple fields that are often queried together, e.g. <cite>first_name</cite> + <cite>last_name</cite>)</p>
+</div>
+</div>
+</div>
+<div class="section" id="system-architecture">
+<h2>System Architecture</h2>
+<div class="section" id="monolithic">
+<h3>Monolithic</h3>
+<div class="docutils container">
+<p>A monolith is when your product is just one big application on a server.</p>
+</div>
+<div class="docutils container">
+<p>Ruby on Rails and other MVC frameworks are often monolithic. The backend and frontend ship together in one big old codebase.</p>
+</div>
+<div class="docutils container">
+<p>This is probably the fastest way to get your product up and running, but itâs also more susceptible to failures because faults in one part of the system can affect the other parts.</p>
+</div>
+<div class="docutils container">
+<p>And it can sometimes be harder to maintain if you have 25 people working on the same giant app.</p>
+</div>
+<a class="reference internal image-reference" href="_images/monolithic.png"><img alt="_images/monolithic.png" src="_images/monolithic.png" style="width: 80%;" /></a>
+</div>
+<div class="section" id="service-oriented-architecture-soa">
+<h3>Service Oriented Architecture (SOA)</h3>
+<div class="docutils container">
+<p>As companies get larger and their apps get more traffic, many switch to a service-oriented-architecture.</p>
+</div>
+<div class="docutils container">
+<p>This essentially means breaking up a monolithic app into several different key services that are typically owned by a dedicated team.</p>
+</div>
+<div class="docutils container">
+<p>For example, an eCommerce site might have a shopping cart team that is a separate service from the product page team, which is separate from the search team, etc.</p>
+</div>
+</div>
+<div class="section" id="monolith-to-soa">
+<h3>Monolith to SOA</h3>
+<a class="reference internal image-reference" href="_images/diagram-soa.jpg"><img alt="_images/diagram-soa.jpg" src="_images/diagram-soa.jpg" style="width: 70%;" /></a>
+</div>
+<div class="section" id="microservices">
+<h3>Microservices</h3>
+<div class="docutils container">
+<p>Microservices is a kind of architecture that is a subset of SOA, where the emphasis is on splitting up the services to be as tiny as possible.</p>
+</div>
+<div class="docutils container">
+<p>What if every RESTful resource was its own API with its own database? For example, a users API, a messages API, a jobs API, a companies API.</p>
+</div>
+<div class="docutils container">
+<p>The advantage here is that the messages API can completely fail while the rest of the system stays up. Also, the code / database can be completely different, which can complement different skillsets on different teams.</p>
+</div>
+<a class="reference internal image-reference" href="_images/microservice.png"><img alt="_images/microservice.png" src="_images/microservice.png" style="width: 80%;" /></a>
+</div>
+</div>
+<div class="section" id="data-storage">
+<h2>Data Storage</h2>
+<div class="section" id="relational-databases-sql">
+<h3>Relational Databases (SQL)</h3>
+<div class="docutils container">
+<p>The dominant / most widely-used form of databases since the 1970s has been relational databases, which are almost all SQL-based.</p>
+</div>
+<div class="docutils container">
+<a class="reference internal image-reference" href="_images/rdbs.jpg"><img alt="_images/rdbs.jpg" src="_images/rdbs.jpg" style="width: 60%;" /></a>
+</div>
+</div>
+<div class="section" id="nosql-databases">
+<h3>NoSQL Databases</h3>
+<div class="docutils container">
+<p>In recent years, new database models have risen to prominence: NoSQL - which initially meant âNo SQLâ literally, but retroactively was changed to âNot Only SQLâ</p>
+</div>
+<div class="docutils container">
+<a class="reference internal image-reference" href="_images/redis.png"><img alt="_images/redis.png" src="_images/redis.png" style="width: 25%;" /></a>
+<a class="reference internal image-reference" href="_images/cassandra.png"><img alt="_images/cassandra.png" src="_images/cassandra.png" style="width: 25%;" /></a>
+<a class="reference internal image-reference" href="_images/mongodb.png"><img alt="_images/mongodb.png" src="_images/mongodb.png" style="width: 25%;" /></a>
+</div>
+<div class="docutils container">
+<p>One of the biggest advantages to NoSQL databases is that they are designed to be easier to distribute across multiple machines than traditional SQL databases.</p>
+</div>
+<div class="docutils container">
+<a class="reference internal image-reference" href="_images/sharding.svg"><img alt="_images/sharding.svg" src="_images/sharding.svg" width="60%" /></a>
+</div>
+</div>
+<div class="section" id="nosql-vs-sql">
+<h3>NoSQL vs SQL</h3>
+<a class="reference internal image-reference" href="_images/nosql-vs-sql.png"><img alt="_images/nosql-vs-sql.png" src="_images/nosql-vs-sql.png" style="width: 50%;" /></a>
+</div>
+</div>
+<div class="section" id="looking-ahead">
+<h2>Looking Ahead</h2>
+<div class="section" id="coming-up">
+<h3>Coming Up</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>MOAR WHITEBOARDING</li>
+<li>MOAR REVIEW</li>
+<li>Compensation &amp; Negotiation</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

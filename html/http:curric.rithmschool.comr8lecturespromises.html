@@ -1,0 +1,692 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>JavaScript Promises</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">JavaScript Promises</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">JavaScript Promises</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-callback-pattern-a-review">The Callback Pattern: A Review</a><ul>
+<li><a class="reference internal" href="#asynchronous-javascript">Asynchronous JavaScript</a></li>
+<li><a class="reference internal" href="#async-ajax">Async + AJAX</a></li>
+<li><a class="reference internal" href="#takeaways">Takeaways</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#promises">Promises</a><ul>
+<li><a class="reference internal" href="#what-s-a-promise">Whatâs a Promise?</a></li>
+<li><a class="reference internal" href="#a-mental-model-for-promises">A Mental Model for Promises</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#working-with-promises">Working with Promises</a><ul>
+<li><a class="reference internal" href="#our-first-promise">Our First Promise</a></li>
+<li><a class="reference internal" href="#but-like-what-s-a-promise">But, Like, Whatâs a Promise?</a></li>
+<li><a class="reference internal" href="#then-and-catch"><cite>.then</cite> and <cite>.catch</cite></a></li>
+<li><a class="reference internal" href="#more-promise-examples">More Promise Examples</a></li>
+<li><a class="reference internal" href="#promise-chaining">Promise Chaining</a></li>
+<li><a class="reference internal" href="#promise-chaining-example">Promise Chaining Example</a></li>
+<li><a class="reference internal" href="#jquery-promises">jQuery Promises</a></li>
+<li><a class="reference internal" href="#jquery-promise-example">jQuery Promise Example</a></li>
+<li><a class="reference internal" href="#id2">Takeaways</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#why-do-we-have-promises">Why do we have Promises?</a><ul>
+<li><a class="reference internal" href="#callback-hell">Callback Hell</a></li>
+<li><a class="reference internal" href="#pokemon-callback-hell">Pokemon Callback Hell</a></li>
+<li><a class="reference internal" href="#pokemon-with-promises">Pokemon with Promises</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-built-in-promise-function">The built-in Promise function</a><ul>
+<li><a class="reference internal" href="#more-on-promise">More on <cite>Promise</cite></a></li>
+<li><a class="reference internal" href="#promise-all"><cite>Promise.all</cite></a></li>
+<li><a class="reference internal" href="#promise-all-example"><cite>Promise.all</cite> Example</a></li>
+<li><a class="reference internal" href="#promise-race"><cite>Promise.race</cite></a></li>
+<li><a class="reference internal" href="#promise-race-example"><cite>Promise.race</cite> Example</a></li>
+<li><a class="reference internal" href="#promise-resolve"><cite>Promise.resolve</cite></a></li>
+<li><a class="reference internal" href="#promise-reject"><cite>Promise.reject</cite></a></li>
+<li><a class="reference internal" href="#building-our-own-promises">Building our own Promises</a></li>
+<li><a class="reference internal" href="#making-promises-an-example">Making Promises: An Example</a></li>
+<li><a class="reference internal" href="#asynchronous-function-pattern">Asynchronous Function Pattern</a></li>
+<li><a class="reference internal" href="#id3">Takeaways</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#looking-ahead">Looking Ahead</a><ul>
+<li><a class="reference internal" href="#coming-up">Coming Up</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="javascript-promises">
+<h1>JavaScript Promises</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Review the callback pattern for asynchronous code in JavaScript</li>
+<li>Define what a promise is</li>
+<li>Use promises to manage asynchronous code</li>
+<li>Compare and contrast promises with the callback pattern</li>
+<li>Explore the <cite>Promise</cite> function in detail</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="the-callback-pattern-a-review">
+<h2>The Callback Pattern: A Review</h2>
+<div class="section" id="asynchronous-javascript">
+<h3>Asynchronous JavaScript</h3>
+<div class="docutils container">
+<p>JS run synchronously, but thereâs a way to handle async code: <span class="raw-reveal"><br></span>
+asynchronous callbacks.</p>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;this prints first&quot;</span><span class="p">);</span>
+
+<span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;this prints third, one second later&quot;</span><span class="p">);</span>
+<span class="p">},</span> <span class="mi">1000</span><span class="p">);</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;this prints second&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>This code does not run âout of order.â However, the callback to <cite>setTimeout</cite> <span class="raw-reveal"><br></span>
+is not executed right away â it runs after the timer expires.</p>
+</div>
+</div>
+<div class="section" id="async-ajax">
+<h3>Async + AJAX</h3>
+<p>When working with timers, youâll need to manage asynchronous code.</p>
+<div class="docutils container">
+<p>A common scenario for managing asynchronous code is dealing with AJAX.</p>
+</div>
+<div class="docutils container">
+<p>Letâs try to pull some data with jQuery, which utilizes callbacks:</p>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">planet</span><span class="p">;</span>
+
+<span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="s2">&quot;https://swapi.co/api/planets/1/&quot;</span><span class="p">,</span> <span class="nx">response</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">planet</span> <span class="o">=</span> <span class="nx">response</span><span class="p">;</span>
+<span class="p">});</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">planet</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>What is the value of planet?</li>
+<li>Why is it <cite>undefined</cite>?!</li>
+<li>The <cite>console.log</cite> was synchronous; it ran before the asynchronous callback.</li>
+</ul>
+</div>
+<div class="docutils container">
+<p>Letâs fix it!</p>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">planet</span><span class="p">;</span>
+
+<span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="s2">&quot;https://swapi.co/api/planets/1/&quot;</span><span class="p">,</span> <span class="nx">response</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">planet</span> <span class="o">=</span> <span class="nx">response</span><span class="p">;</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;done&quot;</span><span class="p">,</span> <span class="nx">planet</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;waiting&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Asynchronous callbacks run <em>after</em> the rest of the code</li>
+<li>Once you are inside the callback, the code executes predictably as per usual, (unless there are more async callbacks in there)</li>
+</ul>
+</div>
+</div>
+<div class="section" id="takeaways">
+<h3>Takeaways</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>JS code is executed synchronously (in-order).</li>
+<li>JS can use special asynchronous callbacks to delay execution of code.</li>
+<li>Not all callbacks are async; youâll have to consult their docs to tell.</li>
+</ul>
+</div>
+<div class="admonition note">
+<p><strong>More on callbacks</strong></p>
+<p class="last">If youâd like to read more about JS callbacks: <a class="reference external" href="https://developer.mozilla.org/en-US/docs/Glossary/Callback_function">MDN Callback Function</a></p>
+</div>
+</div>
+</div>
+<div class="section" id="promises">
+<h2>Promises</h2>
+<div class="section" id="what-s-a-promise">
+<h3>Whatâs a Promise?</h3>
+<p>A promise is <strong>one-time guarantee of future value</strong>.</p>
+</div>
+<div class="section" id="a-mental-model-for-promises">
+<h3>A Mental Model for Promises</h3>
+</div>
+</div>
+<div class="section" id="working-with-promises">
+<h2>Working with Promises</h2>
+<div class="section" id="our-first-promise">
+<h3>Our First Promise</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">promises-demo/app-axios.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">url</span> <span class="o">=</span> <span class="s2">&quot;https://swapi.co/api/planets/1/&quot;</span>
+<span class="kd">let</span> <span class="nx">ourFirstPromise</span> <span class="o">=</span> <span class="nx">axios</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">url</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">ourFirstPromise</span><span class="p">);</span>
+<span class="c1">// PromiseÂ {&lt;pending&gt;}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>axios</cite> is a promise based library for making HTTP requests.</li>
+<li>syntactically, itâs similar to the <cite>jQuery</cite> AJAX methods, <span class="raw-reveal"><br></span>
+but doesnât use the callback pattern.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="but-like-what-s-a-promise">
+<h3>But, Like, Whatâs a Promise?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Promises in JavaScript are objects</li>
+<li>They are native to the language as of ES2015</li>
+<li>A promise can be in one of three states:<ul>
+<li><em>Pending</em> - It doesnât yet have a value</li>
+<li><em>Resolved</em> - It has successfully obtained a value</li>
+<li><em>Rejected</em> - It failed to obtain a value for some reason</li>
+</ul>
+</li>
+<li>The only way to access the resolved or rejected value is to <span class="raw-reveal"><br></span>
+chain a method on the end of the promise.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="then-and-catch">
+<h3><cite>.then</cite> and <cite>.catch</cite></h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Promises provide a <cite>.then</cite> and a <cite>.catch</cite>, which both accept callbacks.</li>
+<li>The callback to <cite>.then</cite> will run if the promise is resolved,
+and has access to the promiseâs resolved value.</li>
+<li>The callback to <cite>.catch</cite> will run if the promise is rejected,
+and typically has access to some reason behind the rejection.</li>
+</ul>
+</div>
+<div class="admonition note">
+<p><strong>Thenables</strong></p>
+<p>When reading about promises, youâll often see a related term, called a
+<strong>thenable</strong>. A thenable is simply any object or function that has a <cite>then</cite>
+method defined on it.</p>
+<p>By this definition, all promises are thenables, but not all thenables are promises!
+There are many more specifications that a promise needs to satisfy.</p>
+<p>Hereâs a simple example of a thenable that isnât a promise:</p>
+<div class="last highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">notAPromise</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">fruit</span><span class="o">:</span> <span class="s2">&quot;apple&quot;</span><span class="p">,</span>
+  <span class="nx">veggie</span><span class="o">:</span> <span class="s2">&quot;carrot&quot;</span><span class="p">,</span>
+  <span class="nx">then</span><span class="o">:</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;I&#39;m just a random object with a then method.&quot;</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">notAPromise</span><span class="p">.</span><span class="nx">then</span><span class="p">();</span>
+<span class="c1">// &quot;I&#39;m just a random object with a then method.&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="more-promise-examples">
+<h3>More Promise Examples</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">promises-demo/app-axios.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">validURL</span> <span class="o">=</span> <span class="s2">&quot;https://swapi.co/api/people/1/&quot;</span><span class="p">;</span>
+<span class="kd">let</span> <span class="nx">futureResolvedPromise</span> <span class="o">=</span> <span class="nx">axios</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">validURL</span><span class="p">);</span>
+
+<span class="nx">futureResolvedPromise</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">data</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span>
+  <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">err</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">promises-demo/app-axios.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">invalidURL</span> <span class="o">=</span> <span class="s2">&quot;https://swapi.co/api/tacos/1/&quot;</span><span class="p">;</span>
+<span class="kd">let</span> <span class="nx">futureRejectedPromise</span> <span class="o">=</span> <span class="nx">axios</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">invalidURL</span><span class="p">);</span>
+
+<span class="nx">futureRejectedPromise</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">data</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span>
+  <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">err</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="promise-chaining">
+<h3>Promise Chaining</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>When you call <cite>.then</cite> on a promise, you can return <em>new</em> promise in callback!</li>
+<li>This means you can chain multiple asynchronous operations together <span class="raw-reveal"><br></span>
+with several <cite>.then</cite> calls.</li>
+<li>When using this pattern, you only need <em>one</em> <code class="docutils literal notranslate"><span class="pre">.catch</span></code> at the end. <span class="raw-reveal"><br></span> You donât have to catch every promise individually.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="promise-chaining-example">
+<h3>Promise Chaining Example</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">promises-demo/app-axios.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">baseURL</span> <span class="o">=</span> <span class="s2">&quot;https://pokeapi.co/api/v2/pokemon&quot;</span><span class="p">;</span>
+
+<span class="nx">axios</span>
+  <span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">baseURL</span><span class="si">}</span><span class="sb">/1/`</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">p1</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`The first pokemon is </span><span class="si">${</span><span class="nx">p1</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">axios</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">baseURL</span><span class="si">}</span><span class="sb">/2/`</span><span class="p">);</span>
+  <span class="p">})</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">p2</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`The second pokemon is </span><span class="si">${</span><span class="nx">p2</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">axios</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">baseURL</span><span class="si">}</span><span class="sb">/3/`</span><span class="p">);</span>
+  <span class="p">})</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">p3</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`The third pokemon is </span><span class="si">${</span><span class="nx">p3</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+  <span class="p">})</span>
+  <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">err</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`Oops, there was a problem :( </span><span class="si">${</span><span class="nx">err</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+  <span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="jquery-promises">
+<h3>jQuery Promises</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>jQuery AJAX methods support a Promise-like interface as well.</li>
+<li>As of version 3, all of these methods have a <code class="docutils literal notranslate"><span class="pre">.then</span></code> and a <code class="docutils literal notranslate"><span class="pre">.catch</span></code>.</li>
+<li>They arenât the same as ES2015 promises <span class="raw-reveal"><br></span> (they were implemented prior to native promises).</li>
+</ul>
+</div>
+</div>
+<div class="section" id="jquery-promise-example">
+<h3>jQuery Promise Example</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">promises-demo/app-jquery.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="s2">&quot;https://pokeapi.co/api/v2/pokemon/&quot;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">pokemon</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`Gotta catch </span><span class="si">${</span><span class="nx">pokemon</span><span class="p">.</span><span class="nx">count</span><span class="si">}</span><span class="sb"> pokemon.`</span><span class="p">);</span>
+  <span class="p">})</span>
+  <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">err</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+  <span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="id2">
+<h3>Takeaways</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>A promise represents a pending value <em>(a guarantee that there will either be a resolved or rejected value)</em></li>
+<li>Standard promises all have a <code class="docutils literal notranslate"><span class="pre">.then()</span></code> method, which takes a callback of the resolved value, and this can be chained.</li>
+<li>Standard promises all also have a <code class="docutils literal notranslate"><span class="pre">.catch()</span></code> method, which takes a callback of the rejected value, and this can only be listed once at the end of a <code class="docutils literal notranslate"><span class="pre">.then</span></code> chain.</li>
+<li>Axios and jQueryâs AJAX methods both use promises.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="why-do-we-have-promises">
+<h2>Why do we have Promises?</h2>
+<div class="section" id="callback-hell">
+<h3>Callback Hell</h3>
+<a class="noprint reference internal image-reference" href="_images/callbackhell.png"><img alt="_images/callbackhell.png" class="noprint" src="_images/callbackhell.png" style="width: 70%;" /></a>
+</div>
+<div class="section" id="pokemon-callback-hell">
+<h3>Pokemon Callback Hell</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">promises-demo/app-jquery.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">baseURL</span> <span class="o">=</span> <span class="s2">&quot;https://pokeapi.co/api/v2/pokemon&quot;</span><span class="p">;</span>
+
+<span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">baseURL</span><span class="si">}</span><span class="sb">/1/`</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">success</span><span class="o">:</span> <span class="nx">p1</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`The first pokemon is </span><span class="si">${</span><span class="nx">p1</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+    <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">baseURL</span><span class="si">}</span><span class="sb">/2/`</span><span class="p">,</span> <span class="p">{</span>
+      <span class="nx">success</span><span class="o">:</span> <span class="nx">p2</span> <span class="p">=&gt;</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`The second pokemon is </span><span class="si">${</span><span class="nx">p2</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+        <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">baseURL</span><span class="si">}</span><span class="sb">/3/`</span><span class="p">,</span> <span class="p">{</span>
+          <span class="nx">success</span><span class="o">:</span> <span class="nx">p3</span> <span class="p">=&gt;</span> <span class="p">{</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`The third pokemon is </span><span class="si">${</span><span class="nx">p3</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+          <span class="p">},</span>
+          <span class="nx">error</span><span class="o">:</span> <span class="nx">err</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+        <span class="p">});</span>
+      <span class="p">},</span>
+      <span class="nx">error</span><span class="o">:</span> <span class="nx">err</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+    <span class="p">});</span>
+  <span class="p">},</span>
+  <span class="nx">error</span><span class="o">:</span> <span class="nx">err</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<p>ð¤¢</p>
+</div>
+</div>
+<div class="section" id="pokemon-with-promises">
+<h3>Pokemon with Promises</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">promises-demo/app-jquery.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">baseURL</span><span class="si">}</span><span class="sb">/1/`</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">p1</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`The first pokemon is </span><span class="si">${</span><span class="nx">p1</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">baseURL</span><span class="si">}</span><span class="sb">/2/`</span><span class="p">);</span>
+  <span class="p">})</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">p2</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`The second pokemon is </span><span class="si">${</span><span class="nx">p2</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">baseURL</span><span class="si">}</span><span class="sb">/3/`</span><span class="p">);</span>
+  <span class="p">})</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">p3</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`The third pokemon is </span><span class="si">${</span><span class="nx">p3</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+  <span class="p">})</span>
+  <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">err</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<p>ð</p>
+</div>
+</div>
+</div>
+<div class="section" id="the-built-in-promise-function">
+<h2>The built-in Promise function</h2>
+<div class="section" id="more-on-promise">
+<h3>More on <cite>Promise</cite></h3>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>Promise</cite> was added as a global variable in ES2015</li>
+<li>You can create your own promises using <cite>Promise</cite></li>
+<li>There are also several helper methods that live on <cite>Promise</cite>, including:<ul>
+<li><cite>Promise.all</cite></li>
+<li><cite>Promise.race</cite></li>
+<li><cite>Promise.resolve</cite></li>
+<li><cite>Promise.reject</cite></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="admonition note">
+<p><strong>Not all Promise methods are created equal</strong></p>
+<p>In general, youâll typically find that <cite>Promise.all</cite> is by far the most
+useful method on the <code class="docutils literal notranslate"><span class="pre">Promise</span></code> function. There are definitely use-cases
+for <cite>Promise.race</cite>, <cite>Promise.resolve</cite>, and <cite>Promise.reject</cite>, but they are more rare.</p>
+<p class="last">For now, you should focus your attention on getting comfortable with
+<cite>Promise.all</cite>, as we wonât really encounter these other methods until
+weâve gotten farther in the Node curriculum.</p>
+</div>
+</div>
+<div class="section" id="promise-all">
+<h3><cite>Promise.all</cite></h3>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>Promise.all</cite> accepts an array of promises and returns a <em>new</em> promise</li>
+<li>This new promise will resolve when every promise in the array resolves, and will be rejected if
+any promise in the array is rejected</li>
+<li><cite>Promise.all</cite> is extremely useful whenever you want to send out several
+independent requests <strong>in parallel</strong>.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="promise-all-example">
+<h3><cite>Promise.all</cite> Example</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">promises-demo/app-jquery.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">fourPokemonPromises</span> <span class="o">=</span> <span class="p">[];</span>
+
+<span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">fourPokemonPromises</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span>
+    <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="sb">`https://pokeapi.co/api/v2/pokemon/</span><span class="si">${</span><span class="nx">i</span><span class="si">}</span><span class="sb">/`</span><span class="p">)</span>
+  <span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nb">Promise</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">fourPokemonPromises</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">pokemonArr</span> <span class="p">=&gt;</span> <span class="p">(</span>
+    <span class="nx">pokemonArr</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">p</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">name</span><span class="p">))</span>
+  <span class="p">))</span>
+  <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">err</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="promise-race">
+<h3><cite>Promise.race</cite></h3>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>Promise.race</cite> accepts an array of promises and returns a <em>new</em> promise</li>
+<li>This new promise will resolve or reject as soon as one promise in the
+array resolves or rejects</li>
+</ul>
+</div>
+</div>
+<div class="section" id="promise-race-example">
+<h3><cite>Promise.race</cite> Example</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">promises-demo/app-jquery.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">fourPokemonRace</span> <span class="o">=</span> <span class="p">[];</span>
+
+<span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">fourPokemonRace</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span>
+    <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="sb">`https://pokeapi.co/api/v2/pokemon/</span><span class="si">${</span><span class="nx">i</span><span class="si">}</span><span class="sb">/`</span><span class="p">)</span>
+  <span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nb">Promise</span><span class="p">.</span><span class="nx">race</span><span class="p">(</span><span class="nx">fourPokemonRace</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">pokemon</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">pokemon</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb"> won!`</span><span class="p">))</span>
+  <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">err</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="promise-resolve">
+<h3><cite>Promise.resolve</cite></h3>
+<div class="docutils container">
+<p><cite>Promise.resolve</cite> accepts a value and returns a promise <span class="raw-reveal"><br></span>
+which has immediately resolved to the value passed in.</p>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">promises-demo/promises.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">resolvedValue</span> <span class="o">=</span> <span class="s2">&quot;hello!&quot;</span><span class="p">;</span>
+<span class="kd">let</span> <span class="nx">p1</span> <span class="o">=</span> <span class="nb">Promise</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">resolvedValue</span><span class="p">);</span>
+<span class="nx">p1</span><span class="p">;</span> <span class="c1">// PromiseÂ {&lt;resolved&gt;: &quot;hello!&quot;}</span>
+<span class="nx">p1</span> <span class="o">===</span> <span class="nx">value</span><span class="p">;</span> <span class="c1">// false</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="promise-reject">
+<h3><cite>Promise.reject</cite></h3>
+<div class="docutils container">
+<p><cite>Promise.reject</cite> accepts a value and returns a promise <span class="raw-reveal"><br></span>
+which has immediately rejected to the value passed in.</p>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">promises-demo/promises.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">rejectedValue</span> <span class="o">=</span> <span class="s2">&quot;sorry :(&quot;</span><span class="p">;</span>
+<span class="kd">let</span> <span class="nx">p2</span> <span class="o">=</span> <span class="nb">Promise</span><span class="p">.</span><span class="nx">reject</span><span class="p">(</span><span class="nx">rejectedValue</span><span class="p">);</span>
+<span class="nx">p2</span><span class="p">;</span> <span class="c1">// PromiseÂ {&lt;rejected&gt;: &quot;sorry :(&quot;}</span>
+<span class="nx">p2</span> <span class="o">===</span> <span class="nx">value</span><span class="p">;</span> <span class="c1">// false</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="building-our-own-promises">
+<h3>Building our own Promises</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>You can use <cite>Promise</cite> with the <cite>new</cite> keyword to make your own promises</li>
+<li>Unfortunately, the syntax here takes some getting used to</li>
+<li><cite>Promise</cite> accepts a single function (call it <em>fn</em>) as an argument<ul>
+<li><cite>fn</cite> accepts two functions as arguments, <cite>resolve</cite> and <cite>reject</cite></li>
+<li>Pass <cite>resolve</cite> a value for the promise to resolve to that value</li>
+<li>Pass <cite>reject</cite> a value for the promise to reject to that value</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="making-promises-an-example">
+<h3>Making Promises: An Example</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-text">promises-demo/promises.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">mockAjaxRequest</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">probSuccess</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">;</span>
+  <span class="kd">let</span> <span class="nx">requestTime</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">;</span>
+
+  <span class="c1">// We mock a network request using a setTimeout.</span>
+  <span class="c1">// The request takes requestTime milliseconds.</span>
+  <span class="c1">// Afterwords, the promise is either resolved with data</span>
+  <span class="c1">// or rejected with a timeout message,</span>
+  <span class="c1">// based on whether randomNum is less than probSuccess.</span>
+  <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">randomNum</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">();</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">randomNum</span> <span class="o">&lt;</span> <span class="nx">probSuccess</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">let</span> <span class="nx">data</span> <span class="o">=</span> <span class="s2">&quot;here&#39;s your data!&quot;</span><span class="p">;</span>
+      <span class="nx">resolve</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">reject</span><span class="p">(</span><span class="s2">&quot;Sorry, your request failed.&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">},</span> <span class="nx">requestTime</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="nx">mockAjaxRequest</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">data</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span>
+  <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">err</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="asynchronous-function-pattern">
+<h3>Asynchronous Function Pattern</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id16">
+<div class="code-block-caption"><span class="caption-text">promises-demo/promises.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">myAsyncFunction</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// return a new Promise</span>
+  <span class="k">return</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="cm">/*</span>
+
+<span class="cm">      DO ASYNC STUFF HERE</span>
+
+<span class="cm">    */</span>
+
+    <span class="c1">// if it succeeds, call the resolve callback</span>
+    <span class="nx">resolve</span><span class="p">(</span><span class="cm">/* success value*/</span><span class="p">);</span>
+
+    <span class="c1">// if it fails, call the reject callback</span>
+    <span class="nx">reject</span><span class="p">(</span><span class="cm">/* fail value*/</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="id3">
+<h3>Takeaways</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>A promise is a <strong>one time guarantee of future value</strong></li>
+<li><cite>Promise</cite> is part of JavaScript as of ES2015</li>
+<li>There are methods on <cite>Promise</cite> that can be used to help work with promises</li>
+<li>You can make your own promises using <cite>Promise</cite> with <cite>new</cite> keyword, <span class="raw-reveal"><br></span>
+but the syntax isnât intuitive and takes practice to get used to</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="looking-ahead">
+<h2>Looking Ahead</h2>
+<div class="section" id="coming-up">
+<h3>Coming Up</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Managing asynchronous code using <cite>async</cite> and <cite>await</cite></li>
+<li>More practice managing asynchronous code</li>
+<li>An introduction to Node.js!</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> 
+</body>
+</html>

@@ -1,0 +1,365 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Binary Search Trees</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Binary Search Trees</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Binary Search Trees</a><ul>
+<li><a class="reference internal" href="#id1">Binary Search Trees</a><ul>
+<li><a class="reference internal" href="#a-list-of-words">A List of Words</a></li>
+<li><a class="reference internal" href="#binary-search-tree">Binary Search Tree</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#implementing-bsts">Implementing BSTs</a><ul>
+<li><a class="reference internal" href="#node-class">Node Class</a></li>
+<li><a class="reference internal" href="#tree-class">Tree Class</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#searching">Searching</a><ul>
+<li><a class="reference internal" href="#binary-search-tree-find">Binary Search Tree Find</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#balancing">Balancing</a><ul>
+<li><a class="reference internal" href="#valid-but-badly-balanced">Valid But Badly Balanced</a></li>
+<li><a class="reference internal" href="#balancing-trees">Balancing Trees</a></li>
+<li><a class="reference internal" href="#self-balancing-trees">Self-Balancing Trees</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#traversal">Traversal</a><ul>
+<li><a class="reference internal" href="#id2">Traversal</a></li>
+<li><a class="reference internal" href="#in-order-traversal">In Order Traversal</a></li>
+<li><a class="reference internal" href="#pre-order-traversal">Pre Order Traversal</a></li>
+<li><a class="reference internal" href="#post-order-traversal">Post Order Traversal</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#binary-trees-vs-hashmap">Binary Trees vs Hashmap</a><ul>
+<li><a class="reference internal" href="#id3">Binary Trees vs Hashmap</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#heaps">Heaps</a><ul>
+<li><a class="reference internal" href="#id4">Heaps</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#resources">Resources</a><ul>
+<li><a class="reference internal" href="#id5">Resources</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="binary-search-trees">
+<h1>Binary Search Trees</h1>
+<div class="section" id="id1">
+<div class="section" id="a-list-of-words">
+<h3>A List of Words</h3>
+<p>Imagine this list of words:</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line">apple, fence, ghost, jackal, just, money,</div>
+<div class="line">mystic, nerd, pencil, zebra</div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="binary-search-tree">
+<h3>Binary Search Tree</h3>
+<div class="graphviz">
+<img src="_images/graphviz-3428e12d88ced202a025c4a9407a18646d1e9917.svg" />
+</div>
+<ul class="simple">
+<li>Also a tree, made of nodes</li>
+<li>But each node has a left and right child</li>
+<li>Has a âruleâ for arrangement<ul>
+<li>Often used for fast searching</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="implementing-bsts">
+<h2>Implementing BSTs</h2>
+<div class="section" id="node-class">
+<h3>Node Class</h3>
+<p>Node class is same as any other binary Node class:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">BinarySearchNode</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">val</span><span class="p">,</span> <span class="nx">left</span><span class="o">=</span><span class="kc">null</span><span class="p">,</span> <span class="nx">right</span><span class="o">=</span><span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">val</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">left</span> <span class="o">=</span> <span class="nx">left</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">right</span> <span class="o">=</span> <span class="nx">right</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="c1">// other methods here</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="tree-class">
+<h3>Tree Class</h3>
+<p>Just like with n-ary trees, may not <em>always</em> need class for tree.</p>
+<p>But it very useful for keeping track of root of tree:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">BinarySearchTree</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="c1">// other methods here</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="searching">
+<h2>Searching</h2>
+<div class="section" id="binary-search-tree-find">
+<h3>Binary Search Tree Find</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="graphviz">
+<img src="_images/graphviz-9ce4042428ee4b8a962514e6c7f97fafc47596a1.svg" />
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">demo/bst.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span>  <span class="nx">find</span><span class="p">(</span><span class="nx">sought</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">current</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+    <span class="k">while</span> <span class="p">(</span><span class="nx">current</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">current</span><span class="p">.</span><span class="nx">val</span> <span class="o">===</span> <span class="nx">sought</span><span class="p">)</span> 
+        <span class="k">return</span> <span class="nx">current</span><span class="p">;</span>
+
+      <span class="nx">current</span> <span class="o">=</span> <span class="nx">sought</span> <span class="o">&lt;</span> <span class="nx">current</span><span class="p">.</span><span class="nx">data</span>
+                <span class="o">?</span> <span class="nx">current</span><span class="p">.</span><span class="nx">left</span>
+                <span class="o">:</span> <span class="nx">current</span><span class="p">.</span><span class="nx">right</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<p>Starting at <cite>E</cite>, looking for <cite>C</cite>:</p>
+<ol class="arabic simple">
+<li><cite>C</cite> comes before <cite>E</cite>, so go left to <cite>B</cite></li>
+<li><cite>C</cite> comes after <cite>B</cite>, so go right to <cite>D</cite></li>
+<li><cite>C</cite> comes before <cite>D</cite>, so go left to <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
+<li>Drop out of <code class="docutils literal notranslate"><span class="pre">while</span></code> loop and return <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
+</ol>
+<p>Every choice we make reduces # options by half!</p>
+<div class="docutils container">
+</div>
+<div class="docutils container">
+<p>For <cite>n</cite> nodes, we need to search, at most O(log n) nodes</p>
+</div>
+<div class="docutils container">
+<p>We can search &gt;1,000 nodes in only 10 steps!</p>
+<p>We can search &gt;1,000,000 nodes in only 20 steps!</p>
+</div>
+</div>
+</div>
+<div class="section" id="balancing">
+<h2>Balancing</h2>
+<div class="section" id="valid-but-badly-balanced">
+<h3>Valid But Badly Balanced</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="graphviz">
+<img src="_images/graphviz-8f5193784fc0a03199bb7b0fdda92a5beb67dce0.svg" />
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Can find <cite>A</cite> efficiently</li>
+<li>Can find missing <cite>C</cite> efficiently</li>
+<li>Canât find <cite>G</cite> efficiently</li>
+<li>Tree needs to be âbalancedâ</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="balancing-trees">
+<h3>Balancing Trees</h3>
+<p>Easy ways to get reasonably balanced trees:</p>
+<ul class="simple">
+<li>shuffle values for tree randomly, and then insert</li>
+<li>or sort values, then insert from the middle working out</li>
+</ul>
+</div>
+<div class="section" id="self-balancing-trees">
+<h3>Self-Balancing Trees</h3>
+<p>There are structure/algorithm pairs for BSTs that can balance themselves:</p>
+<dl class="docutils">
+<dt>AVL Trees</dt>
+<dd>Keeps balanced. Simpler algorithm but slightly less efficient.</dd>
+<dt>Red/Black Trees</dt>
+<dd>Keeps âreasonablyâ balanced. More complex algorithm but can be more efficient.</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="traversal">
+<h2>Traversal</h2>
+<div class="section" id="id2">
+<p>Often, you donât want to look at every node in a BST</p>
+<p>Thatâs the point â you can search without looking at each!</p>
+<div class="docutils container">
+<p>But sometimes you will want to traverse entire tree</p>
+</div>
+</div>
+<div class="section" id="in-order-traversal">
+<h3>In Order Traversal</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">traverse</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">left</span><span class="p">)</span> <span class="nx">traverse</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">left</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">val</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">right</span><span class="p">)</span> <span class="nx">traverse</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">right</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="graphviz">
+<img src="_images/graphviz-468f6ab9858ceddc10b34acfa18e6de421498f14.svg" />
+</div>
+</div>
+</div>
+<div class="docutils container">
+<p>âtraverse left, myself, traverse rightâ is âin-orderâ:</p>
+<p>A â B â D â E â F â G</p>
+</div>
+</div>
+<div class="section" id="pre-order-traversal">
+<h3>Pre Order Traversal</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">traverse</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">val</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">left</span><span class="p">)</span> <span class="nx">traverse</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">left</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">right</span><span class="p">)</span> <span class="nx">traverse</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">right</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="graphviz">
+<img src="_images/graphviz-391155238fc763b502bac59bb2d0c12dcea020ce.svg" />
+</div>
+</div>
+</div>
+<div class="docutils container">
+<p>âmyself, traverse left, traverse rightâ is âpre-orderâ:</p>
+<p>E â B â A â D â G â F</p>
+</div>
+</div>
+<div class="section" id="post-order-traversal">
+<h3>Post Order Traversal</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">traverse</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">left</span><span class="p">)</span> <span class="nx">traverse</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">left</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">right</span><span class="p">)</span> <span class="nx">traverse</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">right</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">val</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="graphviz">
+<img src="_images/graphviz-bfe5b938cfe5a7991fd5f9eadd28e5bf7e0bc8f3.svg" />
+</div>
+</div>
+</div>
+<div class="docutils container">
+<p>âtraverse left, traverse right, myselfâ is âpost-orderâ:</p>
+<p>A â D â B â F â G â E</p>
+</div>
+</div>
+</div>
+<div class="section" id="binary-trees-vs-hashmap">
+<h2>Binary Trees vs Hashmap</h2>
+<div class="section" id="id3">
+<p>How do they compare?</p>
+<div class="graphviz">
+<img src="_images/graphviz-de423b57f642065a15c703c8c766c0af0c4a09bd.svg" />
+</div>
+<div class="docutils container">
+<dl class="docutils">
+<dt>Hashmaps</dt>
+<dd><ul class="first last simple">
+<li>O(1) lookup/addition/deletion</li>
+<li>Have know exactly what youâre looking for</li>
+<li>Canât find âfirst word equal or after bananaâ</li>
+<li>Canât find range of âwords between car and catâ</li>
+</ul>
+</dd>
+<dt>Binary Search Trees</dt>
+<dd><ul class="first last simple">
+<li>O(log n) lookup/addition/deletion</li>
+<li>Can search for exact value, or inequalities</li>
+<li>Can search for ranges</li>
+<li>Often used to implement indexes in databases</li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="section" id="heaps">
+<h2>Heaps</h2>
+<div class="section" id="id4">
+<p>Another ordered binary tree is a <cite>MinHeap</cite> or <cite>MaxHeap</cite>.</p>
+<p>Theyâre used to efficiently implement priority queues.</p>
+<p>Their ordering rule is âparent must be lower <em>[for MaxHeap, larger]</em> than its childrenâ</p>
+<div class="graphviz">
+<img src="_images/graphviz-a18fda833f03a6e0a11c31fa46679968351ce77c.svg" />
+</div>
+</div>
+</div>
+<div class="section" id="resources">
+<h2>Resources</h2>
+<div class="section" id="id5">
+<p><a class="reference external" href="https://medium.com/basecs/leaf-it-up-to-binary-trees-11001aaf746d">Leaf It Up To Binary Trees</a></p>
+<p><a class="reference external" href="https://medium.com/basecs/the-little-avl-tree-that-could-86a3cae410c7">The Little AVL Tree That Could</a></p>
+<p><a class="reference external" href="https://dev.to/vaidehijoshi/trees--binary-search-trees--basecs-video-series-5e38">Trees &amp; Binary Search Trees video</a></p>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

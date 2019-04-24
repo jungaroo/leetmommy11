@@ -1,0 +1,429 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Cookies &amp; Sessions</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Cookies &amp; Sessions</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Cookies &amp; Sessions</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#motivation">Motivation</a><ul>
+<li><a class="reference internal" href="#saving-state">Saving âStateâ</a></li>
+<li><a class="reference internal" href="#some-ways-to-save-state">Some Ways To Save State</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#cookies">Cookies</a><ul>
+<li><a class="reference internal" href="#id2">Cookies</a></li>
+<li><a class="reference internal" href="#cookies-save-state">Cookies Save âStateâ</a></li>
+<li><a class="reference internal" href="#what-is-a-cookie">What is a Cookie?</a></li>
+<li><a class="reference internal" href="#cookies-a-conversation">Cookies, A Conversation</a></li>
+<li><a class="reference internal" href="#seeing-cookies-in-chrome">Seeing Cookies in Chrome</a></li>
+<li><a class="reference internal" href="#settings-cookies-in-flask">Settings Cookies in Flask</a></li>
+<li><a class="reference internal" href="#reading-cookies-in-flask">Reading Cookies in Flask</a></li>
+<li><a class="reference internal" href="#cookie-options">Cookie Options</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sessions">Sessions</a><ul>
+<li><a class="reference internal" href="#cookies-can-be-tricky">Cookies Can Be Tricky</a></li>
+<li><a class="reference internal" href="#id3">Sessions</a></li>
+<li><a class="reference internal" href="#using-session-in-flask">Using Session in Flask</a></li>
+<li><a class="reference internal" href="#how-do-sessions-work">How Do Sessions Work?</a></li>
+<li><a class="reference internal" href="#are-sessions-related-to-session-cookies">Are âSessionsâ Related to âSession Cookiesâ?</a></li>
+<li><a class="reference internal" href="#server-side-sessions">Server-Side Sessions</a></li>
+<li><a class="reference internal" href="#which-should-i-use-cookies-or-sessions">Which Should I Use? Cookies or Sessions?</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="cookies-sessions">
+<h1>Cookies &amp; Sessions</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Define what it means for HTTP to be stateless</li>
+<li>Compare different strategies for persisting state across requests</li>
+<li>Explain what a cookie is, and how client-server cookie communication works</li>
+<li>Compare cookies, session cookies, and sessions</li>
+<li>Implement session functionality with Flask</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="motivation">
+<h2>Motivation</h2>
+<div class="section" id="saving-state">
+<h3>Saving âStateâ</h3>
+<p>HTTP is whatâs called a âstatelessâ protocol.</p>
+<p>On its own, it remembers nothing.</p>
+<p>Itâs like a goldfish. Every time it circles around, what it sees is brand new.</p>
+</div>
+<div class="section" id="some-ways-to-save-state">
+<h3>Some Ways To Save State</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Passing info in a query param / POST form hidden field<ul>
+<li><cite>/step-zero?fav-color=blue</cite> â <cite>/step-one?fav-color=blue</cite> â â¦</li>
+</ul>
+</li>
+<li>Keeping info in URL path<ul>
+<li><cite>/fav-color/blue/step-zero</cite> â <cite>/fav-color/blue/step-one</cite> â â¦</li>
+</ul>
+</li>
+<li>Using JS
+<a class="reference external" href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">localStorage API</a><ul>
+<li>Nice, but only JS can access this â you canât get data on server</li>
+<li>Useful for single-page applications or heavily AJAX-driven apps</li>
+</ul>
+</li>
+<li>Using cookies / sessions</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="cookies">
+<h2>Cookies</h2>
+<div class="section" id="id2">
+<p>Flaskâs <cite>session</cite> is powered by cookies; letâs start there</p>
+</div>
+<div class="section" id="cookies-save-state">
+<h3>Cookies Save âStateâ</h3>
+<p>Cookies are a way to store small bits of info on client (browser)</p>
+</div>
+<div class="section" id="what-is-a-cookie">
+<h3>What is a Cookie?</h3>
+<p>Cookies are <strong>name/string-value pair</strong> stored by the <strong>client</strong> (browser).</p>
+<p>The server tells client to store these.</p>
+<p>The client sends cookies to the server with each request.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<div class="docutils container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="35%" />
+<col width="33%" />
+<col width="31%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Site</td>
+<td>Cookie Name</td>
+<td>Value</td>
+</tr>
+<tr class="row-even"><td>rithmschool.com</td>
+<td>number_visits</td>
+<td>â10â</td>
+</tr>
+<tr class="row-odd"><td>rithmschool.com</td>
+<td>customer_type</td>
+<td>âEnterpriseâ</td>
+</tr>
+<tr class="row-even"><td>localhost:5000</td>
+<td>favorite_food</td>
+<td>âtacoâ</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="cookies-a-conversation">
+<h3>Cookies, A Conversation</h3>
+<div class="docutils container">
+<ul class="simple">
+<li><em>Browser</em>: Iâd like to get the resource <cite>/upcoming-events</cite>.</li>
+<li><em>Server</em>: Hereâs some HTML. Also, please remember this piece of information:
+<cite>favorite_food</cite> is <code class="docutils literal notranslate"><span class="pre">&quot;taco&quot;</span></code>.</li>
+<li><em>Browser</em> (stores this somewhere on the computer)</li>
+<li><em>Browser</em>: Iâd like to get the resource <cite>/event-detail</cite>. Also, you told me
+to remind you that <cite>favorite_food</cite> is <code class="docutils literal notranslate"><span class="pre">&quot;taco&quot;</span></code>.</li>
+<li><em>Server</em>: Hereâs the HTML for that.</li>
+<li><em>Browser</em>: Iâd like to get the resource <cite>/calendar.jpg</cite>. Also, you told me
+to remind you that <cite>favorite_food</cite> is <code class="docutils literal notranslate"><span class="pre">&quot;taco&quot;</span></code>.</li>
+<li>â¦</li>
+</ul>
+</div>
+</div>
+<div class="section" id="seeing-cookies-in-chrome">
+<h3>Seeing Cookies in Chrome</h3>
+<p>Dev Tools â Application â Storage â Cookies</p>
+</div>
+<div class="section" id="settings-cookies-in-flask">
+<h3>Settings Cookies in Flask</h3>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">demo/app.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/handle-form-cookie&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">handle_form</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Return form response; include cookie for browser.&quot;&quot;&quot;</span>
+
+    <span class="n">fav_color</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;fav_color&#39;</span><span class="p">]</span>
+
+    <span class="c1"># Get HTML to send back. Normally, we&#39;d return this, but</span>
+    <span class="c1"># we need to do in pieces, so we can add a cookie first</span>
+    <span class="n">html</span> <span class="o">=</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;response-cookie.html&quot;</span><span class="p">,</span>
+                           <span class="n">fav_color</span><span class="o">=</span><span class="n">fav_color</span><span class="p">)</span>
+
+    <span class="c1"># In order to set a cookie from Flask, we need to deal</span>
+    <span class="c1"># with the response a bit more directly than usual.</span>
+    <span class="c1"># First, let&#39;s make a response obj from that HTML</span>
+    <span class="n">resp</span> <span class="o">=</span> <span class="n">make_response</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
+
+    <span class="c1"># Let&#39;s add a cookie to our response. (There are lots of</span>
+    <span class="c1"># other options here--see the Flask docs for how to set</span>
+    <span class="c1"># cookie expiration, domain it should apply to, or path)</span>
+    <span class="n">resp</span><span class="o">.</span><span class="n">set_cookie</span><span class="p">(</span><span class="s1">&#39;fav_color&#39;</span><span class="p">,</span> <span class="n">fav_color</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">resp</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="reading-cookies-in-flask">
+<h3>Reading Cookies in Flask</h3>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">demo/app.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/later-cookie&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">later</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;An example page that can use that cookie.&quot;&quot;&quot;</span>
+
+    <span class="n">fav_color</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">cookies</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fav_color&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;unset&gt;&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;later-cookie.html&quot;</span><span class="p">,</span>
+                           <span class="n">fav_color</span><span class="o">=</span><span class="n">fav_color</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="cookie-options">
+<h3>Cookie Options</h3>
+<div class="docutils container">
+<ul class="simple">
+<li><strong>Expiration</strong>: how long should the browser remember this?<ul>
+<li>Can be set to a time; default is âas long as web browser is runningâ <em>(session cookie)</em></li>
+</ul>
+</li>
+<li><strong>Domain</strong>: which domains should this cookie be sent to?<ul>
+<li>Send only to <cite>books.site.com</cite> or everything at <cite>site.com</cite>?</li>
+</ul>
+</li>
+</ul>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="26%" />
+<col width="20%" />
+<col width="14%" />
+<col width="25%" />
+<col width="16%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Site</td>
+<td>Cookie</td>
+<td>Expiration</td>
+<td>Domain</td>
+<td>Value</td>
+</tr>
+<tr class="row-even"><td>www.rithmschool.com</td>
+<td>number_visits</td>
+<td>(browser)</td>
+<td>*.rithmschool.com</td>
+<td>â10â</td>
+</tr>
+<tr class="row-odd"><td>shop.rithmschool.com</td>
+<td>customer_type</td>
+<td>2015-12-31</td>
+<td>shop.rithmschool.com</td>
+<td>âEnterpriseâ</td>
+</tr>
+<tr class="row-even"><td>localhost:5000</td>
+<td>favorite_color</td>
+<td>(browser)</td>
+<td>localhost:5000</td>
+<td>âblueâ</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="sessions">
+<h2>Sessions</h2>
+<div class="section" id="cookies-can-be-tricky">
+<h3>Cookies Can Be Tricky</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Cookies are just strings</li>
+<li>Cookies are limited by how much information you can store</li>
+<li>Cookies are a bit low-level in how you use them</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id3">
+<h3>Sessions</h3>
+<p>Flask sessions are a âmagic dictionaryâ</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Contain info for the current browser</li>
+<li>Preserve type (lists stay lists, etc)</li>
+<li>Are âsignedâ, so users canât modify data</li>
+</ul>
+</div>
+</div>
+<div class="section" id="using-session-in-flask">
+<h3>Using Session in Flask</h3>
+<ul class="simple">
+<li>Import <cite>session</cite> from <cite>flask</cite></li>
+<li>Set a <cite>secret_key</cite></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">session</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">app</span><span class="o">.</span><span class="n">secret_key</span> <span class="o">=</span> <span class="s2">&quot;SHHHHHHHHHHH SEEKRIT&quot;</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>Now, in routes, you can treat <cite>session</cite> as a dictionary:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/some-route&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">some_route</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Set fav_number in session.&quot;&quot;&quot;</span>
+
+<span class="hll">    <span class="n">session</span><span class="p">[</span><span class="s1">&#39;fav_number&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">42</span>
+</span>    <span class="k">return</span> <span class="s2">&quot;Ok, I put that in the session.&quot;</span>
+</pre></div>
+</div>
+</div>
+<p>To get things out, treat it like a dictionary:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">session</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/my-route&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">my_route</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Return information using fav_number from session.&quot;&quot;&quot;</span>
+
+<span class="hll">    <span class="k">return</span> <span class="n">f</span><span class="s2">&quot;Favorite number is {session[&#39;fav_number&#39;]}&quot;</span>
+</span></pre></div>
+</div>
+<p>It will stay the same kind of data (in this example, an integer)</p>
+<p>You also have direct access to <cite>session</cite> automatically in
+Jinja templates:</p>
+<div class="highlight-jinja notranslate"><div class="highlight"><pre><span></span><span class="x">Your favorite number is </span><span class="cp">{{</span> <span class="nv">session</span><span class="o">[</span><span class="s1">&#39;fav_number&#39;</span><span class="o">]</span> <span class="cp">}}</span><span class="x"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="how-do-sessions-work">
+<h3>How Do Sessions Work?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Different web frameworks handle this differently</li>
+<li>In Flask, the sessions are stored in the browser as a cookie<ul>
+<li><code class="docutils literal notranslate"><span class="pre">session</span> <span class="pre">=</span> <span class="pre">&quot;eyJjYXJ0IjLDIsMiwyLDJdfQ.CP0ryA2EMSZdE&quot;</span></code></li>
+<li>Theyâre âserializedâ and âsignedâ</li>
+<li>So users could see, but canât change their actual session dataâonly Flask can</li>
+</ul>
+</li>
+</ul>
+</div>
+<p><em>Advanced details:</em> Flask by default uses the <cite>Werkzeug</cite> provided âsecure cookieâ as session system.
+It works by serializing the session data, compressing it and base64 encoding it.</p>
+</div>
+<div class="section" id="are-sessions-related-to-session-cookies">
+<h3>Are âSessionsâ Related to âSession Cookiesâ?</h3>
+<div class="docutils container">
+<div class="line-block">
+<div class="line">Not directly, no.</div>
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="line-block">
+<div class="line">They both just use the term âsessionâ but to mean something different.</div>
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="line-block">
+<div class="line">By default: Flask sessions use browser-lifetime cookies (âsession cookiesâ).</div>
+<div class="line">So a Flask session lasts as long as your browser window.</div>
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="line-block">
+<div class="line">Yes, you can change that (read the Flask docs!)</div>
+<div class="line"><br /></div>
+</div>
+</div>
+</div>
+<div class="section" id="server-side-sessions">
+<h3>Server-Side Sessions</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Some web frameworks store session data on the server instead<ul>
+<li>Often, in a relational database</li>
+<li>Send a cookie with âsession keyâ, which tells server
+how to get the real data</li>
+<li>Useful when you have lots of session data, or for complex setups</li>
+<li>Flask can do this with the add-on <a class="reference external" href="http://pythonhosted.org/Flask-Session/">Flask-Session</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="which-should-i-use-cookies-or-sessions">
+<h3>Which Should I Use? Cookies or Sessions?</h3>
+<div class="docutils container">
+<p>Generally, sessions.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="docutils container">
+<p>Itâs important to know how cookies work to be a
+web app engineer, but if your framework provides
+sessions (as Flask does), theyâre easier to work with.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> 
+</body>
+</html>

@@ -1,0 +1,280 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Intermediate How the Web Works</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Intermediate How the Web Works</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Intermediate How the Web Works</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#http-headers">HTTP Headers</a><ul>
+<li><a class="reference internal" href="#id2">HTTP Headers</a></li>
+<li><a class="reference internal" href="#common-request-headers">Common Request Headers</a></li>
+<li><a class="reference internal" href="#common-response-headers">Common Response Headers</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#cookies-and-sessions">Cookies and Sessions</a><ul>
+<li><a class="reference internal" href="#a-stateless-web">A Stateless Web</a></li>
+<li><a class="reference internal" href="#cookie-facts">Cookie Facts</a></li>
+<li><a class="reference internal" href="#cookie-downsides">Cookie Downsides</a></li>
+<li><a class="reference internal" href="#sessions">Sessions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#web-security">Web Security</a><ul>
+<li><a class="reference internal" href="#same-origin-policy">Same Origin Policy</a></li>
+<li><a class="reference internal" href="#cors">CORS</a></li>
+<li><a class="reference internal" href="#csrf">CSRF</a></li>
+<li><a class="reference internal" href="#csrf-example">CSRF Example</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tcp-ip-model">TCP / IP Model</a><ul>
+<li><a class="reference internal" href="#id5">TCP / IP Model</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="intermediate-how-the-web-works">
+<h1>Intermediate How the Web Works</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Review common HTTP Headers ð</li>
+<li>Review cookies and sessions ðª</li>
+<li>Review same-origin policy and CORS ð</li>
+<li>Review CSRF and form hijacking ð</li>
+<li>Describe in broad terms the TCP/IP model ð¤</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="http-headers">
+<h2>HTTP Headers</h2>
+<div class="section" id="id2">
+<div class="docutils container">
+<p><em>Headers</em> are a way to send meta-information about a request or response along with that request or response.</p>
+</div>
+</div>
+<div class="section" id="common-request-headers">
+<h3>Common Request Headers</h3>
+<div class="docutils container">
+<ul class="simple">
+<li><strong>Accept</strong> - what type of data you will accept (e.g. html, json, xml)</li>
+<li><strong>Cache-control</strong> - Specify caching behavior</li>
+<li><strong>Cookie</strong> - any cookies that the browser has stored <span class="raw-reveal"><br></span> from an earlier response header</li>
+<li><strong>User-Agent</strong> - Info about the application making the request</li>
+<li>â¦and <a class="reference external" href="https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Request_fields">more</a>!</li>
+</ul>
+</div>
+</div>
+<div class="section" id="common-response-headers">
+<h3>Common Response Headers</h3>
+<div class="docutils container">
+<ul class="simple">
+<li><strong>Access-Control-Allow-Origin</strong> - Specify CORS settings <span class="raw-reveal"><br></span> (more on this later)</li>
+<li><strong>Content-type</strong> - The content type of the response (html, css, etc)</li>
+<li><strong>Location</strong> - used for redirects to specify new location</li>
+<li><strong>Set-Cookie</strong> - key/value pairs of data <span class="raw-reveal"><br></span> that the server wants the browser to remember</li>
+<li>â¦and <a class="reference external" href="https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Response_fields">more</a>!</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="cookies-and-sessions">
+<h2>Cookies and Sessions</h2>
+<div class="section" id="a-stateless-web">
+<h3>A Stateless Web</h3>
+<div class="docutils container">
+<p>Remember, the web is <em>stateless</em>. Cookies and sessions both allow applications to preserve information from one request to the next.</p>
+</div>
+</div>
+<div class="section" id="cookie-facts">
+<h3>Cookie Facts</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>The server tells the client to store data in a cookie <span class="raw-reveal"><br></span> using the Set-Cookie header.</li>
+<li>Syntax: <cite>Set-Cookie: key1=val1;key2=val2;</cite></li>
+<li>The browser sends cookies on all future requests to the same server <span class="raw-reveal"><br></span> (inside of the <cite>Cookie</cite> header).</li>
+<li>The server can set an expiration date for the cookie.</li>
+<li>You can manually delete cookies from your browser.</li>
+</ul>
+</div>
+<div class="admonition note">
+<p><strong>Why are cookies called cookies</strong></p>
+<p>Students are often quite curious about the origin of the term <em>cookie</em> to describe these small pieces of text that are exchanged between clients and servers. There are conflicting accounts of where the name comes from. Here are a couple of theories, courtesy of <a class="reference external" href="https://www.bonkersabouttech.com/internet/why-are-cookies-called-cookies/508">this</a> article:</p>
+<blockquote class="last">
+<div>There are many explanations as to where browser cookies got its name.  Some believe that the word cookie got its name from âmagic cookiesâ which is a packet of data a program receives and sends back unchanged, used by Unix programmers.  Others believe that Xerox made a computer system that saved some of the data about the user, who was logged in on the client side and that the data was saved in a small file called a âcookieâ.  It was so-called named as such after a character from the popular (at that time) Andy Williams Show.  This âCookie Bearâ character would follow Andy around asking for a cookie.  And so in honour of Cookie Bear, the Xerox programmers decided to call the little file a cookie.</div></blockquote>
+</div>
+</div>
+<div class="section" id="cookie-downsides">
+<h3>Cookie Downsides</h3>
+<p>Cookies have limitations.</p>
+<div class="docutils container">
+<ul class="simple">
+<li>You can only store text</li>
+<li>You can only store a certain amount of it</li>
+<li>You may not want to let the client know all of the serverâs business</li>
+</ul>
+</div>
+</div>
+<div class="section" id="sessions">
+<h3>Sessions</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>With sessions, you store data on the server <span class="raw-reveal"><br></span> (or something connected to the server)</li>
+<li>This allows you to use multiple data types of arbitrary size</li>
+<li>The client only knows about a session id</li>
+<li>The session id is typically signed so that the server can detect <span class="raw-reveal"><br></span> when itâs been tampered with</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="web-security">
+<h2>Web Security</h2>
+<div class="section" id="same-origin-policy">
+<h3>Same Origin Policy</h3>
+<div class="docutils container">
+<p>The same origin policy specifies how a document from one origin can and cannot request information from a different origin.</p>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>A resourceâs origin is the combination of <em>protocol</em>, <em>port</em>, and <em>host</em>.</li>
+<li>A document loaded from rithmschool.com canât make a request to twitter.com, facebook.com, etc.</li>
+<li>The same origin policy provides an important security layer.</li>
+<li>Itâs also why you canât use some APIs on the client side.</li>
+<li>Some media is exempt from the same origin policy <span class="raw-reveal"><br></span> (e.g. images, css, JS files in script tags).</li>
+</ul>
+</div>
+</div>
+<div class="section" id="cors">
+<h3>CORS</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Stands for <em>cross-origin resource sharing</em>.</li>
+<li>Grants servers the capability to respond to requests from different origins.</li>
+<li>Implement via response headers (Access-Control-Allow-Origin, Access-Control-Allow-Methods, and more).</li>
+<li>Sometimes requests will be <em>preflighted</em>; this means an OPTIONS request will be sent to determine whether or not the original request will be accepted by the server.</li>
+<li>Who should learn about CORS? <a class="reference external" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#Who_should_read_this_article">Everyone, really</a>.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="csrf">
+<h3>CSRF</h3>
+<div class="docutils container">
+<ul class="simple">
+<li><strong>Cross-Site Request Forgery</strong> is the ability for malicious websites to make requests to legitimate websites on your behalf and without your knowledge</li>
+<li>Typically used for state-changing actions (transferring money, posting a malicious status update, etc.)</li>
+<li>How do CSRF tokens prevent these types of attacks?</li>
+</ul>
+</div>
+</div>
+<div class="section" id="csrf-example">
+<h3>CSRF Example</h3>
+<div class="docutils container">
+<ol class="arabic simple">
+<li>Sign up for a free account <a class="reference external" href="https://rithmcoin.herokuapp.com/">here</a>. Youâll get 1000 free coins!</li>
+<li>While logged in, <strong>in a new tab</strong>, go <a class="reference external" href="https://rithmschool.github.io/rithmcoin-secrets/">here</a>.</li>
+<li>Sign up for the newsletter using the same email you used to create your account in 1.</li>
+<li>Refresh your RithmCoin account page. What happened??</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="section" id="tcp-ip-model">
+<h2>TCP / IP Model</h2>
+<div class="section" id="id5">
+<p>The <strong>TCP/IP model</strong> is a way to break down network communication <span class="raw-reveal"><br></span> into four layers.</p>
+<p>Highest Level</p>
+<div class="docutils container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="45%" />
+<col width="37%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Description</th>
+<th class="head">Examples</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Application</td>
+<td>Specifications for data transfer</td>
+<td>FTP, SMTP, HTTP</td>
+</tr>
+<tr class="row-odd"><td>Transport</td>
+<td>Data Transfer / Segmentation</td>
+<td>TCP, UDP</td>
+</tr>
+<tr class="row-even"><td>Network</td>
+<td>Packet Forwarding</td>
+<td>IPv4, IPv6</td>
+</tr>
+<tr class="row-odd"><td>Data Link / Physical</td>
+<td>Transmission between nodes in a network / hardware</td>
+<td>Ethernet, LAN</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Lowest Level</p>
+<div class="admonition note">
+<p><strong>An analogy for TCP/IP</strong></p>
+<p>A commonly-used analogy for the TCP/IP model is the postal network. Hereâs an article that goes into detail on that analogy: <a class="reference external" href="http://bpastudio.csudh.edu/fac/lpress/471/hout/netech/postofficelayers.htm">Analogy between the postal network and TCP/IP</a>.</p>
+<p>Hereâs a summary of the analogy at each level (the text comes directly from the article linked above):</p>
+<ul class="last simple">
+<li><strong>Application Layer</strong> Someone writes a letter to a friend in New York, addresses it, and drops it in a mailbox. The friend opens the letter and reads it with a smile on his face. Neither of them think about how the letter got there. They are communicating directly with each other, unaware of the underlying delivery mechanism.</li>
+<li><strong>Transport Layer</strong> If you accidentally write the wrong address on a letter, a postal employee will stamp it âaddress unknownâ and it will be returned to you. You will be unaware of the details of the error message delivery system, and it will be up to you to decide what to do next.</li>
+<li><strong>Internet Layer</strong> Airplanes move letters between cities. The pilot does not pay attention to who the letters are addressed to or from, what they say, or whether they contain photos and drawings or only written words.</li>
+<li><strong>Data Link Layer</strong> Trucks move letters within a city.</li>
+<li><strong>Phyiscal Layer</strong> People use pens and paper to write letters, and the recipient reads them using reflected light and sometimes glasses.</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

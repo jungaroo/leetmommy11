@@ -1,0 +1,373 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Express Middleware</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Express Middleware</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Express Middleware</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#middleware">Middleware</a><ul>
+<li><a class="reference internal" href="#id2">Middleware</a></li>
+<li><a class="reference internal" href="#middleware-example">Middleware Example</a></li>
+<li><a class="reference internal" href="#what-is-next">What is <code class="docutils literal notranslate"><span class="pre">next</span></code>?</a></li>
+<li><a class="reference internal" href="#purpose-of-middleware">Purpose of Middleware</a></li>
+<li><a class="reference internal" href="#a-practical-example">A Practical Example</a></li>
+<li><a class="reference internal" href="#typical-use-cases-of-middleware">Typical Use Cases of Middleware</a></li>
+<li><a class="reference internal" href="#middleware-conceptual-takeaways">Middleware Conceptual Takeaways</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#express-router-middleware">Express Router Middleware</a><ul>
+<li><a class="reference internal" href="#express-router">Express Router</a></li>
+<li><a class="reference internal" href="#a-router-outside-of-app-js">A Router Outside of <cite>app.js</cite></a></li>
+<li><a class="reference internal" href="#using-our-router-in-app-js">Using Our Router in <cite>app.js</cite></a></li>
+<li><a class="reference internal" href="#benefits-of-router-middleware">Benefits of Router Middleware</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#error-handlers">Error Handlers</a><ul>
+<li><a class="reference internal" href="#id3">Error Handlers</a></li>
+<li><a class="reference internal" href="#error-handler-example">Error Handler Example</a></li>
+<li><a class="reference internal" href="#how-do-you-trigger-an-error-handler">How Do You Trigger an Error Handler?</a></li>
+<li><a class="reference internal" href="#triggering-an-error-handler-example">Triggering an Error Handler Example</a></li>
+<li><a class="reference internal" href="#error-handling-summary">Error Handling Summary</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#takeaways-and-what-s-next">Takeaways and Whatâs Next</a><ul>
+<li><a class="reference internal" href="#middleware-is-a-complicated-pattern">Middleware Is A Complicated Pattern</a></li>
+<li><a class="reference internal" href="#coming-up">Coming Up</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="express-middleware">
+<h1>Express Middleware</h1>
+<p><a class="reference external" href="../express-middleware-demo.zip">Download Demo Express.js Code</a></p>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Understand what middleware is and why itâs used</li>
+<li>See examples of built-in and custom middleware</li>
+<li>Understand the <cite>next</cite> parameter</li>
+<li>Learn about idiomatic error handling in Express</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="middleware">
+<h2>Middleware</h2>
+<div class="section" id="id2">
+<div class="docutils container">
+<ul class="simple">
+<li>Middleware functions are designed to run in the <em>middle</em> of the request-response cycle</li>
+<li>They are the same as route handlers but often utilize the <cite>next</cite> function to âforwardâ the request to the next applicable handler</li>
+<li>Think of them as helper functions that the request passes thru</li>
+</ul>
+</div>
+</div>
+<div class="section" id="middleware-example">
+<h3>Middleware Example</h3>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">demo/app.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">// this applies to all requests at all paths</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`A </span><span class="si">${</span><span class="nx">req</span><span class="p">.</span><span class="nx">method</span><span class="si">}</span><span class="sb"> request </span>
+<span class="sb">                is coming to &quot;</span><span class="si">${</span><span class="nx">req</span><span class="p">.</span><span class="nx">path</span><span class="si">}</span><span class="sb">&quot;!`</span><span class="p">);</span>
+  <span class="c1">// transfer control to the next matching handler</span>
+  <span class="k">return</span> <span class="nx">next</span><span class="p">();</span>
+<span class="p">});</span>
+
+<span class="c1">// normal route handler</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/hello/:name&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="s1">&#39;Hello &#39;</span> <span class="o">+</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="what-is-next">
+<h3>What is <code class="docutils literal notranslate"><span class="pre">next</span></code>?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>next</cite> is a function in the Express router which, when invoked, transfers control to the next matching route handler / middleware.</li>
+<li>Always make sure your middleware calls <cite>next</cite> or responds! Otherwise the request will hang indefinitely.</li>
+<li>It can also be used to short-circuit the request-response cycle and immediately handle errors (more on that in a bitâ¦)</li>
+</ul>
+</div>
+</div>
+<div class="section" id="purpose-of-middleware">
+<h3>Purpose of Middleware</h3>
+<div class="docutils container">
+<p>Everything you can do with middleware, you can do with helper functions.</p>
+</div>
+<div class="docutils container">
+<p>But itâs considered a preferred pattern in Express because it lets you easily enhance many of your route handlers at once.</p>
+</div>
+<div class="docutils container">
+<p>Many NPM libraries that are Express.js add-ons are installed as middleware (i.e. <code class="docutils literal notranslate"><span class="pre">app.use(some_package)</span></code>).</p>
+</div>
+</div>
+<div class="section" id="a-practical-example">
+<h3>A Practical Example</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Imagine if you want most of the routes in your application to require a token (i.e. authentication is required).</li>
+<li>Instead of checking for a token in <em>every single handler</em>, you can have a single middleware function check for the token <em>first</em> and then conditionally forward the request onward.</li>
+</ul>
+</div>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">demo/authExample.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">// auth example</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">req</span><span class="p">.</span><span class="nx">query</span><span class="p">.</span><span class="nx">token</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// you&#39;re unauthorized!</span>
+    <span class="kd">let</span> <span class="nx">err</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;You need a token for this site!&#39;</span><span class="p">);</span>
+    <span class="nx">err</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="mi">401</span><span class="p">;</span>
+    <span class="c1">// go to error handler</span>
+    <span class="k">return</span> <span class="nx">next</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="c1">// go to the next matching handler</span>
+    <span class="k">return</span> <span class="nx">next</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>This is what the Hack-Or-Snooze API does! ð</p>
+</div>
+</div>
+<div class="section" id="typical-use-cases-of-middleware">
+<h3>Typical Use Cases of Middleware</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Log Information About Requests (example: <a class="reference external" href="https://github.com/expressjs/morgan">morgan</a>.)</li>
+<li>Modify/Enhance the Request and Response Objects<ul>
+<li>e.g., mess with headers or extract user information</li>
+</ul>
+</li>
+<li>Perform Validation and Error-Checking<ul>
+<li>e.g., if you are not logged in redirect somewhere else</li>
+</ul>
+</li>
+<li>Reduce Code Duplication<ul>
+<li>e.g., a helper function that applies to many routes can be converted to middleware</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="middleware-conceptual-takeaways">
+<h3>Middleware Conceptual Takeaways</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>An Express pattern for adding functionality in the middle of the request/response cycle</li>
+<li>Helper functions that the request passes through</li>
+<li>Seeing lots of Express code and installing add-ons will give you a better intuition for when to use it</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="express-router-middleware">
+<h2>Express Router Middleware</h2>
+<div class="section" id="express-router">
+<h3>Express Router</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Placing all of your routes in your <cite>app.js</cite> gets messy quickly!</li>
+<li>Express provides built-in middleware to place routes elsewhere and <cite>app.use</cite> them in <cite>app.js</cite>!</li>
+</ul>
+</div>
+</div>
+<div class="section" id="a-router-outside-of-app-js">
+<h3>A Router Outside of <cite>app.js</cite></h3>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">demo/routes.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;express&quot;</span><span class="p">);</span>
+<span class="kr">const</span> <span class="nx">router</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">express</span><span class="p">.</span><span class="nx">Router</span><span class="p">();</span>
+
+<span class="kr">const</span> <span class="nx">users</span> <span class="o">=</span> <span class="p">[];</span>
+
+<span class="cm">/** GET /users: get list of users */</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">users</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="cm">/** DELETE /users/[id]: delete user, return status */</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="k">delete</span><span class="p">(</span><span class="s2">&quot;/:id&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">idx</span> <span class="o">=</span> <span class="nx">users</span><span class="p">.</span><span class="nx">findIndex</span><span class="p">(</span><span class="nx">u</span> <span class="p">=&gt;</span> <span class="nx">u</span><span class="p">.</span><span class="nx">id</span> <span class="o">===</span> <span class="o">+</span><span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+  <span class="nx">users</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">idx</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span> <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;Deleted&quot;</span> <span class="p">});</span>
+<span class="p">});</span>
+
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">router</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="using-our-router-in-app-js">
+<h3>Using Our Router in <cite>app.js</cite></h3>
+<p>We apply the router to all <code class="docutils literal notranslate"><span class="pre">/users</span></code> routes with <code class="docutils literal notranslate"><span class="pre">app.use</span></code>:</p>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">demo/app.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">// use the router middleware</span>
+<span class="c1">//  apply a prefix to every route in userRoutes</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s1">&#39;/users&#39;</span><span class="p">,</span> <span class="nx">userRoutes</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="benefits-of-router-middleware">
+<h3>Benefits of Router Middleware</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>We can make our <cite>app.js</cite> file smaller and more readable.</li>
+<li>We can separate different RESTful resources into their own files (e.g. <code class="docutils literal notranslate"><span class="pre">/users</span></code> has its own router inside <code class="docutils literal notranslate"><span class="pre">userRoutes.js</span></code> while <code class="docutils literal notranslate"><span class="pre">/pets</span></code> has its own router inside <code class="docutils literal notranslate"><span class="pre">petRoutes.js</span></code>).</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="error-handlers">
+<h2>Error Handlers</h2>
+<div class="section" id="id3">
+<p>In Express, error handlers are special types of handlers. Here are the rules for building an error handler:</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Error handlers should be at the bottom of the file, just above <code class="docutils literal notranslate"><span class="pre">app.listen</span></code>. This is because <em>any</em> handlers defined above can potentially throw errors!<ul>
+<li>Think of the error handler as being a jar at the bottom of a funnel. It collects all the bad stuff that leaks down.</li>
+</ul>
+</li>
+<li>Likewise, error handlers should match every type of request or path, so they should utilize <code class="docutils literal notranslate"><span class="pre">app.use(callback)</span></code>.</li>
+<li>The callback signature to error handlers is unique: it has 4 parameters instead of three (this is how Express knows itâs an error-handler): <code class="docutils literal notranslate"><span class="pre">function</span> <span class="pre">(error,</span> <span class="pre">req,</span> <span class="pre">res,</span> <span class="pre">next)</span></code></li>
+</ul>
+</div>
+</div>
+<div class="section" id="error-handler-example">
+<h3>Error Handler Example</h3>
+</div>
+<div class="section" id="how-do-you-trigger-an-error-handler">
+<h3>How Do You Trigger an Error Handler?</h3>
+<p>Calling <cite>next()</cite> with <em>any argument</em> forwards the request directly to the error handler. In other words, it assumes that any argument you pass to it is a type of error.</p>
+<div class="docutils container">
+<p>This is super useful because it means you can directly jump to the error handler via <cite>next</cite> if <em>any</em> handler has a problem.</p>
+</div>
+</div>
+<div class="section" id="triggering-an-error-handler-example">
+<h3>Triggering an Error Handler Example</h3>
+<div class="docutils container">
+<p>Revisiting our auth-checking middleware, if there is no token the request gets immediately kicked down to the error handler and does not match any additional handlers first.</p>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">demo/authExample.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">// auth example</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">req</span><span class="p">.</span><span class="nx">query</span><span class="p">.</span><span class="nx">token</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// you&#39;re unauthorized!</span>
+    <span class="kd">let</span> <span class="nx">err</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;You need a token for this site!&#39;</span><span class="p">);</span>
+    <span class="nx">err</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="mi">401</span><span class="p">;</span>
+    <span class="c1">// go to error handler</span>
+    <span class="k">return</span> <span class="nx">next</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="c1">// go to the next matching handler</span>
+    <span class="k">return</span> <span class="nx">next</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<p>Remember, this is only because an argument was passed to <cite>next</cite>.</p>
+</div>
+<div class="admonition note">
+<p>Error class</p>
+<p>The <a class="reference external" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">JavaScript Error constructor</a> takes 1 argument: an error message (string). This is accessed like so:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">err</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Something bad happened.&#39;</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+</pre></div>
+</div>
+<p class="last">The <cite>status</cite> property is something that weâre just tacking on manually (itâs not a normal <cite>Error</cite> property) so that we can issue appropriate HTTP status codes based on the types of errors encountered. This is helpful for users of our API, who will often base their application logic on status codes.</p>
+</div>
+</div>
+<div class="section" id="error-handling-summary">
+<h3>Error Handling Summary</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Up until now, every handler has been issuing its own error responses</li>
+<li>Now that we know how to define a global error handler, which lives at the bottom of the file and catches all errors from above, we can simplify the error logic in all other route handlers</li>
+<li>Route handlers should just be responsible for passing a specific error down to <cite>next</cite>.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="takeaways-and-what-s-next">
+<h2>Takeaways and Whatâs Next</h2>
+<div class="section" id="middleware-is-a-complicated-pattern">
+<h3>Middleware Is A Complicated Pattern</h3>
+<p>While not the most intuitive, the middleware pattern can be quite powerful in Express and save us from repeating ourselves (DRY).</p>
+<div class="docutils container">
+<p>It opens up the door for separating our code into more logical groupings and providing more robust / abstracted error handling.</p>
+</div>
+</div>
+<div class="section" id="coming-up">
+<h3>Coming Up</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Building our first full API with Express!</li>
+<li>(Tomorrow) Adding PostgreSQL to Express</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> 
+</body>
+</html>

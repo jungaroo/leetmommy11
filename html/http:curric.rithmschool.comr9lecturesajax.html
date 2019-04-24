@@ -1,0 +1,499 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>AJAX</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">AJAX</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">AJAX</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+<li><a class="reference internal" href="#id2">AJAX</a></li>
+<li><a class="reference internal" href="#why-use-ajax">Why Use AJAX?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ajax-with-jquery">AJAX with jQuery</a><ul>
+<li><a class="reference internal" href="#id3">AJAX with jQuery</a></li>
+<li><a class="reference internal" href="#get">$.get</a></li>
+<li><a class="reference internal" href="#asynchronicity">Asynchronicity</a></li>
+<li><a class="reference internal" href="#post">$.post</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#json">JSON</a><ul>
+<li><a class="reference internal" href="#id4">JSON</a></li>
+<li><a class="reference internal" href="#id5">$.get</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#raw-ajax-call">Raw AJAX Call</a><ul>
+<li><a class="reference internal" href="#id6">Raw AJAX Call</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#async-await">Async/Await</a><ul>
+<li><a class="reference internal" href="#callbacks">Callbacks</a></li>
+<li><a class="reference internal" href="#callback-hell">Callback Hell</a></li>
+<li><a class="reference internal" href="#await">Await</a></li>
+<li><a class="reference internal" href="#async">Async</a></li>
+<li><a class="reference internal" href="#no-callback-hell">No Callback Hell</a></li>
+<li><a class="reference internal" href="#callbacks-vs-async-await">Callbacks Vs Async/Await</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#handling-errors">Handling Errors</a><ul>
+<li><a class="reference internal" href="#id7">Handling Errors</a></li>
+<li><a class="reference internal" href="#jquery-ajax-docs">jQuery AJAX Docs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="ajax">
+<h1>AJAX</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Describe what AJAX is</li>
+<li>Compare AJAX requests to non-AJAX requests</li>
+<li>Make GET and POST AJAX requests with jQuery</li>
+<li>Describe what JSON is</li>
+<li>Make general AJAX requests with jQuery and handle errors</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id2">
+<h3>AJAX</h3>
+<p>Traditional browser web requests happen in response to a number of events, including:</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Entering a URL in the browser bar</li>
+<li>Clicking on a link</li>
+<li>Submitting a form</li>
+</ul>
+</div>
+<div class="docutils container">
+<p>In all cases:</p>
+<ul class="simple">
+<li>browser makes <cite>GET</cite>/<cite>POST</cite> request</li>
+<li>receives response</li>
+<li>replaces <em>entire resource</em> with result</li>
+</ul>
+</div>
+<p>AJAX web request:</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Made from JavaScript</li>
+<li>JavaScript makes request (<cite>GET</cite>, <cite>POST</cite>, or other)</li>
+<li>Your callback receives response</li>
+<li>Do whatever you want with result!</li>
+</ul>
+</div>
+<p>AJAX is a technique in Javascript for sending requests and receiving responses
+from a server <em>without</em> having to reload the browser page.</p>
+<div class="admonition note">
+<p>What Does AJAX stand for?</p>
+<p class="last">AJAX originally was an acronym for âAsynchronous Javascript and XMLâ.
+However many people donât send XML over AJAX nowadays; itâs
+more common to send HTML or JSON. The technology is still the same,
+though, even if the data payload is commonly different. Ultimately, AJAX
+is a cooler sounding acronym than AJAJ or AJAH.</p>
+</div>
+<div class="docutils container">
+<div class="compare docutils container">
+<div class="docutils container">
+<p><strong>Regular Request</strong></p>
+<div class="graphviz">
+<img src="_images/graphviz-3927ea9d0e858b68e40ae9a3ebbf893448aa0ec4.svg" />
+</div>
+</div>
+<div class="docutils container">
+<p><strong>AJAX Request</strong></p>
+<div class="graphviz">
+<img src="_images/graphviz-ff3f687f6da27c255c36a6c1a58f124838703242.svg" />
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="why-use-ajax">
+<h3>Why Use AJAX?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Donât need to reload entire page if just 1 thing is changing</li>
+<li>Interactive web sites</li>
+<li>Fewer âround-tripsâ to server<ul>
+<li>Your JS can talk to other servers directly</li>
+</ul>
+</li>
+<li>Less info has to go across network</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="ajax-with-jquery">
+<h2>AJAX with jQuery</h2>
+<div class="section" id="id3">
+<p>You donât <em>have</em> to use jQuery for this</p>
+<ul class="simple">
+<li>There is an old, clunky built-in API</li>
+<li>Or a newer-but-still-clunky <cite>fetch</cite> API</li>
+<li>Or lots of other add-on libraries (eg <em>axios</em>)</li>
+</ul>
+<p>â¦ but weâll use jQuery for now!</p>
+</div>
+<div class="section" id="get">
+<h3>$.get</h3>
+<p><code class="docutils literal notranslate"><span class="pre">$.get(url,</span> <span class="pre">[data,]</span> <span class="pre">successFunction)</span></code></p>
+<ul class="simple">
+<li><strong>data</strong>: object to send as data (in the query string)</li>
+<li><strong>successFunction</strong>: When I get back from the server, call this function.</li>
+</ul>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">demo/templates/index.html</span></div>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">h2</span><span class="p">&gt;</span>Simple GET Request<span class="p">&lt;/</span><span class="nt">h2</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">button</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;card-btn&quot;</span>
+        <span class="na">class</span><span class="o">=</span><span class="s">&quot;btn btn-primary&quot;</span><span class="p">&gt;</span>Get Card
+<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;card&quot;</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;box&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;/static/card.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">demo/static/card.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/* show ajax result directly in card box */</span>
+
+<span class="kd">function</span> <span class="nx">showCard</span><span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;card = &quot;</span><span class="p">,</span> <span class="nx">res</span><span class="p">);</span>
+  <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#card&quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">res</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#card-btn&quot;</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;click&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="nx">$</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/random-card&quot;</span><span class="p">,</span> <span class="nx">showCard</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;finished making request!&quot;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="asynchronicity">
+<h3>Asynchronicity</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>AJAX calls finish before theyâre done</li>
+<li>The <cite>$.get()</cite> completes <em>before</em> the response is received</li>
+<li>The <cite>successFunction</cite> is called when the response is received<ul>
+<li>Itâs a âcallbackâ, just like for an event!</li>
+<li>It will be called with 3 arguments:<ul>
+<li>response body</li>
+<li>string status code (typically âsuccessâ for <cite>200</cite>)</li>
+<li>AJAX request object</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="post">
+<h3>$.post</h3>
+<p>Similar to $.get, but uses a POST request</p>
+<p><code class="docutils literal notranslate"><span class="pre">$.post(url,</span> <span class="pre">[data,]</span> <span class="pre">successFunction)</span></code></p>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">demo/templates/index.html</span></div>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">h2</span><span class="p">&gt;</span>Simple POST Request<span class="p">&lt;/</span><span class="nt">h2</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">input</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;amount&quot;</span> <span class="na">placeholder</span><span class="o">=</span><span class="s">&quot;Amount&quot;</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">button</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;borrow-btn&quot;</span>
+        <span class="na">class</span><span class="o">=</span><span class="s">&quot;btn btn-warning&quot;</span><span class="p">&gt;</span>Borrow
+<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;borrowed&quot;</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;box&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;/static/borrow.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">demo/static/borrow.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/* show result of borrowing in box */</span>
+
+<span class="kd">function</span> <span class="nx">showBorrow</span><span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#borrowed&quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">res</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#borrow-btn&quot;</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;click&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">amount</span> <span class="o">=</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#amount&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">());</span>
+  <span class="nx">$</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s2">&quot;/borrow-money&quot;</span><span class="p">,</span>
+      <span class="p">{</span><span class="nx">amount</span><span class="p">},</span>
+      <span class="nx">showBorrow</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="json">
+<h2>JSON</h2>
+<div class="section" id="id4">
+<div class="docutils container">
+<ul class="simple">
+<li>JSON is a string that looks like a JS object</li>
+<li>JSON is a common standard for sending data between servers &amp; clients</li>
+<li>Most APIs use JSON to communicate</li>
+<li>By default, jQuery recognizes JSON response &amp; turns into JS object</li>
+</ul>
+</div>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">demo/templates/index.html</span></div>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">h2</span><span class="p">&gt;</span>Getting JSON Responses<span class="p">&lt;/</span><span class="nt">h2</span><span class="p">&gt;</span>
+
+Get <span class="p">&lt;</span><span class="nt">input</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;ncards&quot;</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;5&quot;</span><span class="p">&gt;</span> Cards
+<span class="p">&lt;</span><span class="nt">button</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;hand-btn&quot;</span>
+        <span class="na">class</span><span class="o">=</span><span class="s">&quot;btn btn-primary&quot;</span><span class="p">&gt;</span>Go!
+<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;hand&quot;</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;box&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;/static/hand.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">demo/static/hand.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/* show result of hand in box */</span>
+
+<span class="kd">function</span> <span class="nx">showHand</span><span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">res</span><span class="p">);</span>
+
+  <span class="kd">let</span> <span class="nx">$box</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#hand&quot;</span><span class="p">);</span>
+  <span class="nx">$box</span><span class="p">.</span><span class="nx">empty</span><span class="p">();</span>
+
+  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="p">{</span><span class="nx">rank</span><span class="p">,</span> <span class="nx">suit</span><span class="p">}</span> <span class="k">of</span> <span class="nx">res</span><span class="p">.</span><span class="nx">hand</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">t</span> <span class="o">=</span> <span class="sb">`&lt;p&gt;</span><span class="si">${</span><span class="nx">rank</span><span class="si">}</span><span class="sb"> of </span><span class="si">${</span><span class="nx">suit</span><span class="si">}</span><span class="sb">&lt;/p&gt;`</span><span class="p">;</span>
+    <span class="nx">$box</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="nx">t</span><span class="p">));</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#hand-btn&quot;</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;click&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">ncards</span> <span class="o">=</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#ncards&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">());</span>
+  <span class="nx">$</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/random-hand&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nx">ncards</span><span class="p">},</span> <span class="nx">showHand</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="admonition note">
+<p><strong>Global JSON object</strong></p>
+<p>JavaScript comes with a global <cite>JSON</cite> object which can convert strings of JSON into JavaScript objects, and vice versa. These methods are <cite>JSON.stringify</cite> (object -&gt; JSON) and <cite>JSON.parse</cite> (JSON -&gt; object).</p>
+<div class="last highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span>
+  <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Whiskey&quot;</span><span class="p">,</span>
+  <span class="nx">favFood</span><span class="o">:</span> <span class="s2">&quot;popcorn&quot;</span><span class="p">,</span>
+  <span class="nx">birthMonth</span><span class="o">:</span> <span class="mi">7</span>
+<span class="p">});</span>
+<span class="c1">// &#39;{&quot;name&quot;: &quot;Whiskey&quot;, &quot;favFood&quot;: &quot;popcorn&quot;, &quot;birthMonth&quot;: 7}&#39;</span>
+
+<span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="s1">&#39;{&quot;name&quot;: &quot;Whiskey&quot;, &quot;favFood&quot;: &quot;popcorn&quot;, &quot;birthMonth&quot;: 7}&#39;</span><span class="p">);</span>
+<span class="c1">// {name: &quot;Whiskey&quot;, favFood: &quot;popcorn&quot;, birthMonth: 7}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id5">
+<h3>$.get</h3>
+<p><code class="docutils literal notranslate"><span class="pre">$.get(url,</span> <span class="pre">[data,]</span> <span class="pre">successFunction,</span> <span class="pre">[type])</span></code></p>
+<ul class="simple">
+<li><strong>type</strong>: âplainâ, âjsonâ, âxmlâ, or âhtmlâ</li>
+</ul>
+<p>Sets an <cite>Accepts</cite> header on request; some APIs pay attention to this</p>
+<div class="docutils container">
+<p><code class="docutils literal notranslate"><span class="pre">$.getJSON(url,</span> <span class="pre">data,</span> <span class="pre">success)</span></code> does same for JSON</p>
+</div>
+</div>
+</div>
+<div class="section" id="raw-ajax-call">
+<h2>Raw AJAX Call</h2>
+<div class="section" id="id6">
+<p><code class="docutils literal notranslate"><span class="pre">$.ajax(url,</span> <span class="pre">settings-object)</span></code></p>
+<ul class="simple">
+<li><strong>settings</strong>: object with key/values for settings<ul>
+<li>telling server what kind of data to give back</li>
+<li>making a synchronous request</li>
+<li>custom error handlers</li>
+<li>setting headers on the request</li>
+<li>sending authentication info</li>
+<li>&amp; more!</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="async-await">
+<h2>Async/Await</h2>
+<div class="section" id="callbacks">
+<h3>Callbacks</h3>
+<p>Remember, AJAX requests are asynchronous</p>
+<div class="docutils container">
+<ul>
+<li><p class="first">You can provide a âsuccess functionâ for <cite>$.get()</cite> and <cite>$.post()</cite>:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">$</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/url&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">body</span><span class="p">,</span> <span class="nx">status</span><span class="p">,</span> <span class="nx">req</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;got html&quot;</span><span class="p">,</span> <span class="nx">body</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">For <cite>$.ajax()</cite>, can provide success function &amp; error function:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">body</span><span class="p">,</span> <span class="nx">status</span><span class="p">,</span> <span class="nx">req</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">},</span>
+  <span class="nx">error</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">errmsg</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="callback-hell">
+<h3>Callback Hell</h3>
+<p>If you need to make a series of AJAX calls, callbacks can be tricky:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">$</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/url1&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">html</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;got html&quot;</span><span class="p">,</span> <span class="nx">html</span><span class="p">);</span>
+
+  <span class="nx">$</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/url2&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">html2</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;got more&quot;</span><span class="p">,</span> <span class="nx">html2</span><span class="p">);</span>
+
+    <span class="nx">$</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/url3&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">html3</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;even more&quot;</span><span class="p">,</span> <span class="nx">html3</span><span class="p">);</span>
+    <span class="p">});</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="await">
+<h3>Await</h3>
+<p>jQuery AJAX methods return a âpromiseâ â a promise to provide a result</p>
+<p>Rather than handling with a callback, can <cite>await</cite> result:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">html</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">$</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/url&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>Code will stop there to wait for AJAX function to resolve.</p>
+</div>
+</div>
+<div class="section" id="async">
+<h3>Async</h3>
+<p>Outside of all functions (like in the console), you can just use <cite>await</cite>.</p>
+<p>To use in a function, you must mark that function as <cite>async</cite>:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">getInfo</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">html</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">$</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/url&quot;</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;got html&quot;</span><span class="p">,</span> <span class="nx">html</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">html</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>To call an <cite>async</cite> function, you should <cite>await</cite> it:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">info</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">getInfo</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="no-callback-hell">
+<h3>No Callback Hell</h3>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">html</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">$</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/url&quot;</span><span class="p">);</span>
+<span class="kd">let</span> <span class="nx">html2</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">$</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/url2&quot;</span><span class="p">);</span>
+<span class="kd">let</span> <span class="nx">html3</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">$</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/url3&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="callbacks-vs-async-await">
+<h3>Callbacks Vs Async/Await</h3>
+<ul class="simple">
+<li>Callbacks are familiar &amp; can always be used<ul>
+<li>But theyâre tricky to nest or do other complex things</li>
+</ul>
+</li>
+<li><cite>async</cite>/<cite>await</cite> makes it easier to handle chains of requests<ul>
+<li>Itâs worth getting familiar with them</li>
+</ul>
+</li>
+<li>Weâll cover more complex uses of asynchronicity later</li>
+</ul>
+</div>
+</div>
+<div class="section" id="handling-errors">
+<h2>Handling Errors</h2>
+<div class="section" id="id7">
+<p>Can register handler for any AJAX error on this document:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">ajaxError</span><span class="p">(</span>
+  <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">req</span><span class="p">,</span> <span class="nx">settings</span><span class="p">)</span> <span class="p">=&gt;</span>
+     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">req</span><span class="p">,</span> <span class="nx">settings</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="jquery-ajax-docs">
+<h3>jQuery AJAX Docs</h3>
+<p><a class="reference external" href="http://api.jquery.com/category/ajax/">http://api.jquery.com/category/ajax/</a></p>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> 
+</body>
+</html>

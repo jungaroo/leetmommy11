@@ -1,0 +1,478 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Bootstrap</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Bootstrap</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Bootstrap</a><ul>
+<li><a class="reference internal" href="#intro">Intro</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a></li>
+<li><a class="reference internal" href="#benefits">Benefits</a></li>
+<li><a class="reference internal" href="#responsive-groups">Responsive Groups</a></li>
+<li><a class="reference internal" href="#semantic-colors">Semantic Colors</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#using-bootstrap">Using Bootstrap</a><ul>
+<li><a class="reference internal" href="#id1">Using Bootstrap</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#layout">Layout</a><ul>
+<li><a class="reference internal" href="#id2">Layout</a></li>
+<li><a class="reference internal" href="#grids">Grids</a></li>
+<li><a class="reference internal" href="#responsive-grid">Responsive Grid</a></li>
+<li><a class="reference internal" href="#auto-columns">Auto-Columns</a></li>
+<li><a class="reference internal" href="#learning-more">Learning More</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#images">Images</a><ul>
+<li><a class="reference internal" href="#id3">Images</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tables">Tables</a><ul>
+<li><a class="reference internal" href="#id4">Tables</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#alerts">Alerts</a><ul>
+<li><a class="reference internal" href="#id5">Alerts</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#buttons">Buttons</a><ul>
+<li><a class="reference internal" href="#id7">Buttons</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ui-components">UI Components</a><ul>
+<li><a class="reference internal" href="#id8">UI Components</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#javascript-components">JavaScript Components</a><ul>
+<li><a class="reference internal" href="#id9">JavaScript Components</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bootstrap-wrap-up">Bootstrap Wrap-Up</a><ul>
+<li><a class="reference internal" href="#does-everyone-use-bootstrap">Does Everyone Use Bootstrap?</a></li>
+<li><a class="reference internal" href="#theming-bootstrap">Theming Bootstrap</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#font-awesome">Font Awesome</a><ul>
+<li><a class="reference internal" href="#id11">Font Awesome</a></li>
+<li><a class="reference internal" href="#does-everyone-use-font-awesome">Does Everyone Use Font Awesome?</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="bootstrap">
+<h1>Bootstrap</h1>
+<div class="section" id="intro">
+<h2>Intro</h2>
+<div class="section" id="goals">
+<h3>Goals</h3>
+<ul class="simple">
+<li>Learn benefits of Bootstrap &amp; how to add to site</li>
+<li>Learn Bootstrap layout/grid system</li>
+<li>Meet some of more important components</li>
+<li>Learn to integrate Font Awesome into sites</li>
+</ul>
+</div>
+<div class="section" id="benefits">
+<h3>Benefits</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Make tricky column layouts easy</li>
+<li>Provides consistent results across browsers</li>
+<li>Make responsive design much easier</li>
+<li>Includes useful interactive components<ul>
+<li>Modals, dropdowns, popovers, etc</li>
+</ul>
+</li>
+<li>âDeclarativeâ look and feel<ul>
+<li>Easier to theme</li>
+<li>Familiar for writing custom CSS</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="responsive-groups">
+<h3>Responsive Groups</h3>
+<dl class="docutils">
+<dt>xs</dt>
+<dd>Cell phones in portrait mode</dd>
+<dt>sm</dt>
+<dd>Cell phones in landscape / small tablets</dd>
+<dt>md</dt>
+<dd>Tablets</dd>
+<dt>lg</dt>
+<dd>Most desktop users</dd>
+<dt>xl</dt>
+<dd>Very-wide desktop windows</dd>
+</dl>
+</div>
+<div class="section" id="semantic-colors">
+<h3>Semantic Colors</h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="23%" />
+<col width="59%" />
+<col width="18%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Purpose</th>
+<th class="head">Default</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><cite>primary</cite></td>
+<td>Brand color</td>
+<td>blue</td>
+</tr>
+<tr class="row-odd"><td><cite>secondary</cite></td>
+<td>Neutral brand-appropriate color</td>
+<td>grey</td>
+</tr>
+<tr class="row-even"><td><cite>success</cite></td>
+<td>Operation successful</td>
+<td>green</td>
+</tr>
+<tr class="row-odd"><td><cite>danger</cite></td>
+<td>Dangerous operation / error</td>
+<td>red</td>
+</tr>
+<tr class="row-even"><td><cite>warning</cite></td>
+<td>Risky operation</td>
+<td>orange</td>
+</tr>
+<tr class="row-odd"><td><cite>info</cite></td>
+<td>FYI message</td>
+<td>light blue</td>
+</tr>
+</tbody>
+</table>
+<p>Used for table cells, text, buttons, &amp; more</p>
+</div>
+</div>
+<div class="section" id="using-bootstrap">
+<h2>Using Bootstrap</h2>
+<div class="section" id="id1">
+<p>Include their CSS:</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&quot;stylesheet&quot;</span>
+  <span class="na">href</span><span class="o">=</span><span class="s">&quot;https://unpkg.com/bootstrap/dist/css/bootstrap.css&quot;</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>To use interactive components, include JS:</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;https://unpkg.com/jquery&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;https://unpkg.com/popper&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;https://unpkg.com/bootstrap&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="layout">
+<h2>Layout</h2>
+<div class="section" id="id2">
+<p>All content should descend from a <em>container</em> element:</p>
+<dl class="docutils">
+<dt>.container-fluid</dt>
+<dd>Full-browser-width container (with small amount of breathing room).</dd>
+<dt>.container</dt>
+<dd>Full-browser-width but at specific breakpoints. <span class="raw-reveal"><br></span>
+Makes UI testing easier: far fewer possible layouts to test.</dd>
+</dl>
+<div class="docutils container">
+<p>Content that doesnât need to be in columns can go directly in this.</p>
+</div>
+</div>
+<div class="section" id="grids">
+<h3>Grids</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>12 Column Layout</li>
+<li>Cells can span any number of columns</li>
+<li>After all columns are used, will become new row</li>
+<li>To use: all columns must be in a <cite>.row</cite></li>
+</ul>
+</div>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">two rows of 3 columns</span></div>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span> <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;container&quot;</span><span class="p">&gt;</span>
+   <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>
+     <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;col-4&quot;</span><span class="p">&gt;</span>A<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+     <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;col-4&quot;</span><span class="p">&gt;</span>B<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+     <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;col-4&quot;</span><span class="p">&gt;</span>C<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+     <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;col-4&quot;</span><span class="p">&gt;</span>D<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+     <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;col-4&quot;</span><span class="p">&gt;</span>E<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+     <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;col-4&quot;</span><span class="p">&gt;</span>F<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+   <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+ <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="responsive-grid">
+<h3>Responsive Grid</h3>
+<ul class="simple">
+<li>Can specify a breakpoint: that size and above use this</li>
+<li>Specification without breakpoint is for <cite>xs</cite></li>
+</ul>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">different # columns</span></div>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;container&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;col-6 col-md-4&quot;</span><span class="p">&gt;</span>A<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;col-6 col-md-4&quot;</span><span class="p">&gt;</span>B<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;col-6 col-md-4&quot;</span><span class="p">&gt;</span>C<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;col-6 col-md-4&quot;</span><span class="p">&gt;</span>D<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;col-6 col-md-4&quot;</span><span class="p">&gt;</span>E<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;col-6 col-md-4&quot;</span><span class="p">&gt;</span>F<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<p>(2 columns on cell phones; 3 columns for larger devices)</p>
+</div>
+</div>
+<div class="section" id="auto-columns">
+<h3>Auto-Columns</h3>
+<ul class="simple">
+<li>Can leave off numbers &amp; divide by available size</li>
+<li>Useful when you donât know how many items there will be</li>
+</ul>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">auto-columns</span></div>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;container&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>A<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>B<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;row&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>C<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>D<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;col&quot;</span><span class="p">&gt;</span>E<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="learning-more">
+<h3>Learning More</h3>
+<p><a class="reference external" href="https://getbootstrap.com/docs/4.0/layout/grid/">Grid Docs</a></p>
+</div>
+</div>
+<div class="section" id="images">
+<h2>Images</h2>
+<div class="section" id="id3">
+<dl class="docutils">
+<dt>.img-fluid</dt>
+<dd>Make image responsive; wonât be wider than parent</dd>
+</dl>
+<p>Learn more: <a class="reference external" href="https://getbootstrap.com/docs/4.0/content/images/">Images Docs</a></p>
+</div>
+</div>
+<div class="section" id="tables">
+<h2>Tables</h2>
+<div class="section" id="id4">
+<dl class="docutils">
+<dt>.table</dt>
+<dd>Get nice standard table look (use this plus other classes)</dd>
+<dt>.table-hover</dt>
+<dd>Hover-effect over a row</dd>
+<dt>.table-sm</dt>
+<dd>Tighten up margin around cells</dd>
+<dt>.table-striped</dt>
+<dd>Stripe alternative rows</dd>
+</dl>
+<p>Learn more: <a class="reference external" href="https://getbootstrap.com/docs/4.0/content/tables/">Table Docs</a></p>
+</div>
+</div>
+<div class="section" id="alerts">
+<h2>Alerts</h2>
+<div class="section" id="id5">
+<p>Useful for providing feedback/warnings:</p>
+<dl class="docutils">
+<dt>.alert</dt>
+<dd><em>(use this plus other classes)</em></dd>
+<dt>.alert-[semantic-color]</dt>
+<dd>Use color scheme for this level of message.</dd>
+</dl>
+<p>Learn more: <a class="reference external" href="https://getbootstrap.com/docs/4.0/components/alerts/">Alerts</a></p>
+</div>
+</div>
+<div class="section" id="buttons">
+<h2>Buttons</h2>
+<div class="section" id="id7">
+<dl class="docutils">
+<dt>.btn</dt>
+<dd><em>(Use this plus other classes)</em></dd>
+<dt>.btn-[semantic-color]</dt>
+<dd>Use color scheme for this level of message</dd>
+<dt>.btn-link</dt>
+<dd>Make button look like a <code class="docutils literal notranslate"><span class="pre">&lt;a&gt;</span></code> link</dd>
+<dt>.btn-lg / .btn-sm</dt>
+<dd>Make larger or smaller button</dd>
+</dl>
+<div class="docutils container">
+<p>Can use on <code class="docutils literal notranslate"><span class="pre">&lt;a&gt;</span></code> links to look like buttonsâvery useful!</p>
+<p>Learn more: <a class="reference external" href="https://getbootstrap.com/docs/4.0/components/buttons/">Button Docs</a></p>
+</div>
+</div>
+</div>
+<div class="section" id="ui-components">
+<h2>UI Components</h2>
+<div class="section" id="id8">
+<ul class="simple">
+<li>Breadcrumbs</li>
+<li>Forms</li>
+<li>Lists</li>
+<li>Media cards</li>
+<li>Pagination sets</li>
+<li>and more!</li>
+</ul>
+<p>Learn more: <a class="reference external" href="https://getbootstrap.com/docs/4.0/components">Components</a></p>
+</div>
+</div>
+<div class="section" id="javascript-components">
+<h2>JavaScript Components</h2>
+<div class="section" id="id9">
+<p>Need to add JS for jQuery, Popper, and Bootstrap</p>
+<ul class="simple">
+<li>Carousels</li>
+<li>Collapse</li>
+<li>Dropdown</li>
+<li>Modals</li>
+<li>Popovers</li>
+<li>Tooltips</li>
+<li>and more!</li>
+</ul>
+<p>Learn more: <a class="reference external" href="https://getbootstrap.com/docs/4.0/components">Components</a></p>
+</div>
+</div>
+<div class="section" id="bootstrap-wrap-up">
+<h2>Bootstrap Wrap-Up</h2>
+<div class="section" id="does-everyone-use-bootstrap">
+<h3>Does Everyone Use Bootstrap?</h3>
+<div class="docutils container">
+<p>No</p>
+</div>
+<div class="docutils container">
+<p>But almost everyone uses <em>some</em> CSS framework</p>
+</div>
+<div class="docutils container">
+<p>Other popular frameworks:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://foundation.zurb.com/">Zurb Foundation</a></li>
+<li><a class="reference external" href="https://materializecss.com/">Materialize</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="theming-bootstrap">
+<h3>Theming Bootstrap</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Can write your own CSS to change things</li>
+<li>Can make your own Bootstrap with SASS <em>(advanced)</em></li>
+<li>Can find thousands of Bootstrap themes</li>
+<li>Can easily use <a class="reference external" href="https://bootswatch.com/">Bootswatch</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="font-awesome">
+<h2>Font Awesome</h2>
+<div class="section" id="id11">
+<ul class="simple">
+<li><a class="reference external" href="https://fontawesome.com/cheatsheet">Awesome set</a> of icons for common symbols &amp; brands</li>
+<li>Comes as a font, so it scales &amp; can be in any color</li>
+<li>Convenient classes for resizing, animating, stacking, and more!</li>
+</ul>
+<div class="docutils container">
+<p>Include this:</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&quot;stylesheet&quot;</span>
+<span class="na">href</span><span class="o">=</span><span class="s">&quot;https://use.fontawesome.com/releases/v5.3.1/css/all.css&quot;</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>Use icons by name on a <cite>i</cite> or <cite>span</cite> tag</p>
+</div>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="c">&lt;!-- fab/fas/far for brand/solid/regular --&gt;</span>
+<span class="p">&lt;</span><span class="nt">i</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;fab fa-apple&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">i</span><span class="p">&gt;</span> <span class="c">&lt;!-- Apple icon --&gt;</span>
+<span class="p">&lt;</span><span class="nt">i</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;fas fa-star&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">i</span><span class="p">&gt;</span>  <span class="c">&lt;!-- solid star --&gt;</span>
+<span class="p">&lt;</span><span class="nt">i</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;far fa-star&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">i</span><span class="p">&gt;</span>  <span class="c">&lt;!-- regular (outline) of star --&gt;</span>
+
+<span class="c">&lt;!-- can add xs/sm/lg/2x/3x/4x/5x/6x/7x/8x/9x/10x to resize --&gt;</span>
+<span class="p">&lt;</span><span class="nt">i</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;fab fa-apple 3x&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">i</span><span class="p">&gt;</span>   <span class="c">&lt;!-- 3x normal size Apple --&gt;</span>
+
+<span class="c">&lt;!-- can animate --&gt;</span>
+<span class="p">&lt;</span><span class="nt">i</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;fas fa-spinner fa-spin&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">i</span><span class="p">&gt;</span>
+
+<span class="c">&lt;!-- can stack one over another --&gt;</span>
+<span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;fa-stack fa-2x&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">i</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;fas fa-square fa-stack-2x&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">i</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">i</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;fab fa-amazon fa-stack-1x fa-inverse&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">i</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p><a class="reference external" href="https://fontawesome.com/how-to-use/on-the-web/setup/">Font Awesome Docs</a></p>
+</div>
+<div class="section" id="does-everyone-use-font-awesome">
+<h3>Does Everyone Use Font Awesome?</h3>
+<div class="docutils container">
+<p>Pretty much.</p>
+</div>
+<div class="docutils container">
+<p>There are few competing projects, but none nearly as awesome.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

@@ -1,0 +1,705 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>SQL Alchemy</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">SQL Alchemy</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">SQL Alchemy</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sqlalchemy-intro">SQLAlchemy Intro</a><ul>
+<li><a class="reference internal" href="#sqlalchemy-orm">SQLAlchemy ORM</a></li>
+<li><a class="reference internal" href="#installing-sqlalchemy">Installing SQLAlchemy</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#oo-into-sql">OO into SQL</a><ul>
+<li><a class="reference internal" href="#model">Model</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#setup">Setup</a><ul>
+<li><a class="reference internal" href="#id2">Setup</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#models">Models</a><ul>
+<li><a class="reference internal" href="#our-model">Our Model</a></li>
+<li><a class="reference internal" href="#creating-the-database">Creating the Database</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#using-our-model">Using our Model</a><ul>
+<li><a class="reference internal" href="#id3">Using our Model</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#querying">Querying</a><ul>
+<li><a class="reference internal" href="#id4">Querying</a></li>
+<li><a class="reference internal" href="#fetching-records">Fetching Records</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#methods">Methods</a><ul>
+<li><a class="reference internal" href="#id5">Methods</a></li>
+<li><a class="reference internal" href="#using-our-methods">Using Our Methods</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#better-representation">Better Representation</a><ul>
+<li><a class="reference internal" href="#id6">Better Representation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sqlalchemy-with-flask">SQLAlchemy with Flask</a><ul>
+<li><a class="reference internal" href="#flask-sqlalchemy">Flask-SQLAlchemy</a></li>
+<li><a class="reference internal" href="#differences">Differences</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#demo">Demo</a><ul>
+<li><a class="reference internal" href="#demo-listing">Demo: Listing</a></li>
+<li><a class="reference internal" href="#demo-adding">Demo: Adding</a></li>
+<li><a class="reference internal" href="#demo-detail">Demo: Detail</a></li>
+<li><a class="reference internal" href="#demo-seeding">Demo: Seeding</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#coming-up">Coming Up</a><ul>
+<li><a class="reference internal" href="#id7">Coming Up</a></li>
+<li><a class="reference internal" href="#learning-more">Learning More</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="sql-alchemy">
+<h1>SQL Alchemy</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<p>Learn to use object-oriented techniques with relational DBs.</p>
+<div class="docutils container">
+<p>Without writing any SQL.</p>
+</div>
+<div class="docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">whiskey</span> <span class="o">=</span> <span class="n">Pet</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Whiskey&#39;</span><span class="p">,</span> <span class="n">species</span><span class="o">=</span><span class="s2">&quot;dog&quot;</span><span class="p">,</span> <span class="n">hunger</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">whiskey</span><span class="o">.</span><span class="n">hunger</span>
+<span class="go">50</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">whiskey</span><span class="o">.</span><span class="n">hunger</span> <span class="o">=</span> <span class="mi">20</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="sqlalchemy-intro">
+<h2>SQLAlchemy Intro</h2>
+<div class="section" id="sqlalchemy-orm">
+<h3>SQLAlchemy ORM</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Popular, powerful, Python-based ORM (object-relational mapping)</li>
+<li>Translation service between OOP in our server language <span class="raw-reveal"><br></span> and relational data in our database</li>
+<li>Can use by itself, with Flask, or other web frameworks</li>
+</ul>
+</div>
+</div>
+<div class="section" id="installing-sqlalchemy">
+<h3>Installing SQLAlchemy</h3>
+<p>Need the program that lets Python speak PostgreSQL: <cite>psycopg2</cite></p>
+<p>Need the program that provides SQLAlchemy: <cite>flask-sqlalchemy</cite></p>
+<pre class="console literal-block">
+$ <span class="cmd">pip install psycopg2-binary</span>
+$ <span class="cmd">pip install flask-sqlalchemy</span>
+</pre>
+</div>
+</div>
+<div class="section" id="oo-into-sql">
+<h2>OO into SQL</h2>
+<div class="section" id="model">
+<h3>Model</h3>
+<p>A model like this:</p>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">demo/models.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Pet</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Pet.&quot;&quot;&quot;</span>
+
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;pets&quot;</span>
+
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+                   <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                   <span class="n">autoincrement</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">),</span>
+                     <span class="n">nullable</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                     <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">species</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">30</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">hunger</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Would turn into this SQL:</p>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">pets</span> <span class="p">(</span>
+    <span class="n">id</span> <span class="nb">SERIAL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+    <span class="n">name</span> <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">UNIQUE</span><span class="p">,</span>
+    <span class="n">species</span> <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">30</span><span class="p">),</span>
+    <span class="n">hunger</span> <span class="nb">INTEGER</span> <span class="k">NOT</span> <span class="k">NULL</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="setup">
+<h2>Setup</h2>
+<div class="section" id="id2">
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">demo/models.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask_sqlalchemy</span> <span class="kn">import</span> <span class="n">SQLAlchemy</span>
+
+<span class="n">db</span> <span class="o">=</span> <span class="n">SQLAlchemy</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">connect_db</span><span class="p">(</span><span class="n">app</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Connect to database.&quot;&quot;&quot;</span>
+
+    <span class="n">db</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">app</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">demo/app.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">render_template</span>
+<span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="n">db</span><span class="p">,</span> <span class="n">connect_db</span><span class="p">,</span> <span class="n">Pet</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;SQLALCHEMY_DATABASE_URI&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;postgresql:///pets&#39;</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;SQLALCHEMY_TRACK_MODIFICATIONS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;SQLALCHEMY_ECHO&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+
+<span class="n">connect_db</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>SQLALCHEMY_DATABASE_URI</cite> - Where is your database?</li>
+<li><cite>SQLALCHEMY_TRACK_MODIFICATIONS</cite> - Set this to false or SQLAlchemy will yell at you</li>
+<li><cite>SQLALCHEMY_ECHO</cite> - Print all SQL statements to the terminal (helpful for debugging)</li>
+</ul>
+</div>
+<ul class="simple">
+<li>Can talk to SQLite, PostgreSQL, MySQL, and more</li>
+<li>You (almost) never have to change code if you change databases</li>
+</ul>
+</div>
+</div>
+<div class="section" id="models">
+<h2>Models</h2>
+<div class="section" id="our-model">
+<h3>Our Model</h3>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">demo/models.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="hll"><span class="k">class</span> <span class="nc">Pet</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+</span>    <span class="sd">&quot;&quot;&quot;Pet.&quot;&quot;&quot;</span>
+
+<span class="hll">    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;pets&quot;</span>
+</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+                   <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                   <span class="n">autoincrement</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">),</span>
+                     <span class="n">nullable</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                     <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">species</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">30</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">hunger</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>All models should subclass <cite>db.Model</cite></li>
+<li>Specify the tablename with <code class="docutils literal notranslate"><span class="pre">__tablename__</span></code></li>
+</ul>
+</div>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">demo/models.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Pet</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Pet.&quot;&quot;&quot;</span>
+
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;pets&quot;</span>
+
+<span class="hll">    <span class="nb">id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+</span><span class="hll">                   <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+</span><span class="hll">                   <span class="n">autoincrement</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</span><span class="hll">    <span class="n">name</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">),</span>
+</span><span class="hll">                     <span class="n">nullable</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+</span><span class="hll">                     <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</span><span class="hll">    <span class="n">species</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">30</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</span><span class="hll">    <span class="n">hunger</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+</span></pre></div>
+</div>
+</div>
+<ul class="simple">
+<li>Have to specify the type of column</li>
+<li>Columns can contain <cite>NULL</cite> unless <code class="docutils literal notranslate"><span class="pre">nullable=False</span></code></li>
+<li>Can specify <cite>default</cite>, <cite>unique</cite>, <cite>primary_key</cite>, <cite>autoincrement</cite></li>
+</ul>
+</div>
+<div class="section" id="creating-the-database">
+<h3>Creating the Database</h3>
+<pre class="console literal-block">
+$ <span class="cmd">ipython3</span>
+<span class="green">In [1]</span> <span class="cmd">%run app.py</span>
+
+<span class="green">In [2]</span> <span class="cmd">db.create_all()</span>
+</pre>
+<div class="docutils container">
+<ul class="simple">
+<li>Create all the tables using this database connection</li>
+<li>Only have to do once<ul>
+<li>No effect if tables already exist</li>
+</ul>
+</li>
+<li>If you change table schema<ul>
+<li>drop table &amp; re-run</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="admonition note">
+<p><strong>Do I always have to drop the table?</strong></p>
+<p class="last">Dropping all of your tables may seem like an extreme move every time you make a change to your schema. There are tools that can help you update your schema more smoothly. <em>Database migrations</em> are a common way to do this, but this topic is beyond our scope.</p>
+</div>
+</div>
+</div>
+<div class="section" id="using-our-model">
+<h2>Using our Model</h2>
+<div class="section" id="id3">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fluffy</span> <span class="o">=</span> <span class="n">Pet</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Fluffy&#39;</span><span class="p">,</span> <span class="n">species</span><span class="o">=</span><span class="s2">&quot;Pet&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fluffy</span><span class="o">.</span><span class="n">hunger</span>
+<span class="go">20</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">fluffy</span><span class="p">)</span>    <span class="c1"># required to add to database!</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>       <span class="c1"># commit the transaction</span>
+</pre></div>
+</div>
+<p>You only have to use <code class="docutils literal notranslate"><span class="pre">db.session.add()</span></code> to add a new object once â
+you donât need to keep adding it to the session each time you
+change it.</p>
+<div class="admonition note">
+<p><strong>Transactions</strong></p>
+<p>Database management systems (Postgres included) support the concept of <strong>transactions</strong>. The idea here is that you may want to update multiple parts of the database simultaneously, and if any piece of the update fails, the entire transaction fails.</p>
+<p>The most common example is a bank transfer: imagine Abby is trying to send $20 to Barbara, and we want to record this fact in a database. So we deduct $20 from Abbyâs account, but before we can increase Barbaraâs balance by $20, thereâs a power failure. In this case, the whole transaction should be cancelled. Otherwise, Abby would be out $20!</p>
+<p>In PostgreSQL, we can begin a transaction with <code class="docutils literal notranslate"><span class="pre">BEGIN</span> <span class="pre">TRANSACTION</span></code>. Inside of our transaction, any SQL we write wonât make permanent changes to the database. If we make a change we donât like, we can cancel the transaction with the <code class="docutils literal notranslate"><span class="pre">ROLLBACK</span></code> command.</p>
+<p>But more importantly for our present purposes, if thereâs a change we do like, we need to <code class="docutils literal notranslate"><span class="pre">COMMIT</span></code> the transaction.</p>
+<p>Hereâs a small example you can explore in the demo code:</p>
+<div class="literal-block-wrapper last docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">demo/colors.sql</span></div>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span>-- from the terminal run:
+-- psql &lt; colors.sql
+
+DROP DATABASE IF EXISTS colors;
+
+CREATE DATABASE colors;
+
+\c colors
+
+CREATE TABLE colors
+(
+  id SERIAL PRIMARY KEY,
+  name TEXT
+);
+
+INSERT INTO colors (name) VALUES (&#39;red&#39;), (&#39;blue&#39;), (&#39;green&#39;);
+
+BEGIN TRANSACTION;
+  DELETE FROM colors;
+  SELECT * FROM colors; 
+  -- no colors are left!
+ROLLBACK;
+
+SELECT * FROM colors;
+-- all the colors are still here!
+-- we only removed them in a rolled back transaction.
+
+BEGIN TRANSACTION;
+  DELETE FROM colors;
+  SELECT * FROM colors; 
+  -- no colors are left!
+COMMIT;
+
+SELECT * FROM colors;
+-- Since we committed the transaction,
+-- all of the colors are gone.
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="querying">
+<h2>Querying</h2>
+<div class="section" id="id4">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Pet</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="o">*</span>
+<span class="k">FROM</span> <span class="n">pets</span>
+</pre></div>
+</div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Pet</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="o">*</span>
+<span class="k">FROM</span> <span class="n">pets</span>
+<span class="k">WHERE</span> <span class="n">id</span> <span class="o">=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Pet</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">species</span><span class="o">=</span><span class="s1">&#39;dog&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="o">*</span>
+<span class="k">FROM</span> <span class="n">pets</span>
+<span class="k">WHERE</span> <span class="n">species</span> <span class="o">=</span> <span class="s1">&#39;dog&#39;</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Pet</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Pet</span><span class="o">.</span><span class="n">species</span> <span class="o">==</span> <span class="s1">&#39;dog&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Pet</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Pet</span><span class="o">.</span><span class="n">hunger</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="o">*</span>
+<span class="k">FROM</span> <span class="n">pets</span>
+<span class="k">WHERE</span> <span class="n">hunger</span> <span class="o">&lt;</span> <span class="mi">10</span>
+</pre></div>
+</div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Pet</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Pet</span><span class="o">.</span><span class="n">hunger</span> <span class="o">&lt;</span> <span class="mi">15</span><span class="p">,</span>
+                 <span class="n">Pet</span><span class="o">.</span><span class="n">species</span> <span class="o">==</span> <span class="s1">&#39;dog&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="o">*</span>
+<span class="k">FROM</span> <span class="n">pets</span>
+<span class="k">WHERE</span> <span class="n">hunger</span> <span class="o">&lt;</span> <span class="mi">15</span>
+  <span class="k">AND</span> <span class="n">species</span> <span class="o">=</span> <span class="s1">&#39;dog&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="fetching-records">
+<h3>Fetching Records</h3>
+<div class="docutils container">
+<dl class="docutils">
+<dt>.get(pk)</dt>
+<dd>Get single record with that primary key value</dd>
+<dt>.all()</dt>
+<dd>Get all records as a list</dd>
+<dt>.first()</dt>
+<dd>Get first record or <cite>None</cite></dd>
+<dt>.one()</dt>
+<dd>Get first record, error if 0 or if &gt; 1</dd>
+<dt>.one_or_none()</dt>
+<dd>Get first record, error if &gt;1, None if 0</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="section" id="methods">
+<h2>Methods</h2>
+<div class="section" id="id5">
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">demo/models.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Pet</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Pet.&quot;&quot;&quot;</span>
+
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;pets&quot;</span>
+
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+                   <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                   <span class="n">autoincrement</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">),</span>
+                     <span class="n">nullable</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                     <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">species</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">30</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">hunger</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+
+<span class="hll">    <span class="k">def</span> <span class="nf">greet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="hll">        <span class="sd">&quot;&quot;&quot;Greet using name.&quot;&quot;&quot;</span>
+</span><span class="hll">
+</span><span class="hll">        <span class="k">return</span> <span class="n">f</span><span class="s2">&quot;I&#39;m {self.name} the {self.species or &#39;thing&#39;}&quot;</span>
+</span><span class="hll">
+</span><span class="hll">    <span class="k">def</span> <span class="nf">feed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+</span><span class="hll">        <span class="sd">&quot;&quot;&quot;Nom nom nom.&quot;&quot;&quot;</span>
+</span><span class="hll">
+</span><span class="hll">        <span class="bp">self</span><span class="o">.</span><span class="n">hunger</span> <span class="o">-=</span> <span class="n">units</span>
+</span><span class="hll">        <span class="bp">self</span><span class="o">.</span><span class="n">hunger</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hunger</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</span></pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="using-our-methods">
+<h3>Using Our Methods</h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fluffy</span><span class="o">.</span><span class="n">greet</span><span class="p">()</span>
+<span class="go">&#39;I am Fluffy the cat&#39;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fluffy</span><span class="o">.</span><span class="n">feed</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fluffy</span><span class="o">.</span><span class="n">hunger</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>    <span class="c1"># save new hunger</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p>Class Methods</p>
+<ul class="last simple">
+<li>Most methods are âinstance methodsâ<ul>
+<li>These are called on an instance of a class (ie, a single cat)</li>
+<li>They can refer to/change attributes of that instance</li>
+</ul>
+</li>
+<li>Some methods are âclass methodsâ<ul>
+<li>They are called on the <strong>class itself</strong></li>
+<li>They canât refer to instance attributes</li>
+<li>Often used as âfactoriesâ to return instances</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Pet</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_by_species</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">species</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get all pets matching that color.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Pet</span><span class="o">.</span><span class="n">species</span> <span class="o">==</span> <span class="n">species</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Pet</span><span class="o">.</span><span class="n">get_by_species</span><span class="p">(</span><span class="s2">&quot;dog&quot;</span><span class="p">)</span>
+<span class="go">[&lt;Pet ...&gt;, &lt;Pet ...&gt;]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="better-representation">
+<h2>Better Representation</h2>
+<div class="section" id="id6">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Pet</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Pet</span><span class="o">.</span><span class="n">species</span> <span class="o">==</span> <span class="s1">&#39;dog&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<span class="go">[&lt;__main__.Pet object at ...&gt;, &lt;__main__.Pet object at ...&gt;]</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>Yeah, but <em>which pet</em> is that?</p>
+</div>
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-text">demo/models.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Pet</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>   <span class="c1"># ...</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Show info about pet.&quot;&quot;&quot;</span>
+
+        <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="k">return</span> <span class="n">f</span><span class="s2">&quot;&lt;Pet {p.id} {p.name} {p.species} {p.hunger}&gt;&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Pet</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">&lt;Pet 1 Whiskey dog 10&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="sqlalchemy-with-flask">
+<h2>SQLAlchemy with Flask</h2>
+<div class="section" id="flask-sqlalchemy">
+<h3>Flask-SQLAlchemy</h3>
+<ul class="simple">
+<li>Add-on product to integrate Flask and SQLAlchemy</li>
+<li>Benefits<ul>
+<li>Ties SQLAlchemy session to Flask response</li>
+<li>Simplifies finding things in SQLAlchemy API</li>
+<li>Simplifies querying by allowing on class</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="differences">
+<h3>Differences</h3>
+<ul class="simple">
+<li>With Flask-SQLAlchemy, all useful methods are on <cite>db.</cite><ul>
+<li>With vanilla SQLAlchemy, stuff is spread all over</li>
+<li>There are useful web-related methods, like <code class="docutils literal notranslate"><span class="pre">Pet.objects.get_or_404(pk)</span></code></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="demo">
+<h2>Demo</h2>
+<div class="section" id="demo-listing">
+<h3>Demo: Listing</h3>
+<div class="literal-block-wrapper docutils container" id="id16">
+<div class="code-block-caption"><span class="caption-text">demo/app.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@app.route</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">list_pets</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;List pets and show add form.&quot;&quot;&quot;</span>
+
+    <span class="n">pets</span> <span class="o">=</span> <span class="n">Pet</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;list.html&quot;</span><span class="p">,</span> <span class="n">pets</span><span class="o">=</span><span class="n">pets</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id17">
+<div class="code-block-caption"><span class="caption-text">demo/templates/list.html</span></div>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+  {% for pet in pets %}
+  <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/{{ pet.id }}&quot;</span><span class="p">&gt;</span>{{ pet.name }}<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+  {% endfor %}
+<span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="demo-adding">
+<h3>Demo: Adding</h3>
+<div class="literal-block-wrapper docutils container" id="id18">
+<div class="code-block-caption"><span class="caption-text">demo/templates/list.html</span></div>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">form</span> <span class="na">method</span><span class="o">=</span><span class="s">&quot;POST&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Name:     <span class="p">&lt;</span><span class="nt">input</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;name&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Species:  <span class="p">&lt;</span><span class="nt">input</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;species&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Hunger:   <span class="p">&lt;</span><span class="nt">input</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;hunger&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">button</span><span class="p">&gt;</span>Save<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id19">
+<div class="code-block-caption"><span class="caption-text">demo/app.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@app.route</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">add_pet</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Add pet and redirect to list.&quot;&quot;&quot;</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span>
+    <span class="n">species</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;species&#39;</span><span class="p">)</span>
+    <span class="n">hunger</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;hunger&#39;</span><span class="p">)</span>
+    <span class="n">hunger</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">hunger</span><span class="p">)</span> <span class="k">if</span> <span class="n">hunger</span> <span class="k">else</span> <span class="bp">None</span>
+
+    <span class="n">pet</span> <span class="o">=</span> <span class="n">Pet</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">species</span><span class="o">=</span><span class="n">species</span><span class="p">,</span> <span class="n">hunger</span><span class="o">=</span><span class="n">hunger</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">pet</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="demo-detail">
+<h3>Demo: Detail</h3>
+<div class="literal-block-wrapper docutils container" id="id20">
+<div class="code-block-caption"><span class="caption-text">demo/app.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@app.route</span><span class="p">(</span><span class="s2">&quot;/&lt;int:pet_id&gt;&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">show_pet</span><span class="p">(</span><span class="n">pet_id</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Show info on a single pet.&quot;&quot;&quot;</span>
+
+    <span class="n">pet</span> <span class="o">=</span> <span class="n">Pet</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get_or_404</span><span class="p">(</span><span class="n">pet_id</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;detail.html&quot;</span><span class="p">,</span> <span class="n">pet</span><span class="o">=</span><span class="n">pet</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id21">
+<div class="code-block-caption"><span class="caption-text">demo/templates/detail.html</span></div>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>{{ pet.name }}<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Species: {{ pet.species }}<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Hunger: {{ pet.hunger }}<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="demo-seeding">
+<h3>Demo: Seeding</h3>
+<div class="literal-block-wrapper docutils container" id="id22">
+<div class="code-block-caption"><span class="caption-text">demo/seed.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Seed file to make sample data for pets db.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="n">Pet</span><span class="p">,</span> <span class="n">db</span>
+<span class="kn">from</span> <span class="nn">app</span> <span class="kn">import</span> <span class="n">app</span>
+
+<span class="c1"># Create all tables</span>
+<span class="n">db</span><span class="o">.</span><span class="n">create_all</span><span class="p">()</span>
+
+<span class="c1"># If table isn&#39;t empty, empty it</span>
+<span class="n">Pet</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+
+<span class="c1"># Add pets</span>
+<span class="n">whiskey</span> <span class="o">=</span> <span class="n">Pet</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Whiskey&#39;</span><span class="p">,</span> <span class="n">species</span><span class="o">=</span><span class="s2">&quot;dog&quot;</span><span class="p">)</span>
+<span class="n">bowser</span> <span class="o">=</span> <span class="n">Pet</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Bowser&#39;</span><span class="p">,</span> <span class="n">species</span><span class="o">=</span><span class="s2">&quot;dog&quot;</span><span class="p">,</span> <span class="n">hunger</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">spike</span> <span class="o">=</span> <span class="n">Pet</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Spike&#39;</span><span class="p">,</span> <span class="n">species</span><span class="o">=</span><span class="s2">&quot;porcupine&quot;</span><span class="p">)</span>
+
+<span class="c1"># Add new objects to session, so they&#39;ll persist</span>
+<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">whiskey</span><span class="p">)</span>
+<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">bowser</span><span class="p">)</span>
+<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">spike</span><span class="p">)</span>
+
+<span class="c1"># Commit--otherwise, this never gets saved!</span>
+<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="coming-up">
+<h2>Coming Up</h2>
+<div class="section" id="id7">
+<p>SQLAlchemy II: relationships and joins</p>
+</div>
+<div class="section" id="learning-more">
+<h3>Learning More</h3>
+<p><a class="reference external" href="http://docs.sqlalchemy.org/en/latest/">SQLAlchemy Docs</a></p>
+<p><a class="reference external" href="https://pythonhosted.org/Flask-SQLAlchemy/">Flask-SQLAlchemy Docs</a></p>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> 
+</body>
+</html>

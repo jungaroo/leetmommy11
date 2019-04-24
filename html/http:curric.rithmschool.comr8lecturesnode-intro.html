@@ -1,0 +1,526 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Intro to Node.js</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Intro to Node.js</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Intro to Node.js</a><ul>
+<li><a class="reference internal" href="#what-is-node-js">What is Node.js?</a><ul>
+<li><a class="reference internal" href="#id1">What is Node.js?</a></li>
+<li><a class="reference internal" href="#why-node-js">Why Node.js?</a></li>
+<li><a class="reference internal" href="#starting-node">Starting Node</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#npm">NPM</a><ul>
+<li><a class="reference internal" href="#what-is-npm">What is NPM?</a></li>
+<li><a class="reference internal" href="#starting-a-project-with-npm">Starting a Project with NPM</a></li>
+<li><a class="reference internal" href="#example-package-json">Example <cite>package.json</cite></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#installing-packages">Installing Packages</a><ul>
+<li><a class="reference internal" href="#id2">Installing Packages</a></li>
+<li><a class="reference internal" href="#package-lock-json">package-lock.json</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#modules">Modules</a><ul>
+<li><a class="reference internal" href="#exporting-from-a-file">Exporting from a File</a></li>
+<li><a class="reference internal" href="#importing">Importing</a></li>
+<li><a class="reference internal" href="#exports-whatever">exports.whatever</a></li>
+<li><a class="reference internal" href="#destructuring-imports">Destructuring Imports</a></li>
+<li><a class="reference internal" href="#index-files">Index Files</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#node-callbacks">Node Callbacks</a><ul>
+<li><a class="reference internal" href="#id3">Node Callbacks</a></li>
+<li><a class="reference internal" href="#handling-errors">Handling Errors</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#library-process">Library: Process</a><ul>
+<li><a class="reference internal" href="#id4">Library: Process</a></li>
+<li><a class="reference internal" href="#process-exit">process.exit</a></li>
+<li><a class="reference internal" href="#process-args">process.args</a></li>
+<li><a class="reference internal" href="#process-argv">process.argv</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#library-fs">Library: fs</a><ul>
+<li><a class="reference internal" href="#id5">Library: fs</a></li>
+<li><a class="reference internal" href="#fs-readfile">fs.readFile</a></li>
+<li><a class="reference internal" href="#fs-writefile">fs.writeFile</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#node-vs-web-js">Node vs Web JS</a><ul>
+<li><a class="reference internal" href="#id6">Node vs Web JS</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="intro-to-node-js">
+<h1>Intro to Node.js</h1>
+<div class="section" id="what-is-node-js">
+<h2>What is Node.js?</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>An JavaScript environment that runs server-side<ul>
+<li>It uses the Chrome v8 engine, but doesnât require/use Chrome</li>
+</ul>
+</li>
+<li>Can be used to build any kind of server-side JS<ul>
+<li>Including building web applications!</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="why-node-js">
+<h3>Why Node.js?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>You can do all your programming in JavaScript</li>
+<li>Widely used</li>
+<li>There is an extensive set of add-on libraries via <cite>npm</cite><ul>
+<li>Many can also be used in client-side JS</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="starting-node">
+<h3>Starting Node</h3>
+<pre class="console literal-block">
+$ <span class="cmd">node myScript.js</span>
+Hi there!
+</pre>
+<p>or, for an interactive REPL:</p>
+<pre class="console literal-block">
+$ <span class="cmd">node</span>
+&gt;
+</pre>
+<div class="docutils container">
+<p>(<cite>Control-D</cite> to exit)</p>
+</div>
+</div>
+</div>
+<div class="section" id="npm">
+<h2>NPM</h2>
+<div class="section" id="what-is-npm">
+<h3>What is NPM?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Massive repository of add-on libraries</li>
+<li>Command line tool, <cite>npm</cite>, comes with Node</li>
+<li>Keeps track of dependencies so others can quickly get your deps</li>
+<li>Register with npm to publish open-source packages</li>
+</ul>
+</div>
+</div>
+<div class="section" id="starting-a-project-with-npm">
+<h3>Starting a Project with NPM</h3>
+<pre class="console literal-block">
+$ <span class="cmd">cd my-project</span>
+
+$ <span class="cmd">npm init</span>
+</pre>
+<div class="docutils container">
+<ul class="simple">
+<li>Creates <cite>package.json</cite> with metadata &amp; dependencies</li>
+<li>In a hurry? Want the defaults? <code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">init</span> <span class="pre">-y</span></code></li>
+</ul>
+</div>
+</div>
+<div class="section" id="example-package-json">
+<h3>Example <cite>package.json</cite></h3>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;node-files&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;version&quot;</span><span class="o">:</span> <span class="s2">&quot;1.0.0&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="s2">&quot;Exercise to create file listing functions.&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;main&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;scripts&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;test&quot;</span><span class="o">:</span> <span class="s2">&quot;echo \&quot;Error: no test specified\&quot; &amp;&amp; exit 1&quot;</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;author&quot;</span><span class="o">:</span> <span class="s2">&quot;Whiskey the Dog&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;license&quot;</span><span class="o">:</span> <span class="s2">&quot;ISC&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;dependencies&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;axios&quot;</span><span class="o">:</span> <span class="s2">&quot;^0.18.0&quot;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>Store your <cite>package.json</cite> in Git</li>
+</ul>
+</div>
+</div>
+<div class="section" id="installing-packages">
+<h2>Installing Packages</h2>
+<div class="section" id="id2">
+<pre class="console literal-block">
+$ <span class="cmd">npm install axios</span>
+...
+</pre>
+<div class="docutils container">
+<ul class="simple">
+<li>Adds to <span class="cmd">package.json</span></li>
+<li>Installs all dependencies to <cite>node_modules</cite><ul>
+<li>Put <cite>node_modules</cite> in <cite>.gitignore</cite></li>
+</ul>
+</li>
+</ul>
+</div>
+<p>To install everything already defined in <cite>package.json</cite>:</p>
+<pre class="console literal-block">
+$ <span class="cmd">npm install</span>
+...
+</pre>
+</div>
+<div class="section" id="package-lock-json">
+<h3>package-lock.json</h3>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>package.json</cite> contains metadata &amp; dependency <em>requirements</em><ul>
+<li>If you installed as  <code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">install</span> <span class="pre">'axios&#64;&gt;=0.16'</span></code>, <span class="raw-reveal"><br></span>
+this would have ârequires version at least as new as 0.16â</li>
+</ul>
+</li>
+<li><cite>package-lock.json</cite> contains exact versions obtained<ul>
+<li>Shows â0.18.0 installedâ</li>
+</ul>
+</li>
+<li>If you want setup <em>just like yours</em>, keep <cite>package-lock.json</cite> in Git</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="modules">
+<h2>Modules</h2>
+<div class="section" id="exporting-from-a-file">
+<h3>Exporting from a File</h3>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">node-intro-demo/usefulStuff.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">MY_GLOBAL</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span>
+
+<span class="kd">function</span> <span class="nx">add</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">x</span> <span class="o">+</span> <span class="nx">y</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kr">class</span> <span class="nx">User</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>
+  <span class="c1">// ...</span>
+<span class="p">}</span>
+
+<span class="nx">notNeededElsewhere</span> <span class="o">=</span> <span class="s2">&quot;nope&quot;</span><span class="p">;</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">MY_GLOBAL</span><span class="p">,</span>
+  <span class="nx">add</span><span class="p">,</span>
+  <span class="nx">User</span><span class="p">,</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="importing">
+<h3>Importing</h3>
+<p>Importing from local file:</p>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">node-intro-demo/other.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">usefulStuff</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;./usefulStuff&quot;</span><span class="p">);</span>
+
+<span class="nx">results</span> <span class="o">=</span> <span class="nx">usefulStuff</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">results</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<p>(needs to be a path relative to here, can leave off â.jsâ)</p>
+<div class="docutils container">
+<p>Importing from installed library: <cite>âlibraryâ</cite>:</p>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">node-intro-demo/google.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">axios</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;axios&quot;</span><span class="p">);</span>
+
+<span class="nx">axios</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;http://google.com&quot;</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">resp</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">resp</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">80</span><span class="p">),</span> <span class="s2">&quot;...&quot;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="exports-whatever">
+<h3>exports.whatever</h3>
+<p>As a shorthand, can assign exports âas you goâ by assigning to <cite>exports</cite>:</p>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">node-intro-demo/usefulStuff.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">MY_GLOBAL</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span>
+
+<span class="kd">function</span> <span class="nx">add</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">x</span> <span class="o">+</span> <span class="nx">y</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kr">class</span> <span class="nx">User</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>
+  <span class="c1">// ...</span>
+<span class="p">}</span>
+
+<span class="nx">notNeededElsewhere</span> <span class="o">=</span> <span class="s2">&quot;nope&quot;</span><span class="p">;</span>
+
+<span class="hll"><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class="hll">  <span class="nx">MY_GLOBAL</span><span class="p">,</span>
+</span><span class="hll">  <span class="nx">add</span><span class="p">,</span>
+</span><span class="hll">  <span class="nx">User</span><span class="p">,</span>
+</span><span class="hll"><span class="p">};</span>
+</span></pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">node-intro-demo/usefulStuff2.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">MY_GLOBAL</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span>
+
+<span class="hll"><span class="nx">exports</span><span class="p">.</span><span class="nx">MY_GLOBAL</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span>
+</span>
+<span class="kd">function</span> <span class="nx">add</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">x</span> <span class="o">+</span> <span class="nx">y</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="hll"><span class="nx">exports</span><span class="p">.</span><span class="nx">add</span> <span class="o">=</span> <span class="nx">add</span><span class="p">;</span>
+</span>
+<span class="kr">class</span> <span class="nx">User</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>
+  <span class="c1">// ...</span>
+<span class="p">}</span>
+
+<span class="hll"><span class="nx">exports</span><span class="p">.</span><span class="nx">User</span> <span class="o">=</span> <span class="nx">User</span><span class="p">;</span>
+</span>
+<span class="nx">notNeededElsewhere</span> <span class="o">=</span> <span class="s2">&quot;nope&quot;</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="destructuring-imports">
+<h3>Destructuring Imports</h3>
+<p>Since weâre exporting an object, we can destructure it</p>
+<p>Itâs common to do this all at once:</p>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">node-intro-demo/other2.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="p">{</span><span class="nx">add</span><span class="p">,</span> <span class="nx">User</span><span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;./usefulStuff&quot;</span><span class="p">);</span>
+
+<span class="nx">results</span> <span class="o">=</span> <span class="nx">add</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">results</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="index-files">
+<h3>Index Files</h3>
+<p>If you put a file called <cite>index.js</cite> in a folder, importing that folder
+will whatever that file exports:</p>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">db/index.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">databaseURI</span> <span class="o">=</span> <span class="s2">&quot;postgres:///mydb&quot;</span><span class="p">;</span>
+
+<span class="nx">exports</span><span class="p">.</span><span class="nx">dbURI</span> <span class="o">=</span> <span class="nx">databaseURI</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">main.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">db</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;./db&quot;</span><span class="p">);</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">db</span><span class="p">.</span><span class="nx">dbURI</span><span class="p">)</span><span class="o">:</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="node-callbacks">
+<h2>Node Callbacks</h2>
+<div class="section" id="id3">
+<p>Many Node library functions use callbacks</p>
+<p>For example, to read a file:</p>
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-text">node-intro-demo/read.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;fs&quot;</span><span class="p">);</span>
+
+<span class="nx">fs</span><span class="p">.</span><span class="nx">readFile</span><span class="p">(</span><span class="s2">&quot;myFile.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;utf8&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`file contents: </span><span class="si">${</span><span class="nx">data</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="c1">// file won&#39;t have been read yet at this point</span>
+</pre></div>
+</div>
+</div>
+<p>Node callbacks are almost always âerror-firstâ</p>
+<ul>
+<li><p class="first">The callback functionâs first argument is an error (if any happened)</p>
+</li>
+<li><p class="first">Other info, if any, are the other arguments:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">fs</span><span class="p">.</span><span class="nx">readFile</span><span class="p">(</span><span class="s2">&quot;myFile.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;utf8&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>  <span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="handling-errors">
+<h3>Handling Errors</h3>
+<p>In web JS, there are different things to do with errors:</p>
+<ul class="simple">
+<li>Show some âan error happenedâ message in the DOM</li>
+<li>Pop up an alert box</li>
+<li>Log to the console</li>
+</ul>
+<div class="docutils container">
+<p>In Node, you will often do one of these:</p>
+<ul class="simple">
+<li>Log to the console</li>
+<li>Exit the program with <code class="docutils literal notranslate"><span class="pre">process.exit(1)</span></code><ul>
+<li>You need to import the <cite>process</cite> library</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="library-process">
+<h2>Library: Process</h2>
+<div class="section" id="id4">
+<p>Built-in Node library for handling operating system/process stuff</p>
+</div>
+<div class="section" id="process-exit">
+<h3>process.exit</h3>
+<p><code class="docutils literal notranslate"><span class="pre">process.exit(exit_code)</span></code></p>
+<p>Exit the program immediately, returning an exit code to the shell</p>
+<p>Traditionally, 0 is âno errorâ, and other numbers are errors</p>
+</div>
+<div class="section" id="process-args">
+<h3>process.args</h3>
+<p><code class="docutils literal notranslate"><span class="pre">process.args.VAR_NAME</span></code></p>
+<p>Get the value of the environmental variables <cite>VAR_NAME</cite></p>
+</div>
+<div class="section" id="process-argv">
+<h3>process.argv</h3>
+<p><code class="docutils literal notranslate"><span class="pre">process.argv[index]</span></code></p>
+<p><cite>argv</cite> is the âarray of arguments given to start this programâ</p>
+<div class="docutils container">
+<pre class="console literal-block">
+$ <span class="cmd">node showArgs.js hello world</span>
+0 '/path/to/node'
+1 '/path/to/showArgs.js'
+2 'hello'
+3 'world'
+</pre>
+</div>
+</div>
+</div>
+<div class="section" id="library-fs">
+<h2>Library: fs</h2>
+<div class="section" id="id5">
+<p>Library for reading/writing files</p>
+</div>
+<div class="section" id="fs-readfile">
+<h3>fs.readFile</h3>
+<p><code class="docutils literal notranslate"><span class="pre">fs.readFile(path,</span> <span class="pre">codec,</span> <span class="pre">callback)</span></code></p>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>path</cite>: path to file</li>
+<li><cite>codec</cite>: how to interpret file<ul>
+<li>for text files, this is almost always âutf8â</li>
+<li>for binary files (like an image), omit this argument</li>
+</ul>
+</li>
+<li><cite>callback</cite>: function that takes <cite>err</cite> and <cite>data</cite></li>
+</ul>
+</div>
+</div>
+<div class="section" id="fs-writefile">
+<h3>fs.writeFile</h3>
+<p><code class="docutils literal notranslate"><span class="pre">fs.writeFile(path,</span> <span class="pre">data,</span> <span class="pre">codec,</span> <span class="pre">callback)</span></code></p>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>path</cite>: path to file</li>
+<li><cite>data</cite>: data to store in file</li>
+<li><cite>codec</cite>: how to write file<ul>
+<li>for text files, this is almost always âutf8â</li>
+<li>for binary files (like an image), omit this argument</li>
+</ul>
+</li>
+<li><cite>callback</cite>: function that takes <cite>err</cite></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="node-vs-web-js">
+<h2>Node vs Web JS</h2>
+<div class="section" id="id6">
+<div class="docutils container">
+<ul class="simple">
+<li>Most things are exactly the same</li>
+<li>The âglobal objectâ isnât <cite>window</cite>, itâs <cite>global</cite><ul>
+<li>This is where global vars go, where <cite>setTimeout</cite> is, etc</li>
+</ul>
+</li>
+<li>Node doesnât have <cite>document</cite> &amp; DOM methods</li>
+<li>Node provides access to filesystem &amp; can start server processes</li>
+<li>Many NPM libraries are âisomorphicâ (can be used in web JS or Node)</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

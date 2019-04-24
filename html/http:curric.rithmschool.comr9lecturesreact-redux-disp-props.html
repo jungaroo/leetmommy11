@@ -1,0 +1,456 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>React-Redux Part 2</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">React-Redux Part 2</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">React-Redux Part 2</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#dispatching-revisited">Dispatching Revisited</a><ul>
+<li><a class="reference internal" href="#dispatching-from-a-component">Dispatching from a Component</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mapdispatchtoprops"><cite>mapDispatchToProps</cite></a><ul>
+<li><a class="reference internal" href="#id2"><cite>mapDispatchToProps</cite></a></li>
+<li><a class="reference internal" href="#code-example">Code Example</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#folder-structure">Folder Structure</a><ul>
+<li><a class="reference internal" href="#containers-vs-components">Containers vs Components</a></li>
+<li><a class="reference internal" href="#containers-in-detail">Containers in Detail</a></li>
+<li><a class="reference internal" href="#id3">Code Example</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#common-redux-patterns">Common Redux Patterns</a><ul>
+<li><a class="reference internal" href="#action-types">Action Types</a></li>
+<li><a class="reference internal" href="#our-reducer-using-action-types">Our reducer using action types</a></li>
+<li><a class="reference internal" href="#action-creators">Action Creators</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mapdispatchtoprops-revisited"><cite>mapDispatchToProps</cite> Revisited</a><ul>
+<li><a class="reference internal" href="#mapdispatchtoprops-and-action-creators"><cite>mapDispatchToProps</cite> and action creators</a></li>
+<li><a class="reference internal" href="#mapdispatchtoprops-an-alternative"><cite>mapDispatchToProps</cite> â an alternative</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#react-router-and-redux">React Router and Redux</a><ul>
+<li><a class="reference internal" href="#using-react-router-with-redux">Using React Router with Redux</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#recap">Recap</a><ul>
+<li><a class="reference internal" href="#id4">Recap</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#looking-ahead">Looking Ahead</a><ul>
+<li><a class="reference internal" href="#coming-up">Coming Up</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="react-redux-part-2">
+<h1>React-Redux Part 2</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Compare <cite>this.props.dispatch</cite> to <cite>mapDispatchToProps</cite></li>
+<li>Explicitly connect components to dispatchers via <cite>mapDispatchToProps</cite></li>
+<li>Include action types to avoid duplication</li>
+<li>Include action creators to reduce code</li>
+<li>Include React-Router with Redux</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="dispatching-revisited">
+<h2>Dispatching Revisited</h2>
+<div class="section" id="dispatching-from-a-component">
+<h3>Dispatching from a Component</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Weâve seen that when you connect a component to Redux, <span class="raw-reveal"><br></span> you can dispatch actions via <cite>this.props.dispatch</cite></li>
+<li>But you can also pass a second argument to <cite>connect</cite> called <cite>mapDispatchToProps</cite></li>
+<li><cite>mapDispatchToProps</cite> helps decouple your component from Redux, <span class="raw-reveal"><br></span> since <cite>dispatch</cite> wonât be explicitly referenced in your component</li>
+</ul>
+</div>
+<div class="admonition note">
+<p><strong>More on this.props.dispatch vs mapDispatchToProps</strong></p>
+<p class="last">The React-Redux docs have a section discussing the difference between <cite>mapDispatchToProps</cite> and <cite>this.props.dispatch</cite>, and when you may want to prefer the former. You can read more details <a class="reference external" href="https://react-redux.js.org/using-react-redux/connect-mapdispatch#providing-a-mapdispatchtoprops-parameter">here</a>.</p>
+</div>
+</div>
+</div>
+<div class="section" id="mapdispatchtoprops">
+<h2><cite>mapDispatchToProps</cite></h2>
+<div class="section" id="id2">
+<div class="docutils container">
+<ul class="simple">
+<li>First argument in <cite>connect</cite> controls how we pass data Redux â React.</li>
+<li>Second argument, <cite>mapDispatchToProps</cite>, does the opposite<ul>
+<li>It controls how we dispatch actions from React â  Redux.</li>
+<li>Structurally, similar to <cite>mapStateToProps</cite>: functions that return object.</li>
+</ul>
+</li>
+<li>For <cite>mapDispatchToProps</cite>, object is:<ul>
+<li>keys correspond to React props</li>
+<li>values correspond to functions that dispatch Redux actions</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="code-example">
+<h3>Code Example</h3>
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="c1">// our function has access to dispatch as a parameter</span>
+<span class="kd">function</span> <span class="nx">mapDispatchToProps</span><span class="p">(</span><span class="nx">dispatch</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">{</span>
+    <span class="c1">// gives our component this.props.someAction</span>
+    <span class="nx">someAction</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">param</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">dispatch</span><span class="p">({</span>
+        <span class="nx">type</span><span class="o">:</span> <span class="s2">&quot;MY_ACTION&quot;</span><span class="p">,</span>
+        <span class="nx">payload</span><span class="o">:</span> <span class="nx">param</span><span class="p">,</span>
+      <span class="p">});</span>
+    <span class="p">}</span>
+  <span class="p">};</span>
+<span class="p">}</span>
+
+<span class="kr">const</span> <span class="nx">connectAComponent</span> <span class="o">=</span> <span class="nx">connect</span><span class="p">(</span>
+    <span class="nx">mapStateToProps</span><span class="p">,</span> <span class="nx">mapDispatchToProps</span><span class="p">)</span>
+
+<span class="kr">export</span> <span class="k">default</span> <span class="nx">connectAComponent</span><span class="p">(</span><span class="nx">TodoFormContainer</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="folder-structure">
+<h2>Folder Structure</h2>
+<div class="section" id="containers-vs-components">
+<h3>Containers vs Components</h3>
+<div class="docutils container">
+<dl class="docutils">
+<dt><strong>Containers</strong></dt>
+<dd>Components connected to Redux store <em>(âconnected componentsâ)</em></dd>
+<dt><strong>Components</strong></dt>
+<dd><p class="first">Plain React components not connected to Redux store <em>(âpresentational componentsâ)</em></p>
+<p class="last">(These may or may not have local React state)</p>
+</dd>
+</dl>
+</div>
+<div class="docutils container">
+<p>Common folder structure is to have <cite>components/</cite> and <cite>containers/</cite></p>
+</div>
+</div>
+<div class="section" id="containers-in-detail">
+<h3>Containers in Detail</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Typically:<ul>
+<li>Redux controls application state</li>
+<li>React controls UI state</li>
+</ul>
+</li>
+<li>For example:<ul>
+<li>Redux receives API data with todo items and passes to React components.</li>
+<li>React decides if item renders, depending on marked âcompleteâ or âactiveâ</li>
+<li>React receieves user input <em>(eg checking off todo item)</em></li>
+<li>React hands to Redux to fire off action <em>(eg âremove itemâ)</em></li>
+<li>Redux reducer processes.</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id3">
+<h3>Code Example</h3>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">demo/counter/src/components/Counter.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="k">import</span> <span class="nx">React</span><span class="p">,</span> <span class="p">{</span> <span class="nx">Component</span> <span class="p">}</span> <span class="nx">from</span> <span class="s">&quot;react&quot;</span><span class="p">;</span>
+
+<span class="kd">class</span> <span class="nx">Counter</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">h2</span><span class="p">&gt;</span>The count is: <span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">count</span><span class="p">}&lt;/</span><span class="nt">h2</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">button</span> <span class="na">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">increment</span><span class="p">}&gt;</span> + <span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">button</span> <span class="na">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">decrement</span><span class="p">}&gt;</span> - <span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+      <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="nx">Counter</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">containers/CounterContainerOriginal.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="k">import</span> <span class="nx">React</span><span class="p">,</span> <span class="p">{</span> <span class="nx">Component</span> <span class="p">}</span> <span class="nx">from</span> <span class="s">&quot;react&quot;</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">connect</span> <span class="p">}</span> <span class="nx">from</span> <span class="s">&quot;react-redux&quot;</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span>
+  <span class="nx">increment</span><span class="p">,</span>
+  <span class="nx">decrement</span>
+<span class="p">}</span> <span class="nx">from</span> <span class="s">&quot;../actions&quot;</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">Counter</span> <span class="nx">from</span> <span class="s">&quot;../components/Counter&quot;</span><span class="p">;</span>
+
+<span class="kd">class</span> <span class="nx">CounterContainer</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="p">&lt;</span><span class="nt">Counter</span> <span class="p">{...</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">}</span> <span class="p">/&gt;</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">containers/CounterContainerOriginal.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">mapStateToProps</span><span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">{</span>
+    <span class="nx">count</span><span class="p">:</span> <span class="nx">state</span><span class="p">.</span><span class="nx">count</span>
+  <span class="p">};</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">mapDispatchToProps</span><span class="p">(</span><span class="nx">dispatch</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">{</span>
+    <span class="nx">increment</span><span class="p">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">dispatch</span><span class="p">(</span><span class="nx">increment</span><span class="p">()),</span>
+    <span class="nx">decrement</span><span class="p">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">dispatch</span><span class="p">(</span><span class="nx">decrement</span><span class="p">())</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">const</span> <span class="nx">connected</span> <span class="o">=</span> <span class="nx">connect</span><span class="p">(</span>
+  <span class="nx">mapStateToProps</span><span class="p">,</span>
+  <span class="nx">mapDispatchToProps</span>
+<span class="p">);</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="nx">connected</span><span class="p">(</span><span class="nx">CounterContainer</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="common-redux-patterns">
+<h2>Common Redux Patterns</h2>
+<div class="section" id="action-types">
+<h3>Action Types</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Move the value of the type property to a constant</li>
+<li>Define it once, reuse it multiple times!</li>
+<li>Better for tab completion in your editor</li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">demo/counter/src/actionTypes.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="k">export</span> <span class="kd">const</span> <span class="nx">INCREMENT</span> <span class="o">=</span> <span class="s">&quot;INCREMENT&quot;</span><span class="p">;</span>
+<span class="k">export</span> <span class="kd">const</span> <span class="nx">DECREMENT</span> <span class="o">=</span> <span class="s">&quot;DECREMENT&quot;</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="our-reducer-using-action-types">
+<h3>Our reducer using action types</h3>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">demo/counter/src/actionTypes.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="k">export</span> <span class="kd">const</span> <span class="nx">INCREMENT</span> <span class="o">=</span> <span class="s">&quot;INCREMENT&quot;</span><span class="p">;</span>
+<span class="k">export</span> <span class="kd">const</span> <span class="nx">DECREMENT</span> <span class="o">=</span> <span class="s">&quot;DECREMENT&quot;</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">demo/counter/src/rootReducer.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="hll"><span class="k">import</span> <span class="p">{</span> <span class="nx">INCREMENT</span><span class="p">,</span> <span class="nx">DECREMENT</span> <span class="p">}</span> <span class="nx">from</span> <span class="s">&quot;./actionTypes&quot;</span><span class="p">;</span>
+</span>
+<span class="kd">const</span> <span class="nx">INITIAL_STATE</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">count</span><span class="p">:</span> <span class="m">0</span> <span class="p">};</span>
+
+<span class="kd">function</span> <span class="nx">rootReducer</span><span class="p">(</span><span class="nx">state</span> <span class="o">=</span> <span class="nx">INITIAL_STATE</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s">&quot;reducer ran; state &amp; action:&quot;</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">action</span><span class="p">);</span>
+
+  <span class="k">switch</span> <span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+<span class="hll">    <span class="k">case</span> <span class="nx">INCREMENT</span><span class="p">:</span>
+</span>      <span class="k">return</span> <span class="p">{</span> <span class="p">...</span><span class="nx">state</span><span class="p">,</span> <span class="nx">count</span><span class="p">:</span> <span class="nx">state</span><span class="p">.</span><span class="nx">count</span> <span class="o">+</span> <span class="m">1</span> <span class="p">};</span>
+
+<span class="hll">    <span class="k">case</span> <span class="nx">DECREMENT</span><span class="p">:</span>
+</span>      <span class="k">return</span> <span class="p">{</span> <span class="p">...</span><span class="nx">state</span><span class="p">,</span> <span class="nx">count</span><span class="p">:</span> <span class="nx">state</span><span class="p">.</span><span class="nx">count</span> <span class="o">-</span> <span class="m">1</span> <span class="p">};</span>
+
+    <span class="k">default</span><span class="p">:</span>
+      <span class="k">return</span> <span class="nx">state</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="action-creators">
+<h3>Action Creators</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Abstract the functions that create actions to their own file</li>
+<li>A function that creates an action is called an <strong>action creator</strong></li>
+</ul>
+</div>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">demo/counter/src/actions.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="k">import</span> <span class="p">{</span> <span class="nx">INCREMENT</span><span class="p">,</span> <span class="nx">DECREMENT</span> <span class="p">}</span> <span class="nx">from</span> <span class="s">&quot;./actionTypes&quot;</span><span class="p">;</span>
+
+<span class="k">export</span> <span class="kd">function</span> <span class="nx">increment</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">{</span>
+    <span class="nx">type</span><span class="p">:</span> <span class="nx">INCREMENT</span>
+  <span class="p">};</span>
+<span class="p">}</span>
+
+<span class="k">export</span> <span class="kd">function</span> <span class="nx">decrement</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">{</span>
+    <span class="nx">type</span><span class="p">:</span> <span class="nx">DECREMENT</span>
+  <span class="p">};</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="mapdispatchtoprops-revisited">
+<h2><cite>mapDispatchToProps</cite> Revisited</h2>
+<div class="section" id="mapdispatchtoprops-and-action-creators">
+<h3><cite>mapDispatchToProps</cite> and action creators</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Unlike <cite>mapStateToProps</cite>, <span class="raw-reveal"><br></span> <cite>mapDispatchToProps</cite> doesnât need to be a function.<ul>
+<li>It can also be an object that directly maps props to action creators.</li>
+</ul>
+</li>
+<li>Common: pass object instead of function <span class="raw-reveal"><br></span> when importing action creators from other file.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="mapdispatchtoprops-an-alternative">
+<h3><cite>mapDispatchToProps</cite> â an alternative</h3>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">demo/counter/src/containers/CounterContainer.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">CounterContainer</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="p">&lt;</span><span class="nt">Counter</span> <span class="p">{...</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">}</span> <span class="p">/&gt;</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">mapStateToProps</span><span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">{</span>
+    <span class="nx">count</span><span class="p">:</span> <span class="nx">state</span><span class="p">.</span><span class="nx">count</span>
+  <span class="p">};</span>
+<span class="p">}</span>
+
+<span class="kd">const</span> <span class="nx">connectedComponent</span> <span class="o">=</span> <span class="nx">connect</span><span class="p">(</span>
+  <span class="nx">mapStateToProps</span><span class="p">,</span>
+<span class="hll">  <span class="p">{</span> <span class="nx">increment</span><span class="p">,</span> <span class="nx">decrement</span> <span class="p">}</span>
+</span><span class="p">);</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="nx">connectedComponent</span><span class="p">(</span><span class="nx">CounterContainer</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="react-router-and-redux">
+<h2>React Router and Redux</h2>
+<div class="section" id="using-react-router-with-redux">
+<h3>Using React Router with Redux</h3>
+<div class="docutils container">
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">Provider</span> <span class="na">store</span><span class="o">=</span><span class="p">{</span><span class="nx">store</span><span class="p">}&gt;</span>
+  <span class="p">&lt;</span><span class="nt">BrowserRouter</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">App</span><span class="p">/&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">BrowserRouter</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">Provider</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>Make sure you wrap &lt;BrowserRouter&gt; with &lt;Provider&gt;. <span class="raw-reveal"><br></span> Thatâs it!</p>
+</div>
+</div>
+</div>
+<div class="section" id="recap">
+<h2>Recap</h2>
+<div class="section" id="id4">
+<div class="docutils container">
+<ul class="simple">
+<li><cite>connect()</cite> returns new function which can wrap a component.</li>
+<li>This new function will essentially be a container.</li>
+<li>Syntactically, then, using <cite>connect()</cite> looks something like this</li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">MyComponent.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">connect</span><span class="p">(</span><span class="nx">mapStateToProps</span><span class="p">,</span> <span class="nx">mapDispatchToProps</span><span class="p">)(</span><span class="nx">MyReactComponent</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="looking-ahead">
+<h2>Looking Ahead</h2>
+<div class="section" id="coming-up">
+<h3>Coming Up</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Async with Redux</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

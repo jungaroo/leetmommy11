@@ -1,0 +1,344 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Problem Solving - Sliding Window</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Problem Solving - Sliding Window</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Problem Solving - Sliding Window</a><ul>
+<li><a class="reference internal" href="#recap-goals">Recap &amp; Goals</a><ul>
+<li><a class="reference internal" href="#recap">Recap</a></li>
+<li><a class="reference internal" href="#goals">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sliding-window">Sliding Window</a><ul>
+<li><a class="reference internal" href="#what-is-sliding-window">What is Sliding Window?</a></li>
+<li><a class="reference internal" href="#sliding-window-visualized">Sliding Window Visualized</a></li>
+<li><a class="reference internal" href="#how-does-sliding-window-work">How Does Sliding Window Work?</a></li>
+<li><a class="reference internal" href="#when-does-sliding-window-work">When Does Sliding Window Work?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sliding-window-example">Sliding Window Example</a><ul>
+<li><a class="reference internal" href="#example-max-sum-of-a-contiguous-subarray">Example: Max Sum of a Contiguous Subarray</a></li>
+<li><a class="reference internal" href="#naive-brute-force-solution">NaÃ¯ve (Brute Force) Solution</a></li>
+<li><a class="reference internal" href="#naive-solution-visualized">NaÃ¯ve Solution Visualized</a></li>
+<li><a class="reference internal" href="#naive-solution-critique">NaÃ¯ve Solution Critique</a></li>
+<li><a class="reference internal" href="#optimized-sliding-window">Optimized Sliding Window</a></li>
+<li><a class="reference internal" href="#optimized-solution-visualized">Optimized Solution Visualized</a></li>
+<li><a class="reference internal" href="#optimized-solution-in-depth">Optimized Solution In Depth</a></li>
+<li><a class="reference internal" href="#summary">Summary</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="problem-solving-sliding-window">
+<h1>Problem Solving - Sliding Window</h1>
+<p><a class="reference external" href="../prob-sliding-windows-demo.zip">Download Demo Code</a></p>
+<div class="section" id="recap-goals">
+<h2>Recap &amp; Goals</h2>
+<div class="section" id="recap">
+<h3>Recap</h3>
+<p>What patterns have we seen so far?</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Frequency counters</li>
+<li>Multiple pointers</li>
+</ul>
+</div>
+</div>
+<div class="section" id="goals">
+<h3>Goals</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Describe the sliding window technique</li>
+<li>Discuss how to identify a sliding window problem</li>
+<li>Explain how sliding window reduces time complexity</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="sliding-window">
+<h2>Sliding Window</h2>
+<div class="section" id="what-is-sliding-window">
+<h3>What is Sliding Window?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>A possible technique when the input is an <strong>iterable</strong> type like an array or string</li>
+<li>A sliding window is generally a subset of the elements in the array or characters in the string</li>
+<li>Dynamically expand and shrink the window depending on some condition</li>
+<li>Closely related to multiple pointers because it often involves pointers (start and end of the window)</li>
+</ul>
+</div>
+</div>
+<div class="section" id="sliding-window-visualized">
+<h3>Sliding Window Visualized</h3>
+<p>Given a list <cite>[a b c d e f g h]</cite>, letâs slide a window of 3 elements wide:</p>
+<div class="docutils container">
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>[a b c d e f g h]
+
+Here goes the window through the loop:
+
+[a b c] -&gt; first iteration
+  [b c d]
+    [c d e]
+      [d e f]
+        [e f g]
+          [f g h] -&gt; last iteration
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="how-does-sliding-window-work">
+<h3>How Does Sliding Window Work?</h3>
+<div class="docutils container">
+<p>Sliding window works by making use of something called an <cite>optimal substructure</cite>.</p>
+</div>
+<div class="docutils container">
+<p>The TL;DR is that if you break a problem into sub-problems and solve those, youâll get the solution to the original problem.</p>
+</div>
+<div class="docutils container">
+<p>In our case, one of the possible âwindowsâ is the solution to the problem.</p>
+</div>
+</div>
+<div class="section" id="when-does-sliding-window-work">
+<h3>When Does Sliding Window Work?</h3>
+<p>Sliding window often solves problems that have a naÃ¯ve âbrute forceâ O(n^2) solution (or worse) in O(n) time and constant space! ð</p>
+<div class="docutils container">
+<p>Examples include:</p>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>min/max of some sequence</li>
+<li>longest/shortest sequence of some iterable</li>
+<li>generate permutations or subsequences</li>
+</ul>
+</div>
+<div class="docutils container">
+<p>In general, look for the keywords <cite>subarray</cite> or <cite>substring</cite>, and see if the naive solution is O(n^2). This may be an indication to use sliding window.</p>
+</div>
+</div>
+</div>
+<div class="section" id="sliding-window-example">
+<h2>Sliding Window Example</h2>
+<div class="section" id="example-max-sum-of-a-contiguous-subarray">
+<h3>Example: Max Sum of a Contiguous Subarray</h3>
+<div class="docutils container">
+<p>Write a function called <cite>maxSubarraySum</cite>, which accepts an array of integers and an integer representing the length of a subarray.</p>
+</div>
+<div class="docutils container">
+<p>The function should return the largest sum of contiguous subarray with the given length.</p>
+</div>
+<div class="docutils container">
+<p>Note that a subarray must consist of consecutive elements from the original array.</p>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">maxSubarraySum</span><span class="p">([</span><span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">400</span><span class="p">],</span> <span class="mi">2</span><span class="p">);</span> <span class="c1">// 700</span>
+
+<span class="nx">maxSubarraySum</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span> <span class="mi">4</span><span class="p">);</span> <span class="c1">// 39</span>
+
+<span class="nx">maxSubarraySum</span><span class="p">([</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mi">2</span><span class="p">);</span> <span class="c1">// 5</span>
+
+<span class="nx">maxSubarraySum</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="mi">2</span><span class="p">);</span> <span class="c1">// 5</span>
+
+<span class="nx">maxSubarraySum</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="mi">3</span><span class="p">);</span> <span class="c1">// null</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>In the example above, <code class="docutils literal notranslate"><span class="pre">[100,</span> <span class="pre">200]</span></code> is a valid subarray of the original array, but <code class="docutils literal notranslate"><span class="pre">[100,</span> <span class="pre">300]</span></code> is not, because 100 and 300 are not consecutive.</p>
+</div>
+</div>
+<div class="section" id="naive-brute-force-solution">
+<h3>NaÃ¯ve (Brute Force) Solution</h3>
+<p>Compute the sum for every possible sub-array with size <em>k</em> at every index.</p>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">demo/mSSBrute.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">maxSubarraySum</span><span class="p">(</span><span class="nx">arr</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">k</span> <span class="o">&gt;</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Subarray cannot be longer than array.&#39;</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="kd">let</span> <span class="nx">maxSum</span> <span class="o">=</span> <span class="o">-</span><span class="kc">Infinity</span><span class="p">;</span>
+
+  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="nx">k</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// sum every k elements starting from current i</span>
+    <span class="kd">let</span> <span class="nx">currentSum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">j</span> <span class="o">=</span> <span class="nx">i</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">i</span> <span class="o">+</span> <span class="nx">k</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">currentSum</span> <span class="o">+=</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">j</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="c1">// is this the largest slice so far?</span>
+    <span class="nx">maxSum</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="nx">currentSum</span><span class="p">,</span> <span class="nx">maxSum</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="nx">maxSum</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<p>Time Complexity: O(N^2)</p>
+</div>
+<div class="admonition note">
+<p>Actual Time Complexity</p>
+<p class="last">The real time complexity is O(n - k * k), which is approximately O(N^2). See if you can figure out why.</p>
+</div>
+</div>
+<div class="section" id="naive-solution-visualized">
+<h3>NaÃ¯ve Solution Visualized</h3>
+<p>For <code class="docutils literal notranslate"><span class="pre">([-3,</span> <span class="pre">2,</span> <span class="pre">3,</span> <span class="pre">-1,</span> <span class="pre">5,</span> <span class="pre">1],</span> <span class="pre">3)</span></code> as input,</p>
+<div class="docutils container">
+<img alt="_images/sliding_brute.png" src="_images/sliding_brute.png" />
+</div>
+<div class="docutils container">
+<p>How many times did we add three to a currentSum?</p>
+</div>
+<div class="docutils container">
+<p>How many times did we do 3 + -1?</p>
+</div>
+</div>
+<div class="section" id="naive-solution-critique">
+<h3>NaÃ¯ve Solution Critique</h3>
+<p>Weâre doing the same work over and over, re-adding elements that weâve already added beforeâ¦</p>
+<div class="docutils container">
+<p>For <code class="docutils literal notranslate"><span class="pre">([-3,</span> <span class="pre">2,</span> <span class="pre">3,</span> <span class="pre">-1,</span> <span class="pre">5,</span> <span class="pre">1],</span> <span class="pre">3)</span></code> as input, look at the iterations:</p>
+<div class="docutils container">
+<ul class="simple">
+<li>i = 0<ul>
+<li>Nested j = 0 to j = 2 computes currentSum to -3 + 2 + 3 = 2, updates maxSum</li>
+</ul>
+</li>
+<li>i = 1<ul>
+<li>Nested j = 1 to j = 3 computes currentSum to 2 + 3 + -1 = 4, updates maxSum</li>
+</ul>
+</li>
+<li>i = 2<ul>
+<li>Nested j = 2 to j = 4 computes currentSum 3 + -1 + 5 = 7, updates maxSum</li>
+</ul>
+</li>
+<li>i = 3<ul>
+<li>Nested j = 3 to j = 5 computes currentSum -1 + 5 + 1 = 5</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="optimized-sliding-window">
+<h3>Optimized Sliding Window</h3>
+<p>Instead of re-adding the same numbers each time, letâs just keep a running total with a sliding window.</p>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">demo/mSS.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">maxSubarrSum</span><span class="p">(</span><span class="nx">arr</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">maxSum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+  <span class="c1">// get the sum of the first three numbers to start</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">k</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">maxSum</span> <span class="o">+=</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+  <span class="p">}</span>
+  <span class="kd">let</span> <span class="nx">currentSum</span> <span class="o">=</span> <span class="nx">maxSum</span><span class="p">;</span>
+
+  <span class="c1">// starting after the first sum, compute the rest</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">k</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// current window adds new element and chops off left</span>
+    <span class="nx">currentSum</span> <span class="o">+=</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">-</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">i</span> <span class="o">-</span> <span class="nx">k</span><span class="p">];</span>
+    <span class="nx">maxSum</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="nx">maxSum</span><span class="p">,</span> <span class="nx">currentSum</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="nx">maxSum</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<p>Time Complexity: O(N)</p>
+</div>
+<div class="admonition note">
+<p>Actual Time Complexity</p>
+<p class="last">The exact time complexity is O(N - k + k), which is approximately O(N). See if you can figure out why.</p>
+</div>
+</div>
+<div class="section" id="optimized-solution-visualized">
+<h3>Optimized Solution Visualized</h3>
+<div class="docutils container">
+<img alt="_images/slidingwindow.gif" src="_images/slidingwindow.gif" />
+</div>
+<div class="docutils container">
+<p>The window adds one to the right and subtracts one to the left in each iteration instead of doing a nested loop to recalculate the sums.</p>
+</div>
+</div>
+<div class="section" id="optimized-solution-in-depth">
+<h3>Optimized Solution In Depth</h3>
+<p>For <code class="docutils literal notranslate"><span class="pre">([-3,</span> <span class="pre">2,</span> <span class="pre">3,</span> <span class="pre">-1,</span> <span class="pre">5,</span> <span class="pre">1],</span> <span class="pre">3)</span></code> as inputâ¦</p>
+<div class="docutils container">
+<p>Every iteration uses the <cite>currentSum</cite> of the last iteration but slides the window.</p>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>i = 0 to i = 2, currentSum and maxSum set to -3 + 2 + 3 = 2</li>
+<li>i = 3, currentSum computed 2 + -1 - -3 = 4, maxSum updated</li>
+<li>i = 4, currentSum computed 4 + 5 - 2 = 7, maxSum updated</li>
+<li>i = 5, currentSum computed 7 + 1 - 3 = 5</li>
+</ul>
+</div>
+<div class="docutils container">
+<p>The optimized solution does half as many iterations as the brute force approach, by using the previous <cite>currentSum</cite> each time. Weâve already calculated it, so why bother doing it twice?</p>
+</div>
+</div>
+<div class="section" id="summary">
+<h3>Summary</h3>
+<p>How did we solve <cite>maxSubarraySum</cite> with sliding window?</p>
+<div class="docutils container">
+<ul class="simple">
+<li>We saw the keyword <cite>subarray</cite> and the fact that it was a min/max problem with O(n^2) solution, which is a great indicator of a sliding window problem.</li>
+<li>We kept a sliding window of <em>k</em> elements, on every iteration we added a new element to the right and subtracted a new element to the left, thereby sliding the window along.</li>
+<li>We improved the time complexity from O(n^2) to O(n) with constant space.</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> 
+</body>
+</html>

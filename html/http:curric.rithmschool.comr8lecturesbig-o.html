@@ -1,0 +1,516 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Introduction to Big-O Notation</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Introduction to Big-O Notation</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Introduction to Big-O Notation</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#big-o-notation">Big-O Notation</a><ul>
+<li><a class="reference internal" href="#what-s-the-idea-here">Whatâs the idea here?</a></li>
+<li><a class="reference internal" href="#who-cares">Who cares?</a></li>
+<li><a class="reference internal" href="#an-example">An example</a></li>
+<li><a class="reference internal" href="#what-does-better-mean">What does better mean?</a></li>
+<li><a class="reference internal" href="#the-problem-with-timers">The problem with timers</a></li>
+<li><a class="reference internal" href="#if-not-time-then-what">If not time, then what?</a></li>
+<li><a class="reference internal" href="#let-s-try-counting-operations">Letâs try counting operations!</a></li>
+<li><a class="reference internal" href="#another-example">Another example</a></li>
+<li><a class="reference internal" href="#what-have-we-learned">What have we learned?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#introducing-big-o">Introducingâ¦..Big O</a><ul>
+<li><a class="reference internal" href="#id2">Introducingâ¦..Big O</a></li>
+<li><a class="reference internal" href="#big-o-definition">Big O Definition</a></li>
+<li><a class="reference internal" href="#back-to-our-example">Back to our example</a></li>
+<li><a class="reference internal" href="#id3">Another example</a></li>
+<li><a class="reference internal" href="#simplifying-big-o-expressions">Simplifying Big O Expressions</a></li>
+<li><a class="reference internal" href="#helpful-hints">Helpful hints</a></li>
+<li><a class="reference internal" href="#common-runtimes">Common runtimes</a></li>
+<li><a class="reference internal" href="#log-what">log what?</a></li>
+<li><a class="reference internal" href="#whats-the-difference">Whatâs the difference?</a></li>
+<li><a class="reference internal" href="#how-about-things-we-know">How about things we know?</a></li>
+<li><a class="reference internal" href="#must-knows-for-now">Must knows for now</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#space-complexity">Space Complexity</a><ul>
+<li><a class="reference internal" href="#id4">Space Complexity</a></li>
+<li><a class="reference internal" href="#rules-of-thumb-in-js">Rules of Thumb in JS</a></li>
+<li><a class="reference internal" href="#id5">An example</a></li>
+<li><a class="reference internal" href="#id6">Another example</a></li>
+<li><a class="reference internal" href="#recap">Recap</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="introduction-to-big-o-notation">
+<h1>Introduction to Big-O Notation</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<p>Develop a conceptual understanding of Big-O notation</p>
+<ul class="simple">
+<li>Explain the need for Big-O notation</li>
+<li>Analyze time and space complexity</li>
+<li>Compare and contrast different runtimes and space complexities</li>
+</ul>
+</div>
+</div>
+<div class="section" id="big-o-notation">
+<h2>Big-O Notation</h2>
+<div class="section" id="what-s-the-idea-here">
+<h3>Whatâs the idea here?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Imagine we have multiple implementations of the same function</li>
+<li>How can we determine which one is the âbest?â</li>
+<li>âWrite a function that accepts a string input and returns a reversed copyâ</li>
+</ul>
+<div class="docutils container">
+<ul class="simple">
+<li>Good?</li>
+<li>Bad?</li>
+<li>Meh?</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="who-cares">
+<h3>Who cares?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Itâs important to have a precise vocabulary to talk about how code performs</li>
+<li>Useful for discussing trade-offs between different approaches</li>
+<li>When  code slows down or crashes, identifying parts of the code that are inefficient helps find pain points</li>
+<li>Less important: it comes up in interviews!</li>
+</ul>
+</div>
+</div>
+<div class="section" id="an-example">
+<h3>An example</h3>
+<ul class="simple">
+<li>Write a function that calculates the sum of all numbers from 1 up to (and including) some number n</li>
+</ul>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">addUpTo</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
+
+  <span class="kd">let</span> <span class="nx">total</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="nx">n</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">total</span> <span class="o">+=</span> <span class="nx">i</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="nx">total</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">addUpTo</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">n</span> <span class="o">*</span> <span class="p">(</span><span class="nx">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Which one is better?</li>
+</ul>
+</div>
+</div>
+<div class="section" id="what-does-better-mean">
+<h3>What does better mean?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Faster?</li>
+<li>Less memory-intensive?</li>
+<li>More readable?</li>
+<li>Letâs focus on <cite>speed</cite></li>
+</ul>
+</div>
+</div>
+<div class="section" id="the-problem-with-timers">
+<h3>The problem with timers</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Different machines will record different times</li>
+<li>The same machine will record different times!</li>
+<li>For fast algorithms, speed measurements may not be precise enough?</li>
+<li>Instead, letâs count the number of simple operations the computer has to perform!</li>
+</ul>
+</div>
+</div>
+<div class="section" id="if-not-time-then-what">
+<h3>If not time, then what?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Rather than counting <em>seconds</em>, which are so variableâ¦</li>
+<li>Letâs count the <em>number</em> of simple operations the computer has to perform!</li>
+</ul>
+</div>
+</div>
+<div class="section" id="let-s-try-counting-operations">
+<h3>Letâs try counting operations!</h3>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">addUpTo</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">n</span> <span class="o">*</span> <span class="p">(</span><span class="nx">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>3 simple operations, regardless of the size of n</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="another-example">
+<h3>Another example</h3>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">addUpTo</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
+
+  <span class="kd">let</span> <span class="nx">total</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="nx">n</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">total</span> <span class="o">+=</span> <span class="nx">i</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="nx">total</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Letâs try counting the number of operations!</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="what-have-we-learned">
+<h3>What have we learned?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Counting is hard!</li>
+<li>Regardless of the exact number, the number of operations grows roughly proportionally with n</li>
+<li>If n doubles, the number of operations will also roughly double</li>
+<li>To measure the speed and space allocation of our algorithms, weâre going to use this same idea!</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="introducing-big-o">
+<h2>Introducingâ¦..Big O</h2>
+<div class="section" id="id2">
+<div class="docutils container">
+<ul class="simple">
+<li>Big O Notation is a way to formalize fuzzy counting</li>
+<li>It allows us to talk formally about how the runtime of an algorithm grows as the inputs grow</li>
+<li>We wonât care about the details, only the trends</li>
+</ul>
+</div>
+</div>
+<div class="section" id="big-o-definition">
+<h3>Big O Definition</h3>
+<ul>
+<li><p class="first">We say that an algorithm is O(f(n)) if the number of simple operations the computer has to do is eventually less than a constant times f(n), as n increases</p>
+<div class="docutils container">
+<ul class="simple">
+<li>f(n) could be linear (f(n) = n)</li>
+<li>f(n) could be quadratic (f(n) = n<sup>2</sup>)</li>
+<li>f(n) could be constant (f(n) = 1)</li>
+<li>f(n) could be something entirely different!</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="back-to-our-example">
+<h3>Back to our example</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">addUpTo</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">n</span> <span class="o">*</span> <span class="p">(</span><span class="nx">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Always 3 operations</li>
+<li>O(1)</li>
+</ul>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">addUpTo</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
+
+  <span class="kd">let</span> <span class="nx">total</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="nx">n</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">total</span> <span class="o">+=</span> <span class="nx">i</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="nx">total</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>The number of operations is bounded by a multiple of n (say, 10n)</li>
+<li>This algorithm âruns inâ O(n)</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="id3">
+<h3>Another example</h3>
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">printAllPairs</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
+
+  <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">n</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">n</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>O(n) operation inside of an O(n) operation</li>
+<li>This algorithm âruns inâ O(n<sup>2</sup>)</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="simplifying-big-o-expressions">
+<h3>Simplifying Big O Expressions</h3>
+<ul>
+<li><p class="first">When determining the time complexity of an algorithm, there are some helpful rule of thumbs for big O expressions.</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Constants <cite>do not</cite> matter</li>
+<li>Smaller terms <cite>do not</cite> matter</li>
+<li>Always make sure you can answer - <cite>what is n</cite>?</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="helpful-hints">
+<h3>Helpful hints</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Arithmetic operations are constant</li>
+<li>Variable assignment is constant</li>
+<li>Accessing elements in an array (by index) or object (by key) is constant</li>
+<li>In a loop, the the complexity is the length of the loop times the complexity of whatever happens inside of the loop</li>
+</ul>
+</div>
+</div>
+<div class="section" id="common-runtimes">
+<h3>Common runtimes</h3>
+<a class="noprint reference internal image-reference" href="_images/big-o.jpg"><img alt="_images/big-o.jpg" class="noprint" src="_images/big-o.jpg" style="width: 80%;" /></a>
+</div>
+<div class="section" id="log-what">
+<h3>log what?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Weâre in base 2 (think about 0s and 1s)</li>
+<li>log<sub>2</sub>8 = 3 (2 to the power of what gives me 8?)</li>
+<li>The logarithm of a number roughly measures the number of times you can divide that number by 2 before you get a value thatâs less than or equal to one.</li>
+<li>Logarithmic time complexity is great! Youâve written an algorithm that can find a value in a sorted array in log<sub>2</sub>n time!</li>
+</ul>
+</div>
+</div>
+<div class="section" id="whats-the-difference">
+<h3>Whatâs the difference?</h3>
+<div class="docutils container">
+<p>For <cite>n</cite> = 100:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="20%" />
+<col width="59%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Type</th>
+<th class="head">Runtime</th>
+<th class="head">Result</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Constant</td>
+<td>O(1)</td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><td>Logarithmic</td>
+<td>O(log n)</td>
+<td>7</td>
+</tr>
+<tr class="row-even"><td>Linear</td>
+<td>O(n)</td>
+<td>100</td>
+</tr>
+<tr class="row-odd"><td>Logarithmic</td>
+<td>O(n log n)</td>
+<td>664</td>
+</tr>
+<tr class="row-even"><td>Quadratic</td>
+<td>O(n<sup>2</sup>)</td>
+<td>10,000</td>
+</tr>
+<tr class="row-odd"><td>Exponential</td>
+<td>O(2<sup>n</sup>)</td>
+<td>1,267,650,600,228,229,401,496,703,205,376</td>
+</tr>
+<tr class="row-even"><td>Factorial</td>
+<td>O(n<cite>!</cite>)</td>
+<td>9.332622 Ã 10<sup>157</sup></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="how-about-things-we-know">
+<h3>How about things we know?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>What is the time complexity of <cite>.includes()</cite>?</li>
+<li>What is the time complexity of <cite>.indexOf()</cite>?</li>
+</ul>
+</div>
+</div>
+<div class="section" id="must-knows-for-now">
+<h3>Must knows for now</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>A loop does not mean itâs O(n)!</li>
+<li>A loop in a loop does not mean itâs O(n<sup>2</sup>)!</li>
+<li>The best runtime for sorting we can do is O(n * log<sub>2</sub>n) this is also referred to as n log<sub>2</sub>n</li>
+<li>It is <cite>not</cite> the same as log<sub>2</sub>n</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="space-complexity">
+<h2>Space Complexity</h2>
+<div class="section" id="id4">
+<p>So far, weâve been focusing on <cite>time complexity</cite>: how can we analyze the runtime of an algorithm as the size of the inputs increases?</p>
+<p>We can also use big O notation to analyze <cite>space complexity</cite>: how much additional memory do we need to allocate in order to run the code in our algorithm?</p>
+</div>
+<div class="section" id="rules-of-thumb-in-js">
+<h3>Rules of Thumb in JS</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Most primitives (booleans, numbers, undefined, null) are constant space</li>
+<li>Strings require O(n) space (where n is the string length)</li>
+<li>Reference types are generally O(n), where n is the length (for arrays) or the number of keys (for objects)</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id5">
+<h3>An example</h3>
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">sum</span><span class="p">(</span><span class="nx">arr</span><span class="p">)</span> <span class="p">{</span>
+
+  <span class="kd">let</span> <span class="nx">total</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">total</span> <span class="o">+=</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="nx">total</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>O(1) space</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="id6">
+<h3>Another example</h3>
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="kr">double</span><span class="p">(</span><span class="nx">arr</span><span class="p">)</span> <span class="p">{</span>
+
+  <span class="kd">let</span> <span class="nx">newArr</span> <span class="o">=</span> <span class="p">[];</span>
+
+  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">newArr</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="nx">newArr</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>O(n) space</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="recap">
+<h3>Recap</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>To analyze the performance of an algorithm, we use Big O Notation</li>
+<li>Big O Notation can give us a high level understanding of the time or space complexity of an algorithm</li>
+<li>Big O Notation doesnât care about precision, only about general trends (linear? quadratic? constant?)</li>
+<li>The time or space complexity (as measured by Big O) depends only on the algorithm, not the hardware used to run the algorithm</li>
+<li>Big O Notation is everywhere, so get lots of practice!</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> 
+</body>
+</html>
