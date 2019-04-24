@@ -1,0 +1,648 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Introduction to Python</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Introduction to Python</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Introduction to Python</a><ul>
+<li><a class="reference internal" href="#intro">Intro</a><ul>
+<li><a class="reference internal" href="#id1">Intro</a></li>
+<li><a class="reference internal" href="#python-versions">Python Versions</a></li>
+<li><a class="reference internal" href="#installing-python">Installing Python</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#interactive-python">Interactive Python</a><ul>
+<li><a class="reference internal" href="#id2">Interactive Python</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#printing">Printing</a><ul>
+<li><a class="reference internal" href="#id3">Printing</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#indentation">Indentation</a><ul>
+<li><a class="reference internal" href="#id4">Indentation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#variables">Variables</a><ul>
+<li><a class="reference internal" href="#id5">Variables</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#strings">Strings</a><ul>
+<li><a class="reference internal" href="#id6">Strings</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#numbers">Numbers</a><ul>
+<li><a class="reference internal" href="#id7">Numbers</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#lists">Lists</a><ul>
+<li><a class="reference internal" href="#id8">Lists</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#equality">Equality</a><ul>
+<li><a class="reference internal" href="#id9">Equality</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#truthiness">Truthiness</a><ul>
+<li><a class="reference internal" href="#id10">Truthiness</a></li>
+<li><a class="reference internal" href="#and-or-not">And/Or/Not</a></li>
+<li><a class="reference internal" href="#if">If</a></li>
+<li><a class="reference internal" href="#ternary">Ternary</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#loops">Loops</a><ul>
+<li><a class="reference internal" href="#while-loops">While Loops</a></li>
+<li><a class="reference internal" href="#for-loops">For Loops</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#functions">Functions</a><ul>
+<li><a class="reference internal" href="#id11">Functions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#comments-and-docstrings">Comments and Docstrings</a><ul>
+<li><a class="reference internal" href="#id12">Comments and Docstrings</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#modes">Modes</a><ul>
+<li><a class="reference internal" href="#running-a-source-file">Running a Source File</a></li>
+<li><a class="reference internal" href="#running-in-ipython">Running in IPython</a></li>
+<li><a class="reference internal" href="#play-in-the-console">Play in the Console</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#getting-help">Getting Help</a><ul>
+<li><a class="reference internal" href="#dir">dir()</a></li>
+<li><a class="reference internal" href="#help">help()</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="introduction-to-python">
+<h1>Introduction to Python</h1>
+<div class="section" id="intro">
+<h2>Intro</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>a general purpose programming language</li>
+<li>fast, powerful, widely used</li>
+<li>âhigh levelâ: express concepts at a high level (a little more than JS)</li>
+<li>âdynamicâ: can change variable types, make new functions in your code, etc</li>
+<li>runs on servers (but not in a browser)</li>
+<li>particularly used for data science, machine learning, making servers, etc</li>
+</ul>
+</div>
+</div>
+<div class="section" id="python-versions">
+<h3>Python Versions</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<p><strong>Python 2</strong></p>
+<ul class="simple">
+<li>Latest is 2.7</li>
+<li>What some people still use</li>
+<li>What comes by default on OSX</li>
+</ul>
+</div>
+<div class="docutils container">
+<p><strong>Python 3</strong></p>
+<ul class="simple">
+<li>Latest is 3.7</li>
+<li>Slightly different language &amp; syntax</li>
+<li>What weâll use at Rithm</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="installing-python">
+<h3>Installing Python</h3>
+<p><a class="reference external" href="https://www.python.org/downloads/">Download Python</a></p>
+<div class="docutils container">
+<p>Test that it works: in a <em>new Terminal window</em></p>
+<pre class="console literal-block">
+$ <span class="cmd">which python3</span>
+/Library/Frameworks/Python.framework/Versions/3.7/bin/python3
+</pre>
+</div>
+<p>Install a critical Python utility, <em>pip</em>:</p>
+<pre class="console literal-block">
+$ <span class="cmd">python3 -m ensurepip</span>
+Looking in links: /var/folders/...
+Collecting setuptools
+Collecting pip
+Installing collected packages: setuptools, pip
+Successfully installed pip-10.0.1 setuptools-39.0.1
+</pre>
+<p>(the installer may have given you this already)</p>
+<div class="docutils container">
+<p>Test that it works:</p>
+<pre class="console literal-block">
+$ <span class="cmd">which pip3</span>
+/Library/Frameworks/Python.framework/Versions/3.7/bin/pip3
+</pre>
+</div>
+<p>Install other Python utility: <em>ipython</em>:</p>
+<pre class="console literal-block">
+$ <span class="cmd">pip3 install ipython</span>
+</pre>
+<div class="docutils container">
+<p>Test that it works:</p>
+<pre class="console literal-block">
+$ <span class="cmd">which ipython3</span>
+/Library/Frameworks/Python.framework/Versions/3.7/bin/ipython3
+</pre>
+</div>
+</div>
+</div>
+<div class="section" id="interactive-python">
+<h2>Interactive Python</h2>
+<div class="section" id="id2">
+<p><em>IPython</em> is a program for interactive exploring of Python</p>
+<pre class="console literal-block">
+$ <span class="cmd">ipython3</span>
+Python 3.7.0 (v3.7.0:1bf9cc5093, Jun 26 2018, 23:26:24)
+Type 'copyright', 'credits' or 'license' for more information
+IPython 6.5.0: An enhanced Interactive Python. Type '?' for help.
+
+<span class="green">In [1]:</span> <span class="cmd">print(&quot;Hello, World!&quot;)</span>
+Hello, World
+</pre>
+<div class="docutils container">
+<p>(Control-D to exit)</p>
+</div>
+</div>
+</div>
+<div class="section" id="printing">
+<h2>Printing</h2>
+<div class="section" id="id3">
+<p><code class="docutils literal notranslate"><span class="pre">print(value,</span> <span class="pre">value,</span> <span class="pre">...)</span></code></p>
+<ul class="simple">
+<li>Puts spaces between values</li>
+<li>Puts return character (ânewlineâ) at the end</li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="s2">&quot;awesome&quot;</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Python is&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="indentation">
+<h2>Indentation</h2>
+<div class="section" id="id4">
+<p>In <em>many</em> programming languages, you use <code class="docutils literal notranslate"><span class="pre">{</span></code> and <code class="docutils literal notranslate"><span class="pre">}</span></code> to show blocks:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="p">(</span><span class="nx">age</span> <span class="o">&gt;=</span> <span class="mi">18</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Please go vote!&quot;</span><span class="p">);</span>
+  <span class="nx">registerToVote</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>Programmers also tend to indent this code, but thatâs just visually prettiness.</p>
+<p>This would work the same:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="p">(</span><span class="nx">age</span> <span class="o">&gt;=</span> <span class="mi">18</span><span class="p">)</span> <span class="p">{</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Please go vote!&quot;</span><span class="p">);</span>
+<span class="nx">registerToVote</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>(That is so ugly. Please donât do that.)</p>
+</div>
+<p>In Python, you donât use <code class="docutils literal notranslate"><span class="pre">{</span></code>/<code class="docutils literal notranslate"><span class="pre">}</span></code> for blocks; the indentation <em>is</em> what matters:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">age</span> <span class="o">&gt;=</span> <span class="mi">18</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Please go vote!&quot;</span><span class="p">)</span>
+    <span class="n">register_to_vote</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>Thatâs very different than:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">age</span> <span class="o">&gt;=</span> <span class="mi">18</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Please go vote!&quot;</span><span class="p">)</span>
+<span class="n">register_to_vote</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>In JS, people often use 2 or 4 spaces for indentation (styles vary)</p>
+<p>In Python, pretty much everyone agrees: it should always be 4 spaces</p>
+</div>
+</div>
+<div class="section" id="variables">
+<h2>Variables</h2>
+<div class="section" id="id5">
+<div class="docutils container">
+<ul>
+<li><p class="first">Python variable name style is <cite>like_this</cite> (lower-snake-case)</p>
+</li>
+<li><p class="first">Donât declare variables like <cite>let</cite> or <cite>var</cite>; just start using</p>
+</li>
+<li><p class="first">No specific way to make un-re-bindable like <cite>const</cite></p>
+<ul class="simple">
+<li>Style good style to write constants <cite>LIKE_THIS</cite></li>
+</ul>
+</li>
+<li><p class="first">âLexical function scopedâ</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="mi">42</span>
+
+<span class="k">def</span> <span class="nf">my_function</span><span class="p">():</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="mi">12</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>   <span class="c1"># 12</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>       <span class="c1"># 42</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="strings">
+<h2>Strings</h2>
+<div class="section" id="id6">
+<div class="docutils container">
+<ul>
+<li><p class="first">Like JS, can use <code class="docutils literal notranslate"><span class="pre">&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">'</span></code> as delimiters</p>
+</li>
+<li><p class="first">Can be multi-line by using triple-quotes: <code class="docutils literal notranslate"><span class="pre">&quot;&quot;&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">'''</span></code></p>
+</li>
+<li><p class="first">Can interpolate expressions with <em>f-strings</em>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">food</span> <span class="o">=</span> <span class="s2">&quot;cheese&quot;</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;I love {food}&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="numbers">
+<h2>Numbers</h2>
+<div class="section" id="id7">
+<p>Very much like JavaScript!</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Separate types for integers (can be any size) or floating-point<ul>
+<li>In JS, there are only floating-point numbers</li>
+<li>Separate type for complex numbers</li>
+</ul>
+</li>
+<li><code class="docutils literal notranslate"><span class="pre">+</span></code>, <code class="docutils literal notranslate"><span class="pre">-</span></code>, <code class="docutils literal notranslate"><span class="pre">*</span></code>, <code class="docutils literal notranslate"><span class="pre">/</span></code> (true division), <code class="docutils literal notranslate"><span class="pre">//</span></code> (integer division)</li>
+<li><code class="docutils literal notranslate"><span class="pre">%</span></code> (modulo: remainder after division)</li>
+<li>Dividing by zero is an error (JS: is <cite>Infinity</cite>, except 0/0, which is <cite>NaN</cite>)</li>
+<li>Can use <cite>+</cite> and <cite>*</cite> on strings: <code class="docutils literal notranslate"><span class="pre">&quot;cat&quot;</span> <span class="pre">+</span> <span class="pre">&quot;food&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;yay&quot;</span> <span class="pre">*</span> <span class="pre">3</span></code></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="lists">
+<h2>Lists</h2>
+<div class="section" id="id8">
+<p>Like JS arrays:</p>
+<ul class="simple">
+<li>ordered</li>
+<li>can be heterogeneous: <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">&quot;apple&quot;,</span> <span class="pre">13.5]</span></code></li>
+</ul>
+</div>
+</div>
+<div class="section" id="equality">
+<h2>Equality</h2>
+<div class="section" id="id9">
+<div class="compare docutils container">
+<div class="docutils container">
+<p><strong>JavaScript</strong></p>
+<ul class="simple">
+<li><cite>==</cite> loose equality<ul>
+<li><code class="docutils literal notranslate"><span class="pre">7</span> <span class="pre">==</span> <span class="pre">&quot;7&quot;</span></code></li>
+</ul>
+</li>
+<li><cite>===</cite> strict equality<ul>
+<li><code class="docutils literal notranslate"><span class="pre">7</span> <span class="pre">!=</span> <span class="pre">&quot;7&quot;</span></code></li>
+</ul>
+</li>
+<li>Objects &amp; arrays are only equal when same identity</li>
+</ul>
+</div>
+<div class="docutils container">
+<p><strong>Python</strong></p>
+<ul class="simple">
+<li><cite>==</cite> equality (strict about types)<ul>
+<li><code class="docutils literal notranslate"><span class="pre">7</span> <span class="pre">!=</span> <span class="pre">&quot;7&quot;</span></code></li>
+</ul>
+</li>
+<li>Structures with same items <em>are</em> equal<ul>
+<li><code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">2,</span> <span class="pre">3]</span> <span class="pre">==</span> <span class="pre">[1,</span> <span class="pre">2,</span> <span class="pre">3]</span></code></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="truthiness">
+<h2>Truthiness</h2>
+<div class="section" id="id10">
+<div class="docutils container">
+<ul class="simple">
+<li>In JS, these things are falsy:<ul>
+<li><code class="docutils literal notranslate"><span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">0.0</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code>, <cite>undefined</cite>, <cite>null</cite>, <cite>NaN</cite>, <cite>false</cite></li>
+</ul>
+</li>
+<li>In JS, these things are (perhaps unexpectedly) truthy:<ul>
+<li><code class="docutils literal notranslate"><span class="pre">[]</span></code>, <code class="docutils literal notranslate"><span class="pre">{}</span></code></li>
+</ul>
+</li>
+<li>In Python, these things are falsy:<ul>
+<li><code class="docutils literal notranslate"><span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">0.0</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code>, <cite>None</cite>, <cite>False</cite></li>
+<li><code class="docutils literal notranslate"><span class="pre">[]</span></code> (empty list), <code class="docutils literal notranslate"><span class="pre">{}</span></code> (empty dictionary), <code class="docutils literal notranslate"><span class="pre">set()</span></code> (empty set)</li>
+</ul>
+</li>
+<li>In Python, these things are truthy:<ul>
+<li>Any non-empty string, non-empty list/dict/set, non-0 number</li>
+<li><cite>True</cite></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="and-or-not">
+<h3>And/Or/Not</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>JS: <code class="docutils literal notranslate"><span class="pre">&amp;&amp;</span></code>, <code class="docutils literal notranslate"><span class="pre">||</span></code>, <code class="docutils literal notranslate"><span class="pre">!</span></code></li>
+<li>Python: <code class="docutils literal notranslate"><span class="pre">and</span></code>, <code class="docutils literal notranslate"><span class="pre">or</span></code>, <code class="docutils literal notranslate"><span class="pre">not</span></code></li>
+<li>Just like in JS, these âshort circuitâ</li>
+</ul>
+</div>
+</div>
+<div class="section" id="if">
+<h3>If</h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">grade</span> <span class="o">==</span> <span class="s2">&quot;A&quot;</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;awesome job!&quot;</span><span class="p">)</span>
+
+<span class="k">elif</span> <span class="n">grade</span> <span class="o">==</span> <span class="s2">&quot;F&quot;</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;ut oh&quot;</span><span class="p">)</span>
+
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;don&#39;t worry too much&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>(parens around condition arenât required, unlike JS)</p>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">age</span> <span class="o">&gt;=</span> <span class="mi">18</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">unregistered</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;please register&quot;</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;keep voting!&quot;</span><span class="p">)</span>
+
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">print</span> <span class="p">(</span><span class="s2">&quot;Wait a bit&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ternary">
+<h3>Ternary</h3>
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">JavaScript</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">msg</span> <span class="o">=</span> <span class="p">(</span><span class="nx">age</span> <span class="o">&gt;=</span> <span class="mi">18</span><span class="p">)</span> <span class="o">?</span> <span class="s2">&quot;go vote!&quot;</span> <span class="o">:</span> <span class="s2">&quot;go play!&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">Python</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;go vote!&quot;</span> <span class="k">if</span> <span class="p">(</span><span class="n">age</span> <span class="o">&gt;=</span> <span class="mi">18</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;go play!&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<p>(in both languages, those parens are optional)</p>
+</div>
+</div>
+</div>
+<div class="section" id="loops">
+<h2>Loops</h2>
+<div class="section" id="while-loops">
+<h3>While Loops</h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">count</span> <span class="o">=</span> <span class="mi">10</span>
+
+<span class="k">while</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="n">count</span> <span class="o">-</span> <span class="mi">1</span>   <span class="c1"># or &quot;count -= 1&quot;, but not &quot;count--&quot;</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Liftoff!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="for-loops">
+<h3>For Loops</h3>
+<p>Python for loops are like JS <cite>for â¦ of</cite> loops:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">snack</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Oreo&quot;</span><span class="p">,</span> <span class="s2">&quot;Twizzler&quot;</span><span class="p">,</span> <span class="s2">&quot;M&amp;M&quot;</span><span class="p">]:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;I ate a&quot;</span><span class="p">,</span> <span class="n">snack</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>To loop 5 times:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>Can also use <cite>range()</cite> function:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>   <span class="c1"># makes [1, 2, 3, 4, 5]</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="functions">
+<h2>Functions</h2>
+<div class="section" id="id11">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">add_numbers</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="nb">sum</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;doing math!&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">sum</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>Functions that donât explicitly <cite>return</cite> return <cite>None</cite></p>
+</div>
+<p>Can pass arguments by name:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">order_pizza</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">flavor</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;{size} pizza with {flavor} topping&quot;</span><span class="p">)</span>
+
+<span class="n">order_pizza</span><span class="p">(</span><span class="s2">&quot;large&quot;</span><span class="p">,</span> <span class="s2">&quot;mushroom&quot;</span><span class="p">)</span>
+
+<span class="n">order_pizza</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="s2">&quot;small&quot;</span><span class="p">,</span> <span class="n">flavor</span><span class="o">=</span><span class="s2">&quot;sausage&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Can provide defaults for parameters:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">send_invite</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">city</span><span class="o">=</span><span class="s2">&quot;SF&quot;</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="s2">&quot;California&quot;</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;mailing invitation to {city}, {state}&quot;</span><span class="p">)</span>
+
+<span class="n">send_invite</span><span class="p">(</span><span class="s2">&quot;Jenny&quot;</span><span class="p">,</span> <span class="s2">&quot;Portland&quot;</span><span class="p">,</span> <span class="s2">&quot;Oregon&quot;</span><span class="p">)</span>
+
+<span class="n">send_invite</span><span class="p">(</span><span class="s2">&quot;Joel&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Providing extra/fewer-than-requried arguments is an error <span class="raw-reveal"><br></span>
+(in JS, this is ignored / becomes <cite>undefined</cite>):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">add_three_numbers</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">+</span> <span class="n">c</span>
+
+<span class="n">add_three_numbers</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>       <span class="c1"># 60, yay!</span>
+
+<span class="n">add_three_numbers</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>           <span class="c1"># error!</span>
+
+<span class="n">add_three_numbers</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>   <span class="c1"># error!</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="comments-and-docstrings">
+<h2>Comments and Docstrings</h2>
+<div class="section" id="id12">
+<div class="docutils container">
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">#</span></code>: rest of line is comment (use to explain complex code)</li>
+<li>String as very first thing in file/function is âdocstringâ<ul>
+<li>Use to document what the function/file does</li>
+<li>Shown when you ask for <code class="docutils literal notranslate"><span class="pre">help(some_function)</span></code></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">add_limited_numbers</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Add two numbers, making sure sum caps at 100.&quot;&quot;&quot;</span>
+
+    <span class="nb">sum</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+
+    <span class="c1"># If this required explanation, comment like this</span>
+
+    <span class="k">if</span> <span class="nb">sum</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
+        <span class="nb">sum</span> <span class="o">=</span> <span class="mi">100</span>
+
+    <span class="k">return</span> <span class="nb">sum</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="modes">
+<h2>Modes</h2>
+<div class="section" id="running-a-source-file">
+<h3>Running a Source File</h3>
+<pre class="console literal-block">
+$ <span class="cmd">python3 mygame.py</span>
+You win! Your score is 10
+
+$ <span class="tan"># back in shell</span>
+</pre>
+<div class="docutils container">
+<ul class="simple">
+<li>runs Python</li>
+<li>loads <cite>mygame.py</cite></li>
+<li>executes the code</li>
+<li>returns to the terminal when done.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="running-in-ipython">
+<h3>Running in IPython</h3>
+<pre class="console literal-block">
+$ <span class="cmd">ipython3</span>
+<span class="green">In [1]:</span> <span class="cmd">%run mygame.py</span>
+</pre>
+<div class="docutils container">
+<ul class="simple">
+<li>runs <cite>mygame.py</cite></li>
+<li>stays in IPython, variables are still set</li>
+</ul>
+</div>
+</div>
+<div class="section" id="play-in-the-console">
+<h3>Play in the Console</h3>
+<p>Itâs. The. Best. Way. To. Learn.</p>
+<div class="docutils container">
+<p>Good idea: open a console at the same time as your editor!</p>
+</div>
+</div>
+</div>
+<div class="section" id="getting-help">
+<h2>Getting Help</h2>
+<div class="section" id="dir">
+<h3>dir()</h3>
+<p>âShow me the methods and attributes of this objectâ</p>
+<pre class="console literal-block">
+<span class="green">In [1]</span> <span class="cmd">dir([])</span>
+['__add__', 'append', 'count', 'extend', 'index', 'insert',
+'pop', 'remove', 'reverse', 'sort']
+</pre>
+<div class="admonition note">
+<p><strong>__methods__</strong></p>
+<p>Youâll notice many objects provide a lot of methods that have names
+starting and ending with double-underscores (Python programmers often
+call these âspecial methodsâ or âdunder <em>[for âdouble-underscoreâ]</em> methodsâ.</p>
+<p>These arenât methods you call directly (ie, you wouldnât ever say
+<code class="docutils literal notranslate"><span class="pre">mylist.__add__()</span></code>) â instead, these work behind-the-scenes to support
+other operations of the object.</p>
+<p class="last">Generally, you can ignore them when examining an object.</p>
+</div>
+</div>
+<div class="section" id="help">
+<h3>help()</h3>
+<p>âShow me help about how to use this objectâ</p>
+<pre class="console literal-block">
+<span class="green">In [1]</span> <span class="cmd">help([])</span>
+</pre>
+<div class="docutils container">
+<p><cite>q</cite> to quit that</p>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

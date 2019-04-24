@@ -1,0 +1,324 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Professional Coding Part 2</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Professional Coding Part 2</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Professional Coding Part 2</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#revisiting-good-programming-practices">Revisiting Good Programming Practices</a><ul>
+<li><a class="reference internal" href="#what-do-you-remember-from-pro-coding-1">What do you remember from pro-coding 1?</a></li>
+<li><a class="reference internal" href="#what-s-the-flaw">Whatâs the Flaw?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#how-to-better-use-your-text-editor">How to better use your text editor</a><ul>
+<li><a class="reference internal" href="#opening-vscode">Opening VSCode</a></li>
+<li><a class="reference internal" href="#open-folders-instead-of-files">Open folders instead of files</a></li>
+<li><a class="reference internal" href="#things-you-should-start-trying-to-get-comfortable-with">Things you should start trying to get comfortable with</a></li>
+<li><a class="reference internal" href="#keyboard-shortcuts-to-help">Keyboard shortcuts to help</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#debugging-revisited">Debugging Revisited</a><ul>
+<li><a class="reference internal" href="#using-the-sources-tab">Using the sources tab</a></li>
+<li><a class="reference internal" href="#don-t-neglect-the-console">Donât neglect the console!</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#types-in-javascript">Types in JavaScript</a><ul>
+<li><a class="reference internal" href="#primitives">Primitives</a></li>
+<li><a class="reference internal" href="#reference-types">Reference Types</a></li>
+<li><a class="reference internal" href="#assigning-a-primitive">Assigning a primitive</a></li>
+<li><a class="reference internal" href="#assigning-a-reference">Assigning a reference</a></li>
+<li><a class="reference internal" href="#comparing-two-primitives">Comparing two primitives</a></li>
+<li><a class="reference internal" href="#comparing-two-references">Comparing two references</a></li>
+<li><a class="reference internal" href="#so-how-do-we-compare-two-objects">So how do we compare two objects?</a></li>
+<li><a class="reference internal" href="#practice-practice-practice">Practice, practice, practice!!</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="professional-coding-part-2">
+<h1>Professional Coding Part 2</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<p>Learn even more critical parts of professional programming:</p>
+<div class="docutils container">
+<ul class="simple">
+<li>revisit good programming practices</li>
+<li>get more comfortable using a text editor</li>
+<li>revisit debugging using the sources tab</li>
+<li>revisit memory and types in JavaScript</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="revisiting-good-programming-practices">
+<h2>Revisiting Good Programming Practices</h2>
+<div class="section" id="what-do-you-remember-from-pro-coding-1">
+<h3>What do you remember from pro-coding 1?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>variable names</li>
+<li>breaking apart functions</li>
+</ul>
+</div>
+</div>
+<div class="section" id="what-s-the-flaw">
+<h3>Whatâs the Flaw?</h3>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** get a story from server and return Story instance. */</span>
+
+<span class="kd">function</span> <span class="nx">async</span> <span class="nx">getStoryFromServer</span><span class="p">(</span><span class="nx">storyId</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">data</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">$</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="sb">`http://server.com/story/</span><span class="si">${</span><span class="nx">storyId</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+  <span class="kd">let</span> <span class="nx">story</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Story</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">title</span><span class="p">,</span> <span class="nx">data</span><span class="p">.</span><span class="nx">author</span><span class="p">,</span> <span class="nx">data</span><span class="p">.</span><span class="nx">content</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">story</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// .... somewhere else in your program</span>
+
+<span class="cm">/** add story HTML to DOM. */</span>
+
+<span class="kd">function</span> <span class="nx">addStoryToDOM</span><span class="p">(</span><span class="nx">story</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#story-list&quot;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="nx">story</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>Sometimes <cite>story</cite> is an instance of <cite>Story</cite>, sometimes itâs HTML of a story</p>
+<p>Use the same variable name for the same kind of thing!</p>
+</div>
+</div>
+</div>
+<div class="section" id="how-to-better-use-your-text-editor">
+<h2>How to better use your text editor</h2>
+<div class="section" id="opening-vscode">
+<h3>Opening VSCode</h3>
+<p>Letâs start with a simple question - how do you open up VSCode?</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Use the Terminal</li>
+<li>Drag and Drop</li>
+</ul>
+</div>
+</div>
+<div class="section" id="open-folders-instead-of-files">
+<h3>Open folders instead of files</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>better navigation</li>
+<li>Have one open VSCode tab (you can always split windows)</li>
+</ul>
+</div>
+</div>
+<div class="section" id="things-you-should-start-trying-to-get-comfortable-with">
+<h3>Things you should start trying to get comfortable with</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Jumping between words and to the end of a line</li>
+<li>Highlighting words, lines and multiple lines</li>
+</ul>
+</div>
+</div>
+<div class="section" id="keyboard-shortcuts-to-help">
+<h3>Keyboard shortcuts to help</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Quick jump to a file (command + p)</li>
+<li>Selecting multiple occurences (command + d)</li>
+<li>Opening / hiding the explorer (command + b)</li>
+<li>Navigating between tabs (option + command + left/right)</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="debugging-revisited">
+<h2>Debugging Revisited</h2>
+<div class="section" id="using-the-sources-tab">
+<h3>Using the sources tab</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Itâs often very helpful to have âpause on caught exceptionsâ checked</li>
+<li>You can use the debugger by setting break points or using the debugger keyword</li>
+<li>Make sure you understand how to move to the next breakpoint<ul>
+<li>command + backslash</li>
+<li>Click the play button</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="don-t-neglect-the-console">
+<h3>Donât neglect the console!</h3>
+<p>Remember that when the debugger is paused you can press escape to access a console.</p>
+</div>
+</div>
+<div class="section" id="types-in-javascript">
+<h2>Types in JavaScript</h2>
+<div class="section" id="primitives">
+<h3>Primitives</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Primitive types are also known as scalar or simple types.</li>
+<li>Primitive types fit into memory easily.</li>
+<li>JavaScript has six native primitive types<ul>
+<li>null</li>
+<li>undefined</li>
+<li>Boolean</li>
+<li>Number</li>
+<li>String</li>
+<li>Symbol</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="reference-types">
+<h3>Reference Types</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>A reference type can contain multiple values.</li>
+<li>Reference types are also known as: complex types or container types.</li>
+<li>Reference types in JavaScript include:<ul>
+<li>objects</li>
+<li>arrays (a kind of object)</li>
+<li>functions (a kind of object)</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="assigning-a-primitive">
+<h3>Assigning a primitive</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>When a primitive type is assigned to another variable, the second variable simply points to the first value.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="assigning-a-reference">
+<h3>Assigning a reference</h3>
+<p>When a reference type is assigned to another variable, the address of that value is what is copied over.</p>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Joel&quot;</span><span class="p">,</span> <span class="s2">&quot;Alissa&quot;</span><span class="p">,</span> <span class="s2">&quot;Michael&quot;</span><span class="p">];</span>
+<span class="kd">let</span> <span class="nx">namesCopy</span> <span class="o">=</span> <span class="nx">names</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="comparing-two-primitives">
+<h3>Comparing two primitives</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>When the comparison operators ( == and ===) are used on primitives, they check the type and value.</li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">firstName</span> <span class="o">=</span> <span class="s2">&quot;Elie&quot;</span>
+<span class="kd">let</span> <span class="nx">firstNameAgain</span> <span class="o">=</span> <span class="nx">firstName</span>
+<span class="nx">firstName</span> <span class="o">===</span> <span class="nx">firstNameAgain</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">firstName</span> <span class="o">===</span> <span class="s2">&quot;Elie&quot;</span> <span class="c1">// true</span>
+<span class="nx">firstNameAgain</span> <span class="o">===</span> <span class="s2">&quot;Elie&quot;</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="comparing-two-references">
+<h3>Comparing two references</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>When the comparison operators (== and ===) are used on reference types, they check the reference.</li>
+<li>If the variables contain a reference to the same item, the comparison will result in true.</li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">nums</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>
+<span class="kd">let</span> <span class="nx">nums2</span> <span class="o">=</span> <span class="nx">nums</span>
+<span class="nx">nums</span> <span class="o">===</span> <span class="nx">nums2</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">nums</span> <span class="o">===</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span> <span class="c1">// false</span>
+<span class="nx">nums2</span> <span class="o">===</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span> <span class="c1">// false</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="so-how-do-we-compare-two-objects">
+<h3>So how do we compare two objects?</h3>
+<div class="docutils container">
+<p>The quick way:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">instructorData</span> <span class="o">=</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Elie&quot;</span><span class="p">}</span>
+<span class="kd">let</span> <span class="nx">instructorData2</span> <span class="o">=</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Elie&quot;</span><span class="p">}</span>
+
+<span class="kd">let</span> <span class="nx">instructorDataToString</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">instructorData</span><span class="p">);</span>
+<span class="kd">let</span> <span class="nx">instructorData2ToString</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">instructorData2</span><span class="p">);</span>
+<span class="nx">instructorDataToString</span> <span class="o">===</span> <span class="nx">instructorData2ToString</span><span class="p">;</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>Another option would be to recursively loop through the objects and make sure each of the properties/values are the same.</p>
+</div>
+</div>
+<div class="section" id="practice-practice-practice">
+<h3>Practice, practice, practice!!</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>think about the most important developer in the room</li>
+<li>build as if the project will grow</li>
+<li>commit frequently and intentionally</li>
+<li>document your code</li>
+<li>test your assumptions</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

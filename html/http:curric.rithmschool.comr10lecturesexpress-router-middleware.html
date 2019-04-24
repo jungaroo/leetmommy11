@@ -1,0 +1,492 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Express Routing, Middleware</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Express Routing, Middleware</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Express Routing, Middleware</a><ul>
+<li><a class="reference internal" href="#express-router">Express Router</a><ul>
+<li><a class="reference internal" href="#id1">Express Router</a></li>
+<li><a class="reference internal" href="#a-router-outside-of-app-js">A Router Outside of <cite>app.js</cite></a></li>
+<li><a class="reference internal" href="#using-our-router-in-app-js">Using Our Router in <cite>app.js</cite></a></li>
+<li><a class="reference internal" href="#benefits-of-the-express-router">Benefits of the Express Router</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#middleware">Middleware</a><ul>
+<li><a class="reference internal" href="#what-is-middleware">What is Middleware?</a></li>
+<li><a class="reference internal" href="#when-would-you-use-it">When would you use it?</a></li>
+<li><a class="reference internal" href="#what-does-it-look-like">What does it look like?</a></li>
+<li><a class="reference internal" href="#why-do-we-need-next">Why do we need <cite>next</cite>?</a></li>
+<li><a class="reference internal" href="#using-our-middleware">Using our middleware</a></li>
+<li><a class="reference internal" href="#writing-middleware-to-authorize">Writing middleware to authorize</a></li>
+<li><a class="reference internal" href="#id2">Using our middleware</a></li>
+<li><a class="reference internal" href="#summarizing-middleware">Summarizing Middleware</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#integration-tests-in-express-setup">Integration Tests in Express: Setup</a><ul>
+<li><a class="reference internal" href="#integration-tests">Integration Tests</a></li>
+<li><a class="reference internal" href="#integration-tests-with-supertest">Integration Tests with Supertest</a></li>
+<li><a class="reference internal" href="#installing-supertest">Installing Supertest</a></li>
+<li><a class="reference internal" href="#creating-a-server-js">Creating a server.js</a></li>
+<li><a class="reference internal" href="#what-our-app-js-looks-like">What our app.js looks like</a></li>
+<li><a class="reference internal" href="#what-our-server-js-looks-like">What our server.js looks like</a></li>
+<li><a class="reference internal" href="#the-application-we-are-going-to-be-building">The application we are going to be building</a></li>
+<li><a class="reference internal" href="#what-our-test-setup-looks-like">What our test setup looks like</a></li>
+<li><a class="reference internal" href="#testing-reading">Testing Reading</a></li>
+<li><a class="reference internal" href="#testing-creating">Testing Creating</a></li>
+<li><a class="reference internal" href="#testing-updating">Testing Updating</a></li>
+<li><a class="reference internal" href="#testing-deleting">Testing Deleting</a></li>
+<li><a class="reference internal" href="#debugging-your-tests">Debugging your tests</a></li>
+<li><a class="reference internal" href="#coming-up">Coming Up</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="express-routing-middleware">
+<h1>Express Routing, Middleware</h1>
+<div class="section" id="express-router">
+<h2>Express Router</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Placing all of your routes in your <cite>app.js</cite> gets messy quickly!</li>
+<li>Express provides built-in middleware to place routes elsewhere and <cite>app.use</cite> them in <cite>app.js</cite>!</li>
+</ul>
+</div>
+</div>
+<div class="section" id="a-router-outside-of-app-js">
+<h3>A Router Outside of <cite>app.js</cite></h3>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">demo/routes.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;express&quot;</span><span class="p">);</span>
+<span class="kr">const</span> <span class="nx">router</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">express</span><span class="p">.</span><span class="nx">Router</span><span class="p">();</span>
+
+<span class="kr">const</span> <span class="nx">users</span> <span class="o">=</span> <span class="p">[];</span>
+
+<span class="cm">/** GET /users: get list of users */</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">users</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="cm">/** DELETE /users/[id]: delete user, return status */</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="k">delete</span><span class="p">(</span><span class="s2">&quot;/:id&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">idx</span> <span class="o">=</span> <span class="nx">users</span><span class="p">.</span><span class="nx">findIndex</span><span class="p">(</span><span class="nx">u</span> <span class="p">=&gt;</span> <span class="nx">u</span><span class="p">.</span><span class="nx">id</span> <span class="o">===</span> <span class="o">+</span><span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+  <span class="nx">users</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">idx</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span> <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;Deleted&quot;</span> <span class="p">});</span>
+<span class="p">});</span>
+
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">router</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="using-our-router-in-app-js">
+<h3>Using Our Router in <cite>app.js</cite></h3>
+<p>We apply the router to all <code class="docutils literal notranslate"><span class="pre">/users</span></code> routes with <code class="docutils literal notranslate"><span class="pre">app.use</span></code>:</p>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">demo/app.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">//  apply a prefix to every route in userRoutes</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s1">&#39;/users&#39;</span><span class="p">,</span> <span class="nx">userRoutes</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="benefits-of-the-express-router">
+<h3>Benefits of the Express Router</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>We can make our <cite>app.js</cite> file smaller and more readable.</li>
+<li>We can separate different RESTful resources into their own files (e.g. <code class="docutils literal notranslate"><span class="pre">/users</span></code> has its own router inside <code class="docutils literal notranslate"><span class="pre">userRoutes.js</span></code> while <code class="docutils literal notranslate"><span class="pre">/pets</span></code> has its own router inside <code class="docutils literal notranslate"><span class="pre">petRoutes.js</span></code>).</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="middleware">
+<h2>Middleware</h2>
+<div class="section" id="what-is-middleware">
+<h3>What is Middleware?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>It is code that runs in the <strong>middle</strong> of the request / response cycle!</li>
+<li>In Express, middleware are functions that get access to the <cite>req</cite> and <cite>res</cite> objects and can also call the <cite>next</cite> function.</li>
+<li><cite>express.json()</cite> is an example of middleware</li>
+<li>Our 404 and global error handler are example of middleware</li>
+</ul>
+</div>
+</div>
+<div class="section" id="when-would-you-use-it">
+<h3>When would you use it?</h3>
+<div class="docutils container">
+<p>It opens up the door for separating our code into more logical groupings and providing more robust / abstracted error handling.</p>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Logging useful information on every request</li>
+<li>Adding a <strong>current_user</strong> for every request (like <cite>g</cite> in Flask!)</li>
+<li>Ensuring that users are authenticated</li>
+<li>Ensuring that a user is authorized to access an endpoint</li>
+</ul>
+</div>
+</div>
+<div class="section" id="what-does-it-look-like">
+<h3>What does it look like?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>In another file called <cite>middleware.js</cite></li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">demo/middleware.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">logger</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">){</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`A </span><span class="si">${</span><span class="nx">req</span><span class="p">.</span><span class="nx">method</span><span class="si">}</span><span class="sb"> request is being sent to </span><span class="si">${</span><span class="nx">req</span><span class="p">.</span><span class="nx">path</span> <span class="si">}</span><span class="sb">`</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nx">next</span><span class="p">()</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="why-do-we-need-next">
+<h3>Why do we need <cite>next</cite>?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>If we do not include it, we will not make it to the <em>next</em> route!</li>
+<li>Notice here we are <strong>not</strong> passing anything to <strong>next</strong>.</li>
+<li>Express is sneaky, if it sees any argument passed to <strong>next</strong> it will <strong>always</strong> treat it as an error.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="using-our-middleware">
+<h3>Using our middleware</h3>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">demo/app.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">middleware</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./middleware&#39;</span><span class="p">);</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">express</span><span class="p">.</span><span class="nx">json</span><span class="p">());</span>
+
+<span class="c1">// this applies to all requests at all paths</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">middleware</span><span class="p">.</span><span class="nx">logger</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="writing-middleware-to-authorize">
+<h3>Writing middleware to authorize</h3>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">demo/middleware.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">ExpressError</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;./expressError&quot;</span><span class="p">)</span>
+
+<span class="kd">function</span> <span class="nx">onlyAllowElie</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">){</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">name</span> <span class="o">===</span> <span class="s2">&quot;Elie&quot;</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">next</span><span class="p">()</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nx">ExpressError</span><span class="p">(</span><span class="s2">&quot;Unauthorized&quot;</span><span class="p">,</span> <span class="mi">401</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">err</span><span class="p">){</span>
+    <span class="k">return</span> <span class="nx">next</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">logger</span><span class="p">,</span> <span class="nx">onlyAllowElie</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id2">
+<h3>Using our middleware</h3>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">demo/app.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">// route handler with middleware</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/hello/:name&#39;</span><span class="p">,</span> <span class="nx">middleware</span><span class="p">.</span><span class="nx">onlyAllowElie</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="s1">&#39;Hello &#39;</span> <span class="o">+</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="summarizing-middleware">
+<h3>Summarizing Middleware</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Weâve already been using built in middleware like express.json()</li>
+<li>Middleware are functions that can intercept the request/response cycle</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="integration-tests-in-express-setup">
+<h2>Integration Tests in Express: Setup</h2>
+<div class="section" id="integration-tests">
+<h3>Integration Tests</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Making sure the parts work together</li>
+<li>Essential to have along with unit tests!</li>
+<li>More involved than unit tests</li>
+</ul>
+</div>
+</div>
+<div class="section" id="integration-tests-with-supertest">
+<h3>Integration Tests with Supertest</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>A library for testing Express applications</li>
+<li>Our tool for integration testing</li>
+<li>Similar to Flask-testing: allows us to make requests against our app in a test environment</li>
+<li>Docs: <a class="reference external" href="https://github.com/visionmedia/supertest">https://github.com/visionmedia/supertest</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="installing-supertest">
+<h3>Installing Supertest</h3>
+<pre class="console literal-block">
+$ <span class="cmd">npm i --save-dev supertest</span>
+</pre>
+</div>
+<div class="section" id="creating-a-server-js">
+<h3>Creating a server.js</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>To create a test client, we are going to need our <cite>app</cite> variable from <cite>app.js</cite></li>
+<li>Right now we are combining logic to create the <cite>app</cite> variable and start the server all in one file</li>
+<li>To ensure we donât start the server when we import our <cite>app</cite> variable in our tests, weâre going to move out our <cite>app.listen</cite> code into a file called <cite>server.js</cite></li>
+<li>Weâre also going to export our <cite>app</cite> variable in <cite>app.js</cite></li>
+</ul>
+</div>
+</div>
+<div class="section" id="what-our-app-js-looks-like">
+<h3>What our app.js looks like</h3>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">demo/supertest-demo/app.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** general error handler */</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">((</span><span class="nx">err</span><span class="p">,</span> <span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nx">status</span> <span class="o">||</span> <span class="mi">500</span><span class="p">);</span>
+
+  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span>
+    <span class="nx">error</span><span class="o">:</span> <span class="nx">err</span><span class="p">.</span><span class="nx">message</span><span class="p">,</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">app</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="what-our-server-js-looks-like">
+<h3>What our server.js looks like</h3>
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">demo/supertest-demo/server.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;./app&quot;</span><span class="p">)</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="mi">3000</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Server starting on port 3000&quot;</span><span class="p">)</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="the-application-we-are-going-to-be-building">
+<h3>The application we are going to be building</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>A simple API for CRUD on cats!</li>
+<li>Weâre going to be using an array for storage</li>
+<li>Weâll move that logic into a file called <cite>fakeDb.js</cite></li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">demo/supertest-demo/fakeDb.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">cats</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">cats</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="what-our-test-setup-looks-like">
+<h3>What our test setup looks like</h3>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">demo/supertest-demo/routes/cats-routes.test.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">NODE_ENV</span> <span class="o">=</span> <span class="s2">&quot;test&quot;</span><span class="p">;</span>
+<span class="c1">// npm packages</span>
+<span class="kr">const</span> <span class="nx">request</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;supertest&quot;</span><span class="p">);</span>
+<span class="c1">// app imports</span>
+<span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;../app&quot;</span><span class="p">);</span>
+
+<span class="kd">let</span> <span class="nx">cats</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;../fakeDb&quot;</span><span class="p">)</span>
+
+<span class="kd">let</span> <span class="nx">cat</span> <span class="o">=</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;silly&quot;</span><span class="p">}</span>
+
+<span class="nx">beforeEach</span><span class="p">(</span><span class="nx">async</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">cats</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">cat</span><span class="p">)</span>
+<span class="p">});</span>
+
+<span class="nx">afterEach</span><span class="p">(</span><span class="nx">async</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">cats</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="testing-reading">
+<h3>Testing Reading</h3>
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">demo/supertest-demo/routes/cats-routes.test.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** GET /cats - returns `{cats: [cat, ...]}` */</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;GET /cats&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;Gets a list of cats&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="sb">`/cats`</span><span class="p">);</span>
+    <span class="kr">const</span> <span class="p">{</span> <span class="nx">cats</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">;</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">200</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">cats</span><span class="p">).</span><span class="nx">toHaveLength</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="testing-creating">
+<h3>Testing Creating</h3>
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">demo/supertest-demo/routes/cats-routes.test.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** POST /cats - create cat from data; return `{cat: cat}` */</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;POST /cats&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;Creates a new cat&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="sb">`/cats`</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">send</span><span class="p">({</span>
+        <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Ezra&quot;</span>
+      <span class="p">});</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">200</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">cat</span><span class="p">).</span><span class="nx">toHaveProperty</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">cat</span><span class="p">.</span><span class="nx">name</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s2">&quot;Ezra&quot;</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="testing-updating">
+<h3>Testing Updating</h3>
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-text">demo/supertest-demo/routes/cats-routes.test.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** PATCH /cats/[name] - update cat; return `{cat: cat}` */</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;PATCH /cats/:name&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;Updates a single cat&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">patch</span><span class="p">(</span><span class="sb">`/cats/</span><span class="si">${</span><span class="nx">cat</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">send</span><span class="p">({</span>
+        <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Troll&quot;</span>
+      <span class="p">});</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">200</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">cat</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">({</span>
+      <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Troll&quot;</span>
+    <span class="p">});</span>
+  <span class="p">});</span>
+
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;Responds with 404 if can&#39;t find cat&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">).</span><span class="nx">patch</span><span class="p">(</span><span class="sb">`/cats/0`</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">404</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="testing-deleting">
+<h3>Testing Deleting</h3>
+<div class="literal-block-wrapper docutils container" id="id16">
+<div class="code-block-caption"><span class="caption-text">demo/supertest-demo/routes/cats-routes.test.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** DELETE /cats/[name] - delete cat, </span>
+<span class="cm"> *  return `{message: &quot;Cat deleted&quot;}` */</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;DELETE /cats/:name&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;Deletes a single a cat&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+      <span class="p">.</span><span class="k">delete</span><span class="p">(</span><span class="sb">`/cats/</span><span class="si">${</span><span class="nx">cat</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">200</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">({</span> <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;Deleted&quot;</span> <span class="p">});</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="debugging-your-tests">
+<h3>Debugging your tests</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>You can always <strong>console.log</strong> inside of your test files</li>
+<li>If youâd like to use the chrome dev tools, write the following:<ul>
+<li><cite>node âinspect-brk $(which jest) ârunInBand NAME_OF_FILE</cite></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="coming-up">
+<h3>Coming Up</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Adding PostgreSQL to Express</li>
+<li>Testing using a Database</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script>
+<script type="text/javascript" src="_static/language_data.js"></script> 
+</body>
+</html>

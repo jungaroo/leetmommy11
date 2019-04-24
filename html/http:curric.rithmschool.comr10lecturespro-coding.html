@@ -1,0 +1,821 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Professional Coding</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Professional Coding</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Professional Coding</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#style">Style</a><ul>
+<li><a class="reference internal" href="#naming-things">Naming Things</a></li>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+<li><a class="reference internal" href="#function-comments">Function Comments</a></li>
+<li><a class="reference internal" href="#naming-functions">Naming Functions</a></li>
+<li><a class="reference internal" href="#variables">Variables</a></li>
+<li><a class="reference internal" href="#global-variables">Global Variables</a></li>
+<li><a class="reference internal" href="#global-constants">Global Constants</a></li>
+<li><a class="reference internal" href="#comments">Comments</a></li>
+<li><a class="reference internal" href="#commenting-out-code">Commenting Out Code</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#debugging">Debugging</a><ul>
+<li><a class="reference internal" href="#id2">Debugging</a></li>
+<li><a class="reference internal" href="#to-assume-makes-an">To Assume Makes an â¦</a></li>
+<li><a class="reference internal" href="#bad-debugging-strategies">Bad Debugging Strategies</a></li>
+<li><a class="reference internal" href="#learn-from-debugging">Learn From Debugging</a></li>
+<li><a class="reference internal" href="#print-debugging">Print Debugging</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#javascript-debugger">JavaScript Debugger</a><ul>
+<li><a class="reference internal" href="#id3">JavaScript Debugger</a></li>
+<li><a class="reference internal" href="#starting-debugger">Starting Debugger</a></li>
+<li><a class="reference internal" href="#step-over">Step Over</a></li>
+<li><a class="reference internal" href="#step-into">Step Into</a></li>
+<li><a class="reference internal" href="#step-out">Step Out</a></li>
+<li><a class="reference internal" href="#call-stack">Call Stack</a></li>
+<li><a class="reference internal" href="#scope">Scope</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tips-to-avoid-bugs">Tips To Avoid Bugs</a><ul>
+<li><a class="reference internal" href="#plan-first">Plan First</a></li>
+<li><a class="reference internal" href="#keep-it-simple">Keep It Simple</a></li>
+<li><a class="reference internal" href="#common-javascript-bugs">Common JavaScript Bugs</a></li>
+<li><a class="reference internal" href="#good-news">Good News</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#testing">Testing</a><ul>
+<li><a class="reference internal" href="#why-test">Why Test?</a></li>
+<li><a class="reference internal" href="#jasmine">Jasmine</a></li>
+<li><a class="reference internal" href="#running-tests-in-the-browser-with-jasmine">Running Tests in the Browser with Jasmine</a></li>
+<li><a class="reference internal" href="#writing-tests">Writing Tests</a></li>
+<li><a class="reference internal" href="#matchers">Matchers</a></li>
+<li><a class="reference internal" href="#what-to-test">What To Test</a></li>
+<li><a class="reference internal" href="#testable-code">Testable Code</a></li>
+<li><a class="reference internal" href="#looking-ahead">Looking Ahead</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#lab-exercise">Lab Exercise</a><ul>
+<li><a class="reference internal" href="#id4">Lab Exercise</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <style>.size75 { font-size: 75% !important; }</style><div class="section" id="professional-coding">
+<h1>Professional Coding</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<p>Learn critical parts of professional programming:</p>
+<div class="docutils container">
+<ul class="simple">
+<li>introduce good style (names, functions, documentation)</li>
+<li>learn core debugging strategies &amp; JS debugger</li>
+<li>introduction to JS testing with Jasmine</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="style">
+<h2>Style</h2>
+<div class="section" id="naming-things">
+<h3>Naming Things</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Naming things well is a serious, core skill for developers.</li>
+<li>We expect you to learn &amp; practice it here.</li>
+<li>Generally: in JavaScript, names are <cite>camelCase</cite> not <cite>snake_case</cite><ul>
+<li>Weâll meet some exceptions!</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="functions">
+<h3>Functions</h3>
+<ul class="simple">
+<li>Functions are the most basic unit of thought</li>
+<li>Most new programmers create too few &amp; too long</li>
+</ul>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">playTacToe</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// setup board</span>
+  <span class="c1">// ...</span>
+
+  <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="nx">winner</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// show board</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">y</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">y</span> <span class="o">&lt;</span> <span class="nx">board</span><span class="p">.</span><span class="nx">height</span><span class="p">;</span> <span class="nx">y</span><span class="o">++</span><span class="p">)</span>
+      <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">x</span> <span class="o">&lt;</span> <span class="nx">board</span><span class="p">.</span><span class="nx">width</span><span class="p">;</span> <span class="nx">x</span><span class="o">++</span><span class="p">)</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">board</span><span class="p">[</span><span class="nx">y</span><span class="p">][</span><span class="nx">x</span><span class="p">]);</span>
+
+    <span class="c1">// get move</span>
+    <span class="c1">// ...</span>
+
+    <span class="c1">// check for win ...</span>
+    <span class="c1">// ...</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">playTicTacToe</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">winner</span><span class="p">;</span>
+  <span class="nx">setupBoard</span><span class="p">();</span>
+
+  <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="nx">winner</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">displayBoard</span><span class="p">();</span>
+    <span class="kr">const</span> <span class="nx">move</span> <span class="o">=</span> <span class="nx">getMove</span><span class="p">();</span>
+    <span class="nx">makeMove</span><span class="p">(</span><span class="nx">move</span><span class="p">);</span>
+    <span class="nx">winner</span> <span class="o">=</span> <span class="nx">getWinner</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="compare docutils container">
+<div class="docutils container">
+<ul class="simple">
+<li>Functions improve readability</li>
+<li>Functions promote code re-use</li>
+<li>Functions improve testability</li>
+</ul>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Longer than 20-40 lines? Do it!</li>
+<li>Has different logic parts? Do it!</li>
+<li>Mixes different concerns? Do it!<ul>
+<li>User interface</li>
+<li>Core logic</li>
+<li>Reading/writing files</li>
+</ul>
+</li>
+<li>On the fence? Do it!</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="function-comments">
+<h3>Function Comments</h3>
+<ul class="simple">
+<li>All functions should get a comment<ul>
+<li>What does function do? What does it return?</li>
+</ul>
+</li>
+</ul>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="cm">/* Checks board for 3-in-a-row; returns &quot;X&quot;, &quot;O&quot;, or null */</span>
+
+<span class="kd">function</span> <span class="nx">checkForWinner</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// ...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>We expect you to practice this here!</p>
+</div>
+</div>
+<div class="section" id="naming-functions">
+<h3>Naming Functions</h3>
+<ul class="simple">
+<li>Be clear â itâs fine to be long</li>
+<li>Good function names are âverbyâ<ul>
+<li><cite>calculateTax</cite> is much more clear than <cite>tax</cite></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="variables">
+<h3>Variables</h3>
+<p>How could you improve these names?</p>
+<div class="compare compare32 docutils container">
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">demo/bad-names.js</span></div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">evens</span><span class="p">(</span><span class="nx">arr</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">newArr</span> <span class="o">=</span> <span class="p">[];</span>
+
+  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">num</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">num</span> <span class="o">&lt;</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">num</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">arr</span><span class="p">[</span><span class="nx">num</span><span class="p">]</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">newArr</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">num</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="nx">newArr</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Whatâs in the array?</li>
+<li>Is <cite>num</cite> really the number?</li>
+<li>Easy to miss function goal</li>
+</ul>
+</div>
+</div>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">demo/good-names.js</span></div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">indexesOfEvens</span><span class="p">(</span><span class="nx">nums</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">indexes</span> <span class="o">=</span> <span class="p">[];</span>
+
+  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">nums</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">nums</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">indexes</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="nx">indexes</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Clear that <cite>i</cite> is the <em>index</em> of the number</li>
+<li>More clear what function goal is</li>
+</ul>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Good names should be clear, but not neccessarily long<ul>
+<li><cite>i</cite> is a fine name for âindex in a simple loopâ</li>
+</ul>
+</li>
+<li>Focus on the purpose of data, not structure<ul>
+<li><cite>nums</cite> or <cite>temperatures</cite> is much better than <cite>arr</cite></li>
+<li>Make plural things plural! (<cite>nums</cite> or <cite>num</cite>)</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="global-variables">
+<h3>Global Variables</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Variables used through program &amp; not specific to a function<ul>
+<li>Often not a great strategy, but sometimes the best strategy</li>
+<li>Is it better to pass it to the functions that need it?</li>
+</ul>
+</li>
+<li>Give them long &amp; descriptive names<ul>
+<li>Without context of being in function, harder to figure out what theyâre for</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="global-constants">
+<h3>Global Constants</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Variables that are used throughout program and donât change</li>
+<li>Declare as constant with JS <cite>const</cite></li>
+<li>Give them names like <cite>ALL_CAPS</cite> to help others understand their nature</li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">HEIGHT</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+<span class="kr">const</span> <span class="nx">WIDTH</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="comments">
+<h3>Comments</h3>
+<p>Some comments are pointless:</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">price</span> <span class="o">=</span> <span class="nx">price</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;</span>  <span class="c1">// double price</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>But some are extremely valuable:</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">price</span> <span class="o">=</span> <span class="nx">price</span> <span class="o">*</span> <span class="mf">1.25</span><span class="p">;</span>  <span class="c1">// add excise tax</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>Focus on <strong>why</strong> comments</p>
+</div>
+<ul class="simple">
+<li>Itâs rare you need to explain <em>what</em> a line of code does<ul>
+<li>If so, itâs probably too complex</li>
+<li>Consider breaking it into two or three lines</li>
+<li>Consider whether better variable names would help</li>
+</ul>
+</li>
+</ul>
+<div class="compare compare23 docutils container">
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="p">(</span><span class="nx">cust</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">18</span> <span class="o">&amp;&amp;</span>
+    <span class="nx">cust</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span>
+    <span class="nx">reduce</span><span class="p">((</span><span class="nx">n</span><span class="p">,</span> <span class="nx">acc</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">n</span> <span class="o">+</span> <span class="nx">acc</span><span class="p">,</span> <span class="nx">sals</span><span class="p">)</span>
+      <span class="o">&gt;</span> <span class="mi">10000</span><span class="p">)</span>     <span class="c1">// wtf?</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">votingAge</span> <span class="o">=</span> <span class="nx">cust</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">18</span><span class="p">;</span>
+<span class="kr">const</span> <span class="nx">numVotes</span> <span class="o">=</span> <span class="nx">cust</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nx">length</span><span class="p">;</span>
+<span class="kr">const</span> <span class="nx">sumSalary</span> <span class="o">=</span> <span class="nx">reduce</span><span class="p">((</span><span class="nx">n</span><span class="p">,</span> <span class="nx">acc</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">n</span> <span class="o">+</span> <span class="nx">acc</span><span class="p">,</span> <span class="nx">sals</span><span class="p">);</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nx">votingAge</span> <span class="o">&amp;&amp;</span>
+    <span class="nx">numVotes</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span>
+    <span class="nx">sumSalary</span> <span class="o">&gt;</span> <span class="mi">10000</span><span class="p">)</span>    <span class="c1">// ah!</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We expect you to demonstrate good commenting while here.</p>
+</div>
+<div class="section" id="commenting-out-code">
+<h3>Commenting Out Code</h3>
+<p>When commenting out code, always say why:</p>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="c1">// old formula (for ref)</span>
+<span class="c1">//</span>
+<span class="c1">// const salary = ...</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="c1">// not sure if needed; works without?</span>
+<span class="c1">//</span>
+<span class="c1">// if (nuclearReactor.temp &gt; 1000)</span>
+<span class="c1">//     alert(&quot;please flee&quot;);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<p>Youâll thank yourself later</p>
+</div>
+</div>
+</div>
+<div class="section" id="debugging">
+<h2>Debugging</h2>
+<div class="section" id="id2">
+<blockquote>
+<div><p>From then on, <span class="raw-reveal"><br></span> when anything went wrong with a computer, <span class="raw-reveal"><br></span> we said it had bugs in it.</p>
+<p class="attribution">&mdash;Rear Admiral Grace Hopper, 1945</p>
+</div></blockquote>
+<a class="noprint reference internal image-reference" href="_images/moth.jpg"><img alt="_images/moth.jpg" class="noprint" src="_images/moth.jpg" style="width: 30%;" /></a>
+<p>While the term âbugâ had been in use for several decades to refer to flaws
+in designs, it gained prominence after the first real bug was a 2-inch-
+long moth from the Harvard Mark I experimental computer at Harvard in
+August 1945.</p>
+</div>
+<div class="section" id="to-assume-makes-an">
+<h3>To Assume Makes an â¦</h3>
+<ul class="simple">
+<li>Part of debugging is clarifying assumptions â so you can challenge them</li>
+<li>Even <strong>preparing</strong> to explain problem can reveal the assumptions</li>
+</ul>
+<a class="reference internal image-reference" href="_images/duck.jpg"><img alt="_images/duck.jpg" src="_images/duck.jpg" style="width: 20%;" /></a>
+</div>
+<div class="section" id="bad-debugging-strategies">
+<h3>Bad Debugging Strategies</h3>
+<p>Please <strong>donât</strong> do these:</p>
+<ul class="simple">
+<li>Make changes based on guesses with no evidence</li>
+<li>Reread your code again and again</li>
+</ul>
+</div>
+<div class="section" id="learn-from-debugging">
+<h3>Learn From Debugging</h3>
+<blockquote>
+<div><p>As soon as we started programming, <span class="raw-reveal"><br></span>
+we found to our surprise that it wasnât <span class="raw-reveal"><br></span>
+as easy to get programs right as we had thought. <span class="raw-reveal"><br></span>
+Debugging had to be discovered.</p>
+<p>I can remember the exact instant <span class="raw-reveal"><br></span>
+when I realized that a large part of my life <span class="raw-reveal"><br></span>
+from then on was going to be spent <span class="raw-reveal"><br></span>
+in finding mistakes in my own programs.</p>
+<p class="attribution">&mdash;Maurice Wilkes, 1949</p>
+</div></blockquote>
+<p>Every debugging step should <strong>teach you something</strong></p>
+<p>Itâs helpful to think about what a step will teach you before you do it</p>
+</div>
+<div class="section" id="print-debugging">
+<h3>Print Debugging</h3>
+<blockquote>
+<div><p>The most effective debugging tool is still <span class="raw-reveal"><br></span>
+careful thought, coupled with <span class="raw-reveal"><br></span>
+judiciously placed print statements.</p>
+<p class="attribution">&mdash;Brian Kernighan, <em>Unix for Beginners</em> (1979)</p>
+</div></blockquote>
+<div class="docutils container">
+<ul class="simple">
+<li>Yes, itâs simple</li>
+<li>Yes, itâs usually the right thing to do</li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;checkForWinner&quot;</span><span class="p">,</span> <span class="nx">board</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>Also: keep your debugging statements!</p>
+</div>
+</div>
+</div>
+<div class="section" id="javascript-debugger">
+<h2>JavaScript Debugger</h2>
+<div class="section" id="id3">
+<ul class="simple">
+<li>Watch execution of code and examine at any point</li>
+<li>Built into Chrome (other browsers have similiar abilities)</li>
+<li>Can debug in-browser code <em>or</em> Node</li>
+</ul>
+</div>
+<div class="section" id="starting-debugger">
+<h3>Starting Debugger</h3>
+<p>View code or adding âbreakpointsâ:</p>
+<p><cite>View</cite> â <cite>Developer</cite> â <cite>Developer Tools</cite> â <cite>Sources</cite> tab</p>
+<p>Click left of line of code to add a blue breakpoint</p>
+<p>Can put breakpoint into code itself:</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">myFunction</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+  <span class="kr">debugger</span><span class="p">;</span>   <span class="c1">// &lt;-- will always stop here</span>
+
+  <span class="c1">// rest of code follows ...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="step-over">
+<h3>Step Over</h3>
+<a class="reference internal image-reference" href="_images/step-over-outline.svg"><img alt="_images/step-over-outline.svg" src="_images/step-over-outline.svg" width="60%" /></a>
+<p>Run current line, but donât debug into any function calls</p>
+</div>
+<div class="section" id="step-into">
+<h3>Step Into</h3>
+<a class="reference internal image-reference" href="_images/step-into-outline.svg"><img alt="_images/step-into-outline.svg" src="_images/step-into-outline.svg" width="60%" /></a>
+<p>Run current line, stepping into any function calls</p>
+</div>
+<div class="section" id="step-out">
+<h3>Step Out</h3>
+<a class="reference internal image-reference" href="_images/step-out-outline.svg"><img alt="_images/step-out-outline.svg" src="_images/step-out-outline.svg" width="60%" /></a>
+<p>Return from this function to caller</p>
+</div>
+<div class="section" id="call-stack">
+<h3>Call Stack</h3>
+<a class="reference internal image-reference" href="_images/call-stack.svg"><img alt="_images/call-stack.svg" src="_images/call-stack.svg" width="60%" /></a>
+<p>Shows <em>stack</em> of function calls that got you here</p>
+</div>
+<div class="section" id="scope">
+<h3>Scope</h3>
+<a class="reference internal image-reference" href="_images/scope.svg"><img alt="_images/scope.svg" src="_images/scope.svg" width="60%" /></a>
+<p>Shows current value of variables</p>
+<p>Can click to change value</p>
+</div>
+</div>
+<div class="section" id="tips-to-avoid-bugs">
+<h2>Tips To Avoid Bugs</h2>
+<div class="section" id="plan-first">
+<h3>Plan First</h3>
+<blockquote>
+<div><p>Software and cathedrals are much the same â <span class="raw-reveal"><br></span>
+first we build them, then we pray.</p>
+<p class="attribution">&mdash;Sam Redwine, 1988</p>
+</div></blockquote>
+</div>
+<div class="section" id="keep-it-simple">
+<h3>Keep It Simple</h3>
+<blockquote>
+<div><p>Everyone knows that debugging is twice as hard <span class="raw-reveal"><br></span>
+as writing a program in the first place.</p>
+<p>If youâre as clever as you can be when you write it, <span class="raw-reveal"><br></span>
+how will you ever debug it?</p>
+<p class="attribution">&mdash;Brian Kernighan, <em>The Elements of Programming Style</em></p>
+</div></blockquote>
+<p>(Thatâs a particularly excellent intermediate book, by the way)</p>
+</div>
+<div class="section" id="common-javascript-bugs">
+<h3>Common JavaScript Bugs</h3>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>==</cite> is very loose about comparisons (<cite>===</cite> isnât)<ul>
+<li><code class="docutils literal notranslate"><span class="pre">7</span> <span class="pre">==</span> <span class="pre">&quot;7&quot;</span></code></li>
+</ul>
+</li>
+<li>Objects &amp; arrays are not equal to similar objects &amp; arrays<ul>
+<li><code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">2,</span> <span class="pre">3]</span> <span class="pre">!==</span> <span class="pre">[1,</span> <span class="pre">2,</span> <span class="pre">3]</span></code></li>
+</ul>
+</li>
+<li>Calling function with missing arguments makes them <cite>undefined</cite></li>
+<li>Calling function with extra arguments is ignored</li>
+<li>Getting a missing property from object/index from array is <cite>undefined</cite></li>
+</ul>
+</div>
+</div>
+<div class="section" id="good-news">
+<h3>Good News</h3>
+<blockquote>
+<div><p>If debugging is the process of removing bugs, <span class="raw-reveal"><br></span>
+then programming must be <span class="raw-reveal"><br></span>
+the process of putting them in.</p>
+<p class="attribution">&mdash;Edsger W. Dijkstra</p>
+</div></blockquote>
+<div class="docutils container">
+<ul class="simple">
+<li>Bugs are an opportunity to improve debugging skills &amp; to learn something</li>
+<li>You will have lots of chances to practice this valuable skill!</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="testing">
+<h2>Testing</h2>
+<div class="section" id="why-test">
+<h3>Why Test?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Testing software is boring<ul>
+<li>So we tend to not re-run things that âworkâ</li>
+<li>And therefore donât notice when they break</li>
+</ul>
+</li>
+<li>Tests often clarify expectations of a function<ul>
+<li>What should legal input/output be?</li>
+</ul>
+</li>
+<li>Tests are often a great way to understand what code does</li>
+<li>Itâs a core skill for professional devs</li>
+</ul>
+</div>
+</div>
+<div class="section" id="jasmine">
+<h3>Jasmine</h3>
+<div class="docutils container">
+<ul class="simple">
+<li><em>Jasmine</em> is a popular JavaScript testing framework</li>
+<li>Weâll use Jasmine for testing until we get to Python</li>
+<li>Weâll see another framework, <em>Jest</em>, with Node and React</li>
+</ul>
+</div>
+</div>
+<div class="section" id="running-tests-in-the-browser-with-jasmine">
+<h3>Running Tests in the Browser with Jasmine</h3>
+<div class="size75 highlight-html notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;!doctype html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Taxes Tests<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+
+<span class="hll"><span class="c">&lt;!-- include CSS for Jasmine --&gt;</span>
+</span><span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&quot;stylesheet&quot;</span>
+   <span class="na">href</span><span class="o">=</span><span class="s">&quot;https://unpkg.com/jasmine-core/lib/jasmine-core/jasmine.css&quot;</span> <span class="p">/&gt;</span>
+
+<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+
+<span class="hll"><span class="c">&lt;!-- include JS for Jasmine --&gt;</span>  
+</span><span class="p">&lt;</span><span class="nt">script</span> 
+  <span class="na">src</span><span class="o">=</span><span class="s">&quot;https://unpkg.com/jasmine-core/lib/jasmine-core/jasmine.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> 
+  <span class="na">src</span><span class="o">=</span><span class="s">&quot;https://unpkg.com/jasmine-core/lib/jasmine-core/jasmine-html.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> 
+  <span class="na">src</span><span class="o">=</span> <span class="s">&quot;https://unpkg.com/jasmine-core/lib/jasmine-core/boot.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+
+<span class="hll"><span class="c">&lt;!-- include your JS &amp; test file --&gt;</span>
+</span><span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;taxes.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span> 
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;taxes.test.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>Then open this HTML page in browser</p>
+</div>
+<div class="section" id="writing-tests">
+<h3>Writing Tests</h3>
+<p>Write your functions that will be tested:</p>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">demo/taxes.js</span></div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">calculateTaxes</span><span class="p">(</span><span class="nx">income</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">income</span> <span class="o">&gt;</span> <span class="mi">30000</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">income</span> <span class="o">*</span> <span class="mf">1.25</span><span class="p">;</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">income</span> <span class="o">*</span> <span class="mf">1.15</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">calculateTaxes</span><span class="p">(</span><span class="mi">500</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<p>Write a test file:</p>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">demo/taxes.test.js</span></div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should calculate lower-bracket taxes&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">calculateTaxes</span><span class="p">(</span><span class="mi">10000</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">11500</span><span class="p">);</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">calculateTaxes</span><span class="p">(</span><span class="mi">20000</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">23000</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should calculate higher-bracket taxes&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">calculateTaxes</span><span class="p">(</span><span class="mi">50000</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">62500</span><span class="p">);</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">calculateTaxes</span><span class="p">(</span><span class="mi">80000</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">100000</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>Letâs break that down</p>
+</div>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">demo/taxes.test.js</span></div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="hll"><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should calculate lower-bracket taxes&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span>  <span class="nx">expect</span><span class="p">(</span><span class="nx">calculateTaxes</span><span class="p">(</span><span class="mi">10000</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">11500</span><span class="p">);</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">calculateTaxes</span><span class="p">(</span><span class="mi">20000</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">23000</span><span class="p">);</span>
+<span class="hll"><span class="p">});</span>
+</span>
+<span class="hll"><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should calculate higher-bracket taxes&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span>  <span class="nx">expect</span><span class="p">(</span><span class="nx">calculateTaxes</span><span class="p">(</span><span class="mi">50000</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">62500</span><span class="p">);</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">calculateTaxes</span><span class="p">(</span><span class="mi">80000</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">100000</span><span class="p">);</span>
+<span class="hll"><span class="p">});</span>
+</span></pre></div>
+</div>
+</div>
+<ul class="simple">
+<li><em>Test cases</em> are functions passed to <code class="docutils literal notranslate"><span class="pre">it(...)</span></code></li>
+<li>First argument become test case name (shown by Jasmine)</li>
+</ul>
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">demo/taxes.test.js</span></div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should calculate lower-bracket taxes&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<span class="hll">  <span class="nx">expect</span><span class="p">(</span><span class="nx">calculateTaxes</span><span class="p">(</span><span class="mi">10000</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">11500</span><span class="p">);</span>
+</span><span class="hll">  <span class="nx">expect</span><span class="p">(</span><span class="nx">calculateTaxes</span><span class="p">(</span><span class="mi">20000</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">23000</span><span class="p">);</span>
+</span><span class="p">});</span>
+
+<span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should calculate higher-bracket taxes&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<span class="hll">  <span class="nx">expect</span><span class="p">(</span><span class="nx">calculateTaxes</span><span class="p">(</span><span class="mi">50000</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">62500</span><span class="p">);</span>
+</span><span class="hll">  <span class="nx">expect</span><span class="p">(</span><span class="nx">calculateTaxes</span><span class="p">(</span><span class="mi">80000</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">100000</span><span class="p">);</span>
+</span><span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<ul class="simple">
+<li>Test cases can contain any normal code plus âexpectationsâ</li>
+<li>Format is <code class="docutils literal notranslate"><span class="pre">expect(someValue).someMatcher(...)</span></code></li>
+</ul>
+</div>
+<div class="section" id="matchers">
+<h3>Matchers</h3>
+<dl class="docutils">
+<dt><code class="docutils literal notranslate"><span class="pre">.toEqual(obj)</span></code></dt>
+<dd>Has the same value (eg, different lists with same values match)</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">.toBe(obj)</span></code></dt>
+<dd>Is the same object (eg, different lists with same items donât)</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">.toContain(obj)</span></code></dt>
+<dd>Does object/array contain this item?</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">.not.</span></code></dt>
+<dd>Add before matcher to invert (eg <code class="docutils literal notranslate"><span class="pre">expect(...).not.toEqual(7)</span></code>)</dd>
+</dl>
+<p><a class="reference external" href="https://jasmine.github.io/api/edge/matchers.html">https://jasmine.github.io/api/edge/matchers.html</a></p>
+</div>
+<div class="section" id="what-to-test">
+<h3>What To Test</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Test every function in at least one way</li>
+<li>Think about âedgesâ<ul>
+<li>What if the list were empty?</li>
+<li>What about non-integer numbers?</li>
+<li>What if the file canât be found?</li>
+<li>Is the first case/last case handled differently?</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="testable-code">
+<h3>Testable Code</h3>
+<p>Write code that is easier to test!</p>
+<ul class="simple">
+<li>More functions &amp; smaller functions: easier to test (&amp; debug!)</li>
+<li>Donât mix logic &amp; UI in a function</li>
+</ul>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">playTicTacToe</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// ...</span>
+  <span class="kd">let</span> <span class="nx">winner</span> <span class="o">=</span> <span class="nx">checkForWinner</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">checkForWinner</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// code for checking board here...</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">winner</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">alert</span><span class="p">(</span><span class="nx">winner</span> <span class="o">+</span> <span class="s2">&quot; wins!&quot;</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">winner</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">playTicTacToe</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// ...</span>
+  <span class="kd">let</span> <span class="nx">winner</span> <span class="o">=</span> <span class="nx">checkForWinner</span><span class="p">();</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">winner</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">announceWinner</span><span class="p">(</span><span class="nx">winner</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">checkForWinner</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// code for checking board here...</span>
+  <span class="k">return</span> <span class="nx">winner</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">announceWinner</span><span class="p">(</span><span class="nx">winner</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">alert</span><span class="p">(</span><span class="nx">winner</span> <span class="o">+</span> <span class="s2">&quot; wins!&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="looking-ahead">
+<h3>Looking Ahead</h3>
+<ul class="simple">
+<li>Testing web applications (in both Python &amp; Node)</li>
+<li>âTest-Driven Developmentâ</li>
+<li>Testing front-end components</li>
+</ul>
+</div>
+</div>
+<div class="section" id="lab-exercise">
+<h2>Lab Exercise</h2>
+<div class="section" id="id4">
+<p>Yay! Our first lab exercise!</p>
+<div class="compare compare23 docutils container">
+<div class="docutils container">
+<a class="reference internal image-reference" href="_images/exercise.png"><img alt="_images/exercise.png" src="_images/exercise.png" style="width: 10em;" /></a>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Work on one laptop (connect to monitor)</li>
+<li>Download starter code</li>
+<li>Decide who will start as driver/navigator</li>
+<li>Read, plan, draw, â¦ <em>then</em> type!</li>
+<li>Ask questions &amp; ask for code reviews!</li>
+<li>Donât worry about Git â¦ for now</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

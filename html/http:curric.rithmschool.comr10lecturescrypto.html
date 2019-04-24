@@ -1,0 +1,849 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Cryptography and Keys</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Cryptography and Keys</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Cryptography and Keys</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a></li>
+<li><a class="reference internal" href="#agenda">Agenda</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#encryption">Encryption</a><ul>
+<li><a class="reference internal" href="#id1">Introduction</a></li>
+<li><a class="reference internal" href="#caesar-cipher">Caesar Cipher</a></li>
+<li><a class="reference internal" href="#caesar-cipher-with-key">Caesar Cipher With Key</a></li>
+<li><a class="reference internal" href="#simple-substitution">Simple Substitution</a></li>
+<li><a class="reference internal" href="#vigenere-cipher">VigenÃ¨re Cipher</a></li>
+<li><a class="reference internal" href="#digital-algorithms">Digital Algorithms</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#perfect-encryption-randomness">Perfect Encryption &amp; Randomness</a><ul>
+<li><a class="reference internal" href="#one-time-pads">One Time Pads</a></li>
+<li><a class="reference internal" href="#random-numbers">Random Numbers</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#key-exchange">Key Exchange</a><ul>
+<li><a class="reference internal" href="#problems-of-key-exchange">Problems of Key Exchange</a></li>
+<li><a class="reference internal" href="#trapdoor-functions">Trapdoor Functions</a></li>
+<li><a class="reference internal" href="#key-exchange-with-trapdoor-function">Key Exchange With Trapdoor Function</a></li>
+<li><a class="reference internal" href="#math-trapdoor-functions">Math Trapdoor Functions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#public-key-encryption">Public Key Encryption</a><ul>
+<li><a class="reference internal" href="#id2">Public Key Encryption</a></li>
+<li><a class="reference internal" href="#sending-secret-message">Sending Secret Message</a></li>
+<li><a class="reference internal" href="#how-this-works">How This Works</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#basic-protocols">Basic Protocols</a><ul>
+<li><a class="reference internal" href="#combining-methods">Combining Methods</a></li>
+<li><a class="reference internal" href="#digital-signature">Digital Signature</a></li>
+<li><a class="reference internal" href="#hashes">Hashes</a></li>
+<li><a class="reference internal" href="#hashes-for-signatures">Hashes for Signatures</a></li>
+<li><a class="reference internal" href="#signal-analysis">Signal Analysis</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#https">HTTPS</a><ul>
+<li><a class="reference internal" href="#id3">HTTPS</a></li>
+<li><a class="reference internal" href="#https-protocol">HTTPS Protocol</a></li>
+<li><a class="reference internal" href="#your-app">Your App</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ssh">SSH</a><ul>
+<li><a class="reference internal" href="#id4">SSH</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#looking-ahead">Looking Ahead</a><ul>
+<li><a class="reference internal" href="#learning-more">Learning More</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="cryptography-and-keys">
+<h1>Cryptography and Keys</h1>
+<div class="section" id="introduction">
+<h2>Introduction</h2>
+<div class="section" id="goals">
+<h3>Goals</h3>
+<p>Learn fundamentals of cryptography useful for software developers.</p>
+<p>See how cryptography is used in HTTPS and OAuth.</p>
+</div>
+<div class="section" id="agenda">
+<h3>Agenda</h3>
+<ul class="simple">
+<li>Overview of cryptography</li>
+<li>Public key encryption</li>
+<li>Digital signatures</li>
+<li>HTTPS</li>
+</ul>
+<p>This aims to be a gentle introduction to cryptography, starting
+with some classic symmetric encryption schemes, followed by
+an introduction to modern symmetric schemes, and an introduction
+to asymmetric cryptography. It covers how public-key encryption is
+build using asymmetric cryptography, and provides a light introduction
+to how this is used in things like HTTPS and OAuth v1.</p>
+<p>While the <em>details</em> of cryptographic algorithms often involve difficult
+math, very few software developers learn about (or need to know about)
+these parts; this is generally specialized knowledge for cryptographers.
+Instead, most developers learn about âprotocolsâ, the way that
+the algorithms are used to solve real-world problems, like
+sending secret messages, signing messages, generating digital cash,
+providing anonymous-but-verifiable voting, and so on.</p>
+</div>
+</div>
+<div class="section" id="encryption">
+<h2>Encryption</h2>
+<div class="section" id="id1">
+<h3>Introduction</h3>
+<a class="noprint reference internal image-reference" href="_images/whiskey.jpg"><img alt="_images/whiskey.jpg" class="noprint" src="_images/whiskey.jpg" style="width: 5em;" /></a>
+<p>Oh, no! Whiskey was kidnapped by our arch-enemies at <span class="raw-reveal"><br></span>
+Rockstar Ninja Bitcoin Brogrammer Academy! Is she safe?</p>
+<p>She wants to send us a message that others cannot read!</p>
+<div class="docutils container">
+<p><span class="blue">plaintext</span> is the original message.</p>
+<p><span class="red">ciphertext</span> is the enciphered message.</p>
+</div>
+<div class="admonition note">
+<p>Common Characters</p>
+<p>To make them easier to follow, most cryptographic protocols use the
+same cast of example characters. Some of these are:</p>
+<ul class="last simple">
+<li><strong>Alice</strong>, <strong>Bob</strong>, <strong>Carol</strong>, and <strong>Dave</strong>: the main actors, who
+want to send messages, vote, exchange cash, etc.</li>
+<li><strong>Eve</strong>, who is evil and tries to steal messages.</li>
+<li><strong>Mallory</strong>, who is malicious, and may disrupt messages, even if
+he isnât trying to steal secrets. Mallory often plays a role known
+as the âman in the middleâ.</li>
+<li><strong>Trent</strong>, who is a trusted authority and often provides neutral
+information, like timestamps.</li>
+<li><strong>Walter</strong>, who is a warden and can hold on to information securely.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="caesar-cipher">
+<h3>Caesar Cipher</h3>
+<p>This is one of the earlier ciphers known to have been used, by
+Julius Caesar, for military messages.</p>
+<p>Shift each letter by 3, Z wrapping back to A.</p>
+<p>So, for example, if you shift <cite>A</cite> by 2, it becomes <cite>C</cite>. If you
+shift <cite>Y</cite> by 2, it becomes <cite>A</cite>.</p>
+<div class="compare docutils container">
+<div class="docutils container">
+<p>Shifting by 3:</p>
+<pre class="literal-block">
+<span class="blue">WHISKEYISSAFE</span> + <cite>3</cite> â
+<span class="red">ZKLVMGBLVVDIH</span>
+</pre>
+</div>
+<div class="docutils container">
+<p>To decode, just shift by -3:</p>
+<pre class="literal-block">
+<span class="red">ZKLVMGBLVVDIH</span> <cite>-3</cite> â
+<span class="blue">WHISKEYISSAFE</span>
+</pre>
+</div>
+</div>
+<div class="docutils container">
+<p>Trivial to break â you just have to know how it works</p>
+</div>
+<p>The encryption is always the same (by 3).</p>
+<p>Better if we introduced a <span class="orange">key</span> â <span class="raw-reveal"><br></span>
+We can change the key to change the code.</p>
+<p>Then we have some protection if someone learns our algorithm.</p>
+<div class="docutils container">
+<blockquote class="epigraph">
+<div><p>A cryptosystem should be secure <span class="raw-reveal"><br></span>
+even if everything about the system, <span class="raw-reveal"><br></span>
+except the key, is public knowledge.</p>
+<p class="attribution">&mdash;Dutch cryptographer <a class="reference external" href="https://en.wikipedia.org/wiki/Kerckhoffs's_principle">Auguste Kerckhoffs</a></p>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="caesar-cipher-with-key">
+<h3>Caesar Cipher With Key</h3>
+<p>Now with a variable <span class="orange">key</span>:</p>
+<div class="compare docutils container">
+<div class="docutils container">
+<p>For example, shifting by key = <span class="orange">4</span>:</p>
+<pre class="literal-block">
+<span class="blue">WHISKEYISSAFE</span> + <span class="orange">4</span> â
+<span class="red">ALMWOICMWWEJI</span>
+</pre>
+</div>
+<div class="docutils container">
+<p>To decode, just shift by <span class="orange">-4</span>:</p>
+<pre class="literal-block">
+<span class="red">ALMWOICMWWEJI</span> <span class="orange">-4</span> â
+<span class="blue">WHISKEYISSAFE</span>
+</pre>
+</div>
+</div>
+<div class="docutils container">
+<p>Only 25 possible keys â so trivial to break with brute force!</p>
+</div>
+<p>An important feature of cryptography is the âkey lengthâ â
+how many different keys might you have to try to guess the key
+by brute force. With only 25 possibilities, this has very
+short key length â and so itâs entirely feasible to break it
+by just trying every key.</p>
+</div>
+<div class="section" id="simple-substitution">
+<h3>Simple Substitution</h3>
+<p>This is a âmonoalphabetic substitution cipherâ â each letter of the
+alphabet is replaced by another single, constant letter of the alphabet.</p>
+<p>Make a key of the alphabet, rearranged:</p>
+<pre class="literal-block">
+      <strong>abcdefghijklmnopqrstuvwxyz</strong>
+key = <span class="orange">YXALGPTSMICBDEHKZWOFJNRQUV</span>
+</pre>
+<div class="compare docutils container">
+<div class="docutils container">
+<p>Then, change each letter to key letter:</p>
+<pre class="literal-block">
+<span class="blue">WHISKEYISSAFE</span> + <span class="orange">key</span> â
+<span class="red">RSMOCGUMOOYPG</span>
+</pre>
+</div>
+<div class="docutils container">
+<p>To decode, reverse process:</p>
+<pre class="literal-block">
+<span class="red">RSMOCGUMOOYPG</span> + <span class="orange">key</span> â
+<span class="blue">WHISKEYISSAFE</span>
+</pre>
+</div>
+</div>
+<p>Can we solve this with brute force?</p>
+<div class="docutils container">
+<p>4,032,914,611,266,056,355,840,000,000 possibilities</p>
+</div>
+<div class="docutils container">
+<p>If using lowercase/uppercase/digits/common punctuation, there are</p>
+</div>
+<div class="docutils container">
+<p>1,485,715,964,481,761,497,309,522,733,620,825,737,885,569,961, <span class="raw-reveal"><br></span>
+284,688,766,942,216,863,704,985,393,094,065,876,545,992,131,370, <span class="raw-reveal"><br></span>
+884,059,645,617,234,469,978,112,000,000,000,000,000,000,000 <span class="raw-reveal"><br></span></p>
+<p>possibilities!</p>
+</div>
+<div class="docutils container">
+<p>But there are many <em>heuristics</em>.</p>
+</div>
+<p>While itâs impractical to solve this by trying all the combinations,
+these can be easily solved with âfrequency analysisâ, by looking at
+which ciphertext letters are most common, and matching those to the most common letters
+in the plaintext language. Also, you can look for common words, bigraphs, trigraphs, etc.</p>
+<p>This is a good example of how many cryptographic algorithms may be much easier to
+break than their key length suggests: we have a huge key length here, but can typically
+solve these very easily without trying anywhere number every possible key.</p>
+</div>
+<div class="section" id="vigenere-cipher">
+<h3>VigenÃ¨re Cipher</h3>
+<p>(Pronounced similar to âVAHN-yareâ)</p>
+<p>Shift plaintext by each letter in key, rotating through key.</p>
+<div class="compare docutils container">
+<div class="docutils container">
+<p>To encode, using key of <span class="orange">ACE</span>:</p>
+<pre class="literal-block">
+<span class="blue">WHISKEYSISAFE</span> +
+<span class="orange">ACEACEACEACEA (repeat key)</span> =
+<span class="red">XKNTNJZLXTDKF</span>
+</pre>
+</div>
+<div class="docutils container">
+<p>To decrypt, reverse process:</p>
+<pre class="literal-block">
+<span class="red">XKNTNJZLXTDKF</span> -
+<span class="orange">ACEACEACEACEA (repeat key)</span> =
+<span class="blue">WHISKEYISSAFE</span>
+</pre>
+</div>
+</div>
+<div class="docutils container">
+<p>For a 20 character key: 19,928,148,895,209,409,152,340,197,376 possibilities!</p>
+<p>Called <em>le chiffre indÃ©chiffrable</em> â but, before 20th
+century, easily broken.</p>
+</div>
+<p>This cipher has lots of fun history behind it. It was originally
+described by Giovan Battista Bellaso in 1553 but was mis-attributed
+to Blaise de VigenÃ¨re in 1586 (he was actually writing about a much
+better cipher, though harder to implement).</p>
+<p>As late as 1917, it was considered impossible to break by many, but
+Charles Babbage (one of the inventors of the computer and mentor to
+Ada Lovelace) found a solution in the 1850s. His solution was
+censored by the British government, though, as they were currently
+using his process of how to break the cipher to decipher messages
+in the Crimean War, and didnât want the fact known. This tension of
+âWhat is known about cryptography publicly versus what is known inside
+of military/intelligence communities is a common story).</p>
+<p>It was still heavily used by the Confederate
+Army, but the Union secretly routinely deciphered their messages.</p>
+<p>A good, Python-oriented overview of the cipher is at
+<a class="reference external" href="https://inventwithpython.com/hacking/chapter19.html">https://inventwithpython.com/hacking/chapter19.html</a>.</p>
+<p>To decrypt a message, you can perform frequency analysis of it,
+but this depends on knowing the key length. A clever method called
+<a class="reference external" href="https://en.wikipedia.org/wiki/Kasiski_examination">Kasiski Examination</a>
+can be used to determine that.</p>
+<p>Thereâs a Python-based
+<a class="reference external" href="https://inventwithpython.com/hacking/chapter21.html">cracker for this cipher</a>.</p>
+</div>
+<div class="section" id="digital-algorithms">
+<h3>Digital Algorithms</h3>
+<p>Modern digital algorithms are similar in idea, but rely on complex
+math transformations.</p>
+<ul class="simple">
+<li>Encrypt bits, not letters</li>
+<li>Use more complex math transformations<ul>
+<li>But principles are the same as classic cryptography</li>
+<li>Key length typically expresed in bits<ul>
+<li>20-bit key length means 2<sup>20</sup> possible keys</li>
+<li>Each new bit makes brute force attack twice as hard</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>Important digital encryption algorithms:</p>
+<div class="docutils container">
+<dl class="docutils">
+<dt>DES</dt>
+<dd>âData Encryption Standardâ. From the 1970s. Uses a 56-bit key;
+no longer safe from well-funded cryptanalysis.</dd>
+<dt>Triple-DES</dt>
+<dd>DES three times in a row. Provides ~118-bit key length.
+Slow but secure.</dd>
+<dt>AES</dt>
+<dd>âAmerican Encryption Standardâ. Available in three key lengths
+(128-, 192-, 256-bit). Extremely secure.</dd>
+</dl>
+</div>
+<div class="docutils container">
+<p>Python library <cite>PyCrypto</cite> provides many, along with a random number generator.</p>
+</div>
+</div>
+</div>
+<div class="section" id="perfect-encryption-randomness">
+<h2>Perfect Encryption &amp; Randomness</h2>
+<div class="section" id="one-time-pads">
+<h3>One Time Pads</h3>
+<p>Choose a <strong>random</strong> key at least the length of the plaintext:</p>
+<pre class="literal-block">
+key = <span class="orange">FJIMTVESWDFFN</span>
+</pre>
+<div class="compare docutils container">
+<div class="docutils container">
+<p>Perform a VigenÃ¨re cipher on it:</p>
+<pre class="literal-block">
+<span class="blue">WHISKEYISSAFE</span> +
+<span class="orange">FJIMTVESWDFFN</span> â
+<span class="red">CJTXHJRAYRWSV</span>
+</pre>
+</div>
+<div class="docutils container">
+<p>Reverse as usual:</p>
+<pre class="literal-block">
+<span class="red">CJTXHJRAYRWSV</span> -
+<span class="orange">FJIMTVESWDFFN</span> â
+<span class="blue">WHISKEYISSAFE</span>
+</pre>
+</div>
+</div>
+<div class="docutils container">
+<p>If key is longer than plaintext and is truly random, is 100% unbreakable.</p>
+</div>
+<p>One time pads are great, but they cannot be re-used â if you encipher
+multiple messages with the same one-time pad, they can be decrypted.
+In addition, you need a large source of randomness, which was difficult and
+time-consuming to obtain until recently.</p>
+</div>
+<div class="section" id="random-numbers">
+<h3>Random Numbers</h3>
+<p>True randomness is hard!</p>
+<p>Libraries like Pythonâs <cite>random</cite> are âpseudo-random number generatorsâ.</p>
+<p>To get lots of fast random data, you need a hardware solution.</p>
+<a class="noprint reference internal image-reference" href="_images/bingo.jpg"><img alt="_images/bingo.jpg" class="noprint" src="_images/bingo.jpg" style="width: 17em;" /></a>
+<p>Prior to modern computers, this was done manually. During World War II,
+hundreds of volunteers worked throughout the war with bingo cage tumblers,
+generated one random number after another and recording them on sheets,
+to be used as one-time pads.</p>
+</div>
+</div>
+<div class="section" id="key-exchange">
+<h2>Key Exchange</h2>
+<div class="section" id="problems-of-key-exchange">
+<h3>Problems of Key Exchange</h3>
+<p>All algorithms so far are âsymmetricâ â same key to encrypt as decrypt.</p>
+<p>So both <em>Alice</em> and <em>Bob</em> have to know the key.</p>
+<p>And they need some secure way to get it to the other person.</p>
+<div class="docutils container">
+<p><strong>Secure key exchange is hard.</strong></p>
+</div>
+<p>During earlier times, key exchange might be done through diplomatic channels,
+secure courier, or other trusted means.</p>
+</div>
+<div class="section" id="trapdoor-functions">
+<h3>Trapdoor Functions</h3>
+<p>âOne-wayâ functions: longer to do in one direction than other</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Assembling jigsaw puzzle vs. disassembling</li>
+<li>Mixing paints vs. unmixing paints</li>
+</ul>
+</div>
+</div>
+<div class="section" id="key-exchange-with-trapdoor-function">
+<h3>Key Exchange With Trapdoor Function</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<a class="reference internal image-reference" href="_images/paints.png"><img alt="_images/paints.png" src="_images/paints.png" style="width: 11em;" /></a>
+</div>
+<div class="docutils container">
+<p>Alice and Bob can get a shared secret!</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Even if Eve is recording the conversation</li>
+<li>Even with the yellow, periwinkle, and orange,
+she canât make the final secret color</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="math-trapdoor-functions">
+<h3>Math Trapdoor Functions</h3>
+<p>Factoring âsemiprimesâ is harder than making them.</p>
+<div class="docutils container">
+<p><em>Example:</em> given the product of two primes, identify the primes.</p>
+<p>36,853 = ____ Ã ____ ?</p>
+</div>
+<div class="docutils container">
+<p>You can do it, but it takes much longer than multiplying them!</p>
+</div>
+<div class="docutils container">
+<p>When given numbers (269 &amp; 137), itâs easy to prove those are the real ones.</p>
+</div>
+<p>Even with these tiny numbers, it takes a modern computer over 1,000 times
+as long to find those prime numbers from 36,853 as it takes to multiply them
+to produce that number. In real life, the prime numbers used are typically
+dozens of digits long, and the difference in speed is in the quadrillions
+or more â making it very, very impractical to calculate, even with
+significant computing resources and lots of time.</p>
+<p>Cryptographers have figured out ways to have âsecure key exchangeâ;
+a common algorithm for this is <em>Diffie-Hellman Key Exchange</em>. For
+a walkthrough of this, see the provided IPython notebook
+<cite>demo/key-exchange.ipynb</cite>.</p>
+</div>
+</div>
+<div class="section" id="public-key-encryption">
+<h2>Public Key Encryption</h2>
+<p>Public Key encryption was discovered by numerous people â the first
+public disclosure was in the mid 1970s by a team of American and Israeli
+computer scientists, but since then, British Intelligence has revealed
+and proven that they had secretly made the same discovery years earlier.
+Whether other intelligence agencies made the discovery even earlier than
+that is not known.</p>
+<div class="section" id="id2">
+<p>Asymmetric encryption (different key to encrypt than decrypt)</p>
+<div class="docutils container">
+<ul class="simple">
+<li><span class="orange">public key</span> <em>(tell everyone)</em></li>
+<li><span class="orange">private key</span> <em>(only owner knows)</em></li>
+</ul>
+</div>
+<div class="docutils container">
+<p>Things encrypted with public key only decrypted with private key</p>
+<p>Things encrypted with private key only decrypted with public key</p>
+</div>
+</div>
+<div class="section" id="sending-secret-message">
+<h3>Sending Secret Message</h3>
+<p>You can send me a message without my private key.</p>
+<pre class="literal-block">
+public_key  = <span class="orange">UKNOW</span>
+private_key = <span class="orange">IKNOW</span>
+</pre>
+<p>For now, letâs assume these two words are magically related, so that
+things encrypted with <span class="orange">UKNOW</span> are decrypted with <span class="orange">IKNOW</span>,
+and vice-versa.</p>
+<div class="compare docutils container">
+<div class="docutils container">
+<p>You encrypt with public key:</p>
+<pre class="literal-block">
+<span class="blue">WHISKEYISSAFE</span> + <span class="orange">UKNOW</span> â
+<span class="red">AFDFBJDFBDGDF</span>
+</pre>
+</div>
+<div class="docutils container">
+<p>I decrypt with private key:</p>
+<pre class="literal-block">
+<span class="red">AFDFBJDFBDGDF</span> + <span class="orange">IKNOW</span> â
+<span class="blue">WHISKEYISSAFE</span>
+</pre>
+</div>
+</div>
+</div>
+<div class="section" id="how-this-works">
+<h3>How This Works</h3>
+<p>RSA algorithm (most common public key system):</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Three numbers are found, <cite>d</cite>, <cite>e</cite>, <cite>n</cite>, which have trapdoor relationships</li>
+<li>Private key = <cite>(d, n)</cite></li>
+<li>Public key = <cite>(e, n)</cite></li>
+<li>Itâs very hard to discover <cite>e</cite> from <cite>(d, n)</cite></li>
+<li>Itâs very hard to discover <cite>d</cite> from <cite>(e, n)</cite></li>
+</ul>
+</div>
+<p>âHave a relationshipâ is hard to describe non-mathematically, but
+you can read about the <a class="reference external" href="http://www.muppetlabs.com/~breadbox/txt/rsa.html">RSA Algorithm</a>.</p>
+<p>You can study the algorithm here â but it requires a good understanding
+of collegiate math. Rest assured that almost all software developers use
+RSA without understanding how the math works.</p>
+<p>If youâd like to see a simplified version of a public/private key
+system, see <cite>crypto-demo/kidrsa.py</cite>.</p>
+<p>A Python implementation of the full algorithm is in <cite>crypto-demo/rsa.py</cite>.</p>
+<p>Thereâs an IPython notebook to walk through the RSA algorithm in
+<cite>crypto-demo/rsa.ipynb</cite>.</p>
+</div>
+</div>
+<div class="section" id="basic-protocols">
+<h2>Basic Protocols</h2>
+<div class="section" id="combining-methods">
+<h3>Combining Methods</h3>
+<ul class="simple">
+<li>Asymmetric encryption is slow (~1,000Ã slower!)</li>
+<li>Often, you use symmetric and asymmetric together</li>
+</ul>
+<p>First, make a random âsession keyâ (example: <span class="orange">XZJ</span>)</p>
+<div class="compare docutils container">
+<div class="docutils container">
+<p>Use this to encipher <span class="raw-reveal"><br></span> with symmetric algorithm:</p>
+<pre class="literal-block">
+<span class="blue">WHISKEYISSAFE</span> + <span class="orange">XZJ</span> â
+<span class="red">GJTXHJRAYRWSV</span>
+</pre>
+<p>Encrypt session key with public key:</p>
+<pre class="literal-block">
+<span class="blue">XZJ</span> + <span class="orange">UKNOW</span> â
+<span class="red">FDFDFE</span>
+</pre>
+<p>Send both ciphertext <span class="raw-reveal"><br></span> and encoded session key.</p>
+</div>
+<div class="docutils container">
+<p>Recover the session key <span class="raw-reveal"><br></span> using private key:</p>
+<pre class="literal-block">
+<span class="blue">FDFDFE</span> - <span class="orange">IKNOW</span> â
+<span class="red">XZJ</span>
+</pre>
+<p>Decrypt message with session key:</p>
+<pre class="literal-block">
+<span class="red">GJTXHJRAYRWSV</span> - <span class="orange">XZJ</span> â
+<span class="blue">WHISKEYISSAFE</span>
+</pre>
+<p>The key never traveled in the clear!</p>
+</div>
+</div>
+</div>
+<div class="section" id="digital-signature">
+<h3>Digital Signature</h3>
+<p>Only the <span class="orange">private key</span> enciphers things decipherable with <span class="orange">public key</span>.</p>
+<p>Can use this to prove I wrote a message.</p>
+<p>This is useful for ânon-repudiationâ, the ability to have communication
+where one party canât claim they didnât actually write a message believed
+to come from them. For example, in banking, if a client withdraws cash,
+the bank wants to find ways to prove the client made the request, so that the
+client canât turn around and say that they never got the money, and that
+someone else made the request.</p>
+<pre class="literal-block">
+public_key  = <span class="orange">UKNOW</span>
+private_key = <span class="orange">IKNOW</span>
+</pre>
+<div class="compare docutils container">
+<div class="docutils container">
+<p>I encrypt with private key:</p>
+<pre class="literal-block">
+<span class="blue">WHISKEYISSAFE</span> + <span class="orange">IKNOW</span> â
+<span class="red">BGFDVSFREGDGT</span>
+</pre>
+<p>Send both <span class="blue">plaintext</span> and <span class="red">signature</span></p>
+</div>
+<div class="docutils container">
+<p>Decrypt signature, confirm match:</p>
+<pre class="literal-block">
+<span class="red">BGFDVSFREGDGT</span> + <span class="orange">UKNOW</span> â
+<span class="blue">WHISKEYISSAFE</span>
+</pre>
+<p>Matches <span class="blue">plaintext</span>, authentic!</p>
+</div>
+</div>
+</div>
+<div class="section" id="hashes">
+<h3>Hashes</h3>
+<div class="docutils container">
+<p>Imagine the first sentence of a novel:</p>
+<blockquote>
+<div>âIt was a queer, sultry summer, <span class="raw-reveal"><br></span>
+the summer they electrocuted the Rosenbergs, <span class="raw-reveal"><br></span>
+and I didnât know what I was doing in New York.â</div></blockquote>
+</div>
+<p>(Sylvia Plath, <em>The Bell Jar</em>)</p>
+<p>From this, we could get a âhashâ:</p>
+<div class="docutils container">
+<div class="big highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">hash</span> <span class="o">=</span> <span class="s2">&quot;iwaqsststetraidkwiwdiny&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p><strong>Hash</strong>: stable âone-wayâ conversion of data to fixed-size result.</p>
+</div>
+<p>Can use hashes to ensure file hasnât changed/been corrupted:</p>
+<pre class="console literal-block">
+$ <span class="cmd">shasum -a 256 my-file.txt</span>     <span class="gray"># use &quot;SHA256&quot; hash</span>
+c70ef758da7167bdf1a2be7c4db14beab593eccb4f21042d9e1a663fdd23c641
+</pre>
+<div class="docutils container">
+<p>Thereâs no way to turn that number back into full file â¦</p>
+</div>
+<div class="docutils container">
+<p>â¦ but any change to the file will result in a different hash.</p>
+</div>
+<div class="docutils container">
+<p>In Python:</p>
+<pre class="console literal-block">
+&gt;&gt;&gt; <span class="cmd">import hashlib</span>
+&gt;&gt;&gt; <span class="cmd">contents = open(&quot;my-file.txt&quot;).read()</span>
+&gt;&gt;&gt; <span class="cmd">hash = hashlib.sha256(contents)</span>
+&gt;&gt;&gt; <span class="cmd">hash.hexdigest()</span>
+'c70ef758da7167bdf1a2be7c4db14beab593eccb4f21042d9e1a663fdd23c641'
+</pre>
+</div>
+<p>Python has a built-in hash function, <cite>hash</cite>, but this is not cryptographically
+secure and should not be used for this sort of thing.</p>
+<p>Pythonâs hash is not cryptographically secure because itâs not sufficiently difficult
+to predict another input phrase that would lead to the same hash; a
+cryptographically secure hash algorithm makes that very, very difficult to do.</p>
+<p>(For those whoâd like more detail: Pythonâs built-in hash is designed for use with
+hash tables, the underlying data structure Python uses to built dictionaries. Itâs
+important that this hash be super-fast. It also isnât âstableâ â the hash value
+it creates can be different on different computers. This makes it great for hash
+tables but not good for general-purpose or cryptographic hashes).</p>
+</div>
+<div class="section" id="hashes-for-signatures">
+<h3>Hashes for Signatures</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Remember, âsigningâ sends both plaintext + signature<ul>
+<li>You authenticate signature by making sure they match</li>
+</ul>
+</li>
+<li>That means sending a message at least 2x as plaintext<ul>
+<li>And public-key encryption is slow</li>
+</ul>
+</li>
+<li>Instead:<ul>
+<li>Make hash of message</li>
+<li>Digitally sign hash</li>
+<li>Send original message + signed hash</li>
+</ul>
+</li>
+</ul>
+<p>So, for example, letâs say we had a hash algorithm of âtake every 3rd letterâ
+(this is a terrible algorithm, but easy to understand for our example).</p>
+<p>Our message of <span class="blue">WHISKEYISSAFE</span> would hash into <cite>WSYSE</cite>. This
+would be encrypted with the private key â becoming, say, <span class="red">GHOEQ</span>.
+Both the real message and the signature are sent together:</p>
+<pre class="literal-block">
+<span class="blue">WHISKEYISSAFE</span>/<span class="red">GHOEQ</span>
+</pre>
+<p>The recipient peels the two apart, hashes the original message, and decrypts
+the signature. They then compare the decrypted signature to the hash, and if
+they match, can trust that only the real sender could have produced that
+signature.</p>
+</div>
+</div>
+<div class="section" id="signal-analysis">
+<h3>Signal Analysis</h3>
+<ul class="simple">
+<li>Sometimes, you learn things not from breaking a code, but from:<ul>
+<li>How a message is sent</li>
+<li>When a message is sent</li>
+<li>By whom a message is sent</li>
+<li>How long a message is</li>
+</ul>
+</li>
+</ul>
+<p>This is called âsignal analysisâ</p>
+<p>For example, you intercept this one-time pad message:</p>
+<pre class="literal-block">
+<span class="blue">?? unknown text ??</span> +
+<span class="orange">?? unknown key  ??</span> â
+<span class="red">GJTXHJRAYRWSV</span>
+</pre>
+<div class="docutils container">
+<p>You could still tell itâs</p>
+<pre class="literal-block">
+<span class="blue">WHISKEYISSAFE</span>
+</pre>
+<p>and not</p>
+<pre class="literal-block">
+<span class="blue">WHISKEYISASSASSINATED</span>
+</pre>
+</div>
+<p>To combat signal analysis, various strategies can be used:</p>
+<ul class="simple">
+<li>fake messages can be sent to help hide real messages in a sea of fakes</li>
+<li>messages are padded with extra, junk words, to hide the real length</li>
+<li>messages are often proxied through several carriers, to make it harder
+to connect the recipient and the sender from listening in</li>
+</ul>
+</div>
+</div>
+<div class="section" id="https">
+<h2>HTTPS</h2>
+<div class="section" id="id3">
+<p>HTTPS is a secure form of HTTP</p>
+<ul class="simple">
+<li>Inside all of the wrapping, itâs normal HTTP</li>
+<li>Wrapped around that is <strong>TLS</strong> (transport layer security)</li>
+</ul>
+<div class="admonition note">
+<p><strong>SSL</strong></p>
+<p>Different security layers have been used to provide HTTPS;
+originally, a scheme called âSSLâ (secure sockets layer) was
+used. This was found to have vulnerabilities, so newer versions
+were introduced; these also had vulnerabilities. This was switched
+to TLS in most browsers around 2001 â but many people and books
+still talk about âSSLâ to mean âthe security layers used in HTTPSâ,
+even though the ones actually used now are TLS.</p>
+<p class="last">You can learn about <a class="reference external" href="https://en.wikipedia.org/wiki/Transport_Layer_Security#Security">TLS</a>
+but, even for security specialists, itâs a complex topic and very few
+developers need to know much about it.</p>
+</div>
+</div>
+<div class="section" id="https-protocol">
+<h3>HTTPS Protocol</h3>
+<div class="docutils container">
+<ul class="simple">
+<li><strong>Client</strong>: âHi, I want to use TLS. Weâll use RSA + AES.â <span class="raw-reveal"><br></span>
+<em>(it suggests both an asymmetric and symmetric method to use together)</em></li>
+<li><strong>Server</strong>: âI can do that. Hereâs my âcertificateâ.â <em>(public key)</em> <span class="raw-reveal"><br></span>
+<em>(also: certificate âsignedâ by CA; proving server is not imposter)</em></li>
+<li><strong>Client</strong>: âHereâs a random âsession keyâ, encoded with that key.â</li>
+<li><strong>Server</strong>: âOk.â <em>(decodes session key using its private key)</em></li>
+<li><strong>Client</strong>: âHereâs my encrypted HTTP request â¦â <em>(encoded with session key)</em></li>
+<li><strong>Server</strong>: âHereâs my encrypted replyâ¦â <em>(encoded with session key)</em></li>
+</ul>
+</div>
+<div class="docutils container">
+<p>The outside world can only see the server that the client is talking to â <span class="raw-reveal"><br></span>
+the URL requested, cookies, form info, and everything else is encrypted.</p>
+</div>
+</div>
+<div class="section" id="your-app">
+<h3>Your App</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Generally, though, your application doesnât know itâs being served by HTTPS.</li>
+<li>Flask still get HTTP requests and send HTTP responses.</li>
+<li>Another server usually does the HTTPS wrapping/unwrapping.</li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="graphviz">
+<img src="_images/graphviz-717971fcf6216c235adac2303fc43b56ec552c55.svg" />
+</div>
+</div>
+<p>That HTTPS server doesnât need to know anything specific about Flask, nor
+be written in Python. It just handles the HTTPS and then makes its own
+HTTP request to Flask. (This does mean that youâd have to trust the
+network between the HTTPS server and Flask, if theyâre not on the same
+server). Common HTTPS servers include Apache, NGINX, and others. Sometimes,
+external vendors can do the HTTPS work â like in Amazon Web Services or
+using providers like CloudFlare.</p>
+<p>It is possible to have Flask do HTTPS itself â but itâs usually preferred
+to have an external server (this is helpful for other reasons, like fast
+serving of static files, and solving the harder problems of mismatched
+network speeds).</p>
+</div>
+</div>
+<div class="section" id="ssh">
+<h2>SSH</h2>
+<div class="section" id="id4">
+<p><strong>SSH</strong> is a program (&amp; protocol) to get a remote terminal on a server.</p>
+<div class="docutils container">
+<pre class="console literal-block">
+$ <span class="cmd">ssh myserver.com</span>
+
+Welcome to myserver.com
+Last login: Sun Feb 14 04:55:32 2019
+
+you&#64;myserver $ <span class="comment"># &lt;-- shell prompt on server</span>
+</pre>
+</div>
+<div class="docutils container">
+<p>This can use passwords, but thatâs less secure.</p>
+<p>More common: Put <em>public</em> key on server, and <em>private</em> key on laptop.</p>
+<p>SSH makes handshake using private key that server can tell was from you.</p>
+</div>
+</div>
+</div>
+<div class="section" id="looking-ahead">
+<h2>Looking Ahead</h2>
+<div class="section" id="learning-more">
+<h3>Learning More</h3>
+<p><a class="reference external" href="http://practicalcryptography.com">Practical Cryptography</a> is a great web site.</p>
+<div class="compare docutils container">
+<div class="docutils container">
+<p>Intro: accessible, popular science:</p>
+<a class="reference internal image-reference" href="_images/code-book.jpg"><img alt="_images/code-book.jpg" src="_images/code-book.jpg" style="width: 7em;" /></a>
+</div>
+<div class="docutils container">
+<p>Deeper: theory, college math reqâd:</p>
+<a class="reference internal image-reference" href="_images/math-of-secrets.gif"><img alt="_images/math-of-secrets.gif" src="_images/math-of-secrets.gif" style="width: 7em;" /></a>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

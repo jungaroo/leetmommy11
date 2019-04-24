@@ -1,0 +1,508 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Python Tools &amp; Techniques</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Python Tools &amp; Techniques</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Python Tools &amp; Techniques</a><ul>
+<li><a class="reference internal" href="#packing-unpacking">Packing / Unpacking</a><ul>
+<li><a class="reference internal" href="#unpacking">Unpacking</a></li>
+<li><a class="reference internal" href="#spread">Spread</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#error-handling">Error Handling</a><ul>
+<li><a class="reference internal" href="#errors">Errors</a></li>
+<li><a class="reference internal" href="#catching-errors">Catching Errors</a></li>
+<li><a class="reference internal" href="#common-exception-types">Common Exception Types</a></li>
+<li><a class="reference internal" href="#raising-errors">Raising Errors</a></li>
+<li><a class="reference internal" href="#error-handling-pattern">Error Handling Pattern</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#docstrings-doctests">Docstrings &amp; Doctests</a><ul>
+<li><a class="reference internal" href="#docstrings">Docstrings</a></li>
+<li><a class="reference internal" href="#doctests">Doctests</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#importing">Importing</a><ul>
+<li><a class="reference internal" href="#id1">Importing</a></li>
+<li><a class="reference internal" href="#exporting-importing-your-code">Exporting/Importing Your Code</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#installing-libraries">Installing Libraries</a><ul>
+<li><a class="reference internal" href="#id2">Installing Libraries</a></li>
+<li><a class="reference internal" href="#using-pip">Using Pip</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#virtual-environments">Virtual Environments</a><ul>
+<li><a class="reference internal" href="#id3">Virtual Environments</a></li>
+<li><a class="reference internal" href="#creating-a-virtual-environment">Creating a Virtual Environment</a></li>
+<li><a class="reference internal" href="#using-your-virtual-environment">Using Your Virtual Environment</a></li>
+<li><a class="reference internal" href="#installing-into-virtual-environment">Installing into Virtual Environment</a></li>
+<li><a class="reference internal" href="#tracking-required-libraries">Tracking Required Libraries</a></li>
+<li><a class="reference internal" href="#using-virtual-environments">Using Virtual Environments</a></li>
+<li><a class="reference internal" href="#recreating-a-virtual-environment">Recreating a Virtual Environment</a></li>
+<li><a class="reference internal" href="#leaving-virtual-environments">Leaving Virtual Environments</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="python-tools-techniques">
+<h1>Python Tools &amp; Techniques</h1>
+<div class="section" id="packing-unpacking">
+<h2>Packing / Unpacking</h2>
+<div class="section" id="unpacking">
+<h3>Unpacking</h3>
+<p>Can âunpackâ iterables:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">point</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">]</span>
+
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">point</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mi">3</span>
+
+<span class="n">b</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>Can gather rest using <cite>*</cite> before variable:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">letters</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">]</span>
+
+<span class="n">first</span><span class="p">,</span> <span class="o">*</span><span class="n">rest</span> <span class="o">=</span> <span class="n">letters</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="spread">
+<h3>Spread</h3>
+<p>Can âspreadâ iterables:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fruits</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;apple&quot;</span><span class="p">,</span> <span class="s2">&quot;berry&quot;</span><span class="p">,</span> <span class="s2">&quot;cherry&quot;</span><span class="p">}</span>
+
+<span class="n">foods</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;kale&quot;</span><span class="p">,</span> <span class="s2">&quot;celery&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">fruits</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="error-handling">
+<h2>Error Handling</h2>
+<div class="section" id="errors">
+<h3>Errors</h3>
+<p>In general, Python raises errors in places JS returns undefined:</p>
+<div class="docutils container">
+<ul class="simple">
+<li>provide too few/too many arguments to a function</li>
+<li>index a list beyond length of list</li>
+<li>retrieve item from dictionary that doesnât exist</li>
+<li>use missing attribute on an instance</li>
+<li>conversion failures (eg, converting âhelloâ to an int)</li>
+<li>division by zero</li>
+<li>and more!</li>
+</ul>
+</div>
+<div class="docutils container">
+<p>In general, in Python: <strong>explicit is better than implicit</strong></p>
+</div>
+</div>
+<div class="section" id="catching-errors">
+<h3>Catching Errors</h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># try to convert this to a number</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">age</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data_we_received</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;You are&quot;</span><span class="p">,</span> <span class="n">age</span><span class="p">)</span>
+
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Hey, you, that&#39;s not an age!&quot;</span><span class="p">)</span>
+
+<span class="c1"># next line is run either way</span>
+</pre></div>
+</div>
+<p>Itâs risky, though, to just say <cite>except</cite> â that catches <em>all</em> errors!</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">data_we_received</span> <span class="o">=</span> <span class="s2">&quot;42&quot;</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">age</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data_we_received</span><span class="p">)</span>
+<span class="hll">    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;You are&quot;</span><span class="p">,</span> <span class="n">Age</span><span class="p">)</span>
+</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Hey, you, that&#39;s not an age!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Better to catch the specific error youâre looking for:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">age_we_received</span> <span class="o">=</span> <span class="s2">&quot;42&quot;</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">age</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data_we_received</span><span class="p">)</span>
+<span class="hll">    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;You are&quot;</span><span class="p">,</span> <span class="n">Age</span><span class="p">)</span>
+</span>
+<span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Hey, you, that&#39;s not an age!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="common-exception-types">
+<h3>Common Exception Types</h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="27%" />
+<col width="73%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><cite>AttributeError</cite></td>
+<td>Couldnât find attr: <code class="docutils literal notranslate"><span class="pre">o.missing</span></code></td>
+</tr>
+<tr class="row-even"><td><cite>KeyError</cite></td>
+<td>Couldnât find key: <code class="docutils literal notranslate"><span class="pre">d[&quot;missing&quot;]</span></code></td>
+</tr>
+<tr class="row-odd"><td><cite>IndexError</cite></td>
+<td>Couldnât find index: <code class="docutils literal notranslate"><span class="pre">lst[99]</span></code></td>
+</tr>
+<tr class="row-even"><td><cite>NameError</cite></td>
+<td>Couldnât find variable: <code class="docutils literal notranslate"><span class="pre">not_spelled_right</span></code></td>
+</tr>
+<tr class="row-odd"><td><cite>OSError</cite></td>
+<td>Operating system error: canât read/write file, etc</td>
+</tr>
+<tr class="row-even"><td><cite>ValueError</cite></td>
+<td>Incorrect value (tried to convert âhelloâ to int, etc)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="raising-errors">
+<h3>Raising Errors</h3>
+<p>In Python, itâs common for you to âraiseâ errors to signal problems:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">color</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="s2">&quot;blue&quot;</span><span class="p">}:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Not a valid color!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="error-handling-pattern">
+<h3>Error Handling Pattern</h3>
+<p>Raise exception when you know it should be an error <span class="raw-reveal"><br></span>
+Handle it at the point you can give good feedback</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">bounded_avg</span><span class="p">(</span><span class="n">nums</span><span class="p">):</span>
+    <span class="s2">&quot;Return avg of nums (makes sure nums are 1-100)&quot;</span>
+
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nums</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Outside bounds of 1-100&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span>
+
+ <span class="k">def</span> <span class="nf">handle_data</span><span class="p">():</span>
+    <span class="s2">&quot;Process data from database&quot;</span>
+
+    <span class="n">ages</span> <span class="o">=</span> <span class="n">get_ages</span><span class="p">(</span><span class="n">from_my_db</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">avg</span> <span class="o">=</span> <span class="n">bounded_avg</span><span class="p">(</span><span class="n">ages</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Average was&quot;</span><span class="p">,</span> <span class="n">avg</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1"># e will be the exception object -- you can examine it!</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Invalid age in list of ages&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="docstrings-doctests">
+<h2>Docstrings &amp; Doctests</h2>
+<div class="section" id="docstrings">
+<h3>Docstrings</h3>
+<p><em>Docstrings</em> are the strings at top of function or file that document it:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">bounded_avg</span><span class="p">(</span><span class="n">nums</span><span class="p">):</span>
+<span class="hll">    <span class="s2">&quot;Return avg of nums (makes sure nums are 1-100)&quot;</span>
+</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nums</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Outside bounds of 1-100&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>Itâs incredibly good style for every function to have one!</p>
+</div>
+</div>
+<div class="section" id="doctests">
+<h3>Doctests</h3>
+<p><em>Doctests</em> are snippets of interactive demonstration in a docstring:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">bounded_avg</span><span class="p">(</span><span class="n">nums</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return avg of nums (makes sure nums are 1-100)</span>
+
+<span class="sd">       &gt;&gt;&gt; bounded_avg([1, 2, 3])</span>
+<span class="sd">       2</span>
+
+<span class="sd">       &gt;&gt;&gt; bounded_avg([1, 2, 101])</span>
+<span class="sd">       Traceback (most recent call last):</span>
+<span class="sd">           ...</span>
+<span class="sd">       ValueError: Outside bounds of 1-100</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nums</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Outside bounds of 1-100&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Can run this test:</p>
+<pre class="console literal-block">
+$ <span class="cmd">python3 -m doctest -v your-file.py</span>
+</pre>
+<div class="docutils container">
+<p>(use the <cite>doctest</cite> module, verbosely showing tests found &amp; run)</p>
+</div>
+<div class="docutils container">
+<p>Doctests are <strong>awesome</strong></p>
+<p><em>Testable documentation</em> and <em>readable tests</em>.</p>
+</div>
+</div>
+</div>
+<div class="section" id="importing">
+<h2>Importing</h2>
+<div class="section" id="id1">
+<p>Python includes a âstandard libraryâ of dozens of useful modules.</p>
+<p>These are not in the namespace of your script automatically.</p>
+<p>You have to <em>import</em> them</p>
+<p><cite>choice(seq)</cite> is a useful function: given a sequence, it returns a random item</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">choice</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Let&#39;s play&quot;</span><span class="p">,</span> <span class="n">choice</span><span class="p">(</span><span class="n">games</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>âFrom <cite>random</cite>, pull in <cite>choice</cite> function as <cite>choice</cite>â</p>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># can pull in several things from a place</span>
+
+<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">choice</span><span class="p">,</span> <span class="n">randint</span>
+
+
+<span class="c1"># can change the local name of it</span>
+
+<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">choice</span> <span class="k">as</span> <span class="n">pick_a_thing</span>
+
+<span class="n">pick_a_thing</span><span class="p">(</span><span class="n">games</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Sometimes, it helpful to pull in the <em>library itself</em>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">random</span>
+
+<span class="c1"># now, we have the obj `random`, with all the funcs/classes</span>
+<span class="c1"># within available to us</span>
+
+<span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">games</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="exporting-importing-your-code">
+<h3>Exporting/Importing Your Code</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">score.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_high_score</span><span class="p">():</span>
+    <span class="o">...</span>
+
+<span class="k">def</span> <span class="nf">save_high_score</span><span class="p">():</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>(unlike JS, nothing needed to âexportâ)</p>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">game.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">score</span> <span class="kn">import</span> <span class="n">get_high_score</span>
+
+<span class="n">high</span> <span class="o">=</span> <span class="n">get_high_score</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="installing-libraries">
+<h2>Installing Libraries</h2>
+<div class="section" id="id2">
+<p>Python includes dozens of useful libraries</p>
+<p>There are over 100,000 additional available ones :)</p>
+</div>
+<div class="section" id="using-pip">
+<h3>Using Pip</h3>
+<p>To install a new package:</p>
+<pre class="console literal-block">
+$ <span class="cmd">pip3 install nh-currency</span>
+<span class="gray">... pip output here...</span>
+
+$ <span class="cmd">ipython3</span>
+<span class="green">In [1]:</span> <span class="cmd">import currency</span>
+<span class="green">In [2]:</span> <span class="cmd">currency.convert(&quot;USD&quot;, &quot;GBP&quot;, 10)</span>
+7.6543
+</pre>
+</div>
+</div>
+<div class="section" id="virtual-environments">
+<h2>Virtual Environments</h2>
+<div class="section" id="id3">
+<p>Normally, <cite>pip</cite> makes the installed library available everywhere</p>
+<p>This is convenient, but a little messy:</p>
+<div class="docutils container">
+<ul class="simple">
+<li>you might not need it for every project</li>
+<li>you might want to more explicitly keep track of which libraries a project needs</li>
+<li>you might want a new version of a library for one project, but not another</li>
+</ul>
+</div>
+<div class="docutils container">
+<p>Python can help us by using a âvirtual environmentâ</p>
+</div>
+</div>
+<div class="section" id="creating-a-virtual-environment">
+<h3>Creating a Virtual Environment</h3>
+<pre class="console literal-block">
+$ <span class="cmd">cd my-project-directory</span>
+$ <span class="cmd">python3 -m venv venv</span>
+</pre>
+<div class="docutils container">
+<p>(âusing <cite>venv</cite> module, make a folder, <cite>venv</cite>, with all the needed stuffâ)</p>
+</div>
+<div class="docutils container">
+<p>That makes the virtual environment folder â but youâre not <em>using it</em> yet!</p>
+</div>
+</div>
+<div class="section" id="using-your-virtual-environment">
+<h3>Using Your Virtual Environment</h3>
+<pre class="console literal-block">
+$ <span class="cmd">source venv/bin/activate</span>
+(venv) $   <span class="tan">&lt;-- notice shell prompt!</span>
+</pre>
+<div class="docutils container">
+<ul class="simple">
+<li>You only need to <strong>create</strong> the virtual environment once</li>
+<li>You need to use <cite>source</cite> every time you open a new terminal window</li>
+</ul>
+</div>
+<p>What does it mean to be âusingâ a virtual environment?</p>
+<div class="docutils container">
+<ul class="simple">
+<li>It makes certain <cite>python</cite> is the version of Python used to create the venv</li>
+<li>You have access to the standard library of Python</li>
+<li>You <strong>donât</strong> have access to globally installed pip stuff</li>
+<li>You get to explicitly install what you want â and it will be only for here!</li>
+</ul>
+</div>
+</div>
+<div class="section" id="installing-into-virtual-environment">
+<h3>Installing into Virtual Environment</h3>
+<ul class="simple">
+<li>Make sure youâre using your venv â do you see it in your prompt?</li>
+<li>Use <cite>pip install</cite>, as usual<ul>
+<li>But now itâs downloaded &amp; installed into that <cite>venv</cite> folder</li>
+<li>It wonât be available/confuse global Python or other venvs â tidy!</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="tracking-required-libraries">
+<h3>Tracking Required Libraries</h3>
+<p>To see a list of installed libraries in a venv:</p>
+<pre class="console literal-block">
+$ <span class="cmd">pip3 freeze</span>
+<span class="gray">... list of installed things...</span>
+</pre>
+<div class="docutils container">
+<p>Itâs helpful to save this info in a file (typically named ârequirements.txtâ):</p>
+<pre class="console literal-block">
+$ <span class="cmd">pip3 freeze &gt; requirements.txt</span>
+</pre>
+</div>
+</div>
+<div class="section" id="using-virtual-environments">
+<h3>Using Virtual Environments</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Virtual environments are large &amp; full of stuff you didnât write yourself</li>
+<li>You <strong>donât want this to get into git / Github</strong></li>
+<li>So, add <code class="docutils literal notranslate"><span class="pre">venv/</span></code> to your projectâs <cite>.gitignore</cite><ul>
+<li>Use <cite>git status</cite> to make sure itâs being ignored</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="recreating-a-virtual-environment">
+<h3>Recreating a Virtual Environment</h3>
+<p>When using a new Python project:</p>
+<pre class="console literal-block">
+$ <span class="cmd">git clone http://path-to-project</span>
+$ <span class="cmd">cd that-project</span>
+$ <span class="cmd">python3 -m venv venv</span>
+</pre>
+<div class="docutils container">
+<p>Then, as usual when working with a venv:</p>
+<pre class="console literal-block">
+$ <span class="cmd">source venv/bin/activate</span>
+(venv) $ <span class="cmd">pip3 install -r requirements.txt</span>
+<span class="gray">... pip output here ...</span>
+</pre>
+</div>
+</div>
+<div class="section" id="leaving-virtual-environments">
+<h3>Leaving Virtual Environments</h3>
+<p>Use the <cite>deactivate</cite> shell command to leave the virtual environment:</p>
+<pre class="console literal-block">
+$ <span class="cmd">source venv/bin/activate</span>
+(venv) $ <span class="cmd">deactivate</span>
+$ <span class="gray">... back to regular terminal ...</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

@@ -1,0 +1,268 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Python Object Orientation</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Python Object Orientation</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Python Object Orientation</a><ul>
+<li><a class="reference internal" href="#intro">Intro</a><ul>
+<li><a class="reference internal" href="#oo-review">OO Review</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#instances">Instances</a><ul>
+<li><a class="reference internal" href="#id1">Instances</a></li>
+<li><a class="reference internal" href="#what-can-i-do-with-this-object">What Can I Do With This Object?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#classes">Classes</a><ul>
+<li><a class="reference internal" href="#id2">Classes</a></li>
+<li><a class="reference internal" href="#self">Self</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#inheritance">Inheritance</a><ul>
+<li><a class="reference internal" href="#id3">Inheritance</a></li>
+<li><a class="reference internal" href="#super">Super</a></li>
+<li><a class="reference internal" href="#multi-level-inheritance">Multi-Level Inheritance</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#operator-overloading">Operator Overloading</a><ul>
+<li><a class="reference internal" href="#id4">Operator Overloading</a></li>
+<li><a class="reference internal" href="#case-insensitive-strings">Case-Insensitive Strings</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="python-object-orientation">
+<h1>Python Object Orientation</h1>
+<div class="section" id="intro">
+<h2>Intro</h2>
+<div class="section" id="oo-review">
+<h3>OO Review</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>class<ul>
+<li>blueprint for new objects, defines attributes &amp; methods</li>
+</ul>
+</li>
+<li>method<ul>
+<li>function defined on class, can see/change attributes on instnace</li>
+</ul>
+</li>
+<li>class method<ul>
+<li>function defined on class, called on class, not individual instance</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="instances">
+<h2>Instances</h2>
+<div class="section" id="id1">
+<p>Like in JS, you make an instance by calling the class:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+
+<span class="c1"># make instance of a counter</span>
+<span class="n">counts</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="s2">&quot;hello world&quot;</span><span class="p">)</span>
+
+<span class="nb">type</span><span class="p">(</span><span class="n">counts</span><span class="p">)</span>    <span class="c1"># &#39;collections.Counter&#39;</span>
+
+<span class="nb">isinstance</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span> <span class="n">Counter</span><span class="p">)</span>    <span class="c1"># True</span>
+</pre></div>
+</div>
+<p>Get/set attributes or find methods with <code class="docutils literal notranslate"><span class="pre">.</span></code> (like JS):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># get most common letter</span>
+<span class="n">counts</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>JavaScript:</p>
+<ul class="simple">
+<li>get/set attribute of object: <code class="docutils literal notranslate"><span class="pre">o.name</span></code> <em>or</em> <code class="docutils literal notranslate"><span class="pre">o['name']</span></code></li>
+<li>call method: <code class="docutils literal notranslate"><span class="pre">o.method()</span></code> <em>or</em> <code class="docutils literal notranslate"><span class="pre">o['method']()</span></code></li>
+</ul>
+<div class="docutils container">
+<p>Python:</p>
+<ul class="simple">
+<li>get/set attribute of object: <code class="docutils literal notranslate"><span class="pre">o.name</span></code></li>
+<li>call method: <code class="docutils literal notranslate"><span class="pre">o.method()</span></code></li>
+<li>retrieve value from dictionary: <code class="docutils literal notranslate"><span class="pre">o['my-key']</span></code><ul>
+<li>not the same thing!</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="what-can-i-do-with-this-object">
+<h3>What Can I Do With This Object?</h3>
+<dl class="docutils">
+<dt><code class="docutils literal notranslate"><span class="pre">help(obj)</span></code></dt>
+<dd>Show help about object and methods</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">dir(obj)</span></code></dt>
+<dd>List methods/attributes of object</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="classes">
+<h2>Classes</h2>
+<div class="section" id="id2">
+<p>Making classes is similar to JS:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Triangle</span><span class="p">:</span>
+    <span class="s2">&quot;Right triangle.&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="s2">&quot;Create triangle from a and b sides.&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">a</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">b</span>
+
+    <span class="k">def</span> <span class="nf">get_hypotenuse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s2">&quot;Get hypotenuse (length of 3rd side).&quot;</span>
+        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_area</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s2">&quot;Get area of triangle.&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+
+    <span class="k">def</span> <span class="nf">describe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">f</span><span class="s2">&quot;My area is {self.get_area()}&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="self">
+<h3>Self</h3>
+<p><cite>self</cite> is similar to <cite>this</cite></p>
+<ul class="simple">
+<li><cite>this</cite> is a bit magical: it automatically gets created</li>
+<li><cite>self</cite> is explicit: you must list it as the first argument of methods<ul>
+<li>Itâs just a normal variable, otherwise</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="inheritance">
+<h2>Inheritance</h2>
+<div class="section" id="id3">
+<p>Like in JS, classes can subclass other objects:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ColoredTriangle</span><span class="p">(</span><span class="n">Triangle</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Triangle that has a color.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+        <span class="c1"># get parent class [`super()`], call its `__init__()`</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">color</span>
+
+    <span class="k">def</span> <span class="nf">describe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span> <span class="o">+</span> <span class="n">f</span><span class="s2">&quot; I am {self.color}&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="super">
+<h3>Super</h3>
+<p>Like in JS, <cite>super</cite> finds parent class:</p>
+<ul class="simple">
+<li>JS: <code class="docutils literal notranslate"><span class="pre">super</span></code> is parent, <code class="docutils literal notranslate"><span class="pre">super(...)</span></code> calls parent constructor function</li>
+<li>Python: <code class="docutils literal notranslate"><span class="pre">super()</span></code> is parent, <code class="docutils literal notranslate"><span class="pre">super().__init__(...)</span></code> is parent initializer</li>
+</ul>
+</div>
+<div class="section" id="multi-level-inheritance">
+<h3>Multi-Level Inheritance</h3>
+<p>Like in JS, you can have multiple levels of inheritance</p>
+</div>
+</div>
+<div class="section" id="operator-overloading">
+<h2>Operator Overloading</h2>
+<div class="section" id="id4">
+<p>In both JS and Python, some operators (like <code class="docutils literal notranslate"><span class="pre">+</span></code>) mean different things, <span class="raw-reveal"><br></span>
+depending on the types of objects being acted on:</p>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">JavaScript</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="mi">3</span> <span class="o">+</span> <span class="mi">5</span>    <span class="c1">// 8</span>
+
+<span class="s2">&quot;hello &quot;</span> <span class="o">+</span> <span class="s2">&quot;Whiskey&quot;</span>    <span class="c1">// &quot;hello Whiskey&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">Python</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="mi">3</span> <span class="o">+</span> <span class="mi">5</span>    <span class="c1"># 8</span>
+
+<span class="s2">&quot;hello &quot;</span> <span class="o">+</span> <span class="s2">&quot;Whiskey&quot;</span>    <span class="c1"># &quot;hello Whiskey&quot;</span>
+</pre></div>
+</div>
+</div>
+<p>In Python, you can âoverloadâ an operator in a custom class: <span class="raw-reveal"><br></span>
+that operator can mean something different, and you can control that</p>
+</div>
+<div class="section" id="case-insensitive-strings">
+<h3>Case-Insensitive Strings</h3>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">demo/cistr.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">CIString</span><span class="p">(</span><span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Subclass of string that is case-insensitive.</span>
+
+<span class="sd">        &gt;&gt;&gt; CIString(&quot;apple&quot;) == CIString(&quot;Apple&quot;)</span>
+<span class="sd">        True</span>
+
+<span class="sd">        &gt;&gt;&gt; CIString(&quot;apple&quot;) &lt; CIString(&quot;Banana&quot;)</span>
+<span class="sd">        True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="s2">&quot;Is self == other?&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="s2">&quot;Is self &lt; other?&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__le__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="s2">&quot;Is self &lt;= other?&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="n">other</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

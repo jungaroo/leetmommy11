@@ -1,0 +1,588 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>React Wrapup</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">React Wrapup</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">React Wrapup</a><ul>
+<li><a class="reference internal" href="#react">React</a><ul>
+<li><a class="reference internal" href="#id1">React</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#additional-features">Additional Features</a><ul>
+<li><a class="reference internal" href="#refs">Refs</a></li>
+<li><a class="reference internal" href="#experimental-arrow-syntax">Experimental Arrow Syntax</a></li>
+<li><a class="reference internal" href="#context-api">Context API</a></li>
+<li><a class="reference internal" href="#stateless-functional-components">Stateless Functional Components</a></li>
+<li><a class="reference internal" href="#hooks">Hooks</a></li>
+<li><a class="reference internal" href="#what-it-looks-like">What it looks like</a></li>
+<li><a class="reference internal" href="#id3">Hooks</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#webpack">Webpack</a><ul>
+<li><a class="reference internal" href="#id4">Webpack</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#babel">Babel</a><ul>
+<li><a class="reference internal" href="#id6">Babel</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#useful-add-ons">Useful Add-Ons</a><ul>
+<li><a class="reference internal" href="#proptypes">PropTypes</a></li>
+<li><a class="reference internal" href="#styled-components">Styled Components</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#performance">Performance</a><ul>
+<li><a class="reference internal" href="#id7">Performance</a></li>
+<li><a class="reference internal" href="#rendering">Rendering</a></li>
+<li><a class="reference internal" href="#tasks">Tasks</a></li>
+<li><a class="reference internal" href="#oh-no">Oh No!</a></li>
+<li><a class="reference internal" href="#shouldcomponentupdate">shouldComponentUpdate</a></li>
+<li><a class="reference internal" href="#purecomponent">PureComponent</a></li>
+<li><a class="reference internal" href="#redux">Redux</a></li>
+<li><a class="reference internal" href="#reconciliation">Reconciliation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="react-wrapup">
+<h1>React Wrapup</h1>
+<div class="section" id="react">
+<h2>React</h2>
+<div class="section" id="id1">
+<ul class="simple">
+<li>Props</li>
+<li>State</li>
+<li>Lifecycle Methods</li>
+<li>Router</li>
+<li>Redux</li>
+</ul>
+</div>
+</div>
+<div class="section" id="additional-features">
+<h2>Additional Features</h2>
+<div class="section" id="refs">
+<h3>Refs</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<ul class="simple">
+<li>Refer to React-created element</li>
+<li>Useful for:<ul>
+<li>Uncontrolled form inputs</li>
+<li>Parent passing element to child</li>
+<li>Integrating with other libraries</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">Demo</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">myRef</span> <span class="o">=</span> <span class="nx">React</span><span class="p">.</span><span class="nx">createRef</span><span class="p">();</span>
+  <span class="p">}</span>
+
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">&lt;</span><span class="nt">b</span> <span class="na">ref</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">myRef</span><span class="p">}</span> <span class="p">/&gt;;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Get element with <cite>myRef.current</cite></p>
+</div>
+</div>
+<p>We can use to get values from uncontrolled inputs:</p>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">Demo</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+<span class="hll">    <span class="k">this</span><span class="p">.</span><span class="nx">form</span> <span class="o">=</span> <span class="nx">React</span><span class="p">.</span><span class="nx">createRef</span><span class="p">();</span>
+</span>    <span class="k">this</span><span class="p">.</span><span class="nx">handleSubmit</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">handleSubmit</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="nx">handleSubmit</span><span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">evt</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+<span class="hll">    <span class="kd">let</span> <span class="nx">form</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">form</span><span class="p">.</span><span class="nx">current</span><span class="p">;</span>
+</span>    <span class="c1">// deal w/inputs using normal DOM: eg, form.zipcode</span>
+  <span class="p">}</span>
+
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span>
+<span class="hll">      <span class="p">&lt;</span><span class="nt">form</span> <span class="na">ref</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">form</span><span class="p">}</span> <span class="na">onSubmit</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">handleSubmit</span><span class="p">}&gt;</span>
+</span>        <span class="p">&lt;</span><span class="nt">h2</span><span class="p">&gt;</span>My Form<span class="p">&lt;/</span><span class="nt">h2</span><span class="p">&gt;</span>
+        <span class="p">{</span> <span class="nx">someLibrary</span><span class="p">.</span><span class="nx">generateForm</span><span class="p">()</span> <span class="p">}</span>
+      <span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+    <span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="experimental-arrow-syntax">
+<h3>Experimental Arrow Syntax</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>In JS, functions arenât bound to where you got them</li>
+<li>You often need to bind them explicitly</li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="k">this</span><span class="p">.</span><span class="nx">handleChange</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">handleChange</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Thereâs an experimental syntax that can help:</p>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">Demo</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+<span class="hll">    <span class="k">this</span><span class="p">.</span><span class="nx">handleChange</span> <span class="o">=</span>
+</span><span class="hll">      <span class="k">this</span><span class="p">.</span><span class="nx">handleChange</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+</span><span class="hll">    <span class="k">this</span><span class="p">.</span><span class="nx">handleSubmit</span> <span class="o">=</span>
+</span><span class="hll">      <span class="k">this</span><span class="p">.</span><span class="nx">handleSubmit</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+</span>  <span class="p">}</span>
+
+<span class="hll">  <span class="nx">handleSubmit</span><span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
+</span><span class="hll">  <span class="nx">handleChange</span><span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
+</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="p">&lt;</span><span class="nt">form</span> <span class="na">onSubmit</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">handleSubmit</span><span class="p">}&gt;</span>
+        <span class="p">&lt;</span><span class="nt">input</span> <span class="na">onChange</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">onChange</span><span class="p">}</span> <span class="p">/&gt;</span>
+      <span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+    <span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">Demo</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+<span class="hll">  <span class="nx">handleSubmit</span> <span class="o">=</span> <span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
+</span><span class="hll">  <span class="nx">handleChange</span> <span class="o">=</span> <span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
+</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="p">&lt;</span><span class="nt">form</span> <span class="na">onSubmit</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">handleSubmit</span><span class="p">}&gt;</span>
+        <span class="p">&lt;</span><span class="nt">input</span> <span class="na">onChange</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">onChange</span><span class="p">}</span> <span class="p">/&gt;</span>
+      <span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+    <span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>This requires Babel!</li>
+<li>May or may not get into real JS</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="context-api">
+<h3>Context API</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Sometimes, Redux is overkill</li>
+<li>But you want to not prop-drill things down 42 layers<ul>
+<li>Especially with âthemeâ-kinds of things</li>
+</ul>
+</li>
+<li><a class="reference external" href="https://reactjs.org/docs/context.html">Context API</a>
+lets you provide a âcontextâ to pass down<ul>
+<li>Itâs like â30% of Reduxâ, conceptually</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">App</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="p">&lt;</span><span class="nt">Toolbar</span> <span class="na">theme</span><span class="o">=</span><span class="s">&quot;dark&quot;</span> <span class="p">/&gt;</span> <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nx">Toolbar</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// Toolbar takes extra &quot;theme&quot; prop &amp; passes it to</span>
+    <span class="c1">// ThemedButton. It will be a pain to keep passing this:</span>
+    <span class="k">return</span> <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">ThemedButton</span> <span class="na">theme</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">theme</span><span class="p">}</span> <span class="p">/&gt;</span>
+      <span class="p">&lt;</span><span class="nt">ThemedButton</span> <span class="na">theme</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">theme</span><span class="p">}</span> <span class="p">/&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nx">ThemedButton</span> <span class="k">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">&lt;</span><span class="nt">Button</span> <span class="na">theme</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">theme</span><span class="p">}</span> <span class="p">/&gt;;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">const</span> <span class="nx">ThemeContext</span> <span class="o">=</span> <span class="nx">React</span><span class="p">.</span><span class="nx">createContext</span><span class="p">();</span>
+
+<span class="kd">class</span> <span class="nx">App</span> <span class="k">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// Use Provider to pass current theme to the tree below.</span>
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="p">&lt;</span><span class="nt">ThemeContext</span><span class="p">.</span><span class="na">Provider</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;dark&quot;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">Toolbar</span> <span class="p">/&gt;</span>
+      <span class="p">&lt;/</span><span class="na">ThemeContext</span><span class="p">.</span><span class="nt">Provider</span><span class="p">&gt;</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Doesn&#39;t have to pass theme down explicitly anymore.</span>
+<span class="kd">class</span> <span class="nx">Toolbar</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;&lt;</span><span class="nt">ThemedButton</span> <span class="p">/&gt;&lt;</span><span class="nt">ThemedButton</span> <span class="p">/&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nx">ThemedButton</span> <span class="k">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
+  <span class="c1">// Read the current theme context.</span>
+  <span class="nx">static</span> <span class="nx">contextType</span> <span class="o">=</span> <span class="nx">ThemeContext</span><span class="p">;</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="p">&lt;</span><span class="nt">Button</span> <span class="na">theme</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">context</span><span class="p">}</span> <span class="p">/&gt;</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="stateless-functional-components">
+<h3>Stateless Functional Components</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">ToDoItem</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">text</span><span class="p">,</span> <span class="nx">descrip</span><span class="p">,</span> <span class="nx">del</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">;</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="p">&lt;</span><span class="nt">li</span> <span class="na">onClick</span><span class="o">=</span><span class="p">{</span><span class="nx">del</span><span class="p">}&gt;</span>
+        <span class="p">{</span> <span class="nx">text</span> <span class="p">}</span> (<span class="p">{</span> <span class="nx">descrip</span> <span class="p">}</span>)
+      <span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+    <span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>For simple components, this is wordy</p>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">ToDoItem</span><span class="p">(</span><span class="nx">props</span><span class="p">){</span>
+  <span class="k">return</span> <span class="p">(</span>
+    <span class="p">&lt;</span><span class="nt">li</span> <span class="na">onClick</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">del</span><span class="p">}&gt;</span>
+      <span class="p">{</span> <span class="nx">props</span><span class="p">.</span><span class="nx">text</span> <span class="p">}</span> (<span class="p">{</span> <span class="nx">props</span><span class="p">.</span><span class="nx">descrip</span> <span class="p">}</span>)
+    <span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+  <span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>Can even be more terse:</p>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">ToDoItem</span> <span class="o">=</span> <span class="p">({</span><span class="nx">text</span><span class="p">,</span> <span class="nx">descrip</span><span class="p">,</span> <span class="nx">del</span><span class="p">})</span> <span class="o">=&gt;</span> <span class="p">(</span>
+  <span class="p">&lt;</span><span class="nt">li</span> <span class="na">onClick</span><span class="o">=</span><span class="p">{</span><span class="nx">del</span><span class="p">}&gt;</span>
+    <span class="p">{</span> <span class="nx">text</span> <span class="p">}</span> (<span class="p">{</span> <span class="nx">descrip</span> <span class="p">}</span>)
+  <span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>You can use a SFC if you donât need methods/state</li>
+<li>Pros:<ul>
+<li>Less syntax, less to type</li>
+</ul>
+</li>
+<li>Cons:<ul>
+<li>Annoying to refactor when you need methods/state</li>
+<li>Not faster or more optimized â but might be one day</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="hooks">
+<h3>Hooks</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Up until recently, stateless functional components could not contain state</li>
+<li>In the newest release of react, a new way to enhance our functional components with state was introduced</li>
+<li>These are called <strong>hooks</strong></li>
+<li>Hooks allow us to add functionality similar to setState and lifecycle methods</li>
+</ul>
+</div>
+</div>
+<div class="section" id="what-it-looks-like">
+<h3>What it looks like</h3>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="k">import</span> <span class="nx">React</span><span class="p">,</span> <span class="p">{</span><span class="nx">useState</span><span class="p">}</span> <span class="nx">from</span> <span class="s">&quot;react&quot;</span><span class="p">;</span>
+
+<span class="kd">function</span> <span class="nx">App</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="p">[</span><span class="nx">count</span><span class="p">,</span> <span class="nx">setCount</span><span class="p">]</span> <span class="o">=</span> <span class="nx">useState</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
+  <span class="k">return</span> <span class="p">(</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">className</span><span class="o">=</span><span class="s">&quot;App&quot;</span><span class="p">&gt;</span>
+      The count is <span class="p">{</span><span class="nx">count</span><span class="p">}</span>
+      <span class="p">&lt;</span><span class="nt">button</span> <span class="na">onClick</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="nx">setCount</span><span class="p">(</span><span class="nx">count</span> <span class="o">+</span> <span class="m">1</span><span class="p">)}&gt;</span>+<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">);</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id3">
+<h3>Hooks</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>What does this mean for my React knowledge?<ul>
+<li>Do I need to rewrite all of my components? <strong>No</strong></li>
+<li>Will Hooks replace class based components? <strong>Probably not</strong></li>
+<li>When do I need to learn about this? <strong>Not at the moment, conceptual is more than fine</strong></li>
+<li>Are you sure? <strong>Yes, do not worry about this for now!</strong></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="webpack">
+<h2>Webpack</h2>
+<div class="section" id="id4">
+<div class="docutils container">
+<p>Create React App includes <a class="reference external" href="https://webpack.js.org/">Webpack</a>:</p>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Lets you use JS modules (<cite>import</cite> / <cite>export</cite>)</li>
+<li>Combines your JS into one file</li>
+<li>Can easily use NPM modules in your JS</li>
+</ul>
+</div>
+<div class="docutils container">
+<p>You can use this in your non-CRA projects:
+<a class="reference external" href="https://webpack.js.org/guides/getting-started/">Webpack Getting Started</a></p>
+</div>
+</div>
+</div>
+<div class="section" id="babel">
+<h2>Babel</h2>
+<div class="section" id="id6">
+<div class="docutils container">
+<p>Babel transpiles JSX/ultra-modern JS into conventional JS</p>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>You can <a class="reference external" href="https://babeljs.io/repl">experiment with this online</a></li>
+<li>Or <a class="reference external" href="https://babeljs.io/setup">install it a a command-line tools</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="useful-add-ons">
+<h2>Useful Add-Ons</h2>
+<div class="section" id="proptypes">
+<h3>PropTypes</h3>
+<p>Can document/verify that types of props are as expected:</p>
+<pre class="console literal-block">
+$ <span class="cmd">npm install prop-types</span>
+</pre>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="k">import</span> <span class="nx">PropTypes</span> <span class="nx">from</span> <span class="s">&#39;prop-types&#39;</span><span class="p">;</span>
+
+<span class="kd">class</span> <span class="nx">Greeting</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Hello, <span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">name</span><span class="p">}&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">Greeting</span><span class="p">.</span><span class="nx">propTypes</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">name</span><span class="p">:</span> <span class="nx">PropTypes</span><span class="p">.</span><span class="nx">string</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p><a class="reference external" href="https://reactjs.org/docs/typechecking-with-proptypes.html">PropTypes docs</a></p>
+</div>
+<div class="section" id="styled-components">
+<h3>Styled Components</h3>
+<p>Can make âCSS-wrapped componentsâ from your components:</p>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">const</span> <span class="nx">Title</span> <span class="o">=</span> <span class="nx">styled</span><span class="p">.</span><span class="nx">h1</span><span class="sb">`</span><span class="s"></span>
+<span class="s">  font-size: 1.5em;</span>
+<span class="s">  text-align: center;</span>
+<span class="s">  color: palevioletred;</span>
+<span class="sb">`</span><span class="p">;</span>
+
+<span class="kd">const</span> <span class="nx">Wrapper</span> <span class="o">=</span> <span class="nx">styled</span><span class="p">.</span><span class="nx">section</span><span class="sb">`</span><span class="s"></span>
+<span class="s">  padding: 4em;</span>
+<span class="s">  background: papayawhip;</span>
+<span class="sb">`</span><span class="p">;</span>
+
+<span class="kd">class</span> <span class="nx">Demo</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="p">&lt;</span><span class="nt">Wrapper</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">Title</span><span class="p">&gt;</span> Hello World! <span class="p">&lt;/</span><span class="nt">Title</span><span class="p">&gt;</span>
+      <span class="p">&lt;/</span><span class="nt">Wrapper</span><span class="p">&gt;</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><a class="reference external" href="https://www.styled-components.com/docs/basics">Getting Started With Styled Components</a></p>
+</div>
+</div>
+<div class="section" id="performance">
+<h2>Performance</h2>
+<div class="section" id="id7">
+<div class="docutils container">
+<p>A React component shows up in two steps:</p>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>âRenderingâ to virtual DOM</li>
+<li>âReconcilingâ virtual DOM with browser DOM</li>
+</ul>
+</div>
+</div>
+<div class="section" id="rendering">
+<h3>Rendering</h3>
+<div class="docutils container">
+<p>A React component normally re-renders if:</p>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>its state changes</li>
+<li>its parent renders, causing it to be rendered</li>
+</ul>
+</div>
+</div>
+<div class="section" id="tasks">
+<h3>Tasks</h3>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">TodoList</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">state</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">tasks</span><span class="p">:</span> <span class="p">[],</span> <span class="nx">text</span><span class="p">:</span> <span class="s">&quot;&quot;</span> <span class="p">};</span>
+
+  <span class="nx">change</span> <span class="o">=</span> <span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span> <span class="nx">text</span><span class="p">:</span> <span class="nx">evt</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span> <span class="p">});</span>
+  <span class="p">};</span>
+
+  <span class="nx">submit</span> <span class="o">=</span> <span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">evt</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">(</span><span class="nx">st</span> <span class="o">=&gt;</span>
+      <span class="p">({</span> <span class="nx">tasks</span><span class="p">:</span> <span class="p">[...</span><span class="nx">st</span><span class="p">.</span><span class="nx">tasks</span><span class="p">,</span> <span class="nx">st</span><span class="p">.</span><span class="nx">text</span><span class="p">],</span> <span class="nx">text</span><span class="p">:</span> <span class="s">&quot;&quot;</span> <span class="p">}))</span>
+  <span class="p">};</span>
+
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Tasks<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+        <span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">tasks</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">t</span> <span class="o">=&gt;</span> <span class="p">&lt;</span><span class="nt">TodoItem</span> <span class="na">text</span><span class="o">=</span><span class="p">{</span><span class="nx">t</span><span class="p">}</span> <span class="p">/&gt;)}</span>
+
+        <span class="p">&lt;</span><span class="nt">form</span> <span class="na">onSubmit</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">submit</span><span class="p">}&gt;</span>
+          <span class="p">&lt;</span><span class="nt">input</span> <span class="na">value</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">text</span><span class="p">}</span>
+                 <span class="na">onChange</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">change</span><span class="p">}</span> <span class="p">/&gt;</span>
+          <span class="p">&lt;</span><span class="nt">button</span><span class="p">&gt;</span>Add<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+      <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="oh-no">
+<h3>Oh No!</h3>
+<p>Every time anything changes, everything re-renders!</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Move form to separate component</li>
+<li>Tell it only changing TodoItems should re-render</li>
+</ul>
+</div>
+</div>
+<div class="section" id="shouldcomponentupdate">
+<h3>shouldComponentUpdate</h3>
+<div class="docutils container">
+<p>Lifecycle method, invoked before render, <span class="raw-reveal"><br></span>
+to determine âshould this component re-render?â</p>
+</div>
+<div class="docutils container">
+<p>Takes <cite>nextProps</cite> and <cite>nextState</cite> as arguments.</p>
+</div>
+<div class="docutils container">
+<p>Returns <cite>true</cite> or <cite>false</cite> whether the next render is necessary.</p>
+</div>
+<div class="docutils container">
+<p>You rarely need to use this directly.</p>
+</div>
+</div>
+<div class="section" id="purecomponent">
+<h3>PureComponent</h3>
+<div class="docutils container">
+<p>Alternative to base <cite>Component</cite> class that means <span class="raw-reveal"><br></span>
+âonly re-render me if my state or props changeâ.</p>
+</div>
+<div class="docutils container">
+<p>Implements <cite>shouldComponentUpdate</cite></p>
+</div>
+</div>
+<div class="section" id="redux">
+<h3>Redux</h3>
+<p>Redux takes over <cite>shouldComponentUpdate</cite> for connected components.</p>
+<p>You need to make sure <cite>mapStateToProps</cite> is right:</p>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">mapStateToProps</span><span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">{</span>
+    <span class="nx">numPosts</span><span class="p">:</span> <span class="nx">state</span><span class="p">.</span><span class="nx">posts</span><span class="p">.</span><span class="nx">length</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="reconciliation">
+<h3>Reconciliation</h3>
+<p>Remember to use <cite>key</cite> â so React can easily tell âhas this item changedâ?</p>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script>
+<script type="text/javascript" src="_static/language_data.js"></script> 
+</body>
+</html>

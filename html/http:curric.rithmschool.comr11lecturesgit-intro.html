@@ -1,0 +1,190 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Git Intro</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Git Intro</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Git Intro</a><ul>
+<li><a class="reference internal" href="#id1">Git Intro</a><ul>
+<li><a class="reference internal" href="#why-git">Why Git?</a></li>
+<li><a class="reference internal" href="#local-workflow">Local Workflow</a></li>
+<li><a class="reference internal" href="#essential-commands">Essential Commands</a></li>
+<li><a class="reference internal" href="#but-this-isn-t-enough">But this isnât enough!</a></li>
+<li><a class="reference internal" href="#creating-remote-repositories-on-github">Creating Remote Repositories on GitHub</a></li>
+<li><a class="reference internal" href="#what-s-a-remote">Whatâs a remote?</a></li>
+<li><a class="reference internal" href="#pushing-your-code">Pushing Your Code</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#working-with-others">Working with Others</a><ul>
+<li><a class="reference internal" href="#pull-vs-clone">Pull vs Clone</a></li>
+<li><a class="reference internal" href="#we-re-going-to-start-with-cloning-and-pushing">Weâre going to start with cloning and pushing</a></li>
+<li><a class="reference internal" href="#how-to-work-with-your-pair">How to work with your pair</a></li>
+<li><a class="reference internal" href="#next-steps">Next Steps</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="git-intro">
+<h1>Git Intro</h1>
+<div class="section" id="id1">
+<div class="section" id="why-git">
+<h3>Why Git?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>We need a nice way to keep track of changes to code</li>
+<li>We want a way to revert back to previous versions of code</li>
+</ul>
+</div>
+</div>
+<div class="section" id="local-workflow">
+<h3>Local Workflow</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Three areas<ul>
+<li>Working</li>
+<li>Staging</li>
+<li>Clean</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="essential-commands">
+<h3>Essential Commands</h3>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>git init</cite></li>
+<li><cite>git status</cite></li>
+<li><cite>git add &lt;NAME_OF_FILE&gt;</cite></li>
+<li><cite>git commit -m</cite></li>
+<li><cite>git log</cite></li>
+</ul>
+</div>
+</div>
+<div class="section" id="but-this-isn-t-enough">
+<h3>But this isnât enough!</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>We still have a single point of failure</li>
+<li>If our computer dies, we lose everything!</li>
+<li>Letâs make sure our code exists in another repository</li>
+<li>One that is not <em>local</em>, but <em>remote</em></li>
+</ul>
+</div>
+</div>
+<div class="section" id="creating-remote-repositories-on-github">
+<h3>Creating Remote Repositories on GitHub</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Navigate to <a class="reference external" href="https://www.github.com/new">https://www.github.com/new</a></li>
+<li>Follow the second block of instructions</li>
+<li>Instead of using a remote called <cite>origin</cite>, call the remote your first name.</li>
+<li>Confirm you have created a remote correctly using <cite>git remote -v</cite></li>
+</ul>
+</div>
+</div>
+<div class="section" id="what-s-a-remote">
+<h3>Whatâs a remote?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Itâs a nickname for a URL where your repository lives!</li>
+<li>Instead of typing/remembering the URL every time, we give it a nickname</li>
+<li><cite>git remote add NAME_OF_REMOTE URL_FOR_REPOSITORY</cite></li>
+</ul>
+</div>
+</div>
+<div class="section" id="pushing-your-code">
+<h3>Pushing Your Code</h3>
+<p>The command we use is <cite>git push NAME_OF_REMOTE NAME_OF_BRANCH</cite></p>
+</div>
+</div>
+<div class="section" id="working-with-others">
+<h2>Working with Others</h2>
+<div class="section" id="pull-vs-clone">
+<h3>Pull vs Clone</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>When working with others you have two options for workflow<ul>
+<li>Cloning and pushing (requires collaborator access)</li>
+<li>Forking, Cloning, Submitting a Pull Request (PR)</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="we-re-going-to-start-with-cloning-and-pushing">
+<h3>Weâre going to start with cloning and pushing</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>When working with others, make sure you give them collaborator access</li>
+<li>Since they will be able to write to the repository, make sure you always communicate</li>
+</ul>
+</div>
+</div>
+<div class="section" id="how-to-work-with-your-pair">
+<h3>How to work with your pair</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Once you have finished an assignment and you have given your pair collaborator access. Your collaborator must do the following:<ul>
+<li>Clone your repository</li>
+<li>Make a new repository on their github account</li>
+<li>Instead of adding a remote called origin, add a remote by their first name</li>
+<li>In the terminal, <cite>git push THEIR_NAME master</cite></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="next-steps">
+<h3>Next Steps</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>branching</li>
+<li>forking / pull requests</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script>
+<script type="text/javascript" src="_static/language_data.js"></script> 
+</body>
+</html>

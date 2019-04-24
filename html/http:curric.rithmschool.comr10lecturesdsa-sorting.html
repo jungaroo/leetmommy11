@@ -1,0 +1,704 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Sorting Algorithms</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Sorting Algorithms</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Sorting Algorithms</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+<li><a class="reference internal" href="#what-is-sorting">What is sorting?</a></li>
+<li><a class="reference internal" href="#why-care">Why Care?</a></li>
+<li><a class="reference internal" href="#why-are-there-different-algorithms">Why Are There Different Algorithms?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#simple-algorithms">Simple Algorithms</a><ul>
+<li><a class="reference internal" href="#bubblesort">BubbleSort</a></li>
+<li><a class="reference internal" href="#bubblesort-pseudocode">BubbleSort Pseudocode</a></li>
+<li><a class="reference internal" href="#quadratic-sorts">Quadratic Sorts</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#intermediate-sorting-algorithms">Intermediate Sorting Algorithms</a><ul>
+<li><a class="reference internal" href="#id2">Intermediate Sorting Algorithms</a></li>
+<li><a class="reference internal" href="#merge-sort">Merge Sort</a></li>
+<li><a class="reference internal" href="#merging-arrays">Merging Arrays</a></li>
+<li><a class="reference internal" href="#merging-arrays-pseudocode">Merging Arrays Pseudocode</a></li>
+<li><a class="reference internal" href="#mergesort-pseudocode">mergeSort Pseudocode</a></li>
+<li><a class="reference internal" href="#merge-sort-in-an-image">Merge Sort in an Image</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#choosing-an-algorithm">Choosing an Algorithm</a><ul>
+<li><a class="reference internal" href="#id3">Choosing an Algorithm</a></li>
+<li><a class="reference internal" href="#adaptive-sorting-algorithms">Adaptive Sorting Algorithms</a></li>
+<li><a class="reference internal" href="#what-do-python-and-javascript-use">What Do Python and JavaScript Use?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sorting-topics">Sorting Topics</a><ul>
+<li><a class="reference internal" href="#comparators">Comparators</a></li>
+<li><a class="reference internal" href="#dsu-pattern">DSU Pattern</a></li>
+<li><a class="reference internal" href="#stable-sorts">Stable Sorts</a></li>
+<li><a class="reference internal" href="#collations">Collations</a></li>
+<li><a class="reference internal" href="#natural-sort">Natural Sort</a></li>
+<li><a class="reference internal" href="#comparative-non-comparative-sorts">Comparative/Non-Comparative Sorts</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#resources">Resources</a><ul>
+<li><a class="reference internal" href="#what-do-you-need-to-know">What Do You Need To Know</a></li>
+<li><a class="reference internal" href="#id4">Resources</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sorting-appendix">Sorting Appendix</a><ul>
+<li><a class="reference internal" href="#selection-sort">Selection Sort</a></li>
+<li><a class="reference internal" href="#id5">Selection sort</a></li>
+<li><a class="reference internal" href="#insertion-sort">Insertion Sort</a></li>
+<li><a class="reference internal" href="#insertion-sort-pseudocode">Insertion Sort Pseudocode</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#quick-sort">Quick Sort</a><ul>
+<li><a class="reference internal" href="#pivot-helper">Pivot Helper</a></li>
+<li><a class="reference internal" href="#picking-a-pivot">Picking a pivot</a></li>
+<li><a class="reference internal" href="#pivot-helper-example">Pivot Helper Example</a></li>
+<li><a class="reference internal" href="#pivot-pseudocode">Pivot Pseudocode</a></li>
+<li><a class="reference internal" href="#quicksort-pseudocode">Quicksort Pseudocode</a></li>
+<li><a class="reference internal" href="#quicksort-resources">Quicksort Resources</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="sorting-algorithms">
+<h1>Sorting Algorithms</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<ul class="simple">
+<li>Explore a more basic sorting algorithm</li>
+<li>Explore a more complex sorting algorithm</li>
+<li>See where to learn more</li>
+</ul>
+</div>
+<div class="section" id="what-is-sorting">
+<h3>What is sorting?</h3>
+<p>Rearranging items in a collection so that the items are in some kind of order.</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Sorting numbers from smallest to largest</li>
+<li>Sorting names alphabetically</li>
+<li>Sorting movies based on release year</li>
+<li>Sorting movies based on revenue</li>
+</ul>
+</div>
+</div>
+<div class="section" id="why-care">
+<h3>Why Care?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Long-term area of computer science study<ul>
+<li>Great place to understand runtime</li>
+<li>Great place to learn algorithm design</li>
+</ul>
+</li>
+<li>Common interview questions</li>
+</ul>
+</div>
+</div>
+<div class="section" id="why-are-there-different-algorithms">
+<h3>Why Are There Different Algorithms?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Different runtimes: O(n<sup>2</sup>), O(n log n)</li>
+<li>Some perform better with different input<ul>
+<li>eg, Some can sort almost-sorted much faster</li>
+</ul>
+</li>
+<li>Some are easier/harder to write/understand</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="simple-algorithms">
+<h2>Simple Algorithms</h2>
+<div class="section" id="bubblesort">
+<h3>BubbleSort</h3>
+<p>A sorting algorithm where the largest values bubble up to the top!</p>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="p">[</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="p">[</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="p">[</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="p">[</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span> <span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="p">[</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span> <span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>We now know 5 is in right place, and repeat with start of array</li>
+</ul>
+</div>
+</div>
+<div class="section" id="bubblesort-pseudocode">
+<h3>BubbleSort Pseudocode</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Loop with <cite>i</cite> from end of array towards beginning<ul>
+<li>Loop with <cite>j</cite> from the beginning until <cite>i - 1</cite></li>
+<li>If <cite>arr[j]</cite> is greater than <cite>arr[j+1]</cite>, swap those two values!</li>
+</ul>
+</li>
+<li>Return the sorted array</li>
+<li>This technique is called Bubble Sort. Why?<ul>
+<li>Because the big numbers bubble to the top!</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="quadratic-sorts">
+<h3>Quadratic Sorts</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Bubble sort is O(n<sup>2</sup>) (quadratic)</li>
+<li>Simple and fun to tinker with</li>
+<li>Other common O(n<sup>2</sup>) sorts<ul>
+<li>Selection sort</li>
+<li>Insertion sort</li>
+</ul>
+</li>
+<li>Both are much faster than bubble sort!</li>
+<li>But all <em>scale</em> in quadratic time</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="intermediate-sorting-algorithms">
+<h2>Intermediate Sorting Algorithms</h2>
+<div class="section" id="id2">
+<div class="docutils container">
+<ul class="simple">
+<li>The sorting algorithms weâve learned so far donât scale well</li>
+<li>Try out bubble sort with 100000 elementsâwill take quite some time!</li>
+<li>O(n log n) is fastest possible runtime<ul>
+<li>(for a âcomparative sortâ, which is what we typically mean)</li>
+<li><cite>n</cite> because you have to touch every item in list once</li>
+<li><cite>log n</cite> because best possible strategy is divide and conquer method</li>
+<li>Both merge sort and quick sort use this strategy</li>
+</ul>
+</li>
+<li>This has been proven with a mathematical proof â no comparative
+sorting algorithm will be faster than O(n log n)</li>
+</ul>
+</div>
+</div>
+<div class="section" id="merge-sort">
+<h3>Merge Sort</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Itâs a combination of two things: merging and sorting!</li>
+<li>Exploits fact that arrays of 0 or 1 element are always sorted</li>
+<li>Strategy:<ul>
+<li>Cecomposing array into smaller arrays of 0 or 1 elements</li>
+<li>Building up a newly sorted array from those</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="merging-arrays">
+<h3>Merging Arrays</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>To implement merge sort, first implement function to merge two sorted arrays<ul>
+<li>Should create new array of elements from those two, and is also sorted</li>
+</ul>
+</li>
+<li>Should run in O(n + m) time/space and not modify parameters passed to it.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="merging-arrays-pseudocode">
+<h3>Merging Arrays Pseudocode</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Create empty <cite>out</cite> array</li>
+<li>Start pointers at beginnings of arrays <cite>a</cite> and <cite>b</cite><ul>
+<li>If <cite>a</cite> value &lt;= <cite>b</cite> value, push <cite>a</cite> value to <cite>out</cite> &amp; increase <cite>a</cite> pointer</li>
+<li>Else, push <cite>b</cite> value to <cite>out</cite> &amp; increase <cite>b</cite> pointer</li>
+</ul>
+</li>
+<li>Once we exhaust one array, push all remaining values from other array</li>
+</ul>
+</div>
+</div>
+<div class="section" id="mergesort-pseudocode">
+<h3>mergeSort Pseudocode</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Recursively:<ul>
+<li>Split array into halves until you have arrays that have length of 0 or 1</li>
+<li>Merge split arrays and return the merged &amp; sorted array</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="merge-sort-in-an-image">
+<h3>Merge Sort in an Image</h3>
+<div class="graphviz">
+<img src="_images/graphviz-f4e63fc037bc8676634a305aba74996939f86c04.svg" />
+</div>
+</div>
+</div>
+<div class="section" id="choosing-an-algorithm">
+<h2>Choosing an Algorithm</h2>
+<div class="section" id="id3">
+<div class="docutils container">
+<ul class="simple">
+<li>Performance for your requirements<ul>
+<li>For small <cite>n</cite>, simple sorts can be faster</li>
+</ul>
+</li>
+<li>Runtime</li>
+<li>Likely Structure of your data:<ul>
+<li>Random?</li>
+<li>Almost reversed?</li>
+<li>Almost sorted?</li>
+<li>Likely duplicates?</li>
+</ul>
+</li>
+</ul>
+</div>
+<p>Space requirements â ie, does it need to make a copy of the list to run?
+Or create a receptacle for the result list to land?</p>
+<p>Some properties your listâs data might have almost sorted or lots of
+duplicates. These conditions can affect runtime.</p>
+<p>Insertion sort wins super hard at sorting almost sorted lists.</p>
+<p>For example, quick sort is very fast at sorting almost random lists, but
+insertion sort is much much faster at sorting lists with a lot of duplicates.</p>
+<p>To explore advantages and disadvantages of the algorithms, check out this
+page, which visualizes it for you and then click through to read the
+descriptions.</p>
+<p><a class="reference external" href="http://www.sorting-algorithms.com/">http://www.sorting-algorithms.com/</a></p>
+</div>
+<div class="section" id="adaptive-sorting-algorithms">
+<h3>Adaptive Sorting Algorithms</h3>
+<p>Adaptive sorts examine input data, and can:</p>
+<ul class="simple">
+<li>Choose underlying sorting algorithm to use</li>
+<li>Switch between algorithms during same sort<ul>
+<li>Example: starting sorting with merge sort, switch to insertion sort <span class="raw-reveal"><br></span>
+once subarrays get small (typically faster than merge sorting all)</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="what-do-python-and-javascript-use">
+<h3>What Do Python and JavaScript Use?</h3>
+<ul class="simple">
+<li>JavaScript:<ul>
+<li>Chrome &amp; Node: âTimsortâ, an adaptive Merge Sort/Insertion Sort</li>
+<li>Firefox: Merge Sort</li>
+</ul>
+</li>
+<li>Python:<ul>
+<li>âTimsortâ</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="sorting-topics">
+<h2>Sorting Topics</h2>
+<div class="section" id="comparators">
+<h3>Comparators</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>JavaScript built-in <cite>sort</cite> method accepts optional <em>comparator function</em></li>
+<li>Can provide this function to decide how two items compare</li>
+<li>Comparator takes pair of elements (<cite>a</cite> &amp; <cite>b</cite>) and returns sort order<ul>
+<li>Returns negative number: <cite>a</cite> should come before <cite>b</cite></li>
+<li>Returns positive number: <cite>a</cite> should come after <cite>b</cite></li>
+<li>Returns 0:  <cite>a</cite> and <cite>b</cite> sort equally</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">numeric sort</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">numbers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">2000</span><span class="p">]</span>
+
+<span class="nx">numbers</span><span class="p">.</span><span class="nx">sort</span><span class="p">()</span>                 <span class="c1">// [100, 1000, 2000, 60]</span>
+<span class="nx">numbers</span><span class="p">.</span><span class="nx">sort</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span><span class="nx">b</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">a</span> <span class="o">-</span> <span class="nx">b</span><span class="p">)</span>   <span class="c1">// [60, 100, 1000, 2000]</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">sort by ânameâ property of objects</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">instructors</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Elie&quot;</span><span class="p">,</span>   <span class="nx">favLang</span><span class="o">:</span> <span class="s2">&quot;English&quot;</span> <span class="p">},</span>
+  <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Joel&quot;</span><span class="p">,</span>   <span class="nx">favLang</span><span class="o">:</span> <span class="s2">&quot;Python&quot;</span> <span class="p">},</span>
+  <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Alissa&quot;</span><span class="p">,</span> <span class="nx">favLang</span><span class="o">:</span> <span class="s2">&quot;JS&quot;</span> <span class="p">}</span>
+<span class="p">]</span>
+
+<span class="c1">// sort the instructors by name alphabetically</span>
+<span class="nx">instructors</span><span class="p">.</span><span class="nx">sort</span><span class="p">()</span> <span class="c1">// not going to help!</span>
+
+<span class="nx">instructors</span><span class="p">.</span><span class="nx">sort</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span><span class="nx">b</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">a</span><span class="p">.</span><span class="nx">name</span> <span class="o">&lt;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">a</span><span class="p">.</span><span class="nx">name</span> <span class="o">&gt;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="dsu-pattern">
+<h3>DSU Pattern</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Comparator functions may have to run O(n log n) times â a lot!</li>
+<li>Some sorting libraries donât use comparators &amp; use a âDSU patternâ<ul>
+<li><em>Decorate:</em> wrap item with âkeyâ for sorting it</li>
+<li><em>Sort:</em> using that key</li>
+<li><em>Undecorate:</em> remove that wrapper to reveal original item</li>
+</ul>
+</li>
+<li>This can be faster than comparators, but often uses more memory</li>
+</ul>
+</div>
+<p>Python uses DSU, not comparators:</p>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">sort by ânameâ key of dictionaries</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">instructors</span> <span class="o">=</span> <span class="p">[</span>
+      <span class="p">{</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Elie&quot;</span><span class="p">,</span>   <span class="s2">&quot;fav_lang&quot;</span><span class="p">:</span> <span class="s2">&quot;English&quot;</span> <span class="p">},</span>
+      <span class="p">{</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Joel&quot;</span><span class="p">,</span>   <span class="s2">&quot;fav_lang&quot;</span><span class="p">:</span> <span class="s2">&quot;Python&quot;</span> <span class="p">},</span>
+      <span class="p">{</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Alissa&quot;</span><span class="p">,</span> <span class="s2">&quot;fav_laang&quot;</span><span class="p">:</span> <span class="s2">&quot;JS&quot;</span> <span class="p">}</span>
+    <span class="p">]</span>
+
+<span class="n">instructors</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="stable-sorts">
+<h3>Stable Sorts</h3>
+<p>Sometimes, you are sorting items that are different but would sort same:</p>
+<p>For example, to sort these by <cite>priority</cite>:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">tasks</span> <span class="o">=</span> <span class="p">[</span> <span class="p">{</span> <span class="nx">priority</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Make logo&quot;</span> <span class="p">},</span>
+          <span class="p">{</span> <span class="nx">priority</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;Set up server&quot;</span> <span class="p">},</span>
+          <span class="p">{</span> <span class="nx">priority</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Hire team&quot;</span> <span class="p">},</span>
+          <span class="p">{</span> <span class="nx">priority</span><span class="o">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Launch&quot;</span> <span class="p">}</span> <span class="p">];</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>A âstable sortâ guarantees that <em>Make logo</em> sorts before <em>Hire team</em> â <span class="raw-reveal"><br></span>
+even those both have equal priorities, the started in that order</p>
+</div>
+<div class="docutils container">
+<p>Python &amp; modern JavaScripts all promise a stable sort</p>
+</div>
+</div>
+<div class="section" id="collations">
+<h3>Collations</h3>
+<p>How two strings compare in a language is controlled by their âcollationâ:</p>
+<ul class="simple">
+<li>Capitalization: does âaâ sort before or after âZâ?</li>
+<li>Does âÃ©â sort with âeâ? After âeâ and before âfâ? At the end?</li>
+</ul>
+<div class="docutils container">
+<ul class="simple">
+<li>Some languages/frameworks/databases let you choose a collation for a sort</li>
+<li>In others, youâd have to do this manually, in a complex comparator/DSU</li>
+</ul>
+</div>
+</div>
+<div class="section" id="natural-sort">
+<h3>Natural Sort</h3>
+<p>Humans often expect things to sort âintelligentlyâ, like these addresses:</p>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">mixing intelligently numeric &amp; lexicographic sorting</span></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>24 Apple Street
+100 Apple Street
+100 Berry Street
+500 Cherry Street Apt #34
+500 Cherry Street Apt #100
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>Or these 80s band names:</p>
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">not considering unimportant words, like leading âTheâ</span></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>The Clash
+Cyndia Lauper
+The Smiths
+Talking Heads
+U2
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<p>These are examples of ânatural sortsâ</p>
+</div>
+</div>
+<div class="section" id="comparative-non-comparative-sorts">
+<h3>Comparative/Non-Comparative Sorts</h3>
+<p>Most sorting algorithms are âcomparativeâ: <span class="raw-reveal"><br></span>
+Items need to be compared against each other to know how to sort them</p>
+<p>Comparative sorting can never be better than O(n log n)</p>
+<div class="docutils container">
+<p>But not all sorting requires comparison!</p>
+</div>
+<div class="compare compare23 docutils container">
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">movie data</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">movies</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">{</span><span class="nx">title</span><span class="o">:</span> <span class="s2">&quot;ET&quot;</span><span class="p">,</span> <span class="nx">stars</span><span class="o">:</span> <span class="mi">4</span><span class="p">},</span>
+  <span class="p">{</span><span class="nx">title</span><span class="o">:</span> <span class="s2">&quot;Star Wars&quot;</span><span class="p">,</span> <span class="nx">stars</span><span class="o">:</span> <span class="mi">5</span><span class="p">},</span>
+  <span class="p">{</span><span class="nx">title</span><span class="o">:</span> <span class="s2">&quot;Star Trek&quot;</span><span class="p">,</span> <span class="nx">stars</span><span class="o">:</span> <span class="mi">3</span><span class="p">},</span>
+  <span class="p">{</span><span class="nx">title</span><span class="o">:</span> <span class="s2">&quot;ET II&quot;</span><span class="p">,</span> <span class="nx">stars</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span>
+  <span class="c1">// 10,000 other films</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<p>To sort by just # of stars, <span class="raw-reveal"><br></span>
+we donât need to compare!</p>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>We only have 5 different buckets <span class="raw-reveal"><br></span>
+(for # of stars)</li>
+<li>We can scan list and just assign to buckets</li>
+<li>This is O(n), not O(n log n)</li>
+</ul>
+</div>
+</div>
+<div class="docutils container">
+<p>Learn more about <a class="reference external" href="http://pages.cs.wisc.edu/~paton/readings/Old/fall08/LINEAR-SORTS.html">non-comparative sorts</a></p>
+</div>
+</div>
+</div>
+<div class="section" id="resources">
+<h2>Resources</h2>
+<div class="section" id="what-do-you-need-to-know">
+<h3>What Do You Need To Know</h3>
+<p>Need to know:</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Best possible âcomparativeâ sort is O(n log n)</li>
+<li>Sorting in JavaScript:<ul>
+<li>How to use <cite>.sort()</cite> method</li>
+<li>Remember: JS sorting is lexicographic, not numeric, by default!</li>
+<li>How to write a comparator function</li>
+</ul>
+</li>
+<li>Important concepts: stable sorts, natural sorts</li>
+</ul>
+</div>
+<p>Perhaps useful to know:</p>
+<div class="docutils container">
+<ul class="simple">
+<li>How to implement merge sort</li>
+<li>How to implement insertion sort</li>
+<li>How to implement quicksort</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id4">
+<h3>Resources</h3>
+<p><a class="reference external" href="https://medium.com/basecs/sorting-out-the-basics-behind-sorting-algorithms-b0a032873add">Sorting Out The Basics Behind Sorting Algorithms</a></p>
+<p><a class="reference external" href="https://en.wikipedia.org/wiki/Timsort">Timsort</a></p>
+</div>
+</div>
+<div class="section" id="sorting-appendix">
+<h2>Sorting Appendix</h2>
+<div class="section" id="selection-sort">
+<h3>Selection Sort</h3>
+<p>Similar to bubble sort, but instead of first placing large values into sorted position, it places small values into sorted position</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="p">[</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="p">]</span>
+<span class="p">[</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="p">]</span>
+<span class="p">[</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="p">]</span>
+<span class="p">[</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="p">]</span>
+<span class="p">[</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span> <span class="p">]</span>
+<span class="mi">1</span> <span class="nx">is</span> <span class="nx">now</span> <span class="k">in</span> <span class="nx">its</span> <span class="nx">sorted</span> <span class="nx">position</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h3>Selection sort</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Store the first element as the smallest value youâve seen so far.</li>
+<li>Compare this item to the next item in the array until you find a smaller number.</li>
+<li>If a smaller number is found, designate that smaller number to be the new âminimumâ and continue until the end of the array.</li>
+<li>If the âminimumâ is not the value (index) you initially began with, swap the two values.
+Repeat this with the next element until the array is sorted.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="insertion-sort">
+<h3>Insertion Sort</h3>
+<p>Builds up the sort by gradually creating a larger left half which is always sorted</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="p">[</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="p">]</span>
+<span class="p">[</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="p">]</span>
+<span class="p">[</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="p">]</span>
+<span class="p">[</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span> <span class="p">]</span>
+<span class="p">[</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span> <span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="insertion-sort-pseudocode">
+<h3>Insertion Sort Pseudocode</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Start by picking the second element in the array</li>
+<li>Now compare the second element with the one before it and swap if necessary.</li>
+<li>Continue to the next element and if it is in the incorrect order, iterate through the sorted portion (i.e. the left side) to place the element in the correct place.</li>
+<li>Repeat until the array is sorted.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="quick-sort">
+<h2>Quick Sort</h2>
+<div class="docutils container">
+<ul class="simple">
+<li>Like merge sort, exploits the fact that arrays of 0 or 1 element are always sorted</li>
+<li>Works by selecting one element (called the âpivotâ) and finding the index where the pivot should end up in the sorted array</li>
+<li>Once the pivot is positioned appropriately, quick sort can be applied on either side of the pivot</li>
+</ul>
+</div>
+<div class="section" id="pivot-helper">
+<h3>Pivot Helper</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>In order to implement merge sort, itâs useful to first implement a function responsible arranging elements in an array on either side of a pivot</li>
+<li>Given an array, this helper function should designate an element as the pivot</li>
+<li>It should then rearrange elements in the array so that all values less than the pivot are moved to the left of the pivot, and all values greater than the pivot are moved to the right of the pivot</li>
+<li>The order of elements on either side of the pivot doesnât matter!</li>
+<li>The helper should do this in place, that is, it should not create a new array</li>
+<li>When complete, the helper should return the index of the pivot</li>
+</ul>
+</div>
+</div>
+<div class="section" id="picking-a-pivot">
+<h3>Picking a pivot</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>The runtime of quick sort depends in part on how one selects the pivot</li>
+<li>Ideally, the pivot should be chosen so that itâs roughly the median value in the data set youâre sorting</li>
+<li>For simplicity, weâll always choose the pivot to be the first element (weâll talk about consequences of this later)</li>
+</ul>
+</div>
+</div>
+<div class="section" id="pivot-helper-example">
+<h3>Pivot Helper Example</h3>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">arr</span> <span class="o">=</span> <span class="p">[</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">3</span> <span class="p">]</span>
+
+<span class="nx">pivot</span><span class="p">(</span><span class="nx">arr</span><span class="p">);</span> <span class="c1">// 4;</span>
+
+<span class="nx">arr</span><span class="p">;</span>
+<span class="c1">// any one of these is an acceptable mutation:</span>
+<span class="c1">// [2, 1, 4, 3, 5, 8, 7, 6]</span>
+<span class="c1">// [1, 4, 3, 2, 5, 7, 6, 8]</span>
+<span class="c1">// [3, 2, 1, 4, 5, 7, 6, 8]</span>
+<span class="c1">// [4, 1, 2, 3, 5, 6, 8, 7]</span>
+<span class="c1">// there are other acceptable mutations too!</span>
+</pre></div>
+</div>
+<p>All that matters is for 5 to be at index 4, for smaller values to be to the left, and for larger values to be to the right</p>
+</div>
+<div class="section" id="pivot-pseudocode">
+<h3>Pivot Pseudocode</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>It will help to accept three arguments: an array, a start index, and an end index (these can default to 0 and the array length minus 1, respectively)</li>
+<li>Grab the pivot from the start of the array</li>
+<li>Store the current pivot index in a variable (this will keep track of where the pivot should end up)</li>
+<li>Loop through the array from the start until the end</li>
+<li>If the pivot is greater than the current element, increment the pivot index variable and then swap the current element with the element at the pivot index</li>
+<li>Swap the starting element (i.e. the pivot) with the pivot index</li>
+<li>Return the pivot index</li>
+</ul>
+</div>
+</div>
+<div class="section" id="quicksort-pseudocode">
+<h3>Quicksort Pseudocode</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Call the pivot helper on the array</li>
+<li>When the helper returns to you the updated pivot index, recursively call the pivot helper on the subarray to the left of that index, and the subarray to the right of that index</li>
+<li>Your base case occurs when you consider a subarray with less than 2 elements</li>
+</ul>
+</div>
+</div>
+<div class="section" id="quicksort-resources">
+<h3>Quicksort Resources</h3>
+<ul class="simple">
+<li><a class="reference external" href="https://www.youtube.com/watch?v=aQiWF4E8flQ">Quicksort intro</a> (6 min YouTube)</li>
+<li><a class="reference external" href="https://class.coursera.org/algo-006/lecture">Tim Roughgarden Quicksort</a> (Quicksort-Algorithm, first two lectures)</li>
+<li><a class="reference external" href="http://www.quora.com/What-is-an-intuitive-explanation-of-QuickSort">âAn Intuitive Explanation of Quicksortâ</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

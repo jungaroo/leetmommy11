@@ -1,0 +1,399 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>SQL Alchemy Many-to-Many</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">SQL Alchemy Many-to-Many</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">SQL Alchemy Many-to-Many</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#navigating-relationships">Navigating Relationships</a><ul>
+<li><a class="reference internal" href="#one-to-many-navigation-review">One-to-many Navigation Review</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#joining">Joining</a><ul>
+<li><a class="reference internal" href="#id2">Joining</a></li>
+<li><a class="reference internal" href="#outer-join">Outer Join</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#many-to-many-relationships">Many-to-Many Relationships</a><ul>
+<li><a class="reference internal" href="#id3">Many-to-Many Relationships</a></li>
+<li><a class="reference internal" href="#project">Project</a></li>
+<li><a class="reference internal" href="#employeeproject">EmployeeProject</a></li>
+<li><a class="reference internal" href="#relationships">Relationships</a></li>
+<li><a class="reference internal" href="#through-relationships">âThroughâ Relationships</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#adding-to-relationships">Adding To Relationships</a><ul>
+<li><a class="reference internal" href="#id4">Adding To Relationships</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="sql-alchemy-many-to-many">
+<h1>SQL Alchemy Many-to-Many</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<ul class="simple">
+<li>Make explicit joins while querying in SQLAlchemy</li>
+<li>Work with many-to-many relationships in SQLAlchemy</li>
+</ul>
+</div>
+</div>
+<div class="section" id="navigating-relationships">
+<h2>Navigating Relationships</h2>
+<div class="section" id="one-to-many-navigation-review">
+<h3>One-to-many Navigation Review</h3>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">demo/models.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">phone_dir_nav</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Show phone dir of emps &amp; their depts.&quot;&quot;&quot;</span>
+
+    <span class="n">emps</span> <span class="o">=</span> <span class="n">Employee</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">emp</span> <span class="ow">in</span> <span class="n">emps</span><span class="p">:</span>  <span class="c1"># [&lt;Emp&gt;, &lt;Emp&gt;]</span>
+        <span class="k">if</span> <span class="n">emp</span><span class="o">.</span><span class="n">dept</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">emp</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">emp</span><span class="o">.</span><span class="n">dept</span><span class="o">.</span><span class="n">dept_code</span><span class="p">,</span> <span class="n">emp</span><span class="o">.</span><span class="n">dept</span><span class="o">.</span><span class="n">phone</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">emp</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="joining">
+<h2>Joining</h2>
+<div class="section" id="id2">
+<p>Can also specify joins directly</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Can be more explicit about what you want to get</li>
+<li>Connect tables without defined relationships</li>
+<li>Needed for outer joins</li>
+</ul>
+</div>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">demo/models.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">phone_dir_join</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Show employees with a join.&quot;&quot;&quot;</span>
+
+    <span class="n">emps</span> <span class="o">=</span> <span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Employee</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                             <span class="n">Department</span><span class="o">.</span><span class="n">dept_name</span><span class="p">,</span>
+                             <span class="n">Department</span><span class="o">.</span><span class="n">phone</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">Department</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
+
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">dept</span><span class="p">,</span> <span class="n">phone</span> <span class="ow">in</span> <span class="n">emps</span><span class="p">:</span>  <span class="c1"># [(n, d, p), (n, d, p)]</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">dept</span><span class="p">,</span> <span class="n">phone</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>You do need the <cite>.join(cls)</cite> or youâll get a âcross joinâ</p>
+</div>
+<p>Donât forget to add <code class="docutils literal notranslate"><span class="pre">.join()</span></code> to join the second tableâotherwise,
+you wonât get an INNER JOIN, but will get a âcross joinâ, where all
+employees are joined with all departments!</p>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">demo/models.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">phone_dir_join_class</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Show employees with a join.</span>
+
+<span class="sd">    This second version doesn&#39;t just get a list of data tuples,</span>
+<span class="sd">    but a list of tuples of classes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">emps</span> <span class="o">=</span> <span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Employee</span><span class="p">,</span> <span class="n">Department</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">Department</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
+
+    <span class="k">for</span> <span class="n">emp</span><span class="p">,</span> <span class="n">dept</span> <span class="ow">in</span> <span class="n">emps</span><span class="p">:</span>  <span class="c1"># [(&lt;E&gt;, &lt;D&gt;), (&lt;E&gt;, &lt;D&gt;)]</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">emp</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">dept</span><span class="o">.</span><span class="n">dept_name</span><span class="p">,</span> <span class="n">dept</span><span class="o">.</span><span class="n">phone</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="outer-join">
+<h3>Outer Join</h3>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">demo/models.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">phone_dir_join_outerjoin</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Show all employees, even those without a dept.&quot;&quot;&quot;</span>
+
+    <span class="n">emps</span> <span class="o">=</span> <span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Employee</span><span class="p">,</span> <span class="n">Department</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">outerjoin</span><span class="p">(</span><span class="n">Department</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
+
+    <span class="k">for</span> <span class="n">emp</span><span class="p">,</span> <span class="n">dept</span> <span class="ow">in</span> <span class="n">emps</span><span class="p">:</span>  <span class="c1"># [(&lt;E&gt;, &lt;D&gt;), (&lt;E&gt;, &lt;D&gt;)]</span>
+        <span class="k">if</span> <span class="n">dept</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">emp</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">dept</span><span class="o">.</span><span class="n">dept_name</span><span class="p">,</span> <span class="n">dept</span><span class="o">.</span><span class="n">phone</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">emp</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="many-to-many-relationships">
+<h2>Many-to-Many Relationships</h2>
+<div class="section" id="id3">
+<div class="graphviz">
+<img src="_images/graphviz-3170499edc35985ac53f7bd241ce2b91ced72b26.svg" />
+</div>
+<div class="compare docutils container">
+<div class="docutils container">
+<p><strong>employees_projects</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="43%" />
+<col width="28%" />
+<col width="30%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">emp_id</th>
+<th class="head">proj_code</th>
+<th class="head">role</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1 <span class="tan">(Leonard)</span></td>
+<td>server</td>
+<td>Auditor</td>
+</tr>
+<tr class="row-odd"><td>2 <span class="tan">(Liz)</span></td>
+<td>car</td>
+<td>Chair</td>
+</tr>
+<tr class="row-even"><td>2 <span class="tan">(Liz)</span></td>
+<td>server</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td>3 <span class="tan">(Maggie)</span></td>
+<td>car</td>
+<td>&#160;</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="docutils container">
+<p><strong>projects</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="39%" />
+<col width="61%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">proj_code</th>
+<th class="head">proj_name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>car</td>
+<td>Design Car</td>
+</tr>
+<tr class="row-odd"><td>server</td>
+<td>Deploy Server</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="project">
+<h3>Project</h3>
+<div class="graphviz">
+<img src="_images/graphviz-3170499edc35985ac53f7bd241ce2b91ced72b26.svg" />
+</div>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">demo/models.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Project</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Project. Employees can be assigned to this.&quot;&quot;&quot;</span>
+
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;projects&quot;</span>
+
+    <span class="n">proj_code</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Text</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">proj_name</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Text</span><span class="p">,</span>
+                          <span class="n">nullable</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                          <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="employeeproject">
+<h3>EmployeeProject</h3>
+<div class="graphviz">
+<img src="_images/graphviz-3170499edc35985ac53f7bd241ce2b91ced72b26.svg" />
+</div>
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">demo/models.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">EmployeeProject</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Mapping of an employee to a project.&quot;&quot;&quot;</span>
+
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;employees_projects&quot;</span>
+
+    <span class="n">emp_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span>
+                       <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;employees.id&quot;</span><span class="p">),</span>
+                       <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">proj_code</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Text</span><span class="p">,</span>
+                          <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;projects.proj_code&quot;</span><span class="p">),</span>
+                          <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">role</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Text</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="relationships">
+<h3>Relationships</h3>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">demo/models.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Employee</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>   <span class="c1"># ...</span>
+    <span class="c1"># direct navigation: emp -&gt; employeeproject &amp; back</span>
+    <span class="n">assignments</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s1">&#39;EmployeeProject&#39;</span><span class="p">,</span>
+                                  <span class="n">backref</span><span class="o">=</span><span class="s1">&#39;employee&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">demo/models.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Project</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>   <span class="c1"># ...</span>
+    <span class="c1"># direct navigation: proj -&gt; employeeproject &amp; back</span>
+    <span class="n">assignments</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s1">&#39;EmployeeProject&#39;</span><span class="p">,</span>
+                                  <span class="n">backref</span><span class="o">=</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">liz</span> <span class="o">=</span> <span class="n">Employee</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">liz</span><span class="o">.</span><span class="n">assignments</span>
+<span class="go">[&lt;EmployeeProject 2, server&gt;, &lt;EmployeeProject 2, car&gt;]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">car</span> <span class="o">=</span> <span class="n">Project</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;car&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">car</span><span class="o">.</span><span class="n">assignments</span>
+<span class="go">[&lt;EmployeeProject 2, car&gt;, &lt;EmployeeProject 3, car&gt;]</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>These âstop atâ <cite>EmployeeProject</cite>; but can go on:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">liz</span><span class="o">.</span><span class="n">assignments</span>
+<span class="go">[&lt;EmployeeProject 2, server&gt;, &lt;EmployeeProject 2, car&gt;]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">liz</span><span class="o">.</span><span class="n">assignments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">project</span>
+<span class="go">&lt;Project server Deploy Server&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="through-relationships">
+<h3>âThroughâ Relationships</h3>
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">demo/models.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Employee</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>   <span class="c1"># ...</span>
+    <span class="c1"># direct navigation: emp -&gt; project &amp; back</span>
+    <span class="n">projects</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s1">&#39;Project&#39;</span><span class="p">,</span>
+<span class="hll">                               <span class="n">secondary</span><span class="o">=</span><span class="s1">&#39;employees_projects&#39;</span><span class="p">,</span>
+</span>                               <span class="n">backref</span><span class="o">=</span><span class="s1">&#39;employees&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">liz</span><span class="o">.</span><span class="n">projects</span>
+<span class="go">&lt;Project server Deploy Server&gt;, &lt;Project car Design Car&gt;]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">car</span><span class="o">.</span><span class="n">employees</span>
+<span class="go">[&lt;Employee 2 Liz CA&gt;, &lt;Employee 3 Maggie DC&gt;]</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>These go âthroughâ <cite>employees_projects</cite> to get result</p>
+</div>
+<p>Fine (&amp; sometimes useful) to have both:</p>
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">demo/models.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Employee</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>   <span class="c1"># ...</span>
+    <span class="c1"># direct navigation: emp -&gt; employeeproject &amp; back</span>
+    <span class="n">assignments</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s1">&#39;EmployeeProject&#39;</span><span class="p">,</span>
+                                  <span class="n">backref</span><span class="o">=</span><span class="s1">&#39;employee&#39;</span><span class="p">)</span>
+
+    <span class="c1"># direct navigation: emp -&gt; project &amp; back</span>
+    <span class="n">projects</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s1">&#39;Project&#39;</span><span class="p">,</span>
+                               <span class="n">secondary</span><span class="o">=</span><span class="s1">&#39;employees_projects&#39;</span><span class="p">,</span>
+                               <span class="n">backref</span><span class="o">=</span><span class="s1">&#39;employees&#39;</span><span class="p">)</span>
+
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="adding-to-relationships">
+<h2>Adding To Relationships</h2>
+<div class="section" id="id4">
+<p>Can append to âthroughâ relationship directly:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nadine</span> <span class="o">=</span> <span class="n">Employee</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nadine</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">car</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nadine</span><span class="o">.</span><span class="n">assignments</span>
+<span class="go">[&lt;EmployeeProject 4, car&gt;]</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>Can append to middle table:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nadine</span><span class="o">.</span><span class="n">assignments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+<span class="gp">... </span>  <span class="n">EmployeeProject</span><span class="p">(</span><span class="n">proj_code</span><span class="o">=</span><span class="s1">&#39;server&#39;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s1">&#39;Tester&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nadine</span><span class="o">.</span><span class="n">projects</span>
+<span class="go">[&lt;Project server Deploy Server&gt;, &lt;Project car Design Car&gt;]</span>
+</pre></div>
+</div>
+</div>
+<p>Can add a new middle record directly:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m_server</span> <span class="o">=</span> <span class="n">EmployeeProject</span><span class="p">(</span><span class="n">emp_id</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">proj_code</span><span class="o">=</span><span class="s1">&#39;server&#39;</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">m_server</span><span class="p">)</span>   <span class="c1"># need to do this now, though</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>Useful if you only have keys, not a user or project</p>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

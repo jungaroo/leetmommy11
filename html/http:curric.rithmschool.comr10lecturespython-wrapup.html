@@ -1,0 +1,289 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Python Wrap-Up</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Python Wrap-Up</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Python Wrap-Up</a><ul>
+<li><a class="reference internal" href="#about-python-redux">About Python, Redux</a><ul>
+<li><a class="reference internal" href="#python-is">Python Is â¦</a></li>
+<li><a class="reference internal" href="#python-is-compiled">Python Is Compiled</a></li>
+<li><a class="reference internal" href="#python-can-have-type-hints">Python Can Have Type Hints</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#python-can-be-lazy">Python Can Be Lazy</a><ul>
+<li><a class="reference internal" href="#id1">Python Can Be Lazy</a></li>
+<li><a class="reference internal" href="#laziness-through-yield">Laziness Through <cite>yield</cite></a></li>
+<li><a class="reference internal" href="#laziness-is-good">Laziness Is Good</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#python-libraries">Python Libraries</a><ul>
+<li><a class="reference internal" href="#python-standard-library">Python Standard Library</a></li>
+<li><a class="reference internal" href="#beautiful-soup">Beautiful Soup</a></li>
+<li><a class="reference internal" href="#common-data-science-libraries">Common Data Science Libraries</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#jupyter">Jupyter</a><ul>
+<li><a class="reference internal" href="#id2">Jupyter</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#zen-of-python">Zen Of Python</a><ul>
+<li><a class="reference internal" href="#id4">Zen Of Python</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="python-wrap-up">
+<h1>Python Wrap-Up</h1>
+<div class="section" id="about-python-redux">
+<h2>About Python, Redux</h2>
+<div class="section" id="python-is">
+<h3>Python Is â¦</h3>
+<div class="docutils container">
+<ul class="simple">
+<li><strong>high-level</strong>: you think at a relatively high-level</li>
+<li><strong>dynamic</strong>: running script can create its own functions/classes</li>
+<li><strong>dynamically-typed</strong>: same variable can be used for int/string/etc</li>
+<li><strong>strongly-typed</strong>: âaâ + 3 doesnât eval to âa3â</li>
+<li><strong>compiled</strong></li>
+</ul>
+</div>
+</div>
+<div class="section" id="python-is-compiled">
+<h3>Python Is Compiled</h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">double</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="c1"># do the adding</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+    <span class="k">return</span> <span class="n">result</span> <span class="o">*</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">double</span> <span class="k">else</span> <span class="n">result</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>gets âcompiledâ into âbytecodeâ:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">4</span>           <span class="mi">0</span> <span class="n">LOAD_FAST</span>                <span class="mi">0</span> <span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="mi">2</span> <span class="n">LOAD_FAST</span>                <span class="mi">1</span> <span class="p">(</span><span class="n">y</span><span class="p">)</span>
+            <span class="mi">4</span> <span class="n">BINARY_ADD</span>
+            <span class="mi">6</span> <span class="n">STORE_FAST</span>               <span class="mi">3</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+<span class="mi">6</span>           <span class="mi">8</span> <span class="n">LOAD_FAST</span>                <span class="mi">2</span> <span class="p">(</span><span class="n">double</span><span class="p">)</span>
+           <span class="mi">10</span> <span class="n">POP_JUMP_IF_FALSE</span>       <span class="mi">20</span>
+           <span class="mi">12</span> <span class="n">LOAD_FAST</span>                <span class="mi">3</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span>
+           <span class="mi">14</span> <span class="n">LOAD_CONST</span>               <span class="mi">1</span> <span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+           <span class="mi">16</span> <span class="n">BINARY_MULTIPLY</span>
+           <span class="mi">18</span> <span class="n">RETURN_VALUE</span>
+      <span class="o">&gt;&gt;</span>   <span class="mi">20</span> <span class="n">LOAD_FAST</span>                <span class="mi">3</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span>
+           <span class="mi">22</span> <span class="n">RETURN_VALUE</span>
+</pre></div>
+</div>
+</div>
+<p>You donât do this compilation separately.</p>
+<p>It happens when you first run/import Python file.</p>
+<div class="docutils container">
+<p>Previously-compiled version is stored in <cite>__pycache__/add.pyc</cite></p>
+<p>You donât need those file in Git â they get created when needed</p>
+</div>
+</div>
+<div class="section" id="python-can-have-type-hints">
+<h3>Python Can Have Type Hints</h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Add x and y and return results.&quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">num1</span> <span class="o">+</span> <span class="n">num2</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>Editors can use this to help find errors</li>
+<li>Can produce prettier help/API documentation</li>
+</ul>
+</div>
+</div>
+<div class="section" id="python-can-be-lazy">
+<h2>Python Can Be Lazy</h2>
+<div class="section" id="id1">
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">this works greatâ¦</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">find_liked_num</span><span class="p">(</span><span class="n">nums</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Prompt user until they like a number.&quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">nums</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">input</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Do you like {num}? &quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">num</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">works great for thisâ¦</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">find_liked_num</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">If we wanted to do that for âall even numbersâ â¦</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">find_liked_num</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="laziness-through-yield">
+<h3>Laziness Through <cite>yield</cite></h3>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">we can do this â¦</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">evens</span><span class="p">(</span><span class="n">start</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Yield even numbers starting at start.&quot;&quot;&quot;</span>
+
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">start</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">start</span> <span class="o">+</span> <span class="mi">2</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">then we can do thisâ¦</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">find_liked_num</span><span class="p">(</span><span class="n">evens</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mi">8</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<p><cite>yield</cite> is like âreturn this value now, and remember
+where it left offâ</p>
+</div>
+</div>
+<div class="section" id="laziness-is-good">
+<h3>Laziness Is Good</h3>
+<p>Itâs nice to be able to loop over data â¦</p>
+<div class="docutils container">
+<ul class="simple">
+<li>even if itâs infinite (like all even numbers)</li>
+<li>or itâs just too huge to hold in memory</li>
+<li>or itâs expensive to pre-calculate when you might only need some</li>
+</ul>
+</div>
+<div class="docutils container">
+<p>A lot of big-data stuff relies on this</p>
+</div>
+<div class="docutils container">
+<p>There are even lazy list comprehensions: <em>generator expressions</em></p>
+</div>
+</div>
+</div>
+<div class="section" id="python-libraries">
+<h2>Python Libraries</h2>
+<div class="section" id="python-standard-library">
+<h3>Python Standard Library</h3>
+<p>Lots of useful data structures and features:</p>
+<ul class="simple">
+<li>queues and stacks</li>
+<li>binary search trees</li>
+<li>statistics</li>
+<li>complex numbers, fractions, cool math stuff</li>
+<li>functional programming helpers</li>
+</ul>
+</div>
+<div class="section" id="beautiful-soup">
+<h3>Beautiful Soup</h3>
+<p>A lot of sites have APIs that return data.</p>
+<p>Many donât, and you need to âscrapeâ HTML to get data.</p>
+<p>Beautiful Soup is a terrific library for this.</p>
+</div>
+<div class="section" id="common-data-science-libraries">
+<h3>Common Data Science Libraries</h3>
+<div class="docutils container">
+<dl class="docutils">
+<dt>Numpy</dt>
+<dd>Super-fast linear algebra and matrix math</dd>
+<dt>Pandas</dt>
+<dd>Data slicing/grouping/querying</dd>
+<dt>SciKit-Learn</dt>
+<dd>Common machine learning algorithms</dd>
+</dl>
+</div>
+<div class="docutils container">
+<p><a class="reference external" href="http://www.scipy-lectures.org">Good place to start</a></p>
+</div>
+</div>
+</div>
+<div class="section" id="jupyter">
+<h2>Jupyter</h2>
+<div class="section" id="id2">
+<p><a class="reference external" href="http://jupyter.org">Jupyter</a> is âinteractive computingâ</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Like IPython in a web page</li>
+<li>Can mix in documentation, drawings, code snippets</li>
+<li>Often used to play with data or share analyses</li>
+<li>Can publish on the web</li>
+<li>Can even interactively edit as a group!</li>
+</ul>
+</div>
+<p>And itâs not just for Python :)</p>
+</div>
+</div>
+<div class="section" id="zen-of-python">
+<h2>Zen Of Python</h2>
+<div class="section" id="id4">
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Beautiful is better than ugly
+Readability counts
+
+Explicit is better than implicit
+
+Simple is better than complex
+Complex is better than complicated
+
+Special cases aren&#39;t special enough to break the rules
+Although practicality beats purity
+
+Errors should never pass silently
+
+In the face of ambiguity, refuse the temptation to guess
+
+If the implementation is hard to explain, it&#39;s a bad idea
+If the implementation is easy to explain, it may be a good idea
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

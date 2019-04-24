@@ -51,11 +51,27 @@ class WordSearcher():
 
         # search for the word
         for link in links:
-            response = requests.get(self.base_url + link)
-            soup = bs4.BeautifulSoup(response.text, features='html5lib')
+
+            clean_link = link.replace('/', '')
+            clean_base = self.base_url.replace('/','')
+         
+            file_name = f"./html/{clean_base}{clean_link}.html"
+
+            try:
+                with open(file_name, "r") as html_file: 
+                    html_text = html_file.read()
+            except FileNotFoundError:
+                print("Seeing file for first time")
+                response = requests.get(self.base_url + link)
+                with open(file_name, "w") as o:
+                    print(response.text, file=o)
+                html_text = response.text
+            
+            soup = bs4.BeautifulSoup(html_text, features='html5lib')
             pre = soup.find_all('pre')   
             for code_snip in pre:
                 if word in code_snip.text:  # regular expression
                     # print("Try checking in:", f"{BASE_URL}{link}")
                     output.append((f"{self.base_url}{link}", code_snip.text))
+        
         return output

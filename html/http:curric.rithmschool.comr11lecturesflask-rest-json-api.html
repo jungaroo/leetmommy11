@@ -1,0 +1,567 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>REST + JSON APIs</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">REST + JSON APIs</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">REST + JSON APIs</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#revewing-http-verbs">Revewing HTTP Verbs</a><ul>
+<li><a class="reference internal" href="#get">GET</a></li>
+<li><a class="reference internal" href="#post">POST</a></li>
+<li><a class="reference internal" href="#when-would-you-use-one-or-another">When would you use one or another:</a></li>
+<li><a class="reference internal" href="#put-patch-delete">PUT / PATCH / DELETE</a></li>
+<li><a class="reference internal" href="#let-s-define-some-important-terms">Letâs define some important terms</a></li>
+<li><a class="reference internal" href="#safe">Safe</a></li>
+<li><a class="reference internal" href="#idempotent">Idempotent</a></li>
+<li><a class="reference internal" href="#let-s-compare-them">Letâs compare them!</a></li>
+<li><a class="reference internal" href="#why-do-we-care-about-this">Why do we care about this?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#an-introduction-to-rest">An Introduction to REST</a><ul>
+<li><a class="reference internal" href="#imagine-you-re-a-developer">Imagine youâre a developer</a></li>
+<li><a class="reference internal" href="#rest">REST</a></li>
+<li><a class="reference internal" href="#restful-apis">RESTful APIs</a></li>
+<li><a class="reference internal" href="#resource">Resource</a></li>
+<li><a class="reference internal" href="#restful-routes">RESTful routes</a></li>
+<li><a class="reference internal" href="#where-do-you-see-this">Where do you see this?</a></li>
+<li><a class="reference internal" href="#nested-routes">Nested Routes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#restful-json-apis">RESTful JSON APIs</a><ul>
+<li><a class="reference internal" href="#doing-this-in-flask">Doing this in Flask</a></li>
+<li><a class="reference internal" href="#limitations-of-jsonify">limitations of jsonify</a></li>
+<li><a class="reference internal" href="#instead-jsonify-what-does-work">Instead - jsonify what does work!</a></li>
+<li><a class="reference internal" href="#jsonify">jsonify</a></li>
+<li><a class="reference internal" href="#sending-data-to-a-flask-json-api">Sending Data to a Flask JSON API</a></li>
+<li><a class="reference internal" href="#receiving-data-in-a-flask-json-api">Receiving Data in a Flask JSON API</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#testing-our-api">Testing our API</a><ul>
+<li><a class="reference internal" href="#id2">Testing our API</a></li>
+<li><a class="reference internal" href="#what-our-routes-look-like">What our routes look like</a></li>
+<li><a class="reference internal" href="#what-our-tests-look-like">What our tests look like</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#looking-ahead">Looking Ahead</a><ul>
+<li><a class="reference internal" href="#id3">Looking Ahead</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="rest-json-apis">
+<h1>REST + JSON APIs</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Review GET vs POST</li>
+<li>Review other HTTP verbs (PUT, PATCH, DELETE)</li>
+<li>Describe what REST is</li>
+<li>Build and Test JSON APIs</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="revewing-http-verbs">
+<h2>Revewing HTTP Verbs</h2>
+<div class="section" id="get">
+<h3>GET</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>remains in history + is cached and bookmarked</li>
+<li>never for sensitive information</li>
+<li>Data is sent in the URL in the query string</li>
+<li><cite>GET</cite> requests are repeatable</li>
+</ul>
+</div>
+</div>
+<div class="section" id="post">
+<h3>POST</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>does not remain in history + is not cached or bookmarked</li>
+<li>used for sensitive information</li>
+<li>Data is sent in body of the request</li>
+<li><cite>POST</cite> requests are not repeatable</li>
+</ul>
+</div>
+</div>
+<div class="section" id="when-would-you-use-one-or-another">
+<h3>When would you use one or another:</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Searching / Filtering? GET</li>
+<li>Sending an email? POST</li>
+<li>Updating a user? POST?</li>
+</ul>
+</div>
+</div>
+<div class="section" id="put-patch-delete">
+<h3>PUT / PATCH / DELETE</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>PUT - update the entire resource</li>
+<li>PATCH - update a part of entire resource (patch it up)</li>
+<li>DELETE - delete the resource</li>
+</ul>
+</div>
+</div>
+<div class="section" id="let-s-define-some-important-terms">
+<h3>Letâs define some important terms</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Safe</li>
+<li>Idempotent</li>
+</ul>
+</div>
+</div>
+<div class="section" id="safe">
+<h3>Safe</h3>
+<p>A <cite>safe</cite> operation is an operation which does not change the data requested.</p>
+</div>
+<div class="section" id="idempotent">
+<h3>Idempotent</h3>
+<p>A request method is considered âidempotentâ if the intended effect on
+the server of multiple identical requests with that method is the same as the effect for a single such request.</p>
+<div class="docutils container">
+<ul class="simple">
+<li>An idempotent operation can be repeated an arbitrary number of times and the result will be the same as if it had been done only once.</li>
+<li>Idempotence refers to side-effects not all-effects or responses.</li>
+<li>In arithmetic, adding zero to a number is idempotent. Calculating the absolute value is idempotent as well.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="let-s-compare-them">
+<h3>Letâs compare them!</h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="41%" />
+<col width="19%" />
+<col width="41%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">HTTP Verb</th>
+<th class="head">Safe?</th>
+<th class="head">Idempotent?</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>GET</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr class="row-odd"><td>POST</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td>PUT / PATCH</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr class="row-odd"><td>DELETE</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="why-do-we-care-about-this">
+<h3>Why do we care about this?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Better describe the routes that we create</li>
+<li>Build standards around how we define routes</li>
+<li>Do we really need this? Letâs try something out!</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="an-introduction-to-rest">
+<h2>An Introduction to REST</h2>
+<div class="section" id="imagine-you-re-a-developer">
+<h3>Imagine youâre a developer</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Hopefully this should not be imagination!</li>
+<li>Your task: create a route that when requested, will update a user!</li>
+<li>POST <cite>/users/[id]/update</cite>? / or POST <cite>/users/[id]/change</cite>? or PATCH <cite>/users/[id]</cite>?</li>
+<li>With this much flexibility, itâs very helpful to standardize!</li>
+<li>Enter REST!</li>
+</ul>
+</div>
+</div>
+<div class="section" id="rest">
+<h3>REST</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>An architectural style that defines a set of constraints to be used for creating web services.</li>
+<li>Includes things like a client-server model, statelessness and cacheability</li>
+<li>APIs that adhere to these constraints are called RESTful APIs</li>
+</ul>
+</div>
+</div>
+<div class="section" id="restful-apis">
+<h3>RESTful APIs</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Usually defined with a base url <cite>https://api.github.com</cite></li>
+<li>Are defined using a <cite>resource</cite> after the base url</li>
+<li>Use standard HTTP verbs (GET, POST, PUT/PATCH, DELETE)</li>
+<li>Structure routes in a standardized way (a.k.a. RESTful routing)</li>
+</ul>
+</div>
+</div>
+<div class="section" id="resource">
+<h3>Resource</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>An object with a type, associated data, relationships to other resources</li>
+<li>A set of methods that operate on it.</li>
+<li>Similar to an object instance in an object-oriented programming language with HTTP verbs describing methods on it</li>
+<li>Not everything you do with a RESTful API will be around resources!</li>
+</ul>
+</div>
+</div>
+<div class="section" id="restful-routes">
+<h3>RESTful routes</h3>
+<p>Letâs see what the RESTful routes are for a resource called <cite>snacks</cite></p>
+<div class="docutils container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="27%" />
+<col width="29%" />
+<col width="44%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">HTTP Verb</th>
+<th class="head">Route</th>
+<th class="head">Response</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>GET</td>
+<td>/snacks</td>
+<td>Display all snacks</td>
+</tr>
+<tr class="row-odd"><td>GET</td>
+<td>/snacks/[id]</td>
+<td>Display a snack</td>
+</tr>
+<tr class="row-even"><td>POST</td>
+<td>/snacks</td>
+<td>Create a snack</td>
+</tr>
+<tr class="row-odd"><td>PUT / PATCH</td>
+<td>/snacks/[id]</td>
+<td>Update a snack</td>
+</tr>
+<tr class="row-even"><td>DELETE</td>
+<td>/snacks/[id]</td>
+<td>Delete a snack</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="docutils container">
+<p>But what about X, Y or Z?</p>
+</div>
+<div class="docutils container">
+<p>No!</p>
+</div>
+</div>
+<div class="section" id="where-do-you-see-this">
+<h3>Where do you see this?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Almost all RESTful APIs</li>
+<li>Stripe - <a class="reference external" href="https://stripe.com/docs/api?lang=curl#charges">https://stripe.com/docs/api?lang=curl#charges</a></li>
+<li>Github - <a class="reference external" href="https://developer.github.com/v3/repos/">https://developer.github.com/v3/repos/</a></li>
+<li>Yelp - <a class="reference external" href="https://www.yelp.com/developers/documentation/v3/event">https://www.yelp.com/developers/documentation/v3/event</a></li>
+<li>Spotify - <a class="reference external" href="https://developer.spotify.com/documentation/web-api/reference/playlists/">https://developer.spotify.com/documentation/web-api/reference/playlists/</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="nested-routes">
+<h3>Nested Routes</h3>
+<div class="docutils container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="12%" />
+<col width="43%" />
+<col width="45%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">HTTP Verb</th>
+<th class="head">Route</th>
+<th class="head">Response</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>GET</td>
+<td>/businesses</td>
+<td>Display information about all businesses</td>
+</tr>
+<tr class="row-odd"><td>GET</td>
+<td>/businesses/[id]</td>
+<td>Display information about a business</td>
+</tr>
+<tr class="row-even"><td>POST</td>
+<td>/businesses</td>
+<td>Create a busines</td>
+</tr>
+<tr class="row-odd"><td>PUT / PATCH</td>
+<td>/businesses/[id]</td>
+<td>Update a business</td>
+</tr>
+<tr class="row-even"><td>DELETE</td>
+<td>/businesses/[id]</td>
+<td>Delete a business</td>
+</tr>
+<tr class="row-odd"><td>GET</td>
+<td>/businesses/[business-id]/reviews</td>
+<td>Display all reviews for a business</td>
+</tr>
+<tr class="row-even"><td>GET</td>
+<td>/businesses/[business-id]/reviews/[id]</td>
+<td>Display a review for a business</td>
+</tr>
+<tr class="row-odd"><td>POST</td>
+<td>/businesses/[business-id]/reviews</td>
+<td>Create a review for a business</td>
+</tr>
+<tr class="row-even"><td>PUT / PATCH</td>
+<td>/businesses/[business-id]/reviews/[id]</td>
+<td>Update a review for a business</td>
+</tr>
+<tr class="row-odd"><td>DELETE</td>
+<td>/businesses/[business-id]/reviews/[id]</td>
+<td>Delete a review for a business</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="restful-json-apis">
+<h2>RESTful JSON APIs</h2>
+<div class="section" id="doing-this-in-flask">
+<h3>Doing this in Flask</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>You can do so much of this already!</li>
+<li>Be mindful of your response</li>
+<li><strong>NO MORE redirect or render_template</strong></li>
+<li>Instead, use <code class="docutils literal notranslate"><span class="pre">jsonify</span></code>!</li>
+</ul>
+</div>
+</div>
+<div class="section" id="limitations-of-jsonify">
+<h3>limitations of jsonify</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Python does not know how to just âturn your objects into JSONâ</li>
+<li>Requires a process called serialization</li>
+<li>Instances of custom classes arenât JSON serializable by default</li>
+</ul>
+</div>
+</div>
+<div class="section" id="instead-jsonify-what-does-work">
+<h3>Instead - jsonify what does work!</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>jsonify works well with simple Python data structures like lists, tuples and dictionaries (not sets!)</li>
+<li>Take instances of classes and convert them into dictionaries / lists</li>
+<li>Or use another tool like Marshmallow (<a class="reference external" href="https://flask-marshmallow.readthedocs.io/en/latest/">https://flask-marshmallow.readthedocs.io/en/latest/</a>)</li>
+</ul>
+</div>
+</div>
+<div class="section" id="jsonify">
+<h3>jsonify</h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@app.route</span><span class="p">(</span><span class="s2">&quot;/desserts/&lt;dessert_id&gt;&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">show_user</span><span class="p">(</span><span class="n">dessert_id</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Display information about a dessert&quot;&quot;&quot;</span>
+    <span class="c1"># get an instance of a user from a Dessert class</span>
+
+    <span class="n">found_dessert</span> <span class="o">=</span> <span class="n">Dessert</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dessert_id</span><span class="p">)</span>
+
+    <span class="c1"># return jsonify(found_dessert) - this will not work!</span>
+
+    <span class="n">serialized_dessert</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">found_dessert</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+      <span class="s2">&quot;calories&quot;</span><span class="p">:</span> <span class="n">found_dessert</span><span class="o">.</span><span class="n">calories</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">response</span><span class="o">=</span><span class="n">serialized_dessert</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="sending-data-to-a-flask-json-api">
+<h3>Sending Data to a Flask JSON API</h3>
+<p>If using a tool like cURL to send JSON data, be sure to set a Content type!</p>
+<div class="docutils container">
+<pre class="console literal-block">
+$ <span class="cmd">curl localhost:5000/desserts \</span>
+$ <span class="cmd">-H &quot;Content-type: application/json&quot;</span>
+$ <span class="cmd">-d '</span>
+$ <span class="cmd">{&quot;name&quot;:&quot;chocolate bar&quot;,</span>
+$ <span class="cmd">&quot;description&quot;:&quot;so tasty&quot;,</span>
+$ <span class="cmd">&quot;calories&quot;: 200}</span>
+$ <span class="cmd">'</span>
+</pre>
+</div>
+</div>
+<div class="section" id="receiving-data-in-a-flask-json-api">
+<h3>Receiving Data in a Flask JSON API</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>When receiving JSON data, donât look in <code class="docutils literal notranslate"><span class="pre">request.args</span></code> or <code class="docutils literal notranslate"><span class="pre">request.form</span></code></li>
+<li>When a request is made to a Flask server using a header of <cite>Content-Type: application/json</cite>, youâll find what you seek inside of <code class="docutils literal notranslate"><span class="pre">request.json</span></code>!</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="testing-our-api">
+<h2>Testing our API</h2>
+<div class="section" id="id2">
+<div class="docutils container">
+<ul class="simple">
+<li>We will be testing the JSON response, not HTML<ul>
+<li>In particular, weâll look at <code class="docutils literal notranslate"><span class="pre">response.json</span></code>, not <code class="docutils literal notranslate"><span class="pre">response.data</span></code></li>
+<li>Weâll also send data via a <code class="docutils literal notranslate"><span class="pre">json</span></code> named argument, not a <code class="docutils literal notranslate"><span class="pre">data</span></code> named argument</li>
+</ul>
+</li>
+<li>This makes things even easier! Weâre just testing data, not presentation</li>
+<li>We can always start using Insomnia / curl</li>
+</ul>
+</div>
+</div>
+<div class="section" id="what-our-routes-look-like">
+<h3>What our routes look like</h3>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">demo/app.py</span></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/desserts&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">list_all_desserts</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;query for desserts, send back a list of dictionaries&quot;&quot;&quot;</span>
+
+    <span class="n">desserts</span> <span class="o">=</span> <span class="n">Dessert</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+    <span class="n">serialized_desserts</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">dessert</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;calories&#39;</span><span class="p">:</span> <span class="n">dessert</span><span class="o">.</span><span class="n">calories</span><span class="p">}</span> 
+        <span class="k">for</span> <span class="n">dessert</span> <span class="ow">in</span> <span class="n">desserts</span>
+    <span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">desserts</span><span class="o">=</span><span class="n">serialized_desserts</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="what-our-tests-look-like">
+<h3>What our tests look like</h3>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">demo/test_desserts.py</span></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">app</span> <span class="k">import</span> <span class="n">app</span>
+<span class="kn">from</span> <span class="nn">models</span> <span class="k">import</span> <span class="n">db</span><span class="p">,</span> <span class="n">Dessert</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;SQLALCHEMY_DATABASE_URI&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;postgresql:///desserts_db_test&#39;</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;SQLALCHEMY_ECHO&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="n">db</span><span class="o">.</span><span class="n">create_all</span><span class="p">()</span>
+
+
+<span class="k">class</span> <span class="nc">AppTestCase</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set up test client and make new dessert.&quot;&quot;&quot;</span>
+        <span class="n">Dessert</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">test_client</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dessert</span> <span class="o">=</span> <span class="n">Dessert</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;cake&#39;</span><span class="p">,</span> <span class="n">calories</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dessert</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">test_all_desserts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;/desserts should show all desserts&quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/desserts&quot;</span><span class="p">)</span>
+        <span class="n">response_data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s1">&#39;desserts&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response_data</span><span class="p">,</span>
+                         <span class="p">[{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;cake&#39;</span><span class="p">,</span> <span class="s1">&#39;calories&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">}])</span>
+
+    <span class="k">def</span> <span class="nf">test_get_single_dessert</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;/desserts/</span><span class="si">{self.dessert.id}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s1">&#39;dessert&#39;</span><span class="p">],</span>
+                         <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;cake&#39;</span><span class="p">,</span> <span class="s1">&#39;calories&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
+
+    <span class="k">def</span> <span class="nf">test_creating_dessert</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;/desserts&quot;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;cake 2&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;calories&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+            <span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s1">&#39;dessert&#39;</span><span class="p">],</span>
+                         <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;cake 2&#39;</span><span class="p">,</span> <span class="s1">&#39;calories&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">Dessert</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="looking-ahead">
+<h2>Looking Ahead</h2>
+<div class="section" id="id3">
+<div class="docutils container">
+<ul class="simple">
+<li>Building JSON APIs with Node!</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script>
+<script type="text/javascript" src="_static/language_data.js"></script> 
+</body>
+</html>

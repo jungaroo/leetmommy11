@@ -1,0 +1,254 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Deployment with Heroku</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Deployment with Heroku</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Deployment with Heroku</a><ul>
+<li><a class="reference internal" href="#heroku">Heroku</a><ul>
+<li><a class="reference internal" href="#id1">Heroku</a></li>
+<li><a class="reference internal" href="#installing-heroku">Installing Heroku</a></li>
+<li><a class="reference internal" href="#installing-gunicorn">Installing gunicorn</a></li>
+<li><a class="reference internal" href="#ensuring-a-correct-requirements-txt">Ensuring a correct requirements.txt</a></li>
+<li><a class="reference internal" href="#adding-a-procfile">Adding a Procfile</a></li>
+<li><a class="reference internal" href="#adding-a-runtime-txt">Adding a runtime.txt</a></li>
+<li><a class="reference internal" href="#creating-your-heroku-app">Creating your Heroku app</a></li>
+<li><a class="reference internal" href="#debugging-a-heroku-application">Debugging a Heroku application</a></li>
+<li><a class="reference internal" href="#environment-variables">Environment Variables</a></li>
+<li><a class="reference internal" href="#adding-a-postgres-database">Adding a Postgres Database</a></li>
+<li><a class="reference internal" href="#making-sure-you-connect-to-the-correct-database">Making sure you connect to the correct database</a></li>
+<li><a class="reference internal" href="#connecting-to-psql">Connecting to PSQL</a></li>
+<li><a class="reference internal" href="#running-a-sql-file-on-heroku">Running a SQL file on Heroku</a></li>
+<li><a class="reference internal" href="#running-commands-on-your-production-server">Running commands on your production server</a></li>
+<li><a class="reference internal" href="#heroku-hints">Heroku hints</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="deployment-with-heroku">
+<h1>Deployment with Heroku</h1>
+<div class="section" id="heroku">
+<h2>Heroku</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>a platform as a service, runs on Amazon Web Services</li>
+<li>easier and faster to deploy, but far less customization</li>
+</ul>
+</div>
+</div>
+<div class="section" id="installing-heroku">
+<h3>Installing Heroku</h3>
+<div class="docutils container">
+<ul class="simple">
+<li><a class="reference external" href="https://brew.sh/">Make sure homebrew is installed</a></li>
+<li><a class="reference external" href="https://signup.heroku.com/">Sign up for an account on Heroku</a></li>
+<li>Install the Heroku CLI</li>
+</ul>
+</div>
+<div class="docutils container">
+<pre class="console literal-block">
+$ <span class="cmd">brew install heroku/brew/heroku</span>
+</pre>
+</div>
+</div>
+<div class="section" id="installing-gunicorn">
+<h3>Installing gunicorn</h3>
+<p>When we deploy an application in production, we will always want to <span class="raw-reveal"><br></span>
+use a server that is production ready and not meant for just development.</p>
+<p>The server we will be using is gunicorn so letâs make sure we:</p>
+<pre class="console literal-block">
+(env) $ <span class="cmd">pip install gunicorn</span>
+</pre>
+</div>
+<div class="section" id="ensuring-a-correct-requirements-txt">
+<h3>Ensuring a correct requirements.txt</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Heroku needs to know our dependencies!</li>
+<li>Make sure you <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">freeze</span> <span class="pre">&gt;</span> <span class="pre">requirements.txt</span></code></li>
+</ul>
+</div>
+</div>
+<div class="section" id="adding-a-procfile">
+<h3>Adding a Procfile</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>When we push code to Heroku, we need to tell Heroku what command <span class="raw-reveal"><br></span>
+to run to start the server.</li>
+<li>This command must be placed in a file called <cite>Procfile</cite>.</li>
+<li>Make sure this filename does not have any extension and begins with capital P.</li>
+</ul>
+</div>
+<div class="docutils container">
+<pre class="console literal-block">
+$ <span class="cmd">echo &quot;web: gunicorn app:app&quot; &gt; Procfile</span>
+</pre>
+</div>
+</div>
+<div class="section" id="adding-a-runtime-txt">
+<h3>Adding a runtime.txt</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>To make sure you are using a certain version of Python on Heroku, <span class="raw-reveal"><br></span>
+add a file called <cite>runtime.txt</cite> and specify the version of Python you want to use.</li>
+</ul>
+</div>
+<div class="docutils container">
+<pre class="console literal-block">
+$ <span class="cmd">echo &quot;python-3.7.2&quot; &gt; runtime.txt</span>
+</pre>
+</div>
+</div>
+<div class="section" id="creating-your-heroku-app">
+<h3>Creating your Heroku app</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Login to your heroku account</li>
+<li>Create an application and make sure you have a correct remote.</li>
+<li>Push your code to the new remote and make sure you have a worker.</li>
+<li>Open your heroku app!</li>
+</ul>
+</div>
+<div class="docutils container">
+<pre class="console literal-block">
+$ <span class="cmd">heroku login</span>
+$ <span class="cmd">heroku create NAME_OF_APP</span>
+$ <span class="cmd">git remote -v</span>            <span class="tan"># make sure you see heroku</span>
+$ <span class="cmd">git push heroku master</span>  <span class="tan"># make sure you've added &amp; commited!</span>
+$ <span class="cmd">heroku open</span>
+</pre>
+</div>
+</div>
+<div class="section" id="debugging-a-heroku-application">
+<h3>Debugging a Heroku application</h3>
+<p>Itâs <strong>never</strong> going to work perfectly the first time. <span class="raw-reveal"><br></span>
+Make sure you look at the server logs to debug!</p>
+<p>To see what went wrong, check out the server logs:</p>
+<div class="docutils container">
+<pre class="console literal-block">
+$ <span class="cmd">heroku logs --tail</span>
+</pre>
+</div>
+</div>
+<div class="section" id="environment-variables">
+<h3>Environment Variables</h3>
+<p>Since weâre on a different server, we need different environment variables values:</p>
+<div class="docutils container">
+<pre class="console literal-block">
+$ <span class="cmd">heroku config:set SECRET_KEY=nevertell FLASK_ENV=production</span>
+$ <span class="cmd">heroku config</span>    <span class="tan"># see all your environment variables</span>
+</pre>
+</div>
+<div class="docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="c1"># use secret key in production or default to our dev one</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;SECRET_KEY&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;SECRET_KEY&#39;</span><span class="p">,</span> <span class="s1">&#39;shh&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="adding-a-postgres-database">
+<h3>Adding a Postgres Database</h3>
+<p>In order to use a production database, we need Heroku to make one:</p>
+<div class="docutils container">
+<pre class="console literal-block">
+$ <span class="cmd">heroku addons:create heroku-postgresql:hobby-dev</span>
+$ <span class="cmd">heroku config</span>   <span class="tan"># you should see DATABASE_URL</span>
+</pre>
+</div>
+</div>
+<div class="section" id="making-sure-you-connect-to-the-correct-database">
+<h3>Making sure you connect to the correct database</h3>
+<p>Now that we have a postgres database, we need to make sure that we are connecting to the correct database when in production!</p>
+<div class="docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;SQLALCHEMY_DATABASE_URI&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+    <span class="s1">&#39;DATABASE_URL&#39;</span><span class="p">,</span> <span class="s1">&#39;postgres:///flask-heroku&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="connecting-to-psql">
+<h3>Connecting to PSQL</h3>
+<div class="docutils container">
+<pre class="console literal-block">
+$ <span class="cmd">heroku pg:psql</span>
+</pre>
+</div>
+</div>
+<div class="section" id="running-a-sql-file-on-heroku">
+<h3>Running a SQL file on Heroku</h3>
+<div class="docutils container">
+<pre class="console literal-block">
+$ <span class="cmd">heroku pg:psql &lt; data.sql</span>
+</pre>
+</div>
+</div>
+<div class="section" id="running-commands-on-your-production-server">
+<h3>Running commands on your production server</h3>
+<div class="docutils container">
+<pre class="console literal-block">
+$ <span class="cmd">heroku run python seed.py</span>
+</pre>
+</div>
+</div>
+<div class="section" id="heroku-hints">
+<h3>Heroku hints</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Make sure youâve added and committed before pushing to production</li>
+<li>If things break <strong>ALWAYS</strong> go to <cite>heroku logs âtail</cite> and see whatâs breaking</li>
+<li>If CSS or JS is not loading, check the Chrome console â <span class="raw-reveal"><br></span> make sure youâre serving over HTTPS</li>
+</ul>
+</div>
+<div class="admonition note">
+<p><strong>Further Reading</strong></p>
+<p class="last">There are a number of helpful guides on the Heroku Dev Center that walk you step-by-step through deploying applications in the technology of your choice. Guides for Python projects can be found <a class="reference external" href="https://devcenter.heroku.com/categories/python-support">here</a>.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

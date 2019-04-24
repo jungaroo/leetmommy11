@@ -1,0 +1,446 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Trees &amp; Binary Trees</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Trees &amp; Binary Trees</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Trees &amp; Binary Trees</a><ul>
+<li><a class="reference internal" href="#trees">Trees</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a></li>
+<li><a class="reference internal" href="#terminology">Terminology</a></li>
+<li><a class="reference internal" href="#an-org-chart-is-a-tree">An Org Chart is a Tree</a></li>
+<li><a class="reference internal" href="#a-filesystem-is-a-tree">A Filesystem is a Tree</a></li>
+<li><a class="reference internal" href="#html-dom-is-a-tree">HTML DOM is a Tree</a></li>
+<li><a class="reference internal" href="#a-taxonomy-is-a-tree">A Taxonomy is a Tree</a></li>
+<li><a class="reference internal" href="#this-is-not-a-tree">This Is Not a Tree</a></li>
+<li><a class="reference internal" href="#binary-trees-binary-search-trees">Binary Trees/Binary Search Trees</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#trees-in-javascript">Trees in JavaScript</a><ul>
+<li><a class="reference internal" href="#node-class">Node Class</a></li>
+<li><a class="reference internal" href="#finding-a-node">Finding a Node</a></li>
+<li><a class="reference internal" href="#highest-ranking-consuela">Highest-Ranking Consuela</a></li>
+<li><a class="reference internal" href="#tree-class">Tree Class</a></li>
+<li><a class="reference internal" href="#do-you-really-need-a-tree-class">Do You Really Need a Tree Class?</a></li>
+<li><a class="reference internal" href="#also">Also</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#binary-trees">Binary Trees</a><ul>
+<li><a class="reference internal" href="#id1">Binary Trees</a></li>
+<li><a class="reference internal" href="#what-are-they-good-for">What Are They Good For?</a></li>
+<li><a class="reference internal" href="#other-trees">Other Trees</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#advanced-ideas">Advanced Ideas</a><ul>
+<li><a class="reference internal" href="#moving-up">Moving Up</a></li>
+<li><a class="reference internal" href="#some-trees-point-up">Some Trees Point Up</a></li>
+<li><a class="reference internal" href="#some-point-both-ways">Some Point Both Ways</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#resources">Resources</a><ul>
+<li><a class="reference internal" href="#id2">Resources</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="trees-binary-trees">
+<h1>Trees &amp; Binary Trees</h1>
+<div class="section" id="trees">
+<h2>Trees</h2>
+<div class="section" id="goals">
+<h3>Goals</h3>
+<ul class="simple">
+<li>Introduce terminology</li>
+<li>Create a tree class and methods</li>
+<li>Learn uses for trees</li>
+</ul>
+</div>
+<div class="section" id="terminology">
+<h3>Terminology</h3>
+<dl class="docutils">
+<dt>node</dt>
+<dd>basic unit</dd>
+<dt>children</dt>
+<dd>nodes directly below a node</dd>
+<dt>descendants</dt>
+<dd>nodes below a node</dd>
+<dt>parent</dt>
+<dd>node that is directly above a node</dd>
+<dt>ancestor</dt>
+<dd>node that is above a node</dd>
+</dl>
+<dl class="docutils">
+<dt>root node</dt>
+<dd>node at the top of tree</dd>
+<dt>leaf node</dt>
+<dd>node without any children</dd>
+</dl>
+</div>
+<div class="section" id="an-org-chart-is-a-tree">
+<h3>An Org Chart is a Tree</h3>
+<div class="graphviz">
+<img src="_images/graphviz-5dbe93703faff54c062725f7360395d744967f8e.svg" />
+</div>
+</div>
+<div class="section" id="a-filesystem-is-a-tree">
+<h3>A Filesystem is a Tree</h3>
+<div class="graphviz">
+<img src="_images/graphviz-fcdc9af997f8a333a6eff5aca18e9730c995887a.svg" />
+</div>
+</div>
+<div class="section" id="html-dom-is-a-tree">
+<h3>HTML DOM is a Tree</h3>
+<div class="graphviz">
+<img src="_images/graphviz-3c8af049ab36d090f6f82f0acdc4733c41195315.svg" />
+</div>
+</div>
+<div class="section" id="a-taxonomy-is-a-tree">
+<h3>A Taxonomy is a Tree</h3>
+<div class="graphviz">
+<img src="_images/graphviz-f3ac8364d6918cae378ee50f9b3d874049834aab.svg" />
+</div>
+</div>
+<div class="section" id="this-is-not-a-tree">
+<h3>This Is Not a Tree</h3>
+<div class="graphviz">
+<img src="_images/graphviz-596bdffbde4c1362cc5f2ced2886cd716f9db5c8.svg" />
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Trees need a root node â we donât have one!</li>
+<li>A node can only have one parent</li>
+</ul>
+</div>
+</div>
+<div class="section" id="binary-trees-binary-search-trees">
+<h3>Binary Trees/Binary Search Trees</h3>
+<p>These are differentâand weâll cover later!</p>
+<div class="docutils container">
+<p>General trees are sometimes called ân-aryâ trees, <span class="raw-reveal"><br></span>
+since they can have <em>n</em> (any) number of children.</p>
+</div>
+</div>
+</div>
+<div class="section" id="trees-in-javascript">
+<h2>Trees in JavaScript</h2>
+<div class="section" id="node-class">
+<h3>Node Class</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">Node</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">val</span><span class="p">,</span> <span class="nx">children</span> <span class="o">=</span> <span class="p">[])</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">val</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">children</span> <span class="o">=</span> <span class="nx">children</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="graphviz">
+<img src="_images/graphviz-9867be31fca6a08eb7c551ef10063c971316be34.svg" />
+</div>
+</div>
+<div class="docutils container">
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">amy</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Node</span><span class="p">(</span><span class="s2">&quot;amy&quot;</span><span class="p">);</span>
+
+<span class="nx">amy</span><span class="p">.</span><span class="nx">children</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="k">new</span> <span class="nx">Node</span><span class="p">(</span><span class="s2">&quot;bob&quot;</span><span class="p">));</span>
+<span class="nx">amy</span><span class="p">.</span><span class="nx">children</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="k">new</span> <span class="nx">Node</span><span class="p">(</span><span class="s2">&quot;barb&quot;</span><span class="p">));</span>
+<span class="nx">amy</span><span class="p">.</span><span class="nx">children</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="k">new</span> <span class="nx">Node</span><span class="p">(</span><span class="s2">&quot;barry&quot;</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">amy</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Node</span><span class="p">(</span><span class="s2">&quot;amy&quot;</span><span class="p">,</span>
+  <span class="p">[</span><span class="k">new</span> <span class="nx">Node</span><span class="p">(</span><span class="s2">&quot;bob&quot;</span><span class="p">),</span>
+   <span class="nx">newNode</span><span class="p">(</span><span class="s2">&quot;barb&quot;</span><span class="p">),</span>
+   <span class="nx">newNode</span><span class="p">(</span><span class="s2">&quot;barry&quot;</span><span class="p">)])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="finding-a-node">
+<h3>Finding a Node</h3>
+<p>Starting at Amy, find Connie:</p>
+<div class="graphviz">
+<img src="_images/graphviz-d4d61dbdc1ec45dd854ca3c50e85adabb98d7158.svg" />
+</div>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="graphviz">
+<img src="_images/graphviz-9ac1552e23cd7bc1e3184a28494284c9b435d67a.svg" />
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">demo/trees.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span>  <span class="nx">find</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">toVisitStack</span> <span class="o">=</span> <span class="p">[</span><span class="k">this</span><span class="p">];</span>
+
+    <span class="k">while</span> <span class="p">(</span><span class="nx">toVisitStack</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">let</span> <span class="nx">current</span> <span class="o">=</span> <span class="nx">toVisitStack</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="nx">current</span><span class="p">.</span><span class="nx">val</span> <span class="o">===</span> <span class="nx">val</span><span class="p">)</span> 
+        <span class="k">return</span> <span class="nx">current</span><span class="p">;</span>
+
+      <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">child</span> <span class="k">of</span> <span class="nx">current</span><span class="p">.</span><span class="nx">children</span><span class="p">)</span> 
+        <span class="nx">toVisitStack</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">child</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<p>âDepth First Searchâ (uses stack)</p>
+</div>
+</div>
+<div class="section" id="highest-ranking-consuela">
+<h3>Highest-Ranking Consuela</h3>
+<p>Say we hire another Consuela, a VP, &amp; we want to find her</p>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="graphviz">
+<img src="_images/graphviz-081ffdb0a1e047e1ac9ad5d152f5c29c185c53e0.svg" />
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">demo/trees.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span>  <span class="nx">findBFS</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">toVisitQueue</span> <span class="o">=</span> <span class="p">[</span><span class="k">this</span><span class="p">];</span>
+
+    <span class="k">while</span> <span class="p">(</span><span class="nx">toVisitQueue</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">let</span> <span class="nx">current</span> <span class="o">=</span> <span class="nx">toVisitQueue</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="nx">current</span><span class="p">.</span><span class="nx">val</span> <span class="o">===</span> <span class="nx">val</span><span class="p">)</span> 
+        <span class="k">return</span> <span class="nx">current</span><span class="p">;</span>
+
+      <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">child</span> <span class="k">of</span> <span class="nx">current</span><span class="p">.</span><span class="nx">children</span><span class="p">)</span> 
+        <span class="nx">toVisitQueue</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">child</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<p>âBreadth First Searchâ (uses queue)</p>
+</div>
+</div>
+<div class="section" id="tree-class">
+<h3>Tree Class</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">Tree</span> <span class="p">{</span>
+
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="graphviz">
+<img src="_images/graphviz-47b3799a40525123a338a66d59127e82cc82c472.svg" />
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">org</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Tree</span><span class="p">(</span>
+  <span class="k">new</span> <span class="nx">Node</span><span class="p">(</span><span class="s2">&quot;amy&quot;</span><span class="p">,</span>
+    <span class="p">[</span><span class="k">new</span> <span class="nx">Node</span><span class="p">(</span><span class="s2">&quot;bob&quot;</span><span class="p">),</span>
+     <span class="nx">newNode</span><span class="p">(</span><span class="s2">&quot;barb&quot;</span><span class="p">),</span>
+     <span class="nx">newNode</span><span class="p">(</span><span class="s2">&quot;barry&quot;</span><span class="p">)]))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="do-you-really-need-a-tree-class">
+<h3>Do You Really Need a Tree Class?</h3>
+<div class="docutils container">
+<p>Each node is, itself, a tree</p>
+<img alt="_images/omg-wtf-cat.jpg" class="noprint" src="_images/omg-wtf-cat.jpg" />
+</div>
+<p>Itâs useful to have a Tree class, though, so you
+can keep track of the head node!</p>
+<p>Can delegate to the head node for many operations:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">Tree</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="cm">/** findInTree: return node in tree w/this val */</span>
+
+  <span class="nx">findInTree</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">root</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="cm">/** findInTreeBFS: return node in tree w/this val */</span>
+
+  <span class="nx">findInTreeBFS</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">root</span><span class="p">.</span><span class="nx">findBFS</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="also">
+<h3>Also</h3>
+<p>Every linked list is a tree</p>
+<p>But not every tree is a linked list.</p>
+<img alt="_images/omg-wtf-cat.jpg" class="noprint" src="_images/omg-wtf-cat.jpg" />
+</div>
+</div>
+<div class="section" id="binary-trees">
+<h2>Binary Trees</h2>
+<div class="section" id="id1">
+<p>General n-ary trees have nodes with 0+ children.</p>
+<p>Binary tree nodes can have 0, 1, or 2 children.</p>
+<div class="graphviz">
+<img src="_images/graphviz-74fc8b3fd7e4e39c68c0fc8d090f60d6ecc751cf.svg" />
+</div>
+<p>Binary tree nodes are usually structured with <cite>left</cite> and <cite>right</cite>
+properties, rather than an array of <cite>children</cite>:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">BinNode</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">left</span><span class="o">=</span><span class="kc">null</span><span class="p">,</span> <span class="nx">right</span><span class="o">=</span><span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">left</span> <span class="o">=</span> <span class="nx">left</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">right</span> <span class="o">=</span> <span class="nx">right</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="what-are-they-good-for">
+<h3>What Are They Good For?</h3>
+<p>Sometimes theyâre used to store data in a normal hierarchy, like a tree.</p>
+<div class="docutils container">
+<p>Often times, they have a âruleâ about the arrangement:</p>
+<ul class="simple">
+<li>binary search trees</li>
+<li>min/max heap</li>
+</ul>
+</div>
+</div>
+<div class="section" id="other-trees">
+<h3>Other Trees</h3>
+<p>Less commonly, there are other <em>n</em> trees</p>
+<p>One example is âquad-treesâ, often used for geographic programs,
+to keep track of N/S/E/W information from a node.</p>
+</div>
+</div>
+<div class="section" id="advanced-ideas">
+<h2>Advanced Ideas</h2>
+<div class="section" id="moving-up">
+<h3>Moving Up</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="graphviz">
+<img src="_images/graphviz-987db57b4c34f8c008a98767923ba0bffd8f7e14.svg" />
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">barb</span><span class="p">.</span><span class="nx">children</span> <span class="c1">// carlos and connie nodes</span>
+</pre></div>
+</div>
+<p>Itâs not possible to âmove upâ:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">barb</span><span class="p">.</span><span class="nx">findParents</span><span class="p">()</span>   <span class="c1">// can&#39;t do easily</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="some-trees-point-up">
+<h3>Some Trees Point Up</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="graphviz">
+<img src="_images/graphviz-a7673440afbb6df33d1fd2e4660fce118967be65.svg" />
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">ReverseNode</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">parent</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<p>Of course, then you canât move down!</p>
+<p>So youâd need to keep a list of all leaf nodes</p>
+</div>
+</div>
+<div class="section" id="some-point-both-ways">
+<h3>Some Point Both Ways</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="graphviz">
+<img src="_images/graphviz-8c3e5df739875d4ae3bf1e77f0b74d1ba3824530.svg" />
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">BidirectionalNode</span> <span class="p">{</span>
+  <span class="n">constructor</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">children</span> <span class="o">=</span> <span class="p">[])</span> <span class="p">{</span>
+    <span class="n">this</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span><span class="p">;</span>
+    <span class="n">this</span><span class="o">.</span><span class="n">children</span> <span class="o">=</span> <span class="n">children</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="resources">
+<h2>Resources</h2>
+<div class="section" id="id2">
+<p><a class="reference external" href="https://medium.com/basecs/how-to-not-be-stumped-by-trees-5f36208f68a7">How to Not Be Stumped By Trees</a></p>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

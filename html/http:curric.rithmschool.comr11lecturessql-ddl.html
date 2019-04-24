@@ -1,0 +1,630 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>DDL &amp; Schema Design</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">DDL &amp; Schema Design</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">DDL &amp; Schema Design</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ddl-basics">DDL Basics</a><ul>
+<li><a class="reference internal" href="#creating-and-dropping-databases">Creating and Dropping Databases</a></li>
+<li><a class="reference internal" href="#creating-tables">Creating Tables</a></li>
+<li><a class="reference internal" href="#inspecting-tables-in-postgresql">Inspecting Tables in PostgreSQL</a></li>
+<li><a class="reference internal" href="#dropping-tables">Dropping Tables</a></li>
+<li><a class="reference internal" href="#column-data-types">Column Data Types</a></li>
+<li><a class="reference internal" href="#null">NULL</a></li>
+<li><a class="reference internal" href="#primary-keys">Primary Keys</a></li>
+<li><a class="reference internal" href="#constraints">Constraints</a></li>
+<li><a class="reference internal" href="#column-manipulation">Column Manipulation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#structuring-relational-data">Structuring Relational Data</a><ul>
+<li><a class="reference internal" href="#modeling-our-movies-database">Modeling Our Movies Database</a></li>
+<li><a class="reference internal" href="#as-a-spreadsheet">As A Spreadsheet</a></li>
+<li><a class="reference internal" href="#crow-s-foot-notation">Crowâs Foot Notation</a></li>
+<li><a class="reference internal" href="#ddl-for-movies">DDL for Movies</a></li>
+<li><a class="reference internal" href="#controlling-delete-behavior-with-ddl">Controlling Delete Behavior with DDL</a></li>
+<li><a class="reference internal" href="#many-to-many-ddl">Many-to-Many DDL</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#best-practices">Best Practices</a><ul>
+<li><a class="reference internal" href="#normalization">Normalization</a></li>
+<li><a class="reference internal" href="#normalization-bad-example">Normalization Bad Example</a></li>
+<li><a class="reference internal" href="#normalized-example">Normalized Example</a></li>
+<li><a class="reference internal" href="#another-bad-example">Another Bad Example</a></li>
+<li><a class="reference internal" href="#id2">Normalized Example</a></li>
+<li><a class="reference internal" href="#indexing">Indexing</a></li>
+<li><a class="reference internal" href="#index-efficiency">Index Efficiency</a></li>
+<li><a class="reference internal" href="#why-not-index-everything">Why Not Index Everything?</a></li>
+<li><a class="reference internal" href="#how-to-create-an-index-in-postgresql">How to Create an Index in PostgreSQL</a></li>
+<li><a class="reference internal" href="#how-to-drop-an-index-in-postgresql">How to Drop an Index in PostgreSQL</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="ddl-schema-design">
+<h1>DDL &amp; Schema Design</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Learn SQL Commands to Create, Update, and Remove Databases &amp; Tables</li>
+<li>Understand the Basics of Database Schema Design</li>
+<li>Learn How to Properly Model Relational Data</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="ddl-basics">
+<h2>DDL Basics</h2>
+<div class="section" id="creating-and-dropping-databases">
+<h3>Creating and Dropping Databases</h3>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">CREATE</span> <span class="k">DATABASE</span> <span class="n">yet_another_db</span><span class="p">;</span>
+
+<span class="k">DROP</span> <span class="k">DATABASE</span> <span class="n">yet_another_db</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>Same as shell commands <cite>createdb</cite> and <cite>dropdb</cite></p>
+</div>
+</div>
+<div class="section" id="creating-tables">
+<h3>Creating Tables</h3>
+<div class="docutils container">
+<pre class="console literal-block">
+jane=# <span class="cmd">CREATE DATABASE library;</span>
+CREATE DATABASE
+
+jane=# <span class="cmd">\c library</span>
+You are now connected to database &quot;library&quot; as user &quot;jane&quot;.
+library=#
+</pre>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">books</span> <span class="p">(</span>
+  <span class="n">id</span> <span class="nb">SERIAL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+  <span class="n">title</span> <span class="nb">TEXT</span><span class="p">,</span>
+  <span class="n">author</span> <span class="nb">TEXT</span><span class="p">,</span>
+  <span class="n">price</span> <span class="nb">FLOAT</span><span class="p">,</span>
+  <span class="n">page_count</span> <span class="nb">INTEGER</span><span class="p">,</span>
+  <span class="n">publisher</span> <span class="nb">TEXT</span><span class="p">,</span>
+  <span class="n">publication_date</span> <span class="nb">DATE</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="inspecting-tables-in-postgresql">
+<h3>Inspecting Tables in PostgreSQL</h3>
+<p>Listing the tables in the database</p>
+<div class="docutils container">
+<pre class="console literal-block">
+library=# <span class="cmd">\dt</span>
+</pre>
+<div class="docutils container">
+<p>Listing the column names and types in a specific table</p>
+<div class="docutils container">
+<pre class="console literal-block">
+library=# <span class="cmd">\d+ books</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="dropping-tables">
+<h3>Dropping Tables</h3>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">DROP</span> <span class="k">TABLE</span> <span class="n">users</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="column-data-types">
+<h3>Column Data Types</h3>
+<div class="docutils container">
+<dl class="docutils">
+<dt>Integer</dt>
+<dd>Integer numbers</dd>
+<dt>Float</dt>
+<dd>Floating-point numbers (you can specify the precision)</dd>
+<dt>Text</dt>
+<dd>Text Strings</dd>
+<dt>Varchar</dt>
+<dd>Text Strings, but limited to a certain size</dd>
+</dl>
+</div>
+<div class="docutils container">
+<dl class="docutils">
+<dt>Boolean</dt>
+<dd>True or False</dd>
+<dt>Date</dt>
+<dd>Date (without time)</dd>
+<dt>Timestamp</dt>
+<dd>Date and time</dd>
+<dt>Serial</dt>
+<dd>Auto-incrementing numbers (used for primary keys)</dd>
+</dl>
+</div>
+<div class="admonition note">
+<p>Other Types</p>
+<p class="last">There are lots of other types, including specialized, less-common types
+for fixed-precision math (<cite>NUMERIC</cite> or <cite>DECIMAL</cite>),  handling geospatial
+information, currency, and more!</p>
+</div>
+</div>
+<div class="section" id="null">
+<h3>NULL</h3>
+<p><cite>NULL</cite> is a special value in SQL for âunknownâ.</p>
+<p>Itâs <strong>not</strong> the same thing as 0 or an empty string!</p>
+<div class="docutils container">
+<p>NULL values are ok when you really might have missing/unknown data</p>
+<p>But generally, theyâre a pain, so it can be a good idea to make fields not nullable</p>
+</div>
+</div>
+<div class="section" id="primary-keys">
+<h3>Primary Keys</h3>
+<p>Every table should have a âprimary keyâ, a unique way to identify rows</p>
+<div class="docutils container">
+<p>Primary keys <em>must be</em>:</p>
+<ul class="simple">
+<li>Unique</li>
+<li>Not Null</li>
+</ul>
+</div>
+<div class="docutils container">
+<p>Primary keys <em>should be</em>:</p>
+<ul class="simple">
+<li>Unchanging (itâs a pain when primary keys change)</li>
+</ul>
+</div>
+</div>
+<div class="section" id="constraints">
+<h3>Constraints</h3>
+<p>Constraints are a basic form of validation. The database can prevent basic types of unintended behavior.</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Primary Key (every table must have a unique identifier)</li>
+<li>Unique (prevent duplicates in the column)</li>
+<li>Not Null (prevent null in the column)</li>
+<li>Check (do a logical condition before inserting / updating)</li>
+<li>Foreign Key (column values must reference values in another table)</li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">users</span> <span class="p">(</span>
+    <span class="n">id</span> <span class="nb">SERIAL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+    <span class="n">phone_number</span> <span class="nb">TEXT</span> <span class="k">UNIQUE</span><span class="p">,</span>
+    <span class="n">password</span> <span class="nb">TEXT</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+    <span class="n">account_balance</span> <span class="nb">FLOAT</span> <span class="k">CHECK</span> <span class="p">(</span><span class="n">account_balance</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="column-manipulation">
+<h3>Column Manipulation</h3>
+<p>Adding / Removing / Renaming columns</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="n">books</span> <span class="k">ADD</span> <span class="k">COLUMN</span> <span class="n">in_paperback</span> <span class="nb">BOOLEAN</span><span class="p">;</span>
+
+<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="n">books</span> <span class="k">DROP</span> <span class="k">COLUMN</span> <span class="n">in_paperback</span><span class="p">;</span>
+
+<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="n">books</span> <span class="k">RENAME</span> <span class="k">COLUMN</span> <span class="n">page_count</span> <span class="k">TO</span> <span class="n">num_pages</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="structuring-relational-data">
+<h2>Structuring Relational Data</h2>
+<div class="section" id="modeling-our-movies-database">
+<h3>Modeling Our Movies Database</h3>
+<p>From our joins exercise involving movies, studios, actors, and roles, we can see that:</p>
+<div class="docutils container">
+<ul class="simple">
+<li>one studio has many movies</li>
+<li>one actor has many roles</li>
+<li>one movie has many actors</li>
+</ul>
+</div>
+<div class="docutils container">
+<p>Before we write out the DDL, weâll visualize this a few ways.</p>
+</div>
+</div>
+<div class="section" id="as-a-spreadsheet">
+<h3>As A Spreadsheet</h3>
+<p>Check out <a class="reference external" href="https://docs.google.com/spreadsheets/d/1uFoV781nebAPbtnsQ_qYstib2Mtg99yKVUDXCnXMssE/edit?usp=sharing">this color-coded spreadsheet</a>.</p>
+</div>
+<div class="section" id="crow-s-foot-notation">
+<h3>Crowâs Foot Notation</h3>
+<p>Preferably, we will draw diagrams with Crowâs Foot Notation, which is a standard way to represent schemas.</p>
+<div class="docutils container">
+<div class="graphviz">
+<img src="_images/graphviz-c621c234c8dcb81667a433c2791e02d7df18c0af.svg" />
+</div>
+</div>
+</div>
+<div class="section" id="ddl-for-movies">
+<h3>DDL for Movies</h3>
+<p>Letâs look at the DDL from the earlier example</p>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">studios</span> <span class="p">(</span>
+  <span class="n">id</span> <span class="nb">SERIAL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+  <span class="n">name</span> <span class="nb">TEXT</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="n">founded_in</span> <span class="nb">DATE</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">movies</span> <span class="p">(</span>
+  <span class="n">id</span> <span class="nb">SERIAL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+  <span class="n">title</span> <span class="nb">TEXT</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="n">release_year</span> <span class="nb">INTEGER</span><span class="p">,</span>
+  <span class="n">runtime</span> <span class="nb">INTEGER</span><span class="p">,</span>
+  <span class="n">rating</span> <span class="nb">TEXT</span><span class="p">,</span>
+  <span class="n">studio_id</span> <span class="nb">INTEGER</span> <span class="k">REFERENCES</span> <span class="n">studios</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="controlling-delete-behavior-with-ddl">
+<h3>Controlling Delete Behavior with DDL</h3>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">movies</span> <span class="p">(</span>
+  <span class="n">id</span> <span class="nb">SERIAL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+  <span class="n">title</span> <span class="nb">TEXT</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="n">release_year</span> <span class="nb">INTEGER</span><span class="p">,</span>
+  <span class="n">runtime</span> <span class="nb">INTEGER</span><span class="p">,</span>
+  <span class="n">rating</span> <span class="nb">TEXT</span><span class="p">,</span>
+  <span class="n">studio_id</span> <span class="nb">INTEGER</span> <span class="k">REFERENCES</span> <span class="n">studios</span> <span class="k">ON</span> <span class="k">DELETE</span> <span class="k">SET</span> <span class="k">NULL</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">movies</span> <span class="p">(</span>
+  <span class="n">id</span> <span class="nb">SERIAL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+  <span class="n">title</span> <span class="nb">TEXT</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="n">release_year</span> <span class="nb">INTEGER</span><span class="p">,</span>
+  <span class="n">runtime</span> <span class="nb">INTEGER</span><span class="p">,</span>
+  <span class="n">rating</span> <span class="nb">TEXT</span><span class="p">,</span>
+  <span class="n">studio_id</span> <span class="nb">INTEGER</span> <span class="k">REFERENCES</span> <span class="n">studios</span> <span class="k">ON</span> <span class="k">DELETE</span> <span class="k">CASCADE</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="many-to-many-ddl">
+<h3>Many-to-Many DDL</h3>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">movies</span> <span class="p">(</span>
+  <span class="n">id</span> <span class="nb">SERIAL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+  <span class="n">title</span> <span class="nb">TEXT</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="n">release_year</span> <span class="nb">INTEGER</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="n">runtime</span> <span class="nb">INTEGER</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="n">rating</span> <span class="nb">TEXT</span> <span class="k">NOT</span> <span class="k">NULL</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">actors</span> <span class="p">(</span>
+  <span class="n">id</span> <span class="nb">SERIAL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+  <span class="n">first_name</span> <span class="nb">TEXT</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="n">last_name</span> <span class="nb">TEXT</span><span class="p">,</span>
+  <span class="n">birth_date</span> <span class="nb">DATE</span> <span class="k">NOT</span> <span class="k">NULL</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">roles</span> <span class="p">(</span>
+  <span class="n">id</span> <span class="nb">SERIAL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+  <span class="n">movie_id</span> <span class="nb">INTEGER</span> <span class="k">REFERENCES</span> <span class="n">movies</span> <span class="k">ON</span> <span class="k">DELETE</span> <span class="k">CASCADE</span><span class="p">,</span>
+  <span class="n">actor_id</span> <span class="nb">INTEGER</span> <span class="k">REFERENCES</span> <span class="n">actors</span> <span class="k">ON</span> <span class="k">DELETE</span> <span class="k">CASCADE</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="best-practices">
+<h2>Best Practices</h2>
+<div class="section" id="normalization">
+<h3>Normalization</h3>
+<p>Normalization is a database design technique which organizes tables in a manner that reduces redundancy and dependency of data.</p>
+<p>It divides larger tables to smaller tables and links them using relationships.</p>
+</div>
+<div class="section" id="normalization-bad-example">
+<h3>Normalization Bad Example</h3>
+<div class="docutils container">
+<p>Consider the following products table. There are strings with multiple values in the <cite>color</cite> column, making it difficult to query.</p>
+<p><cite>products</cite></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="27%" />
+<col width="35%" />
+<col width="38%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">id</th>
+<th class="head">color</th>
+<th class="head">price</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>red, green</td>
+<td>05.00</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>yellow</td>
+<td>10.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="normalized-example">
+<h3>Normalized Example</h3>
+<div class="docutils container">
+<p><cite>products</cite></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="67%" />
+<col width="33%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">id</th>
+<th class="head">price</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>05.00</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>10.00</td>
+</tr>
+</tbody>
+</table>
+<p><cite>colors</cite></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="45%" />
+<col width="55%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">id</th>
+<th class="head">color</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>red</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>green</td>
+</tr>
+<tr class="row-even"><td>3</td>
+<td>yellow</td>
+</tr>
+</tbody>
+</table>
+<p><cite>products_colors</cite></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="35%" />
+<col width="35%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">id</th>
+<th class="head">color_id</th>
+<th class="head">product_id</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr class="row-even"><td>3</td>
+<td>3</td>
+<td>2</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="another-bad-example">
+<h3>Another Bad Example</h3>
+<div class="docutils container">
+<p>Consider the following purchases table. Itâs bad because <code class="docutils literal notranslate"><span class="pre">store_location</span></code> is fully dependent on <code class="docutils literal notranslate"><span class="pre">store_id</span></code>.</p>
+<p><cite>purchases</cite></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="33%" />
+<col width="24%" />
+<col width="42%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">customer_id</th>
+<th class="head">store_id</th>
+<th class="head">store_location</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>1</td>
+<td>New York</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>3</td>
+<td>Boston</td>
+</tr>
+<tr class="row-even"><td>2</td>
+<td>2</td>
+<td>San Francisco</td>
+</tr>
+<tr class="row-odd"><td>3</td>
+<td>1</td>
+<td>New York</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="id2">
+<h3>Normalized Example</h3>
+<div class="docutils container">
+<p><cite>stores</cite></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="36%" />
+<col width="64%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">store_id</th>
+<th class="head">store_location</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>New York</td>
+</tr>
+<tr class="row-odd"><td>3</td>
+<td>Boston</td>
+</tr>
+<tr class="row-even"><td>2</td>
+<td>San Francisco</td>
+</tr>
+</tbody>
+</table>
+<p><cite>purchases</cite></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="58%" />
+<col width="42%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">customer_id</th>
+<th class="head">store_id</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>3</td>
+</tr>
+<tr class="row-even"><td>2</td>
+<td>2</td>
+</tr>
+<tr class="row-odd"><td>3</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="indexing">
+<h3>Indexing</h3>
+<p>A <cite>database index</cite> is a special data structure that efficiently stores column values to speed up row retrieval via <cite>SELECT</cite> and <cite>WHERE</cite> (i.e. âreadâ) queries.</p>
+<div class="docutils container">
+<p>For instance, if you place an index on a <cite>username</cite> column in a <cite>users</cite> table, any query using username will execute faster since fewer rows have to be scanned due to the efficient structure.</p>
+</div>
+</div>
+<div class="section" id="index-efficiency">
+<h3>Index Efficiency</h3>
+<p>In general, database software (including PostgreSQL) use tree-like data structures to store the data, which can retrieve values in logarithmic time O(lg(N)) instead of linear O(N) time.</p>
+<div class="docutils container">
+<p>Translation: If have 1,000,000 rows and are looking for a single column value, instead of examining every row, we can examine approximately log2(1000000) â 20 rows to get our answer, which is an incredible improvement!</p>
+</div>
+</div>
+<div class="section" id="why-not-index-everything">
+<h3>Why Not Index Everything?</h3>
+<p>There is a tradeoff with indexing! For every indexed column, a copy of that columnâs data has to be stored as a tree, which can take up a lot of space.</p>
+<div class="docutils container">
+<p>Also, every INSERT and UPDATE query becomes more expensive, since data in both the regular table AND the index have to be dealt with.</p>
+</div>
+</div>
+<div class="section" id="how-to-create-an-index-in-postgresql">
+<h3>How to Create an Index in PostgreSQL</h3>
+<p>Indexing is part of DDL, but indexes can be created or dropped at any time. The more records in the database at the time of creation, the slower the indexing process will be.</p>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">CREATE</span> <span class="k">INDEX</span> <span class="n">index_name</span> <span class="k">ON</span> <span class="k">table_name</span> <span class="p">(</span><span class="k">column_name</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>You can also create a multi-column index, which is useful if you are constantly querying by two fields at once (e.g. first_name and last_name):</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">CREATE</span> <span class="k">INDEX</span> <span class="n">index_name</span> <span class="k">ON</span> <span class="k">table_name</span> <span class="p">(</span><span class="n">column1_name</span><span class="p">,</span> <span class="n">column2_name</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="how-to-drop-an-index-in-postgresql">
+<h3>How to Drop an Index in PostgreSQL</h3>
+<p>Drop an index:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">DROP</span> <span class="k">INDEX</span> <span class="n">full_name</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p>When to Index</p>
+<p>Indexes are used in every PostgreSQL table by default on the primary key column.</p>
+<p>In general, if you are building an application that is more read-heavy than write-heavy, indexes are your friend and can be safely placed on columns that are used frequently in queries to speed up performance.</p>
+<p class="last">However, there are other index types besides the default that may be more efficient for your data, so definitely read up on some PostgreSQL performance optimizations <a class="reference external" href="https://robots.thoughtbot.com/postgresql-performance-considerations">here</a> and <a class="reference external" href="https://devcenter.heroku.com/articles/postgresql-indexes">here</a>.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script>
+<script type="text/javascript" src="_static/language_data.js"></script> 
+</body>
+</html>

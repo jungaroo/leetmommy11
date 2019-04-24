@@ -1,0 +1,506 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Intermediate JS 1</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Intermediate JS 1</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Intermediate JS 1</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#types-in-javascript">Types in JavaScript</a><ul>
+<li><a class="reference internal" href="#primitives">Primitives</a></li>
+<li><a class="reference internal" href="#reference-types">Reference Types</a></li>
+<li><a class="reference internal" href="#assigning-a-primitive">Assigning a primitive</a></li>
+<li><a class="reference internal" href="#assigning-a-reference">Assigning a reference</a></li>
+<li><a class="reference internal" href="#comparing-two-primitives">Comparing two primitives</a></li>
+<li><a class="reference internal" href="#comparing-two-references">Comparing two references</a></li>
+<li><a class="reference internal" href="#so-how-do-we-compare-two-objects">So how do we compare two objects?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#writing-tests">Writing Tests</a><ul>
+<li><a class="reference internal" href="#writing-tests-with-jasmine">Writing tests with Jasmine</a></li>
+<li><a class="reference internal" href="#matchers">Matchers</a></li>
+<li><a class="reference internal" href="#what-to-test">What To Test</a></li>
+<li><a class="reference internal" href="#testable-code">Testable Code</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#javascript-debugger">JavaScript Debugger</a><ul>
+<li><a class="reference internal" href="#id2">JavaScript Debugger</a></li>
+<li><a class="reference internal" href="#starting-debugger">Starting Debugger</a></li>
+<li><a class="reference internal" href="#step-over">Step Over</a></li>
+<li><a class="reference internal" href="#step-into">Step Into</a></li>
+<li><a class="reference internal" href="#step-out">Step Out</a></li>
+<li><a class="reference internal" href="#call-stack">Call Stack</a></li>
+<li><a class="reference internal" href="#scope">Scope</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tips-to-avoid-bugs">Tips To Avoid Bugs</a><ul>
+<li><a class="reference internal" href="#plan-first">Plan First</a></li>
+<li><a class="reference internal" href="#keep-it-simple">Keep It Simple</a></li>
+<li><a class="reference internal" href="#common-javascript-bugs">Common JavaScript Bugs</a></li>
+<li><a class="reference internal" href="#good-news">Good News</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#handling-errors-gracefullly">Handling Errors gracefullly</a><ul>
+<li><a class="reference internal" href="#id3">Handling Errors gracefullly</a></li>
+<li><a class="reference internal" href="#your-turn">Your Turn</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="intermediate-js-1">
+<h1>Intermediate JS 1</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Review types in JavaScript</li>
+<li>Debug using the chrome dev tools</li>
+<li>Write tests with Jasmine</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="types-in-javascript">
+<h2>Types in JavaScript</h2>
+<div class="section" id="primitives">
+<h3>Primitives</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Primitive types are also known as scalar or simple types.</li>
+<li>Primitive types fit into memory easily.</li>
+<li>JavaScript has six native primitive types<ul>
+<li>null</li>
+<li>undefined</li>
+<li>Boolean</li>
+<li>Number</li>
+<li>String</li>
+<li>Symbol</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="reference-types">
+<h3>Reference Types</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>A reference type can contain multiple values.</li>
+<li>Reference types are also known as: complex types or container types.</li>
+<li>Reference types in JavaScript include:<ul>
+<li>objects</li>
+<li>arrays (a kind of object)</li>
+<li>functions (a kind of object)</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="assigning-a-primitive">
+<h3>Assigning a primitive</h3>
+<p>When a primitive type is assigned to another variable, a copy of the value of the primitive type is saved in the variable.</p>
+</div>
+<div class="section" id="assigning-a-reference">
+<h3>Assigning a reference</h3>
+<p>When a reference type is assigned to another variable, the address of that value is what is copied over.</p>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Joel&quot;</span><span class="p">,</span> <span class="s2">&quot;Alissa&quot;</span><span class="p">,</span> <span class="s2">&quot;Michael&quot;</span><span class="p">];</span>
+<span class="kd">let</span> <span class="nx">namesCopy</span> <span class="o">=</span> <span class="nx">names</span><span class="p">;</span>
+<span class="nx">namesCopy</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Tim&quot;</span><span class="p">;</span>
+<span class="nx">names</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">===</span> <span class="s2">&quot;Tim&quot;</span><span class="p">;</span> <span class="c1">// true or false?</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="comparing-two-primitives">
+<h3>Comparing two primitives</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>When the comparison operators ( == and ===) are used on primitives, they check the type and value.</li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">firstName</span> <span class="o">=</span> <span class="s2">&quot;Elie&quot;</span>
+<span class="kd">let</span> <span class="nx">firstNameAgain</span> <span class="o">=</span> <span class="nx">firstName</span>
+<span class="nx">firstName</span> <span class="o">===</span> <span class="nx">firstNameAgain</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">firstName</span> <span class="o">===</span> <span class="s2">&quot;Elie&quot;</span> <span class="c1">// true</span>
+<span class="nx">firstNameAgain</span> <span class="o">===</span> <span class="s2">&quot;Elie&quot;</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="comparing-two-references">
+<h3>Comparing two references</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>When the comparison operators (== and ===) are used on reference types, they check the reference.</li>
+<li>If the variables contain a reference to the same item, the comparison will result in true.</li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">nums</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>
+<span class="kd">let</span> <span class="nx">nums2</span> <span class="o">=</span> <span class="nx">nums</span>
+<span class="nx">nums</span> <span class="o">===</span> <span class="nx">nums2</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">nums</span> <span class="o">===</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span> <span class="c1">// false</span>
+<span class="nx">nums2</span> <span class="o">===</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span> <span class="c1">// false</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="so-how-do-we-compare-two-objects">
+<h3>So how do we compare two objects?</h3>
+<div class="docutils container">
+<p>The quick way:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">instructorData</span> <span class="o">=</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Elie&quot;</span><span class="p">}</span>
+<span class="kd">let</span> <span class="nx">instructorData2</span> <span class="o">=</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Elie&quot;</span><span class="p">}</span>
+
+<span class="kd">let</span> <span class="nx">instructorDataToString</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">instructorData</span><span class="p">);</span>
+<span class="kd">let</span> <span class="nx">instructorData2ToString</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">instructorData2</span><span class="p">);</span>
+<span class="nx">instructorDataToString</span> <span class="o">===</span> <span class="nx">instructorData2ToString</span><span class="p">;</span> <span class="c1">// true</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>Another option would be to recursively loop through the objects and make sure each of the properties/values are the same.</p>
+</div>
+</div>
+</div>
+<div class="section" id="writing-tests">
+<h2>Writing Tests</h2>
+<div class="section" id="writing-tests-with-jasmine">
+<h3>Writing tests with Jasmine</h3>
+<p>Write your functions that will be tested:</p>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">demo/taxes.js</span></div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">calculateTaxes</span><span class="p">(</span><span class="nx">income</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">income</span> <span class="o">&gt;</span> <span class="mi">30000</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">income</span> <span class="o">*</span> <span class="mf">1.25</span><span class="p">;</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">income</span> <span class="o">*</span> <span class="mf">1.15</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">calculateTaxes</span><span class="p">(</span><span class="mi">500</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<p>Write a test file:</p>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">demo/taxes.test.js</span></div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should calculate lower-bracket taxes&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">calculateTaxes</span><span class="p">(</span><span class="mi">10000</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">11500</span><span class="p">);</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">calculateTaxes</span><span class="p">(</span><span class="mi">20000</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">23000</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should calculate higher-bracket taxes&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">calculateTaxes</span><span class="p">(</span><span class="mi">50000</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">62500</span><span class="p">);</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">calculateTaxes</span><span class="p">(</span><span class="mi">80000</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">100000</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>Letâs break that down</p>
+</div>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">demo/taxes.test.js</span></div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="hll"><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should calculate lower-bracket taxes&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span>  <span class="nx">expect</span><span class="p">(</span><span class="nx">calculateTaxes</span><span class="p">(</span><span class="mi">10000</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">11500</span><span class="p">);</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">calculateTaxes</span><span class="p">(</span><span class="mi">20000</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">23000</span><span class="p">);</span>
+<span class="hll"><span class="p">});</span>
+</span>
+<span class="hll"><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should calculate higher-bracket taxes&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span>  <span class="nx">expect</span><span class="p">(</span><span class="nx">calculateTaxes</span><span class="p">(</span><span class="mi">50000</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">62500</span><span class="p">);</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">calculateTaxes</span><span class="p">(</span><span class="mi">80000</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">100000</span><span class="p">);</span>
+<span class="hll"><span class="p">});</span>
+</span></pre></div>
+</div>
+</div>
+<ul class="simple">
+<li><em>Test cases</em> are functions passed to <code class="docutils literal notranslate"><span class="pre">it(...)</span></code></li>
+<li>First argument become test case name (shown by Jasmine)</li>
+</ul>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">demo/taxes.test.js</span></div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should calculate lower-bracket taxes&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<span class="hll">  <span class="nx">expect</span><span class="p">(</span><span class="nx">calculateTaxes</span><span class="p">(</span><span class="mi">10000</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">11500</span><span class="p">);</span>
+</span><span class="hll">  <span class="nx">expect</span><span class="p">(</span><span class="nx">calculateTaxes</span><span class="p">(</span><span class="mi">20000</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">23000</span><span class="p">);</span>
+</span><span class="p">});</span>
+
+<span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should calculate higher-bracket taxes&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<span class="hll">  <span class="nx">expect</span><span class="p">(</span><span class="nx">calculateTaxes</span><span class="p">(</span><span class="mi">50000</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">62500</span><span class="p">);</span>
+</span><span class="hll">  <span class="nx">expect</span><span class="p">(</span><span class="nx">calculateTaxes</span><span class="p">(</span><span class="mi">80000</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">100000</span><span class="p">);</span>
+</span><span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<ul class="simple">
+<li>Test cases can contain any normal code plus âexpectationsâ</li>
+<li>Format is <code class="docutils literal notranslate"><span class="pre">expect(someValue).someMatcher(...)</span></code></li>
+</ul>
+</div>
+<div class="section" id="matchers">
+<h3>Matchers</h3>
+<dl class="docutils">
+<dt><code class="docutils literal notranslate"><span class="pre">.toEqual(obj)</span></code></dt>
+<dd>Has the same value (eg, different lists with same values match)</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">.toBe(obj)</span></code></dt>
+<dd>Is the same object (eg, different lists with same items donât)</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">.toContain(obj)</span></code></dt>
+<dd>Does object/array contain this item?</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">.not.</span></code></dt>
+<dd>Add before matcher to invert (eg <code class="docutils literal notranslate"><span class="pre">expect(...).not.toEqual(7)</span></code>)</dd>
+</dl>
+<p><a class="reference external" href="https://jasmine.github.io/api/edge/matchers.html">https://jasmine.github.io/api/edge/matchers.html</a></p>
+</div>
+<div class="section" id="what-to-test">
+<h3>What To Test</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Test every function in at least one way</li>
+<li>Think about âedgesâ<ul>
+<li>What if the list were empty?</li>
+<li>What about non-integer numbers?</li>
+<li>What if the file canât be found?</li>
+<li>Is the first case/last case handled differently?</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="testable-code">
+<h3>Testable Code</h3>
+<p>Write code that is easier to test!</p>
+<ul class="simple">
+<li>More functions &amp; smaller functions: easier to test (&amp; debug!)</li>
+<li>Donât mix logic &amp; UI in a function</li>
+</ul>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">playTicTacToe</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// ...</span>
+  <span class="kd">let</span> <span class="nx">winner</span> <span class="o">=</span> <span class="nx">checkForWinner</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">checkForWinner</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// code for checking board here...</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">winner</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">alert</span><span class="p">(</span><span class="nx">winner</span> <span class="o">+</span> <span class="s2">&quot; wins!&quot;</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">winner</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">playTicTacToe</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// ...</span>
+  <span class="kd">let</span> <span class="nx">winner</span> <span class="o">=</span> <span class="nx">checkForWinner</span><span class="p">();</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">winner</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">announceWinner</span><span class="p">(</span><span class="nx">winner</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">checkForWinner</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// code for checking board here...</span>
+  <span class="k">return</span> <span class="nx">winner</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">announceWinner</span><span class="p">(</span><span class="nx">winner</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">alert</span><span class="p">(</span><span class="nx">winner</span> <span class="o">+</span> <span class="s2">&quot; wins!&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="javascript-debugger">
+<h2>JavaScript Debugger</h2>
+<div class="section" id="id2">
+<ul class="simple">
+<li>Watch execution of code and examine at any point</li>
+<li>Built into Chrome (other browsers have similiar abilities)</li>
+<li>Can debug in-browser code <em>or</em> Node</li>
+</ul>
+</div>
+<div class="section" id="starting-debugger">
+<h3>Starting Debugger</h3>
+<p>View code or adding âbreakpointsâ:</p>
+<p><cite>View</cite> â <cite>Developer</cite> â <cite>Developer Tools</cite> â <cite>Sources</cite> tab</p>
+<p>Click left of line of code to add a blue breakpoint</p>
+<p>Can put breakpoint into code itself:</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">myFunction</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+  <span class="kr">debugger</span><span class="p">;</span>   <span class="c1">// &lt;-- will always stop here</span>
+
+  <span class="c1">// rest of code follows ...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="step-over">
+<h3>Step Over</h3>
+<a class="reference internal image-reference" href="_images/step-over-outline.svg"><img alt="_images/step-over-outline.svg" src="_images/step-over-outline.svg" width="60%" /></a>
+<p>Run current line, but donât debug into any function calls</p>
+</div>
+<div class="section" id="step-into">
+<h3>Step Into</h3>
+<a class="reference internal image-reference" href="_images/step-into-outline.svg"><img alt="_images/step-into-outline.svg" src="_images/step-into-outline.svg" width="60%" /></a>
+<p>Run current line, stepping into any function calls</p>
+</div>
+<div class="section" id="step-out">
+<h3>Step Out</h3>
+<a class="reference internal image-reference" href="_images/step-out-outline.svg"><img alt="_images/step-out-outline.svg" src="_images/step-out-outline.svg" width="60%" /></a>
+<p>Return from this function to caller</p>
+</div>
+<div class="section" id="call-stack">
+<h3>Call Stack</h3>
+<a class="reference internal image-reference" href="_images/call-stack.svg"><img alt="_images/call-stack.svg" src="_images/call-stack.svg" width="60%" /></a>
+<p>Shows <em>stack</em> of function calls that got you here</p>
+</div>
+<div class="section" id="scope">
+<h3>Scope</h3>
+<a class="reference internal image-reference" href="_images/scope.svg"><img alt="_images/scope.svg" src="_images/scope.svg" width="60%" /></a>
+<p>Shows current value of variables</p>
+<p>Can click to change value</p>
+</div>
+</div>
+<div class="section" id="tips-to-avoid-bugs">
+<h2>Tips To Avoid Bugs</h2>
+<div class="section" id="plan-first">
+<h3>Plan First</h3>
+<blockquote>
+<div><p>Software and cathedrals are much the same â <span class="raw-reveal"><br></span>
+first we build them, then we pray.</p>
+<p class="attribution">&mdash;Sam Redwine, 1988</p>
+</div></blockquote>
+</div>
+<div class="section" id="keep-it-simple">
+<h3>Keep It Simple</h3>
+<blockquote>
+<div><p>Everyone knows that debugging is twice as hard <span class="raw-reveal"><br></span>
+as writing a program in the first place.</p>
+<p>If youâre as clever as you can be when you write it, <span class="raw-reveal"><br></span>
+how will you ever debug it?</p>
+<p class="attribution">&mdash;Brian Kernighan, <em>The Elements of Programming Style</em></p>
+</div></blockquote>
+<p>(Thatâs a particularly excellent intermediate book, by the way)</p>
+</div>
+<div class="section" id="common-javascript-bugs">
+<h3>Common JavaScript Bugs</h3>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>==</cite> is very loose about comparisons (<cite>===</cite> isnât)<ul>
+<li><code class="docutils literal notranslate"><span class="pre">7</span> <span class="pre">==</span> <span class="pre">&quot;7&quot;</span></code></li>
+</ul>
+</li>
+<li>Objects &amp; arrays are not equal to similar objects &amp; arrays<ul>
+<li><code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">2,</span> <span class="pre">3]</span> <span class="pre">!==</span> <span class="pre">[1,</span> <span class="pre">2,</span> <span class="pre">3]</span></code></li>
+</ul>
+</li>
+<li>Calling function with missing arguments makes those arguments <cite>undefined</cite></li>
+<li>Calling function with extra arguments is ignored (the extra arguments are ignored).</li>
+<li>Getting a missing property from object/index from array is <cite>undefined</cite></li>
+</ul>
+</div>
+</div>
+<div class="section" id="good-news">
+<h3>Good News</h3>
+<blockquote>
+<div><p>If debugging is the process of removing bugs, <span class="raw-reveal"><br></span>
+then programming must be <span class="raw-reveal"><br></span>
+the process of putting them in.</p>
+<p class="attribution">&mdash;Edsger W. Dijkstra</p>
+</div></blockquote>
+<div class="docutils container">
+<ul class="simple">
+<li>Bugs are an opportunity to improve debugging skills &amp; to learn something</li>
+<li>You will have lots of chances to practice this valuable skill!</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="handling-errors-gracefullly">
+<h2>Handling Errors gracefullly</h2>
+<div class="section" id="id3">
+<div class="docutils container">
+<ul class="simple">
+<li>Remember that errors crash your programs!</li>
+<li>Sometimes you canât predict what your programs will return</li>
+<li>To handle errors gracefully, we use try/catch</li>
+<li>You <strong>must</strong> pass a parameter to <cite>catch</cite></li>
+</ul>
+</div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">displayUserInfo</span><span class="p">(){</span>
+  <span class="c1">// imagine we&#39;re getting some data from Github</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="c1">// what happens if responseFromGithubAPI is undefined?</span>
+    <span class="kd">var</span> <span class="nx">userData</span> <span class="o">=</span> <span class="nx">responseFromGithubAPI</span><span class="p">.</span><span class="nx">username</span>
+    <span class="k">return</span> <span class="s2">&quot;Hello &quot;</span> <span class="o">+</span> <span class="nx">userData</span>
+  <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">err</span><span class="p">){</span>
+    <span class="k">return</span> <span class="s2">&quot;Invalid Username&quot;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="your-turn">
+<h3>Your Turn</h3>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script>
+<script type="text/javascript" src="_static/language_data.js"></script> 
+</body>
+</html>

@@ -1,0 +1,665 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Python Data Structures</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Python Data Structures</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Python Data Structures</a><ul>
+<li><a class="reference internal" href="#id1">Python Data Structures</a><ul>
+<li><a class="reference internal" href="#id2">Python Data Structures</a></li>
+<li><a class="reference internal" href="#length-of-structure">Length of Structure</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#lists">Lists</a><ul>
+<li><a class="reference internal" href="#id3">Lists</a></li>
+<li><a class="reference internal" href="#making-lists">Making Lists</a></li>
+<li><a class="reference internal" href="#membership">Membership</a></li>
+<li><a class="reference internal" href="#retrieving-by-index">Retrieving By Index</a></li>
+<li><a class="reference internal" href="#slicing">Slicing</a></li>
+<li><a class="reference internal" href="#splicing">Splicing</a></li>
+<li><a class="reference internal" href="#core-api">Core API</a></li>
+<li><a class="reference internal" href="#differences-from-js-arrays">Differences From JS Arrays</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#strings">Strings</a><ul>
+<li><a class="reference internal" href="#id4">Strings</a></li>
+<li><a class="reference internal" href="#making-strings">Making Strings</a></li>
+<li><a class="reference internal" href="#membership-substrings">Membership / Substrings</a></li>
+<li><a class="reference internal" href="#id5">Core API</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#dictionaries">Dictionaries</a><ul>
+<li><a class="reference internal" href="#id6">Dictionaries</a></li>
+<li><a class="reference internal" href="#making-dictionaries">Making Dictionaries</a></li>
+<li><a class="reference internal" href="#membership-retrieval">Membership &amp; Retrieval</a></li>
+<li><a class="reference internal" href="#looping-over-dictionaries">Looping over Dictionaries</a></li>
+<li><a class="reference internal" href="#id7">Core API</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sets">Sets</a><ul>
+<li><a class="reference internal" href="#id8">Sets</a></li>
+<li><a class="reference internal" href="#making-sets">Making Sets</a></li>
+<li><a class="reference internal" href="#id9">Membership</a></li>
+<li><a class="reference internal" href="#id10">Core API</a></li>
+<li><a class="reference internal" href="#set-operations">Set Operations</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tuples">Tuples</a><ul>
+<li><a class="reference internal" href="#id11">Tuples</a></li>
+<li><a class="reference internal" href="#making-tuples">Making Tuples</a></li>
+<li><a class="reference internal" href="#what-are-these-good-for">What Are These Good For?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#files">Files</a><ul>
+<li><a class="reference internal" href="#id12">Files</a></li>
+<li><a class="reference internal" href="#reading">Reading</a></li>
+<li><a class="reference internal" href="#writing">Writing</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#comprehensions">Comprehensions</a><ul>
+<li><a class="reference internal" href="#id13">Comprehensions</a></li>
+<li><a class="reference internal" href="#filtering-into-list">Filtering Into List</a></li>
+<li><a class="reference internal" href="#mapping-into-list">Mapping Into List</a></li>
+<li><a class="reference internal" href="#super-flexible">Super Flexible</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="python-data-structures">
+<h1>Python Data Structures</h1>
+<div class="section" id="id1">
+<div class="section" id="id2">
+<p>Includes excellent, high-performance data structures as part of language.</p>
+</div>
+<div class="section" id="length-of-structure">
+<h3>Length of Structure</h3>
+<p>Generic <cite>len(x)</cite> returns length of x:</p>
+<ul class="simple">
+<li># chars in string</li>
+<li># items in list</li>
+<li># items in dictionary</li>
+<li># items in a set</li>
+</ul>
+</div>
+</div>
+<div class="section" id="lists">
+<h2>Lists</h2>
+<div class="section" id="id3">
+<p>Like JS arrays:</p>
+<ul class="simple">
+<li>Mutable, ordered sequence</li>
+<li><cite>O(n)</cite> to search, add, delete<ul>
+<li>Except when at end: <cite>O(1)</cite></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="making-lists">
+<h3>Making Lists</h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">alpha</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>Can use constructor function, <cite>list()</cite></p>
+<p>This will make list from iterating over argument:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">letters</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="s2">&quot;apple&quot;</span><span class="p">)</span>   <span class="c1"># [&#39;a&#39;, &#39;p&#39;, &#39;p&#39;, &#39;l&#39;, &#39;e&#39;]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="membership">
+<h3>Membership</h3>
+<p>Can check for membership with <cite>in</cite>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="s2">&quot;taco&quot;</span> <span class="ow">in</span> <span class="n">foods</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Yum!&quot;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="s2">&quot;cheese&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">foods</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Oh no!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="retrieving-by-index">
+<h3>Retrieving By Index</h3>
+<p>Can retrieve/mutate item with <code class="docutils literal notranslate"><span class="pre">[n]</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="n">fav_foods</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="n">fav_foods</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;taco&quot;</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fav_foods</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>   <span class="c1"># last item</span>
+
+<span class="n">fav_foods</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span>   <span class="c1"># third from end</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="slicing">
+<h3>Slicing</h3>
+<p>Can retrieve list from list:</p>
+<p><code class="docutils literal notranslate"><span class="pre">lst[start:stop:step]</span></code></p>
+<ul class="simple">
+<li><cite>start</cite>: Index to begin retrieval <em>(default start)</em></li>
+<li><cite>stop</cite>: Index to end retrieval before <em>(default: end)</em></li>
+<li><cite>step</cite>: Number to step <em>(default: 1)</em></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">alpha</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">]</span>
+
+<span class="n">alpha</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>        <span class="c1"># [&#39;c&#39;, &#39;d&#39;, &#39;e&#39;]</span>
+<span class="n">alpha</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>       <span class="c1"># [&#39;c&#39;, &#39;d&#39;]</span>
+<span class="n">alpha</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>        <span class="c1"># [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;]</span>
+<span class="n">alpha</span><span class="p">[::</span><span class="mi">2</span><span class="p">]</span>       <span class="c1"># [&#39;a&#39;, &#39;c&#39;, &#39;e&#39;]</span>
+<span class="n">alpha</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>    <span class="c1"># [&#39;d&#39;, &#39;c&#39;, &#39;b&#39;]</span>
+<span class="n">alpha</span><span class="p">[::</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>      <span class="c1"># [&#39;e&#39;, &#39;c&#39;, &#39;a&#39;]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="splicing">
+<h3>Splicing</h3>
+<p>Can assign a list to a splice:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">alpha</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">]</span>
+
+<span class="n">alpha</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>            <span class="c1"># [&#39;a&#39;, &#39;b&#39;, &#39;y&#39;, &#39;z&#39;]</span>
+
+<span class="n">alpha</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">print</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>            <span class="c1"># [&#39;a&#39;, &#39;z&#39;]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="core-api">
+<h3>Core API</h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="31%" />
+<col width="69%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">l.append(x)</span></code></td>
+<td>Add <cite>x</cite> to end of of list</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">l.copy()</span></code></td>
+<td>Return shall copy of list <cite>l</cite></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">l.count(x)</span></code></td>
+<td>Return # times <cite>x</cite> appears in <cite>l</cite></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">l.extend(l2)</span></code></td>
+<td>Add items of <cite>l2</cite> to <cite>l</cite></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">l.index(x)</span></code></td>
+<td>Return (0-based) index of <cite>x</cite> in <cite>l</cite></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">l.insert(i,</span> <span class="pre">x)</span></code></td>
+<td>Insert <cite>x</cite> at position <cite>i</cite></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">l.pop([i])</span></code></td>
+<td>Remove &amp; return item at <cite>i</cite> (default last)</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">l.reverse()</span></code></td>
+<td>Reverse list (change in place)</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">l.sort()</span></code></td>
+<td>Sort list in place</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="differences-from-js-arrays">
+<h3>Differences From JS Arrays</h3>
+<p>Canât add new item with <code class="docutils literal notranslate"><span class="pre">[]</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">alpha</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">]</span>
+<span class="n">alpha</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;d&#39;</span>           <span class="c1"># error!</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">alpha</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;d&#39;</span><span class="p">)</span>         <span class="c1"># ok!</span>
+</pre></div>
+</div>
+<p>Functions that mutate list return <cite>None</cite>, not data:</p>
+<div class="compare docutils container">
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">JavaScript</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">ltrs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">];</span>
+<span class="nx">ltrs</span><span class="p">.</span><span class="nx">sort</span><span class="p">();</span> <span class="c1">// sorts in-place; returns ltrs</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-text">Python</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ltrs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">]</span>
+<span class="n">ltrs</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span> <span class="c1"># sorts in-place; returns None</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="strings">
+<h2>Strings</h2>
+<div class="section" id="id4">
+<p>Immutable sequence of characters (like JS)</p>
+</div>
+<div class="section" id="making-strings">
+<h3>Making Strings</h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Hello!&quot;</span>
+<span class="n">also</span> <span class="o">=</span> <span class="s1">&#39;Oh hi!&#39;</span>
+
+<span class="n">long_msg</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;THis can continue on for several</span>
+<span class="s2">lines of text&quot;&quot;&quot;</span>
+
+<span class="n">greet</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;Hi, {fname} {lname}&quot;</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">nums</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+
+<span class="nb">str</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span>     <span class="c1"># &quot;[1, 2, 3]&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="membership-substrings">
+<h3>Membership / Substrings</h3>
+<div class="docutils container">
+<ul>
+<li><p class="first">Can use <cite>in</cite> for membership  (<code class="docutils literal notranslate"><span class="pre">&quot;e&quot;</span> <span class="pre">in</span> <span class="pre">&quot;apple&quot;</span></code>)</p>
+</li>
+<li><p class="first">Can slice to retrieve substring (<code class="docutils literal notranslate"><span class="pre">&quot;apple&quot;[1:3]</span> <span class="pre">==</span> <span class="pre">&quot;pp&quot;</span></code>)</p>
+<ul class="simple">
+<li>Cannot splice; strings are immutable!</li>
+</ul>
+</li>
+<li><p class="first">Can iterate over, get letter-by-letter:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">letter</span> <span class="ow">in</span> <span class="n">word</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Letter&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id5">
+<h3>Core API</h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="28%" />
+<col width="72%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">s.count(t)</span></code></td>
+<td>Returns # times <cite>t</cite> occurs in <cite>s</cite></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">s.endswith(st)</span></code></td>
+<td>Does <cite>s</cite> end with string <cite>t</cite>?</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">s.find(t)</span></code></td>
+<td>Index of first occurence of <cite>t</cite> in <cite>s</cite> (-1 for failure)</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">s.isdigit()</span></code></td>
+<td>Is <cite>s</cite> entirely made up of digits?</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">s.join(seq)</span></code></td>
+<td>Make new string of <cite>seq</cite> joined by <cite>s</cite> (<code class="docutils literal notranslate"><span class="pre">&quot;|&quot;.join(nums)</span></code>)</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">s.lower()</span></code></td>
+<td>Return lowercased copy of <cite>s</cite></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">s.replace(t,</span> <span class="pre">count)</span></code></td>
+<td>Replace <cite>count</cite> (default: all) occurences of <cite>t</cite> in <cite>s</cite></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">s.split(sep)</span></code></td>
+<td>Return list of items made from splitting <cite>s</cite> on <cite>sep</cite></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">s.splitlines()</span></code></td>
+<td>Split <cite>s</cite> at newlines</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">s.startswith(t)</span></code></td>
+<td>Does <cite>s</cite> start with <cite>t</cite>?</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">s.strip()</span></code></td>
+<td>Remove whitespace at start/end of <cite>s</cite></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="dictionaries">
+<h2>Dictionaries</h2>
+<div class="section" id="id6">
+<p>Mutable, ordered mapping of keys â values</p>
+<p><cite>O(1)</cite> runtime for adding, retrieving, deleting items</p>
+<p>(like JS object or <cite>Map</cite>)</p>
+</div>
+<div class="section" id="making-dictionaries">
+<h3>Making Dictionaries</h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fruit_colors</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;apple&quot;</span><span class="p">:</span> <span class="s2">&quot;red&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;berry&quot;</span><span class="p">:</span> <span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;cherry&quot;</span><span class="p">:</span> <span class="s2">&quot;red&quot;</span><span class="p">}</span>
+</pre></div>
+</div>
+<ul>
+<li><p class="first">Values can be <em>any type</em></p>
+</li>
+<li><p class="first">Keys can be any <strong>immutable type</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">my_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;ok&quot;</span><span class="p">:</span> <span class="s2">&quot;yes&quot;</span><span class="p">,</span>
+           <span class="mi">42</span><span class="p">:</span> <span class="s2">&quot;all good&quot;</span><span class="p">,</span>
+           <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]:</span> <span class="mi">2</span><span class="p">}</span> <span class="c1"># ERR: not immutable</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="membership-retrieval">
+<h3>Membership &amp; Retrieval</h3>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>in</cite> checks for membership of key (<code class="docutils literal notranslate"><span class="pre">&quot;apple&quot;</span> <span class="pre">in</span> <span class="pre">fruit_colors</span></code>)</li>
+<li><code class="docutils literal notranslate"><span class="pre">[]</span></code> retrieves item by key (<code class="docutils literal notranslate"><span class="pre">fruit_colors['apple']</span></code>)<ul>
+<li>Cannot use dot notation, though (no <code class="docutils literal notranslate"><span class="pre">fruit_colors.apple</span></code>)</li>
+<li>Failure to find is <em>error</em> (can say <code class="docutils literal notranslate"><span class="pre">.get(x,</span> <span class="pre">default)</span></code>)</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="looping-over-dictionaries">
+<h3>Looping over Dictionaries</h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ages</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Whiskey&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="s2">&quot;Fluffy&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Ezra&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">}</span>
+
+<span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">ages</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">age</span> <span class="ow">in</span> <span class="n">ages</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">age</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">name_and_age</span> <span class="ow">in</span> <span class="n">ages</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">name_and_age</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>Can unpack <cite>name_and_age</cite> while looping:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">age</span><span class="p">)</span> <span class="ow">in</span> <span class="n">ages</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;is&quot;</span><span class="p">,</span> <span class="n">age</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id7">
+<h3>Core API</h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="27%" />
+<col width="73%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">d.copy()</span></code></td>
+<td>Return new copy of <cite>d</cite></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">d.get(x,</span> <span class="pre">default)</span></code></td>
+<td>Retrieve value of <cite>x</cite> (return optional <cite>default</cite> if missing)</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">d.items()</span></code></td>
+<td>Return iterable of (key, value) pairs</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">d.keys()</span></code></td>
+<td>Return iterable of keys</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">d.values()</span></code></td>
+<td>Return iterable of values</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="sets">
+<h2>Sets</h2>
+<div class="section" id="id8">
+<p>Unordered, unique collection of items, like JS <cite>Set</cite></p>
+<p><cite>O(1)</cite> runtime for adding, retrieving, deleting</p>
+</div>
+<div class="section" id="making-sets">
+<h3>Making Sets</h3>
+<p>Use <code class="docutils literal notranslate"><span class="pre">{}</span></code>, but with only keys, not <code class="docutils literal notranslate"><span class="pre">key:</span> <span class="pre">value</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">colors</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="s2">&quot;green&quot;</span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>Can use constructor function to make set from iterable:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">set</span><span class="p">(</span><span class="n">pet_list</span><span class="p">)</span>   <span class="c1"># {&quot;Whiskey&quot;, &quot;Fluffy&quot;, &quot;Ezra&quot;}</span>
+
+<span class="nb">set</span><span class="p">(</span><span class="s2">&quot;apple&quot;</span><span class="p">)</span>    <span class="c1"># {&quot;a&quot;, &quot;p&quot;, &quot;l&quot;, &quot;e&quot;}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>Any immutable thing can be put in a set</p>
+</div>
+</div>
+<div class="section" id="id9">
+<h3>Membership</h3>
+<p>Use <cite>in</cite> for membership check:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;red&quot;</span> <span class="ow">in</span> <span class="n">colors</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id10">
+<h3>Core API</h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="28%" />
+<col width="72%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">s.add(x)</span></code></td>
+<td>Add item <cite>x</cite> to <cite>s</cite></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">s.copy()</span></code></td>
+<td>Make new copy of <cite>s</cite></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">s.pop()</span></code></td>
+<td>Remove &amp; return arbitrary item from <cite>s</cite></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">s.remove(x)</span></code></td>
+<td>Remove <cite>x</cite> from <cite>s</cite></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="set-operations">
+<h3>Set Operations</h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">moods</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;happy&quot;</span><span class="p">,</span> <span class="s2">&quot;sad&quot;</span><span class="p">,</span> <span class="s2">&quot;grumpy&quot;</span><span class="p">}</span>
+
+<span class="n">dwarfs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;happy&quot;</span><span class="p">,</span> <span class="s2">&quot;grumpy&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">}</span>
+
+
+<span class="n">moods</span> <span class="o">|</span> <span class="n">dwarfs</span>    <span class="c1"># union: {&quot;happy&quot;, &quot;sad&quot;, &quot;grumpy&quot;, &quot;doc&quot;}</span>
+
+<span class="n">moods</span> <span class="o">&amp;</span> <span class="n">dwarfs</span>    <span class="c1"># intersection: {&quot;happy&quot;, &quot;grumpy&quot;}</span>
+
+<span class="n">moods</span> <span class="o">-</span> <span class="n">dwarfs</span>    <span class="c1"># difference: {&quot;sad&quot;}</span>
+<span class="n">dwarfs</span> <span class="o">-</span> <span class="n">moods</span>    <span class="c1"># difference: {&quot;doc&quot;}</span>
+
+<span class="n">moods</span> <span class="o">^</span> <span class="n">dwarfs</span>    <span class="c1"># symmetric difference: {&quot;sad&quot;, &quot;doc&quot;}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>(These are so awesome!)</p>
+</div>
+</div>
+</div>
+<div class="section" id="tuples">
+<h2>Tuples</h2>
+<div class="section" id="id11">
+<p>Immutable, ordered sequence</p>
+<p>(like a list, but immutable)</p>
+</div>
+<div class="section" id="making-tuples">
+<h3>Making Tuples</h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">t1</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+<span class="n">t2</span> <span class="o">=</span> <span class="p">()</span>           <span class="c1"># empty tuple</span>
+
+<span class="n">t3</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)</span>         <span class="c1"># one-item tuple: note trailing comma</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>Can use constructor function to make tuple from iterable:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ids</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">44</span><span class="p">]</span>
+
+<span class="n">t_of_ids</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="what-are-these-good-for">
+<h3>What Are These Good For?</h3>
+<p>Slightly smaller, faster than lists</p>
+<p>Since theyâre immutable, can use a dict keys or put into sets</p>
+</div>
+</div>
+<div class="section" id="files">
+<h2>Files</h2>
+<div class="section" id="id12">
+<p>You can open an on-disk file with <cite>open(filepath, mode)</cite></p>
+<ul class="simple">
+<li><cite>filepath</cite>: absolute or relative path to file</li>
+<li><cite>mode</cite>: string of how to open file (eg, ârâ for reading or âwâ for writing)</li>
+</ul>
+<p>This returns an file-type instance.</p>
+</div>
+<div class="section" id="reading">
+<h3>Reading</h3>
+<p>Line-by-line:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/my/file.txt&quot;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">file</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;line =&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+
+<span class="nb">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>All at once:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/my/file.txt&quot;</span><span class="p">)</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="nb">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+<span class="nb">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="writing">
+<h3>Writing</h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/my/file.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+
+<span class="nb">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;This is a new line.&quot;</span><span class="p">)</span>
+<span class="nb">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;So is this.&quot;</span><span class="p">)</span>
+
+<span class="nb">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="comprehensions">
+<h2>Comprehensions</h2>
+<div class="section" id="id13">
+<p>Python has <cite>filter()</cite> and <cite>map()</cite>, like JS</p>
+<p>But <em>comprehensions</em> are even more flexible</p>
+</div>
+<div class="section" id="filtering-into-list">
+<h3>Filtering Into List</h3>
+<p>Instead of this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">evens</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">nums</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">num</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">evens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>You can say this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">evens</span> <span class="o">=</span> <span class="p">[</span><span class="n">num</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">nums</span> <span class="k">if</span> <span class="n">num</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="mapping-into-list">
+<h3>Mapping Into List</h3>
+<p>Instead of this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">doubled</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">nums</span><span class="p">:</span>
+    <span class="n">doubled</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">num</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>You can say this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">doubled</span> <span class="o">=</span> <span class="p">[</span><span class="n">num</span> <span class="o">*</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">nums</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>Can combine this mapping and filtering:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">doubled_evens</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="o">*</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nums</span> <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="super-flexible">
+<h3>Super Flexible</h3>
+<p>Can make lists via comprehensions from <em>any kind of iterable</em>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">vowels</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;e&quot;</span><span class="p">,</span> <span class="s2">&quot;i&quot;</span><span class="p">,</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="s2">&quot;u&quot;</span><span class="p">}</span>
+<span class="n">word</span> <span class="o">=</span> <span class="s2">&quot;apple&quot;</span>
+
+<span class="n">vowel_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">ltr</span> <span class="k">for</span> <span class="n">ltr</span> <span class="ow">in</span> <span class="n">word</span> <span class="k">if</span> <span class="n">ltr</span> <span class="ow">in</span> <span class="n">vowels</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>Can make âdictionary comprehensionsâ and âset comprehensionsâ:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">evens_to_doubled</span> <span class="o">=</span> <span class="p">{</span><span class="n">n</span><span class="p">:</span> <span class="n">n</span> <span class="o">*</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nums</span> <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">}</span>
+
+<span class="n">a_words</span> <span class="o">=</span> <span class="p">{</span><span class="n">w</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">words</span> <span class="k">if</span> <span class="n">w</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">)}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

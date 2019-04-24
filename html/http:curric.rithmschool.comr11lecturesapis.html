@@ -1,0 +1,327 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Working with APIs</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Working with APIs</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Working with APIs</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#apis">APIs</a><ul>
+<li><a class="reference internal" href="#what-is-an-api">What Is An API?</a></li>
+<li><a class="reference internal" href="#apis-you-have-used">APIs You Have Used</a></li>
+<li><a class="reference internal" href="#third-party-apis">Third Party APIs</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#data-formats">Data Formats</a><ul>
+<li><a class="reference internal" href="#id2">Data Formats</a></li>
+<li><a class="reference internal" href="#xml">XML</a></li>
+<li><a class="reference internal" href="#json">JSON</a></li>
+<li><a class="reference internal" href="#json-vs-xml">JSON vs XML</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api-security">API Security</a><ul>
+<li><a class="reference internal" href="#limitations-of-ajax-requests">Limitations of AJAX requests</a></li>
+<li><a class="reference internal" href="#same-origin-policy">Same Origin Policy</a></li>
+<li><a class="reference internal" href="#bypassing-the-sop">Bypassing the SOP</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#curl">Curl</a><ul>
+<li><a class="reference internal" href="#id3">Curl</a></li>
+<li><a class="reference internal" href="#making-a-request-using-curl">Making a request using Curl</a></li>
+<li><a class="reference internal" href="#flags-with-curl">Flags with Curl</a></li>
+<li><a class="reference internal" href="#when-to-use-curl">When to use Curl</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#insomnia">Insomnia</a><ul>
+<li><a class="reference internal" href="#id4">Insomnia</a></li>
+<li><a class="reference internal" href="#insomnia-vs-curl">Insomnia vs Curl</a></li>
+<li><a class="reference internal" href="#practicing-with-insomnia">Practicing with Insomnia</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="working-with-apis">
+<h1>Working with APIs</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Define what an API is</li>
+<li>Compare and contrast different kinds of APIs</li>
+<li>Understand the limitations</li>
+<li>Use Terminal and GUI clients for making HTTP requests</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="apis">
+<h2>APIs</h2>
+<div class="section" id="what-is-an-api">
+<h3>What Is An API?</h3>
+<p>A set of clearly defined methods of communication <span class="raw-reveal"><br></span>
+between various components.</p>
+<p>An API may be for a web-based system, operating system, database system, <span class="raw-reveal"><br></span>
+computer hardware, or software library.</p>
+</div>
+<div class="section" id="apis-you-have-used">
+<h3>APIs You Have Used</h3>
+<p><strong>Web APIs</strong> <a class="reference external" href="https://developer.mozilla.org/en-US/docs/Web/API">https://developer.mozilla.org/en-US/docs/Web/API</a></p>
+<p><strong>The jQuery API</strong> <a class="reference external" href="https://api.jquery.com/">https://api.jquery.com/</a></p>
+<p><strong>Bootstrap API</strong> <a class="reference external" href="https://getbootstrap.com/docs/4.1/getting-started/javascript/">https://getbootstrap.com/docs/4.1/getting-started/javascript/</a></p>
+</div>
+<div class="section" id="third-party-apis">
+<h3>Third Party APIs</h3>
+<p>Companies will provide access to their data (sometimes not for free)</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Twitter API, give me all tweets that mention âice creamâ</li>
+<li>Facebook API, send me the current userâs profile picture</li>
+<li>Weather API, what is the weather in Missoula Montana?</li>
+<li>Reddit API, what is the current top post?</li>
+<li>GooglePlaces API, what gas stations are near the user?</li>
+<li>Yelp API, give me 10 restaurants in the zipcode 94110</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="data-formats">
+<h2>Data Formats</h2>
+<div class="section" id="id2">
+<div class="docutils container">
+<ul class="simple">
+<li>When we browse on the web, we make HTTP requests and get HTML back.</li>
+<li>APIs donât respond with HTML.<ul>
+<li>HTML contains info about page structure. APIs respond with data, not structure.</li>
+</ul>
+</li>
+<li>They use different data formats like XML and JSON.<ul>
+<li>These are still text based formatsâremember, HTTP is text based!</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="xml">
+<h3>XML</h3>
+<p>Syntactically similar to HTML, but does not describe presentation like HTML, and many of the tags are custom.</p>
+<div class="highlight-XML notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;person&gt;</span>
+  <span class="nt">&lt;name&gt;</span>Elie<span class="nt">&lt;/name&gt;</span>
+  <span class="nt">&lt;favoriteColor&gt;</span>purple<span class="nt">&lt;/favoriteColor&gt;</span>
+  <span class="nt">&lt;city&gt;</span>San Francisco<span class="nt">&lt;/city&gt;</span>
+<span class="nt">&lt;/person&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="json">
+<h3>JSON</h3>
+<p>JSON stands for <strong>JavaScript Object Notation</strong>.</p>
+<div class="docutils container">
+<p>JSON looks very similiar to JavaScript objects, but all the keys must be âdouble-quotedâ.</p>
+</div>
+<div class="docutils container">
+<div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;person&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Elie&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;favoriteColor&quot;</span><span class="p">:</span> <span class="s2">&quot;purple&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;city&quot;</span><span class="p">:</span> <span class="s2">&quot;San Francisco&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;favoriteNumber&quot;</span><span class="p">:</span> <span class="mi">-97</span><span class="p">,</span>
+    <span class="nt">&quot;interests&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;CEOing&quot;</span><span class="p">,</span> <span class="s2">&quot;eating Mediterranean food&quot;</span><span class="p">],</span>
+    <span class="nt">&quot;futureDreams&quot;</span><span class="p">:</span> <span class="kc">null</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<p>A JSON payload must be sent as a string over HTTP requests. To convert JavaScript object to JSON string:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">myObject</span><span class="p">)</span>   <span class="c1">// &quot;...string of JSON...&quot;</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>To convert JSON string to JavaScript object:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">jsonString</span><span class="p">)</span>   <span class="c1">// {prop: value, ...}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>Most libraries do this for you.</p>
+</div>
+</div>
+<div class="section" id="json-vs-xml">
+<h3>JSON vs XML</h3>
+<p>Weâll primarily use JSON: itâs easier to parse &amp; works great with JavaScript! JSON is also the contemporary standard for most RESTful APIs.</p>
+</div>
+</div>
+<div class="section" id="api-security">
+<h2>API Security</h2>
+<div class="section" id="limitations-of-ajax-requests">
+<h3>Limitations of AJAX requests</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Unfortunately: we canât use AJAX to make HTTP requests to all APIs.</li>
+<li>Primarily: essential principle in web security called âSame-Origin-Policyâ.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="same-origin-policy">
+<h3>Same Origin Policy</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Critical security mechanism that restricts how a document or script loaded from one origin can interact with a resource from another origin.</li>
+<li>It helps to isolate potentially malicious documents, reducing possible attacks</li>
+<li>It is <strong>very</strong> restrictive</li>
+</ul>
+</div>
+<div class="docutils container">
+<p>What constitutes a âdifferentâ origin?</p>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Different domain</li>
+<li>Different protocol</li>
+<li>Different port</li>
+</ul>
+</div>
+</div>
+<div class="section" id="bypassing-the-sop">
+<h3>Bypassing the SOP</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>JSONP</li>
+<li>CORS</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="curl">
+<h2>Curl</h2>
+<div class="section" id="id3">
+<p><cite>curl</cite> is used in command lines or scripts to transfer data.</p>
+<p>Open source &amp; comes with OSXâso itâs easy to use right out of the box</p>
+</div>
+<div class="section" id="making-a-request-using-curl">
+<h3>Making a request using Curl</h3>
+<div class="docutils container">
+<p>We do it in the Terminal!</p>
+</div>
+<div class="docutils container">
+<p>Simplest &amp; most common request/operation made using HTTP is to GET a URL:</p>
+<pre class="console literal-block">
+$ <span class="cmd">curl https://curl.haxx.se</span>
+</pre>
+</div>
+<div class="docutils container">
+<p>This will return the entire HTML document that that URL holds.</p>
+<pre class="console literal-block">
+$ <span class="cmd">curl https://api.github.com/users/elie</span>
+</pre>
+</div>
+<div class="docutils container">
+<p>This will return a JSON response from the Github API</p>
+</div>
+</div>
+<div class="section" id="flags-with-curl">
+<h3>Flags with Curl</h3>
+<div class="docutils container">
+<ul>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">-d</span></code> or <code class="docutils literal notranslate"><span class="pre">--data</span></code> to send information to a server</p>
+<p><code class="docutils literal notranslate"><span class="pre">-d</span>&#160; <span class="pre">'{&quot;username&quot;:&quot;xyz&quot;,&quot;password&quot;:&quot;xyz&quot;}'</span></code></p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">-X</span></code> or <code class="docutils literal notranslate"><span class="pre">--request</span></code> to specify HTTP verb (<code class="docutils literal notranslate"><span class="pre">-X</span> <span class="pre">POST</span></code>)</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">-H</span></code> or <code class="docutils literal notranslate"><span class="pre">--header</span></code> to specify additional headers</p>
+<p><code class="docutils literal notranslate"><span class="pre">-H</span> <span class="pre">&quot;Content-Type:</span> <span class="pre">application/json&quot;</span></code></p>
+</li>
+</ul>
+</div>
+<div class="docutils container">
+<p>Example of a larger request</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl --header <span class="s2">&quot;Content-Type: application/json&quot;</span> <span class="se">\</span>
+  --request POST <span class="se">\</span>
+  --data <span class="s1">&#39;{&quot;username&quot;:&quot;xyz&quot;,&quot;password&quot;:&quot;xyz&quot;}&#39;</span> <span class="se">\</span>
+  https://myapplication.com/login
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="when-to-use-curl">
+<h3>When to use Curl</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>When you are making a simple HTTP(S) request</li>
+<li>When you donât have any other option</li>
+<li>When youâre doing scripting</li>
+<li>You will also see it in almost all API documentation for examples</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="insomnia">
+<h2>Insomnia</h2>
+<div class="section" id="id4">
+<p>A GUI for making HTTP requests.</p>
+<p><a class="reference external" href="https://insomnia.rest/">https://insomnia.rest/</a></p>
+</div>
+<div class="section" id="insomnia-vs-curl">
+<h3>Insomnia vs Curl</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>You can save previous HTTP requests</li>
+<li>Itâs easier to write complex HTTP requests with many headers/long data fields</li>
+</ul>
+</div>
+</div>
+<div class="section" id="practicing-with-insomnia">
+<h3>Practicing with Insomnia</h3>
+<p><a class="reference external" href="https://hackorsnoozeapiv2.docs.apiary.io">https://hackorsnoozeapiv2.docs.apiary.io</a></p>
+<div class="docutils container">
+<p>If you want extra practice with lots of APIs <cite>https://apilist.fun/</cite></p>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script>
+<script type="text/javascript" src="_static/language_data.js"></script> 
+</body>
+</html>

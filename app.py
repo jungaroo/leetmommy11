@@ -51,7 +51,7 @@ def list_snipit_links():
                 all_links[c] = links
             
     print(all_links)
-    return render_template("codes.html",links_and_snips=all_links.get('r11'))
+    return render_template("codes.html",links_and_snips=all_links)
 
 @app.route('/orlandoSearch')
 def list_lecture_links():

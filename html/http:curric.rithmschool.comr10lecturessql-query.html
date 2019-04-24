@@ -1,0 +1,543 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>SQL Querying</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">SQL Querying</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">SQL Querying</a><ul>
+<li><a class="reference internal" href="#intro">Intro</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sql-dml">SQL DML</a><ul>
+<li><a class="reference internal" href="#data-manipulation-language">Data Manipulation Language</a></li>
+<li><a class="reference internal" href="#what-s-crud">Whatâs CRUD?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#select">SELECT</a><ul>
+<li><a class="reference internal" href="#id1">SELECT</a></li>
+<li><a class="reference internal" href="#from">FROM</a></li>
+<li><a class="reference internal" href="#where">WHERE</a></li>
+<li><a class="reference internal" href="#group-by">GROUP BY</a></li>
+<li><a class="reference internal" href="#id2">SELECT</a></li>
+<li><a class="reference internal" href="#having">HAVING</a></li>
+<li><a class="reference internal" href="#order-by">ORDER BY</a></li>
+<li><a class="reference internal" href="#limit">LIMIT</a></li>
+<li><a class="reference internal" href="#offset">OFFSET</a></li>
+<li><a class="reference internal" href="#some-example-selects">Some Example SELECTs</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sql-operators">SQL Operators</a><ul>
+<li><a class="reference internal" href="#id3">SQL Operators</a></li>
+<li><a class="reference internal" href="#an-example">An example</a></li>
+<li><a class="reference internal" href="#another-example">Another example</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sql-aggregates">SQL Aggregates</a><ul>
+<li><a class="reference internal" href="#id4">SQL Aggregates</a></li>
+<li><a class="reference internal" href="#id5">An Example</a></li>
+<li><a class="reference internal" href="#id6">GROUP BY</a></li>
+<li><a class="reference internal" href="#id7">An example</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#modifying-data">Modifying Data</a><ul>
+<li><a class="reference internal" href="#creating-data-with-insert">Creating data with INSERT</a></li>
+<li><a class="reference internal" href="#updating-data-with-update">Updating data with UPDATE</a></li>
+<li><a class="reference internal" href="#deleting-data-with-delete">Deleting data with DELETE</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="sql-querying">
+<h1>SQL Querying</h1>
+<p><a class="reference external" href="../sql-query-demo.zip">Download Demo SQL Code</a></p>
+<div class="section" id="intro">
+<h2>Intro</h2>
+<div class="section" id="goals">
+<h3>Goals</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Learn core querying</li>
+<li>Learn insertion, updating, and deletion</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="sql-dml">
+<h2>SQL DML</h2>
+<div class="section" id="data-manipulation-language">
+<h3>Data Manipulation Language</h3>
+<p>DML is a subset of SQL that involves querying and manipulating records in existing tables.</p>
+<p>Most of the DML youâll be doing will be related to <strong>CRUD</strong> operations on rows.</p>
+</div>
+<div class="section" id="what-s-crud">
+<h3>Whatâs CRUD?</h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="37%" />
+<col width="46%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Letter</th>
+<th class="head">Verb</th>
+<th class="head">SQL Commands</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><strong>C</strong></td>
+<td>Create</td>
+<td><cite>INSERT INTO</cite></td>
+</tr>
+<tr class="row-odd"><td><strong>R</strong></td>
+<td>Read</td>
+<td><cite>SELECT â¦ FROM</cite></td>
+</tr>
+<tr class="row-even"><td><strong>U</strong></td>
+<td>Update</td>
+<td><cite>UPDATE â¦ SET</cite></td>
+</tr>
+<tr class="row-odd"><td><strong>D</strong></td>
+<td>Delete</td>
+<td><cite>DELETE FROM</cite></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="select">
+<h2>SELECT</h2>
+<div class="section" id="id1">
+<p><cite>SELECT</cite> is the most flexible and powerful command in SQL</p>
+<p>It selects rows (included summary data, roll-up data, etc) from table(s)</p>
+<p><cite>SELECT</cite> statements have subclauses, which are performed in this order:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="7%" />
+<col width="13%" />
+<col width="67%" />
+<col width="13%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">#</th>
+<th class="head">Clause</th>
+<th class="head">Purpose</th>
+<th class="head">Required?</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>FROM</td>
+<td>Select and join together tables where data is</td>
+<td><span class="gray">No</span></td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>WHERE</td>
+<td>Decide which rows to use</td>
+<td><span class="gray">No</span></td>
+</tr>
+<tr class="row-even"><td>3</td>
+<td>GROUP BY</td>
+<td>Place rows into groups</td>
+<td><span class="gray">No</span></td>
+</tr>
+<tr class="row-odd"><td>4</td>
+<td>SELECT</td>
+<td>Determine values of result</td>
+<td><span class="red">Yes</span></td>
+</tr>
+<tr class="row-even"><td>5</td>
+<td>HAVING</td>
+<td>Determine which grouped results to keep</td>
+<td><span class="gray">No</span></td>
+</tr>
+<tr class="row-odd"><td>6</td>
+<td>ORDER BY</td>
+<td>Sort output data</td>
+<td><span class="gray">No</span></td>
+</tr>
+<tr class="row-even"><td>7</td>
+<td>LIMIT</td>
+<td>Limit output to <em>n</em> rows</td>
+<td><span class="gray">No</span></td>
+</tr>
+<tr class="row-odd"><td>8</td>
+<td>OFFSET</td>
+<td>Skip <em>n</em> rows at start of output</td>
+<td><span class="gray">No</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="from">
+<h3>FROM</h3>
+<p>Determine which table(s) to use to get data:</p>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">all info from books table</span></div>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="o">*</span>
+  <span class="k">FROM</span> <span class="n">books</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<p>You can get data from more than one table by âjoiningâ them â <span class="raw-reveal"><br></span>
+weâll discuss this later</p>
+</div>
+</div>
+<div class="section" id="where">
+<h3>WHERE</h3>
+<p>Filter which rows get included:</p>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">only books with price over $10</span></div>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="o">*</span>
+  <span class="k">FROM</span> <span class="n">books</span>
+  <span class="k">WHERE</span> <span class="n">price</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="group-by">
+<h3>GROUP BY</h3>
+<p>Reduce the amount of rows returned by grouping rows together:</p>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">group by author, show name &amp; # books</span></div>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="n">author</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span>
+  <span class="k">FROM</span> <span class="n">books</span>
+  <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">author</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="id2">
+<h3>SELECT</h3>
+<p>Only at this point do the <cite>SELECT</cite> values get calculated:</p>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">return only author name &amp; count-of-books fields</span></div>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="n">author</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span>
+  <span class="k">FROM</span> <span class="n">books</span>
+  <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">author</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="having">
+<h3>HAVING</h3>
+<p>Decide which group(s), if grouped, to keep:</p>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">only show groups with more than 2 books</span></div>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="n">author</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span>
+  <span class="k">FROM</span> <span class="n">books</span>
+  <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">author</span>
+  <span class="k">HAVING</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="order-by">
+<h3>ORDER BY</h3>
+<p>Arrange output in order (sort):</p>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">order results by author name (A â Z)</span></div>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="n">title</span><span class="p">,</span> <span class="n">author</span><span class="p">,</span> <span class="n">price</span>
+  <span class="k">FROM</span> <span class="n">books</span>
+  <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">author</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="limit">
+<h3>LIMIT</h3>
+<p>Only show <em>n</em> number of rows:</p>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">only show first 5 rows</span></div>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="n">title</span><span class="p">,</span> <span class="n">author</span><span class="p">,</span> <span class="n">price</span>
+  <span class="k">FROM</span> <span class="n">books</span>
+  <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">price</span>
+  <span class="k">LIMIT</span> <span class="mi">5</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="offset">
+<h3>OFFSET</h3>
+<p>Skip <em>n</em> number of rows. Used in combination with <cite>LIMIT</cite> to <strong>paginate</strong> results.</p>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-text">skip first row</span></div>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="n">title</span><span class="p">,</span> <span class="n">author</span><span class="p">,</span> <span class="n">price</span>
+  <span class="k">FROM</span> <span class="n">books</span>
+  <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">price</span>
+  <span class="k">OFFSET</span> <span class="mi">1</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="some-example-selects">
+<h3>Some Example SELECTs</h3>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Select all rows and all columns from the books table</span>
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">books</span><span class="p">;</span>
+
+<span class="c1">-- Select all rows and two columns from the books table</span>
+<span class="k">SELECT</span> <span class="n">title</span><span class="p">,</span> <span class="n">author</span> <span class="k">FROM</span> <span class="n">books</span><span class="p">;</span>
+
+<span class="c1">-- Select ten rows and two columns from the books table</span>
+<span class="k">SELECT</span> <span class="n">title</span><span class="p">,</span> <span class="n">author</span> <span class="k">FROM</span> <span class="n">books</span> <span class="k">LIMIT</span> <span class="mi">10</span><span class="p">;</span>
+
+<span class="c1">-- Select all columns from short books</span>
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">books</span> <span class="k">WHERE</span> <span class="n">page_count</span> <span class="o">&lt;</span> <span class="mi">150</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="sql-operators">
+<h2>SQL Operators</h2>
+<div class="section" id="id3">
+<p>Operators are used to build more complicated queries <span class="raw-reveal"><br></span>
+They involve reserved SQL keywords</p>
+<p>These include <cite>IN</cite>, <cite>NOT IN</cite>, <cite>BETWEEN</cite>, <cite>AND</cite>, and <cite>OR</cite></p>
+</div>
+<div class="section" id="an-example">
+<h3>An example</h3>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- basic WHERE clause</span>
+<span class="k">SELECT</span> <span class="n">title</span> <span class="k">FROM</span> <span class="n">books</span> <span class="k">WHERE</span> <span class="n">author</span> <span class="o">=</span> <span class="s1">&#39;J. K. Rowling&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- basic IN clause</span>
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">books</span> <span class="k">WHERE</span> <span class="n">id</span> <span class="k">IN</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">30</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- grab books of moderate length</span>
+<span class="k">SELECT</span> <span class="n">title</span><span class="p">,</span> <span class="n">author</span>
+  <span class="k">FROM</span> <span class="n">books</span>
+  <span class="k">WHERE</span> <span class="n">page_count</span> <span class="k">BETWEEN</span> <span class="mi">300</span> <span class="k">AND</span> <span class="mi">500</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="another-example">
+<h3>Another example</h3>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- short, cheap books</span>
+<span class="k">SELECT</span> <span class="n">title</span><span class="p">,</span> <span class="n">author</span>
+  <span class="k">FROM</span> <span class="n">books</span>
+  <span class="k">WHERE</span> <span class="n">price</span> <span class="o">&lt;</span> <span class="mi">10</span>
+    <span class="k">AND</span> <span class="n">page_count</span> <span class="o">&lt;</span> <span class="mi">150</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- new books or expensive books</span>
+<span class="k">SELECT</span> <span class="n">title</span><span class="p">,</span> <span class="n">author</span><span class="p">,</span> <span class="n">publication_date</span><span class="p">,</span> <span class="n">price</span>
+  <span class="k">FROM</span> <span class="n">books</span>
+  <span class="k">WHERE</span> <span class="n">publication_date</span> <span class="o">&gt;</span> <span class="s1">&#39;01-01-2017&#39;</span>
+    <span class="k">OR</span> <span class="n">price</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- books ordered by price</span>
+<span class="k">SELECT</span> <span class="n">title</span><span class="p">,</span> <span class="n">price</span>
+  <span class="k">FROM</span> <span class="n">books</span>
+  <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">price</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="sql-aggregates">
+<h2>SQL Aggregates</h2>
+<div class="section" id="id4">
+<p>Aggregates are used to combine multiple rows together to extract data</p>
+<p>Common aggregate functions include <cite>COUNT</cite>, <cite>AVG</cite>, <cite>SUM</cite>, <cite>MIN</cite>, and <cite>MAX</cite></p>
+</div>
+<div class="section" id="id5">
+<h3>An Example</h3>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- count all books</span>
+<span class="k">SELECT</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">books</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- count all Kyle Simpson books</span>
+<span class="k">SELECT</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">books</span> <span class="k">WHERE</span> <span class="n">author</span> <span class="o">=</span> <span class="s1">&#39;Kyle Simpson&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- find page count for longest book</span>
+<span class="k">SELECT</span> <span class="k">MAX</span><span class="p">(</span><span class="n">page_count</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">books</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- find cheapest price</span>
+<span class="k">SELECT</span> <span class="k">MIN</span><span class="p">(</span><span class="n">price</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">books</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- find total number of pages</span>
+<span class="k">SELECT</span> <span class="k">SUM</span><span class="p">(</span><span class="n">page_count</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">books</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- find average price</span>
+<span class="k">SELECT</span> <span class="k">AVG</span><span class="p">(</span><span class="n">price</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">books</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id6">
+<h3>GROUP BY</h3>
+<p>The <cite>GROUP BY</cite> and <cite>HAVING</cite> clauses are often used with aggregate functions</p>
+</div>
+<div class="section" id="id7">
+<h3>An example</h3>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- how many books did each author write?</span>
+<span class="k">SELECT</span> <span class="n">author</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span>
+  <span class="k">FROM</span> <span class="n">books</span>
+  <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">author</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- let&#39;s only consider authors with at least 2 books</span>
+<span class="k">SELECT</span> <span class="n">author</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span>
+  <span class="k">FROM</span> <span class="n">books</span>
+  <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">author</span>
+  <span class="k">HAVING</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- let&#39;s order our authors from most to least prolific</span>
+<span class="k">SELECT</span> <span class="n">author</span><span class="p">,</span> <span class="k">SUM</span><span class="p">(</span><span class="n">page_count</span><span class="p">)</span> <span class="k">AS</span> <span class="n">total</span>
+  <span class="k">FROM</span> <span class="n">books</span>
+  <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">author</span>
+  <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">total</span> <span class="k">DESC</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="modifying-data">
+<h2>Modifying Data</h2>
+<div class="section" id="creating-data-with-insert">
+<h3>Creating data with INSERT</h3>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Inserting a new book with title and author</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">books</span> <span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">author</span><span class="p">)</span>
+  <span class="k">VALUES</span> <span class="p">(</span><span class="s1">&#39;The Iliad&#39;</span><span class="p">,</span> <span class="s1">&#39;Homer&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Inserting several books with titles only</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">books</span> <span class="p">(</span><span class="n">title</span><span class="p">)</span> <span class="k">VALUES</span>
+  <span class="p">(</span><span class="s1">&#39;War and Peace&#39;</span><span class="p">),</span>
+  <span class="p">(</span><span class="s1">&#39;Emma&#39;</span><span class="p">),</span>
+  <span class="p">(</span><span class="s1">&#39;Treasure Island&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p>INSERT via SELECT</p>
+<p>You can combine INSERT and SELECT to copy data from another table.</p>
+<div class="last highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">books</span> <span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">author</span><span class="p">)</span>
+  <span class="k">SELECT</span> <span class="n">title</span><span class="p">,</span> <span class="n">author</span>
+    <span class="k">FROM</span> <span class="n">some_other_table</span>
+    <span class="k">WHERE</span> <span class="n">price</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="updating-data-with-update">
+<h3>Updating data with UPDATE</h3>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Matt is a prolific writer</span>
+<span class="k">UPDATE</span> <span class="n">books</span> <span class="k">SET</span> <span class="n">author</span> <span class="o">=</span> <span class="s1">&#39;Matt&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- JK, not that prolific!</span>
+<span class="k">UPDATE</span> <span class="n">books</span> <span class="k">SET</span> <span class="n">author</span> <span class="o">=</span> <span class="s1">&#39;Jane Austen&#39;</span> <span class="k">WHERE</span> <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Emma&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="deleting-data-with-delete">
+<h3>Deleting data with DELETE</h3>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- delete Emma</span>
+<span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">books</span> <span class="k">WHERE</span> <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Emma&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- delete long books</span>
+<span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">books</span> <span class="k">WHERE</span> <span class="n">num_pages</span> <span class="o">&gt;</span> <span class="mi">200</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- delete all books!</span>
+<span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">books</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

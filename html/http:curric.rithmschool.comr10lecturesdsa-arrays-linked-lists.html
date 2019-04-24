@@ -1,0 +1,663 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Arrays and Linked Lists</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Arrays and Linked Lists</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Arrays and Linked Lists</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#lists">Lists</a><ul>
+<li><a class="reference internal" href="#id2">Lists</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#arrays">Arrays</a><ul>
+<li><a class="reference internal" href="#id3">Arrays</a></li>
+<li><a class="reference internal" href="#array-runtimes">Array Runtimes</a></li>
+<li><a class="reference internal" href="#direct-arrays-vectors">Direct Arrays / Vectors</a></li>
+<li><a class="reference internal" href="#indirect-arrays">Indirect Arrays</a></li>
+<li><a class="reference internal" href="#what-does-javascript-use">What Does JavaScript Use?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#linked-lists">Linked Lists</a><ul>
+<li><a class="reference internal" href="#id4">Linked Lists</a></li>
+<li><a class="reference internal" href="#a-node">A Node</a></li>
+<li><a class="reference internal" href="#the-node-class">The Node Class</a></li>
+<li><a class="reference internal" href="#smarter-node-class">Smarter Node Class</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#linkedlist-class">LinkedList Class</a><ul>
+<li><a class="reference internal" href="#id5">LinkedList Class</a></li>
+<li><a class="reference internal" href="#in-pictures">In Picturesâ¦</a></li>
+<li><a class="reference internal" href="#things-you-might-want-to-do">Things you might want to do</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#traversing">Traversing</a><ul>
+<li><a class="reference internal" href="#id6">Traversing</a></li>
+<li><a class="reference internal" href="#searching">Searching</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#appending-removing-nodes">Appending/Removing Nodes</a><ul>
+<li><a class="reference internal" href="#append-a-node">Append a Node</a></li>
+<li><a class="reference internal" href="#remove-a-node-by-value">Remove a Node (by value)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#runtime-of-linked-lists">Runtime of Linked Lists</a><ul>
+<li><a class="reference internal" href="#id7">Runtime of Linked Lists</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#code-implementation">Code Implementation</a><ul>
+<li><a class="reference internal" href="#id8">Code Implementation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#doubly-linked-lists">Doubly-Linked Lists</a><ul>
+<li><a class="reference internal" href="#id9">Doubly-Linked Lists</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#resources">Resources</a><ul>
+<li><a class="reference internal" href="#id10">Resources</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="arrays-and-linked-lists">
+<h1>Arrays and Linked Lists</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Describe what an âabstract data typeâ means</li>
+<li>Compare different types of arrays</li>
+<li>Define singly and doubly linked lists</li>
+<li>Compare performance characteristics of arrays and lists</li>
+<li>Implement linked lists in JavaScript</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="lists">
+<h2>Lists</h2>
+<div class="section" id="id2">
+<p>A <em>list</em> is an <em>abstract data type</em></p>
+<div class="docutils container">
+<p>It describes a <em>set of requirements</em>, not an exact implementation.</p>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Keep multiple items</li>
+<li>Can insert or delete items at any position</li>
+<li>Can contain duplicates</li>
+<li>Preserves order of items</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="arrays">
+<h2>Arrays</h2>
+<div class="section" id="id3">
+<p>Arrangement of items at equally-spaced addresses in memory</p>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>In memory:</p>
+<div class="graphviz">
+<img src="_images/graphviz-9cf73c5ef5af3a1c7cb613ea233877f3cb2b5091.svg" />
+</div>
+</div>
+<p>Therefore, inserting or deleting an item requires
+moving everything after it.</p>
+</div>
+<div class="section" id="array-runtimes">
+<h3>Array Runtimes</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Retrieving by index<ul>
+<li><cite>O(1)</cite></li>
+</ul>
+</li>
+<li>Finding<ul>
+<li><cite>O(n)</cite></li>
+</ul>
+</li>
+<li>General insertion<ul>
+<li><cite>O(n)</cite></li>
+</ul>
+</li>
+<li>General deletion<ul>
+<li><cite>O(n)</cite></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="direct-arrays-vectors">
+<h3>Direct Arrays / Vectors</h3>
+<p>This kind of array is often called a <em>direct array</em> or <em>vector</em></p>
+<p>Direct arrays only work if items are same size:</p>
+<ul class="simple">
+<li>all numbers</li>
+<li>all same-length strings</li>
+</ul>
+<div class="docutils container">
+<p>Donât work well when items are varied sizes:</p>
+<ul class="simple">
+<li>different length strings</li>
+<li>subarrays or objects</li>
+</ul>
+</div>
+<p>Theyâre not commonly used, but JavaScript provides these as
+<a class="reference external" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays">Typed Arrays</a></p>
+</div>
+<div class="section" id="indirect-arrays">
+<h3>Indirect Arrays</h3>
+<p>In any <em>indirect array</em>, the array doesnât directly hold the value.</p>
+<p>It holds the memory address of the real value.</p>
+<p>This lets an array store different types of data, or different length data.</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="s2">&quot;ant&quot;</span><span class="p">,</span> <span class="s2">&quot;bee&quot;</span><span class="p">,</span> <span class="s2">&quot;caterpillar&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="graphviz">
+<img src="_images/graphviz-df6c7f825619b7b52975d5a7a782c8688763bff6.svg" />
+</div>
+</div>
+<div class="section" id="what-does-javascript-use">
+<h3>What Does JavaScript Use?</h3>
+<p>Indirect arrays â since you can store different-length things in them</p>
+<div class="docutils container">
+<p>Itâs complicated, though: some implementations have specialized or adaptive
+structures to handle edge cases like sparse arrays</p>
+</div>
+</div>
+</div>
+<div class="section" id="linked-lists">
+<h2>Linked Lists</h2>
+<div class="section" id="id4">
+<div class="graphviz">
+<img src="_images/graphviz-3e34b86b8f4719b4a0babac6a3931e328dc4155f.svg" />
+</div>
+<p>Items arenât stored in contiguous memory; <span class="raw-reveal"><br></span>
+instead, each item references the next item in the sequence.</p>
+<p>Can rearrange without having to move other items in memory.</p>
+<div class="graphviz">
+<img src="_images/graphviz-75c33bf36b966d78e6ab7a7cc58642f2bf170802.svg" />
+</div>
+<div class="docutils container">
+<p>This is a lot faster than having to move everything around
+in a big list.</p>
+</div>
+</div>
+<div class="section" id="a-node">
+<h3>A Node</h3>
+<p>The basic unit of a linked list is a node.</p>
+<div class="graphviz">
+<img src="_images/graphviz-685cf62ac288954708cc09464a0671728ed61d7f.svg" />
+</div>
+<p><cite>ant</cite>, <cite>bee</cite>, and <cite>caterpillar</cite> are nodes.</p>
+<div class="compare docutils container">
+<div class="docutils container">
+<p>A basic Node has two attributes:</p>
+<dl class="docutils">
+<dt><cite>val</cite></dt>
+<dd>the information the node contains <span class="raw-reveal"><br></span>
+(could be string, int, instance, etc)</dd>
+<dt><cite>next</cite></dt>
+<dd>reference to next node <span class="raw-reveal"><br></span>
+(for last item, this is <cite>null</cite>)</dd>
+</dl>
+</div>
+<div class="docutils container">
+<div class="graphviz">
+<img src="_images/graphviz-7cbbe844125fe03aba99b357fdd6b692288b7bdb.svg" />
+</div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">antNode</span>
+<span class="c1">// {val: &quot;ant&quot;, next: beeNode}</span>
+
+<span class="nx">beeNode</span>
+<span class="c1">// {val: &quot;bee&quot;, next: caterpillarNode}</span>
+
+<span class="nx">caterpillarNode</span>
+<span class="c1">// {val: &quot;caterpillar&quot;, next: null}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="the-node-class">
+<h3>The Node Class</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">demo/linkedlist.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** Node class for item in linked list. */</span>
+
+<span class="kr">class</span> <span class="nx">Node</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">val</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">next</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">antNode</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Node</span><span class="p">(</span><span class="s2">&quot;ant&quot;</span><span class="p">)</span>
+<span class="kd">let</span> <span class="nx">beeNode</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Node</span><span class="p">(</span><span class="s2">&quot;bee&quot;</span><span class="p">)</span>
+<span class="kd">let</span> <span class="nx">caterpillarNode</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Node</span><span class="p">(</span><span class="s2">&quot;caterpillar&quot;</span><span class="p">)</span>
+
+<span class="nx">antNode</span><span class="p">.</span><span class="nx">next</span> <span class="o">=</span> <span class="nx">beeNode</span>
+<span class="nx">beeNode</span><span class="p">.</span><span class="nx">next</span> <span class="o">=</span> <span class="nx">caterpillarNode</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="graphviz">
+<img src="_images/graphviz-0f6c5e8ff3065cb417efd353158e8fd587cfc140.svg" />
+</div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">antNode</span>
+<span class="c1">// {val: &quot;ant&quot;, next: beeNode}</span>
+
+<span class="nx">beeNode</span>
+<span class="c1">// {val: &quot;bee&quot;, next: caterpillarNode}</span>
+
+<span class="nx">caterpillarNode</span>
+<span class="c1">// {val: &quot;caterpillar&quot;, next: null}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="smarter-node-class">
+<h3>Smarter Node Class</h3>
+<p>Some people make a <cite>Node</cite> class which accepts optional <cite>next</cite> argument:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">Node</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">val</span><span class="p">,</span> <span class="nx">next</span><span class="o">=</span><span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">val</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">next</span> <span class="o">=</span> <span class="nx">next</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>Then you can add a chain of nodes:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">antNode</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Node</span><span class="p">(</span><span class="s2">&quot;ant&quot;</span><span class="p">,</span>
+                <span class="k">new</span> <span class="nx">Node</span><span class="p">(</span><span class="s2">&quot;bee&quot;</span><span class="p">,</span>
+                  <span class="k">new</span> <span class="nx">Node</span><span class="p">(</span><span class="s2">&quot;caterpillar&quot;</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>This ends up exactly the same, but can be harder to read at first.</p>
+</div>
+</div>
+</div>
+<div class="section" id="linkedlist-class">
+<h2>LinkedList Class</h2>
+<div class="section" id="id5">
+<p>A Linked List is just a bunch of nodes linked sequentially.</p>
+<p>The only attribute it must have is a reference to its first node,
+called the <cite>head</cite>.</p>
+<p>Since the list starts empty, the head is initially <cite>null</cite>.</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">LinkedList</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">head</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">insects</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">LinkedList</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="in-pictures">
+<h3>In Picturesâ¦</h3>
+<p>An empty Linked List:</p>
+<div class="graphviz">
+<img src="_images/graphviz-23d9a2d13dc88e10994714b2243a8a9ac2344d27.svg" />
+</div>
+<div class="docutils container">
+<p>A Linked List with nodes in it:</p>
+<div class="graphviz">
+<img src="_images/graphviz-3279fc9c9d63becf0457b9cea3aa16780ff1df43.svg" />
+</div>
+</div>
+</div>
+<div class="section" id="things-you-might-want-to-do">
+<h3>Things you might want to do</h3>
+<ul class="simple">
+<li>Print each node</li>
+<li>Find a node by its data</li>
+<li>Append to end</li>
+<li>Insert at specific position</li>
+<li>Remove a node</li>
+</ul>
+</div>
+</div>
+<div class="section" id="traversing">
+<h2>Traversing</h2>
+<div class="section" id="id6">
+<p>Assumption: weâve already built list, leaving the actual construction for later.</p>
+<p>Weâre just going to traverse the list and print it.</p>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">demo/linkedlist.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span>  <span class="cm">/** print(): traverse &amp; console.log each item. */</span>
+
+  <span class="nx">print</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">current</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">head</span><span class="p">;</span>
+
+    <span class="k">while</span> <span class="p">(</span><span class="nx">current</span> <span class="o">!==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">current</span><span class="p">.</span><span class="nx">val</span><span class="p">);</span>
+      <span class="nx">current</span> <span class="o">=</span> <span class="nx">current</span><span class="p">.</span><span class="nx">next</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="searching">
+<h3>Searching</h3>
+<p>Like printingâbut stop searching once we find what weâre looking for.</p>
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">demo/linkedlist.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span>  <span class="cm">/** find(val): is val in list? */</span>
+
+  <span class="nx">find</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">current</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">head</span><span class="p">;</span>
+
+    <span class="k">while</span> <span class="p">(</span><span class="nx">current</span> <span class="o">!==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">current</span><span class="p">.</span><span class="nx">val</span> <span class="o">===</span> <span class="nx">val</span><span class="p">)</span> <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+
+      <span class="nx">current</span> <span class="o">=</span> <span class="nx">current</span><span class="p">.</span><span class="nx">next</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="appending-removing-nodes">
+<h2>Appending/Removing Nodes</h2>
+<div class="section" id="append-a-node">
+<h3>Append a Node</h3>
+<p><strong>Q:</strong> How do we append a node to the end of a linked list?</p>
+<div class="graphviz">
+<img src="_images/graphviz-a4403cdf147df8e26d8f0f51d794dedfc10ab548.svg" />
+</div>
+<div class="docutils container">
+<p><strong>A:</strong> Walk to the end and add it there.</p>
+</div>
+<div class="docutils container">
+<p>(But wouldnât it be faster to append if we âknowâ the end?)</p>
+</div>
+<div class="graphviz">
+<img src="_images/graphviz-030b4ac337517d9d4cfc7c55de77b009b99408c6.svg" />
+</div>
+<div class="docutils container">
+<p>This way, appending is always <cite>O(1)</cite></p>
+</div>
+<p>This becomes easier if we add a <cite>tail</cite> attribute onto our list. <span class="raw-reveal"><br></span>
+This way, we donât have to traverse the list every time we add a node.</p>
+<p>We can do this with just <cite>head</cite>, but why if we can add a <cite>tail</cite>?</p>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">LinkedList</span> <span class="p">{</span>
+ <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span>
+   <span class="k">this</span><span class="p">.</span><span class="nx">head</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+   <span class="k">this</span><span class="p">.</span><span class="nx">tail</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+ <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="graphviz">
+<img src="_images/graphviz-f9e6d75ea69bee324377c5666ae013a35270a22f.svg" />
+</div>
+<p>What do we need to do to add âdragonflyâ?</p>
+<div class="docutils container">
+<ul class="simple">
+<li>make new node <cite>dragonfly</cite></li>
+<li>make <cite>caterpillar.next</cite> a reference to <cite>dragonfly</cite></li>
+<li>make <cite>list.tail</cite> a reference to <cite>dragonfly</cite></li>
+</ul>
+</div>
+<p>Success!</p>
+<div class="graphviz">
+<img src="_images/graphviz-3675d25f8d84d628b571326b3e58b4b38ea353e7.svg" />
+</div>
+<p>Donât forget to handle case of an empty list!</p>
+<div class="docutils container">
+<div class="graphviz">
+<img src="_images/graphviz-0a3526bcf2f7fccb1f808fcdb0d788d870e9083c.svg" />
+</div>
+</div>
+<div class="docutils container">
+<p>What do we need to do to add âantâ?</p>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>make new node <cite>ant</cite></li>
+<li>make <cite>list.head</cite> a reference to <cite>ant</cite></li>
+<li>make <cite>list.tail</cite> a reference to <cite>ant</cite></li>
+</ul>
+</div>
+<p>Success!</p>
+<div class="graphviz">
+<img src="_images/graphviz-b4c782dac997e93fff446d76587f3a9bbf3e0d3d.svg" />
+</div>
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">demo/linkedlist.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span>  <span class="cm">/** push(val): add node w/val to end of list. */</span>
+
+  <span class="nx">push</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">newNode</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Node</span><span class="p">(</span><span class="nx">val</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">head</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">head</span> <span class="o">=</span> <span class="nx">newNode</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">tail</span> <span class="o">!==</span> <span class="kc">null</span><span class="p">)</span> <span class="k">this</span><span class="p">.</span><span class="nx">tail</span><span class="p">.</span><span class="nx">next</span> <span class="o">=</span> <span class="nx">newNode</span><span class="p">;</span>
+
+    <span class="k">this</span><span class="p">.</span><span class="nx">tail</span> <span class="o">=</span> <span class="nx">newNode</span><span class="p">;</span>
+  <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">insects</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">LinkedList</span><span class="p">()</span>
+
+<span class="nx">insects</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s2">&quot;ant&quot;</span><span class="p">)</span>
+<span class="nx">insects</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s2">&quot;bee&quot;</span><span class="p">)</span>
+<span class="nx">insects</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s2">&quot;caterpillar&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="remove-a-node-by-value">
+<h3>Remove a Node (by value)</h3>
+<p>What would you need to change to remove:</p>
+<ul class="simple">
+<li>âantâ</li>
+<li>âbeeâ</li>
+<li>âcaterpillarâ</li>
+</ul>
+<div class="graphviz">
+<img src="_images/graphviz-095be8d0bf21590f241d3f88759785e736148128.svg" />
+</div>
+<p>All we are doing to âremoveâ a node from the list is redirecting the reference
+(or <cite>next</cite>) of a node to the one after the node weâre looking for.</p>
+<p>There are many tricky ways of doing this.</p>
+<p>Weâre going to rely on a âdaisy-chainingâ effect and the fact that any given
+nodeâs <cite>next</cite> is just a node, which has its own <cite>val</cite> and <cite>next</cite>.</p>
+<p>The code is a bit complex, since we need to handle:</p>
+<div class="docutils container">
+<ul class="simple">
+<li>removing only item in linked list<ul>
+<li>Donât forget to update head <em>and</em> tail to <cite>null</cite></li>
+</ul>
+</li>
+<li>removing first item<ul>
+<li>Donât forget to update the head!</li>
+</ul>
+</li>
+<li>removing the last item<ul>
+<li>Donât forget to update the tail!</li>
+</ul>
+</li>
+<li>removing an item in the middle</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="runtime-of-linked-lists">
+<h2>Runtime of Linked Lists</h2>
+<div class="section" id="id7">
+<div class="compare docutils container">
+<div class="docutils container">
+<ul class="simple">
+<li>Going to ânextâ item<ul>
+<li><cite>O(1)</cite></li>
+</ul>
+</li>
+<li>Going to item by arbitrary index<ul>
+<li><cite>O(n)</cite></li>
+</ul>
+</li>
+<li>Searching for value<ul>
+<li><cite>O(n)</cite></li>
+</ul>
+</li>
+<li>General insertion or deletion<ul>
+<li><cite>O(n)</cite></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Adding to start<ul>
+<li><cite>O(1)</cite></li>
+</ul>
+</li>
+<li>Appending to end<ul>
+<li><cite>O(1)</cite> if know tail; <cite>O(n)</cite> if donât</li>
+</ul>
+</li>
+<li>Deleting at start<ul>
+<li><cite>O(1)</cite></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="docutils container">
+<p>How do these compare to arrays?</p>
+</div>
+</div>
+</div>
+<div class="section" id="code-implementation">
+<h2>Code Implementation</h2>
+<div class="section" id="id8">
+<div class="compare docutils container">
+<div class="docutils container">
+<p>Can write with classic OO:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">Node</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
+
+<span class="kr">class</span> <span class="nx">LinkedList</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">head</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">tail</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="nx">find</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
+<span class="p">}</span>
+
+
+<span class="kd">let</span> <span class="nx">antNode</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Node</span><span class="p">(</span><span class="s2">&quot;ant&quot;</span><span class="p">);</span>
+<span class="kd">let</span> <span class="nx">insects</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">LinkedList</span><span class="p">();</span>
+
+<span class="nx">insects</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s2">&quot;ant&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>Can write using plain JS objects:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">find</span><span class="p">(</span><span class="nx">insects</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
+
+
+<span class="nx">antNode</span> <span class="o">=</span> <span class="p">{</span><span class="nx">val</span><span class="o">:</span> <span class="s2">&quot;ant&quot;</span><span class="p">,</span> <span class="nx">next</span><span class="o">:</span> <span class="kc">null</span><span class="p">};</span>
+<span class="nx">insects</span> <span class="o">=</span> <span class="p">{</span><span class="nx">head</span><span class="o">:</span> <span class="nx">antNode</span><span class="p">,</span> <span class="nx">tail</span><span class="o">:</span> <span class="kc">null</span><span class="p">};</span>
+
+<span class="nx">find</span><span class="p">(</span><span class="nx">insects</span><span class="p">,</span> <span class="s2">&quot;ant&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="admonition note">
+<p>Other Possibilities, too!</p>
+<p class="last">Less commonly, you may see implementations that use
+arrays or tuples to hold nodes, such that the linked list
+is series of nested arrays or tuples. These tend to be more
+common in languages without OO, and tend to be more complex
+to visualize or understand.</p>
+</div>
+</div>
+</div>
+<div class="section" id="doubly-linked-lists">
+<h2>Doubly-Linked Lists</h2>
+<div class="section" id="id9">
+<p>Sometimes, linked lists have <cite>next</cite> and a <cite>prev</cite> (the âprevious nodeâ)</p>
+<div class="graphviz">
+<img src="_images/graphviz-3896b485494a55f43f9b42e25920a888075949cc.svg" />
+</div>
+<p>n.b. While doubly-linked lists are relatively common and useful in actual programming,
+most interview questions are asking about a singly-linked list.</p>
+</div>
+</div>
+<div class="section" id="resources">
+<h2>Resources</h2>
+<div class="section" id="id10">
+<p><a class="reference external" href="https://medium.com/basecs/whats-a-linked-list-anyway-part-1-d8b7e6508b9d">Whatâs a Linked List, Anyway? [Base CS]</a></p>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

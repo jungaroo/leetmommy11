@@ -1,0 +1,840 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Intro to Postgres with Node</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Intro to Postgres with Node</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Intro to Postgres with Node</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#introduction">Introduction</a><ul>
+<li><a class="reference internal" href="#the-node-sql-ecosystem">The Node SQL Ecosystem</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pg"><cite>pg</cite></a><ul>
+<li><a class="reference internal" href="#scaffolding-for-our-demo">Scaffolding for Our Demo</a></li>
+<li><a class="reference internal" href="#id2"><cite>pg</cite></a></li>
+<li><a class="reference internal" href="#using-pg">Using <cite>pg</cite></a></li>
+<li><a class="reference internal" href="#what-did-we-just-do">What did we just do?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#queries">Queries</a><ul>
+<li><a class="reference internal" href="#making-our-first-query">Making our first query</a></li>
+<li><a class="reference internal" href="#what-s-the-bug-here">Whatâs the bug here?</a></li>
+<li><a class="reference internal" href="#fixing-with-async-await">Fixing with async/await</a></li>
+<li><a class="reference internal" href="#api-example-continued-search">API Example Continued: Search</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sql-injection">SQL Injection</a><ul>
+<li><a class="reference internal" href="#what-is-sql-injection">What is SQL Injection?</a></li>
+<li><a class="reference internal" href="#what-s-the-problem">Whatâs the Problem?</a></li>
+<li><a class="reference internal" href="#solution-parameterized-queries">Solution: Parameterized Queries</a></li>
+<li><a class="reference internal" href="#api-example-continued-create-v2">API Example Continued: Create V2</a></li>
+<li><a class="reference internal" href="#parameterized-queries-overview">Parameterized Queries Overview</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#more-crud-actions">More CRUD Actions</a><ul>
+<li><a class="reference internal" href="#api-example-continued-create">API Example Continued: Create</a></li>
+<li><a class="reference internal" href="#returning-clause">RETURNING clause</a></li>
+<li><a class="reference internal" href="#api-example-continued-update">API Example Continued: Update</a></li>
+<li><a class="reference internal" href="#api-example-continued-delete">API Example Continued: Delete</a></li>
+<li><a class="reference internal" href="#committing">Committing</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#testing-our-database">Testing our Database</a><ul>
+<li><a class="reference internal" href="#adding-a-test-database">Adding a test database</a></li>
+<li><a class="reference internal" href="#running-tests">Running Tests</a></li>
+<li><a class="reference internal" href="#setting-up-and-tearing-down-the-test-suite">Setting Up and Tearing Down the test suite</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#testing-crud-actions">Testing CRUD Actions</a><ul>
+<li><a class="reference internal" href="#our-restful-json-api">Our Restful JSON API</a></li>
+<li><a class="reference internal" href="#testing-read">Testing Read</a></li>
+<li><a class="reference internal" href="#testing-create">Testing Create</a></li>
+<li><a class="reference internal" href="#testing-update">Testing Update</a></li>
+<li><a class="reference internal" href="#testing-delete">Testing Delete</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#looking-ahead">Looking Ahead</a><ul>
+<li><a class="reference internal" href="#coming-up">Coming Up</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="intro-to-postgres-with-node">
+<h1>Intro to Postgres with Node</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Use <cite>pg</cite> to connect and execute SQL queries</li>
+<li>Explain what SQL injection is and how to prevent it with <cite>pg</cite></li>
+<li>Examine CRUD on a single resource with Express and <cite>pg</cite></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="introduction">
+<h2>Introduction</h2>
+<div class="section" id="the-node-sql-ecosystem">
+<h3>The Node SQL Ecosystem</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>ORMs</li>
+<li>Query builders</li>
+<li>SQL driver (what we will be using)</li>
+<li>You can <a class="reference external" href="https://www.rithmschool.com/blog/different-approaches-express">read more about</a>
+it from the one and only Joel Burton!</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="pg">
+<h2><cite>pg</cite></h2>
+<div class="section" id="scaffolding-for-our-demo">
+<h3>Scaffolding for Our Demo</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">demo/app.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** Express app for pg-intro-demo */</span>
+
+<span class="kr">const</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;express&quot;</span><span class="p">);</span>
+<span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">express</span><span class="p">();</span>
+<span class="kr">const</span> <span class="nx">ExpressError</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;./expressError&quot;</span><span class="p">);</span>
+
+<span class="c1">// Parse request bodies for JSON</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">express</span><span class="p">.</span><span class="nx">json</span><span class="p">());</span>
+
+<span class="kr">const</span> <span class="nx">uRoutes</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;./routes/users&quot;</span><span class="p">);</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s2">&quot;/users&quot;</span><span class="p">,</span> <span class="nx">uRoutes</span><span class="p">);</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="mi">3000</span><span class="p">,</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Server started on 3000&quot;</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="id2">
+<h3><cite>pg</cite></h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Similar to <cite>psycopg2</cite> with python</li>
+<li>Allows us to establish a connection to a database and execute SQL</li>
+</ul>
+</div>
+<div class="docutils container">
+<pre class="console literal-block">
+$ <span class="cmd">npm install pg</span>
+</pre>
+</div>
+</div>
+<div class="section" id="using-pg">
+<h3>Using <cite>pg</cite></h3>
+<div class="docutils container">
+<p>Itâs common to abstract this logic to another file, <span class="raw-reveal"><br></span>
+so letâs create a file <cite>db.js</cite>:</p>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">demo/db.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** Database setup for cats. */</span>
+<span class="kr">const</span> <span class="p">{</span> <span class="nx">Client</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;pg&quot;</span><span class="p">);</span>
+
+<span class="kd">let</span> <span class="nx">DB_URI</span><span class="p">;</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">NODE_ENV</span> <span class="o">===</span> <span class="s2">&quot;test&quot;</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">DB_URI</span> <span class="o">=</span> <span class="s2">&quot;postgresql:///users-test&quot;</span><span class="p">;</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+  <span class="nx">DB_URI</span> <span class="o">=</span> <span class="s2">&quot;postgresql:///users&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">let</span> <span class="nx">db</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Client</span><span class="p">({</span>
+  <span class="nx">connectionString</span><span class="o">:</span> <span class="nx">DB_URI</span>
+<span class="p">});</span>
+
+<span class="nx">db</span><span class="p">.</span><span class="nx">connect</span><span class="p">();</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">db</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="what-did-we-just-do">
+<h3>What did we just do?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Specified a database to connect to<ul>
+<li>Depending on an environment variable we specify to use the test DB or not</li>
+<li>Weâre going to need this conditional logic later when we test!</li>
+</ul>
+</li>
+<li>Established a connection</li>
+<li>Exported out the connection</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="queries">
+<h2>Queries</h2>
+<div class="section" id="making-our-first-query">
+<h3>Making our first query</h3>
+<div class="compare32 compare docutils container">
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">demo/routes/users.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">db</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;../db&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">demo/routes/users.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** Get users: [user, user, user] */</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/all&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">results</span> <span class="o">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span>
+        <span class="sb">`SELECT * FROM users`</span><span class="p">);</span>
+
+  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">results</span><span class="p">.</span><span class="nx">rows</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">(results)</span></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>[nothing!]
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="what-s-the-bug-here">
+<h3>Whatâs the bug here?</h3>
+<p>DB queries are asynchronous! We have to wait for the query to finish before!</p>
+</div>
+<div class="section" id="fixing-with-async-await">
+<h3>Fixing with async/await</h3>
+<div class="compare32 compare docutils container">
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">demo/routes/users.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** (Fixed) Get users: [user, user, user] */</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">results</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span>
+          <span class="sb">`SELECT id, name, type FROM users`</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">results</span><span class="p">.</span><span class="nx">rows</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="k">catch</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">next</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">(results)</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+  <span class="p">{</span>
+    <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;Juanita&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;admin&quot;</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;Jenny&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;staff&quot;</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;Jeff&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;user&quot;</span>
+  <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="api-example-continued-search">
+<h3>API Example Continued: Search</h3>
+<div class="compare32 compare docutils container">
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">demo/routes/users.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** Search by user type. */</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/search&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">type</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">type</span><span class="p">;</span>
+    
+    <span class="kr">const</span> <span class="nx">results</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span>
+      <span class="sb">`SELECT id, name, type </span>
+<span class="sb">       FROM users</span>
+<span class="sb">       WHERE type=&#39;</span><span class="si">${</span><span class="nx">type</span><span class="si">}</span><span class="sb">&#39;`</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">results</span><span class="p">.</span><span class="nx">rows</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="k">catch</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">next</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">(results for âstaffâ type)</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="p">[{</span>
+  <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
+  <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;Jenny&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;staff&quot;</span>
+<span class="p">}]</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>But thereâs a problemâ¦</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="sql-injection">
+<h2>SQL Injection</h2>
+<div class="section" id="what-is-sql-injection">
+<h3>What is SQL Injection?</h3>
+<p>A technique where an attacker tries to execute undesirable SQL statements on your database.</p>
+<div class="docutils container">
+<p>It is an extremely common attack, and itâs easy to make yourself vulnerable if you arenât careful!</p>
+</div>
+</div>
+<div class="section" id="what-s-the-problem">
+<h3>Whatâs the Problem?</h3>
+<p>If our search type is <code class="docutils literal notranslate"><span class="pre">staff</span></code>, everything works fine.</p>
+<div class="docutils container">
+<p>But what if our search type is <code class="docutils literal notranslate"><span class="pre">bwah-hah';</span> <span class="pre">DELETE</span> <span class="pre">FROM</span> <span class="pre">users;</span> <span class="pre">--</span></code> ?</p>
+</div>
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="n">id</span><span class="p">,</span> <span class="k">type</span><span class="p">,</span> <span class="n">name</span>
+<span class="k">FROM</span> <span class="n">users</span>
+<span class="k">WHERE</span> <span class="k">type</span><span class="o">=</span><span class="s1">&#39;bwah-hah&#39;</span><span class="p">;</span> <span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">users</span><span class="p">;</span> <span class="c1">--&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>Ut oh.</p>
+</div>
+</div>
+<div class="section" id="solution-parameterized-queries">
+<h3>Solution: Parameterized Queries</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>To prevent against SQL injection, we need to sanitize our inputs</li>
+<li>ORMs typically do this for you automatically</li>
+<li>We can sanitize our inputs by using <strong>parameterized queries</strong></li>
+</ul>
+</div>
+<div class="admonition note">
+<p><strong>Prepared Statements</strong></p>
+<p>Itâs not the most important part to understand, but if youâre curious how the <cite>pg</cite> module does this,
+it uses a feature called âprepared statementsâ.</p>
+<p>Prepared statements are a database tool used to templatize and optimize queries you plan on running frequently.
+Youâve seen prepared statements already when we worked with SQLAlchemy in Flask, though we didnât specifically
+call them out as such.</p>
+<p class="last">You donât need to worry about the details, but because of the way that prepared statements work on the database
+level, they naturally protect against SQL injection. If youâre curious about the details, check out
+<a class="reference external" href="https://en.wikipedia.org/wiki/Prepared_statement">this</a> article on Wikipedia.</p>
+</div>
+</div>
+<div class="section" id="api-example-continued-create-v2">
+<h3>API Example Continued: Create V2</h3>
+<p>Hereâs the same approach, but safe from SQL injection.</p>
+<div class="compare32 compare docutils container">
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">demo/routes/users.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">// (Fixed) Search by user type. */</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/good-search&quot;</span><span class="p">,</span>
+      <span class="nx">async</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">type</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">type</span><span class="p">;</span>
+
+    <span class="kr">const</span> <span class="nx">results</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span>
+      <span class="sb">`SELECT id, name, type </span>
+<span class="sb">       FROM users</span>
+<span class="sb">       WHERE type=$1`</span><span class="p">,</span> <span class="p">[</span><span class="nx">type</span><span class="p">]);</span>
+
+    <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">results</span><span class="p">.</span><span class="nx">rows</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="k">catch</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">next</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">(results for âstaffâ type)</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="p">[{</span>
+  <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
+  <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;Jenny&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;staff&quot;</span>
+<span class="p">}]</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="parameterized-queries-overview">
+<h3>Parameterized Queries Overview</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>In your SQL statement, represent variables like <cite>$1</cite>, <cite>$2</cite>, <cite>$3</cite>, etc.<ul>
+<li>You can have as many variables as you want</li>
+</ul>
+</li>
+<li>For the second argument to <cite>db.query</cite>, pass an array of values<ul>
+<li><cite>$1</cite> will evaluate to the first array element, <cite>$2</cite> to the second, etc.</li>
+</ul>
+</li>
+<li><strong>Note:</strong> the variable naming is 1-indexed!</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="more-crud-actions">
+<h2>More CRUD Actions</h2>
+<div class="section" id="api-example-continued-create">
+<h3>API Example Continued: Create</h3>
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">demo/routes/users.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** Create new user, return user */</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="p">{</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">type</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">;</span>
+
+    <span class="kr">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span>
+          <span class="sb">`INSERT INTO users (name, type) </span>
+<span class="sb">           VALUES ($1, $2)</span>
+<span class="sb">           RETURNING id, name, type`</span><span class="p">,</span>
+        <span class="p">[</span><span class="nx">name</span><span class="p">,</span> <span class="nx">type</span><span class="p">]</span>
+    <span class="p">);</span>
+
+    <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="mi">201</span><span class="p">).</span><span class="nx">json</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+  <span class="p">}</span>
+
+  <span class="k">catch</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">next</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p>Status Code 201</p>
+<p>Note that we use HTTP status code 201 (âCreatedâ) here, not 200 (âOkâ).</p>
+<p class="last">Some APIs do return 200 for object-was-created, but the REST standard suggests 201 is the proper code
+here.</p>
+</div>
+</div>
+<div class="section" id="returning-clause">
+<h3>RETURNING clause</h3>
+<p>In SQL, for INSERT/UPDATE/DELETE, you can have a <cite>RETURNING</cite> clause.</p>
+<p>This is to <em>return data</em> that was inserted, updated, or deleted:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">users</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="k">type</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(...)</span> <span class="n">RETURNING</span> <span class="n">id</span><span class="p">,</span> <span class="n">name</span><span class="p">;</span>
+
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">users</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="k">type</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(...)</span> <span class="n">RETURNING</span> <span class="o">*</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="api-example-continued-update">
+<h3>API Example Continued: Update</h3>
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-text">demo/routes/users.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** Update user, returning user */</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="nx">patch</span><span class="p">(</span><span class="s2">&quot;/:id&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="p">{</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">type</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">;</span>
+
+    <span class="kr">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span>
+          <span class="sb">`UPDATE users SET name=$1, type=$2</span>
+<span class="sb">           WHERE id = $3</span>
+<span class="sb">           RETURNING id, name, type`</span><span class="p">,</span>
+        <span class="p">[</span><span class="nx">name</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span>
+    <span class="p">);</span>
+
+    <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+  <span class="p">}</span>
+
+  <span class="k">catch</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">next</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="api-example-continued-delete">
+<h3>API Example Continued: Delete</h3>
+<div class="literal-block-wrapper docutils container" id="id16">
+<div class="code-block-caption"><span class="caption-text">demo/routes/users.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** Delete user, returning {message: &quot;Deleted&quot;} */</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="k">delete</span><span class="p">(</span><span class="s2">&quot;/:id&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span>
+        <span class="s2">&quot;DELETE FROM users WHERE id = $1&quot;</span><span class="p">,</span>
+        <span class="p">[</span><span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span>
+    <span class="p">);</span>
+
+    <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span><span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;Deleted&quot;</span><span class="p">});</span>
+  <span class="p">}</span>
+
+  <span class="k">catch</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">next</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="committing">
+<h3>Committing</h3>
+<p>With SQLAlchemy, you had to commit after all changes â <span class="raw-reveal"><br></span>
+because SQLAlchemy put all work into a db transaction.</p>
+<p>That isnât the case with <cite>pg</cite> â so you donât need to explicitly commit <span class="raw-reveal"><br></span>
+(each INSERT/UPDATE/DELETE commits automatically)</p>
+</div>
+</div>
+<div class="section" id="testing-our-database">
+<h2>Testing our Database</h2>
+<div class="section" id="adding-a-test-database">
+<h3>Adding a test database</h3>
+<p>Weâre going to need a different database for testing, so letâs configure that!</p>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id17">
+<div class="code-block-caption"><span class="caption-text">demo/cats-api/db.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** Database setup for cats. */</span>
+<span class="kr">const</span> <span class="p">{</span> <span class="nx">Client</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;pg&quot;</span><span class="p">);</span>
+
+<span class="kd">let</span> <span class="nx">DB_URI</span><span class="p">;</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">NODE_ENV</span> <span class="o">===</span> <span class="s2">&quot;test&quot;</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">DB_URI</span> <span class="o">=</span> <span class="s2">&quot;postgresql:///cats-test&quot;</span><span class="p">;</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+  <span class="nx">DB_URI</span> <span class="o">=</span> <span class="s2">&quot;postgresql:///cats&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">let</span> <span class="nx">db</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Client</span><span class="p">({</span>
+  <span class="nx">connectionString</span><span class="o">:</span> <span class="nx">DB_URI</span>
+<span class="p">});</span>
+
+<span class="nx">db</span><span class="p">.</span><span class="nx">connect</span><span class="p">();</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">db</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="running-tests">
+<h3>Running Tests</h3>
+<p>Make sure you create test database first, otherwise they will hang.</p>
+<div class="docutils container">
+<pre class="console literal-block">
+$ <span class="cmd">createdb cats-test</span>
+$ <span class="cmd">psql cats-test &lt; data.sql</span>
+</pre>
+</div>
+<div class="docutils container">
+<p>Once you have database, run your tests as usual with <cite>jest</cite></p>
+</div>
+</div>
+<div class="section" id="setting-up-and-tearing-down-the-test-suite">
+<h3>Setting Up and Tearing Down the test suite</h3>
+<p>Make sure weâre using test DB for our tests:</p>
+<div class="literal-block-wrapper docutils container" id="id18">
+<div class="code-block-caption"><span class="caption-text">demo/cats-api/routes/cats.test.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="hll"><span class="c1">// connect to right DB --- set before loading db.js</span>
+</span><span class="hll"><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">NODE_ENV</span> <span class="o">=</span> <span class="s2">&quot;test&quot;</span><span class="p">;</span>
+</span>
+<span class="c1">// npm packages</span>
+<span class="kr">const</span> <span class="nx">request</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;supertest&quot;</span><span class="p">);</span>
+
+<span class="c1">// app imports</span>
+<span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;../app&quot;</span><span class="p">);</span>
+<span class="kr">const</span> <span class="nx">db</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;../db&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<p>Setup at beginning:</p>
+<div class="literal-block-wrapper docutils container" id="id19">
+<div class="code-block-caption"><span class="caption-text">demo/cats-api/routes/cats.test.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">cat</span><span class="p">;</span>
+
+<span class="nx">beforeEach</span><span class="p">(</span><span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="sb">`</span>
+<span class="sb">    INSERT INTO </span>
+<span class="sb">      cats (name) VALUES (&#39;beans&#39;)  </span>
+<span class="sb">      RETURNING id, name`</span><span class="p">);</span>
+  <span class="nx">cat</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<p>Teardown at end:</p>
+<div class="literal-block-wrapper docutils container" id="id20">
+<div class="code-block-caption"><span class="caption-text">demo/cats-api/routes/cats.test.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">afterEach</span><span class="p">(</span><span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// delete any data created by test</span>
+  <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s2">&quot;DELETE FROM cats&quot;</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="nx">afterAll</span><span class="p">(</span><span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// close db connection</span>
+  <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">end</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="testing-crud-actions">
+<h2>Testing CRUD Actions</h2>
+<div class="section" id="our-restful-json-api">
+<h3>Our Restful JSON API</h3>
+<p>What routes do we need for a RESTful JSON API with full CRUD on cats? <span class="raw-reveal"><br></span> (ZOMG so many acryonyms.)</p>
+<div class="docutils container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="27%" />
+<col width="29%" />
+<col width="44%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">HTTP Verb</th>
+<th class="head">Route</th>
+<th class="head">Response</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>GET</td>
+<td>/cats</td>
+<td>Display all cats</td>
+</tr>
+<tr class="row-odd"><td>GET</td>
+<td>/cats/:id</td>
+<td>Display a cat</td>
+</tr>
+<tr class="row-even"><td>POST</td>
+<td>/cats</td>
+<td>Create a cat</td>
+</tr>
+<tr class="row-odd"><td>PUT / PATCH</td>
+<td>/cats/:id</td>
+<td>Update a cat</td>
+</tr>
+<tr class="row-even"><td>DELETE</td>
+<td>/cats/:id</td>
+<td>Delete a cat</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="testing-read">
+<h3>Testing Read</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id21">
+<div class="code-block-caption"><span class="caption-text">demo/cats-api/routes/cats.test.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** GET /cats - returns `{cats: [cat, ...]}` */</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;GET /cats&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;Gets a list of 1 cat&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="sb">`/cats`</span><span class="p">);</span>
+    <span class="kr">const</span> <span class="p">{</span> <span class="nx">cats</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">;</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">200</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">cats</span><span class="p">).</span><span class="nx">toHaveLength</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">cats</span><span class="p">[</span><span class="mi">0</span><span class="p">]).</span><span class="nx">toEqual</span><span class="p">(</span><span class="nx">cat</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id22">
+<div class="code-block-caption"><span class="caption-text">demo/cats-api/routes/cats.test.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** GET /cats/[id] - return data about one cat: `{cat: cat}` */</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;GET /cats/:id&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;Gets a single cat&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="sb">`/cats/</span><span class="si">${</span><span class="nx">cat</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">200</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">cat</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="nx">cat</span><span class="p">);</span>
+  <span class="p">});</span>
+
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;Responds with 404 if can&#39;t find cat&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="sb">`/cats/0`</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">404</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="testing-create">
+<h3>Testing Create</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id23">
+<div class="code-block-caption"><span class="caption-text">demo/cats-api/routes/cats.test.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** POST /cats - create cat from data; return `{cat: cat}` */</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;POST /cats&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;Creates a new cat&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="sb">`/cats`</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">send</span><span class="p">({</span>
+        <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Ezra&quot;</span>
+      <span class="p">});</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">201</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">cat</span><span class="p">).</span><span class="nx">toHaveProperty</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">cat</span><span class="p">).</span><span class="nx">toHaveProperty</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">cat</span><span class="p">.</span><span class="nx">name</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s2">&quot;Ezra&quot;</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="testing-update">
+<h3>Testing Update</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id24">
+<div class="code-block-caption"><span class="caption-text">demo/cats-api/routes/cats.test.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** PATCH /cats/[id] - update cat; return `{cat: cat}` */</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;PATCH /cats/:id&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;Updates a single cat&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">patch</span><span class="p">(</span><span class="sb">`/cats/</span><span class="si">${</span><span class="nx">cat</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="sb">`</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">send</span><span class="p">({</span>
+        <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Troll&quot;</span>
+      <span class="p">});</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">200</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">cat</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">({</span>
+      <span class="nx">id</span><span class="o">:</span> <span class="nx">cat</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Troll&quot;</span>
+    <span class="p">});</span>
+  <span class="p">});</span>
+
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;Responds with 404 if can&#39;t find cat&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">).</span><span class="nx">patch</span><span class="p">(</span><span class="sb">`/cats/0`</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">404</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="testing-delete">
+<h3>Testing Delete</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id25">
+<div class="code-block-caption"><span class="caption-text">demo/cats-api/routes/cats.test.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** DELETE /cats/[id] - delete cat, </span>
+<span class="cm"> *  return `{message: &quot;Cat deleted&quot;}` */</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;DELETE /cats/:id&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;Deletes a single a cat&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+      <span class="p">.</span><span class="k">delete</span><span class="p">(</span><span class="sb">`/cats/</span><span class="si">${</span><span class="nx">cat</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">200</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">({</span> <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;Cat deleted&quot;</span> <span class="p">});</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="looking-ahead">
+<h2>Looking Ahead</h2>
+<div class="section" id="coming-up">
+<h3>Coming Up</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Associations with pg</li>
+<li>Building our own lightweight ORM!</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script>
+<script type="text/javascript" src="_static/language_data.js"></script> 
+</body>
+</html>

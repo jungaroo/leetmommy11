@@ -1,0 +1,693 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Intro to Node.js</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Intro to Node.js</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Intro to Node.js</a><ul>
+<li><a class="reference internal" href="#node-js">Node.js</a><ul>
+<li><a class="reference internal" href="#id1">Node.js</a></li>
+<li><a class="reference internal" href="#what-is-node-js">What is Node.js?</a></li>
+<li><a class="reference internal" href="#why-node-js">Why Node.js?</a></li>
+<li><a class="reference internal" href="#starting-node">Starting Node</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#npm">NPM</a><ul>
+<li><a class="reference internal" href="#id2">NPM</a></li>
+<li><a class="reference internal" href="#what-is-npm">What is NPM?</a></li>
+<li><a class="reference internal" href="#starting-a-project-with-npm">Starting a Project with NPM</a></li>
+<li><a class="reference internal" href="#example-package-json">Example <cite>package.json</cite></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#installing-packages">Installing Packages</a><ul>
+<li><a class="reference internal" href="#id3">Installing Packages</a></li>
+<li><a class="reference internal" href="#node-modules">node_modules</a></li>
+<li><a class="reference internal" href="#reinstalling-packages">Reinstalling Packages</a></li>
+<li><a class="reference internal" href="#package-lock-json">package-lock.json</a></li>
+<li><a class="reference internal" href="#npm-summary">NPM Summary</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-node-js-process">The Node.js <code class="docutils literal notranslate"><span class="pre">process</span></code></a><ul>
+<li><a class="reference internal" href="#process">process</a></li>
+<li><a class="reference internal" href="#process-env">process.env</a></li>
+<li><a class="reference internal" href="#process-argv">process.argv</a></li>
+<li><a class="reference internal" href="#process-argv-example">process.argv Example</a></li>
+<li><a class="reference internal" href="#process-exit">process.exit</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-module-system">The Module System</a><ul>
+<li><a class="reference internal" href="#modules">Modules</a></li>
+<li><a class="reference internal" href="#importing-a-project-file">Importing a Project File</a></li>
+<li><a class="reference internal" href="#importing-a-library">Importing a Library</a></li>
+<li><a class="reference internal" href="#destructuring-imports">Destructuring Imports</a></li>
+<li><a class="reference internal" href="#exporting-from-a-file">Exporting from a File</a></li>
+<li><a class="reference internal" href="#module-exports">module.exports</a></li>
+<li><a class="reference internal" href="#modules-summary">Modules Summary</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#node-callbacks">Node Callbacks</a><ul>
+<li><a class="reference internal" href="#id4">Node Callbacks</a></li>
+<li><a class="reference internal" href="#error-first-callbacks">Error-First Callbacks</a></li>
+<li><a class="reference internal" href="#handling-errors">Handling Errors</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#file-system-module">File System Module</a><ul>
+<li><a class="reference internal" href="#fs">fs</a></li>
+<li><a class="reference internal" href="#reading-files">Reading Files</a></li>
+<li><a class="reference internal" href="#writing-files">Writing Files</a></li>
+<li><a class="reference internal" href="#file-system-summary">File System Summary</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#node-vs-browser-js">Node vs Browser JS</a><ul>
+<li><a class="reference internal" href="#id5">Node vs Browser JS</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#looking-ahead">Looking Ahead</a><ul>
+<li><a class="reference internal" href="#what-s-next">Whatâs Next</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="intro-to-node-js">
+<h1>Intro to Node.js</h1>
+<p><a class="reference external" href="../node-intro-demo.zip">Download Demo Node.js Code</a></p>
+<div class="section" id="node-js">
+<h2>Node.js</h2>
+<div class="section" id="id1">
+</div>
+<div class="section" id="what-is-node-js">
+<h3>What is Node.js?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>A JavaScript environment that runs server-side<ul>
+<li>It uses the Chrome v8 engine, but doesnât require/use Chrome</li>
+</ul>
+</li>
+<li>Can be used to build any kind of server-side JS<ul>
+<li>Including building web applications!</li>
+<li>or as a general-purpose scripting language</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="why-node-js">
+<h3>Why Node.js?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>The entire stack (frontend/backend) can be JavaScript</li>
+<li>There is an extensive set of add-on libraries via <cite>npm</cite><ul>
+<li>Many can also be used in client-side JS</li>
+</ul>
+</li>
+<li>Widely used</li>
+</ul>
+</div>
+</div>
+<div class="section" id="starting-node">
+<h3>Starting Node</h3>
+<pre class="console literal-block">
+$ <span class="cmd">node myScript.js</span>
+Hi there!
+</pre>
+<p>or, for an interactive REPL:</p>
+<pre class="console literal-block">
+$ <span class="cmd">node</span>
+&gt;
+</pre>
+<div class="docutils container">
+<p>(<cite>.exit</cite> or <cite>Control-D</cite> to return to the normal terminal)</p>
+</div>
+</div>
+</div>
+<div class="section" id="npm">
+<h2>NPM</h2>
+<div class="section" id="id2">
+</div>
+<div class="section" id="what-is-npm">
+<h3>What is NPM?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Massive registry of add-on libraries</li>
+<li>Command line tool, <cite>npm</cite>, comes with Node</li>
+<li>Easy dependency management for a project</li>
+<li>Register with npm to publish open-source or proprietary packages</li>
+</ul>
+</div>
+</div>
+<div class="section" id="starting-a-project-with-npm">
+<h3>Starting a Project with NPM</h3>
+<pre class="console literal-block">
+$ <span class="cmd">cd my-project</span>
+
+$ <span class="cmd">npm init</span>
+</pre>
+<div class="docutils container">
+<ul class="simple">
+<li>Creates <cite>package.json</cite> with metadata &amp; dependencies</li>
+<li>In a hurry? Want the defaults? <code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">init</span> <span class="pre">--yes</span></code></li>
+</ul>
+</div>
+</div>
+<div class="section" id="example-package-json">
+<h3>Example <cite>package.json</cite></h3>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;node-files&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;version&quot;</span><span class="o">:</span> <span class="s2">&quot;1.0.0&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="s2">&quot;Exercise to create file listing functions.&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;main&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;scripts&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;start&quot;</span><span class="o">:</span> <span class="s2">&quot;node index.js&quot;</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;author&quot;</span><span class="o">:</span> <span class="s2">&quot;Whiskey the Dog&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;license&quot;</span><span class="o">:</span> <span class="s2">&quot;ISC&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;dependencies&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;axios&quot;</span><span class="o">:</span> <span class="s2">&quot;^0.18.0&quot;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>Store your <cite>package.json</cite> in Git</li>
+</ul>
+</div>
+</div>
+<div class="section" id="installing-packages">
+<h2>Installing Packages</h2>
+<div class="section" id="id3">
+<p>In the root project directory:</p>
+<div class="docutils container">
+<pre class="console literal-block">
+$ <span class="cmd">npm install axios</span>
+</pre>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Adds the latest version of <cite>axios</cite> to <cite>package.json</cite> <code class="docutils literal notranslate"><span class="pre">dependencies</span></code> object</li>
+<li>Installs the package in a local <cite>node_modules</cite> folder</li>
+</ul>
+</div>
+</div>
+<div class="section" id="node-modules">
+<h3>node_modules</h3>
+<p>A directory containing all dependencies in the root directory of your project.</p>
+<div class="docutils container">
+<ul class="simple">
+<li><strong>Always add node_modules to .gitignore</strong></li>
+<li>Itâs just a massive collection of dependencies that can easily be reinstalled</li>
+</ul>
+</div>
+</div>
+<div class="section" id="reinstalling-packages">
+<h3>Reinstalling Packages</h3>
+<p>When you clone an existing project from GitHub or somehow lose your <code class="docutils literal notranslate"><span class="pre">node_modules</span></code>, hereâs how you get those dependencies:</p>
+<pre class="console literal-block">
+$ <span class="cmd">npm install</span>
+</pre>
+<div class="docutils container">
+<ul class="simple">
+<li>Itâs as simple as that. Use <code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">install</span></code> without any arguments in the project root; it reads from the <code class="docutils literal notranslate"><span class="pre">dependencies</span></code> object inside the <cite>package.json</cite></li>
+<li>Same behavior as <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-r</span> <span class="pre">requirements.txt</span></code> in Python</li>
+</ul>
+</div>
+</div>
+<div class="section" id="package-lock-json">
+<h3>package-lock.json</h3>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>package.json</cite> contains metadata &amp; dependency <em>requirements</em></li>
+<li>The default for <cite>npm install axios</cite> is to list the dependency like this <code class="docutils literal notranslate"><span class="pre">&quot;axios&quot;:</span> <span class="pre">&quot;^0.18.0&quot;</span></code></li>
+<li>This reads âuse axios version 0.18.0 or greaterâ because of the caret <cite>^</cite> symbol at the beginning</li>
+<li><cite>package-lock.json</cite> on the other hand, contains the <em>exact</em> versions obtained during the original installation</li>
+<li><cite>npm install</cite> looks at <cite>package-lock.json</cite> first, before <cite>package.json</cite></li>
+</ul>
+</div>
+</div>
+<div class="section" id="npm-summary">
+<h3>NPM Summary</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Easily install dependencies to your local project folder in the <cite>node_modules</cite> directory by <code class="docutils literal notranslate"><span class="pre">npm</span> <span class="pre">install</span> <span class="pre">&lt;package_name&gt;</span></code></li>
+<li>Dependencies are notated in <cite>package.json</cite> and <cite>package-lock.json</cite></li>
+<li><cite>package-lock</cite> locks in the exact versions of the original installation and you get it automatically on the first install</li>
+<li>Always commit <cite>package.json</cite>; never commit <cite>node_modules</cite>.</li>
+<li>Use <cite>npm install</cite> command (no arguments) on a fresh repository to get a new <code class="docutils literal notranslate"><span class="pre">node_modules</span></code></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="the-node-js-process">
+<h2>The Node.js <code class="docutils literal notranslate"><span class="pre">process</span></code></h2>
+<div class="section" id="process">
+<h3>process</h3>
+<p>When you execute a Node.js file, it has a special global object called <code class="docutils literal notranslate"><span class="pre">process</span></code> for managing the currently-running script.</p>
+<div class="docutils container">
+<p>Using <code class="docutils literal notranslate"><span class="pre">process</span></code>, we can:</p>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Access environment variables.</li>
+<li>See the command-line arguments passed to the script.</li>
+<li>Kill the script.</li>
+</ul>
+</div>
+<div class="docutils container">
+<p>Peruse the <a class="reference external" href="https://nodejs.org/api/process.html#process_process">documentation</a> for a full list of features.</p>
+</div>
+</div>
+<div class="section" id="process-env">
+<h3>process.env</h3>
+<p><code class="docutils literal notranslate"><span class="pre">process.env.SECRET_KEY</span></code></p>
+<div class="docutils container">
+<p>Get the value of the environmental variables, that were listed in your terminal e.g. <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">SECRET_KEY=abc123</span></code></p>
+</div>
+<div class="docutils container">
+<p><code class="docutils literal notranslate"><span class="pre">process.env</span></code> is an object. The keys of the object are the names of environment varibles.</p>
+</div>
+</div>
+<div class="section" id="process-argv">
+<h3>process.argv</h3>
+<p><code class="docutils literal notranslate"><span class="pre">process.argv[index]</span></code></p>
+<div class="docutils container">
+<p><code class="docutils literal notranslate"><span class="pre">process.argv</span></code> is the array of command-line arguments given to start this program</p>
+</div>
+</div>
+<div class="section" id="process-argv-example">
+<h3>process.argv Example</h3>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">demo/basics/showArgs.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">argv</span> <span class="o">=</span> <span class="nx">process</span><span class="p">.</span><span class="nx">argv</span><span class="p">;</span>
+
+<span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">argv</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">argv</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<pre class="console literal-block">
+$ <span class="cmd">node showArgs.js hello world</span>
+0 '/path/to/node'
+1 '/path/to/showArgs.js'
+2 'hello'
+3 'world'
+</pre>
+</div>
+</div>
+<div class="section" id="process-exit">
+<h3>process.exit</h3>
+<p><code class="docutils literal notranslate"><span class="pre">process.exit(exit_code)</span></code></p>
+<p>Exit the program immediately and return an exit code to the shell.</p>
+<div class="docutils container">
+<p>Traditionally, 0 means âno errorâ, and other numbers (1, 2, etc.) represent script errors.</p>
+</div>
+</div>
+</div>
+<div class="section" id="the-module-system">
+<h2>The Module System</h2>
+<div class="section" id="modules">
+<h3>Modules</h3>
+<p>Modules are just the way of handling code in different files across a Node.js project.</p>
+<div class="docutils container">
+<p>You might hear this system referred to as âCommonJS Modulesâ.</p>
+</div>
+<div class="docutils container">
+<p>We donât have <cite>&lt;script&gt;</cite> tags in the Node.js ecosystem, so we have to include other files by exporting and importing them explicitly.</p>
+</div>
+</div>
+<div class="section" id="importing-a-project-file">
+<h3>Importing a Project File</h3>
+<p>All imports use the <cite>require</cite> keyword.</p>
+<div class="docutils container">
+<p>To import a local project file, specify a <cite>relative path</cite> to that file:</p>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">demo/modules/other.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">usefulStuff</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;./usefulStuff&quot;</span><span class="p">);</span>
+
+<span class="kr">const</span> <span class="nx">results</span> <span class="o">=</span> <span class="nx">usefulStuff</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">results</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>This usually means <code class="docutils literal notranslate"><span class="pre">./</span></code> for current directory or <code class="docutils literal notranslate"><span class="pre">../</span></code> for parent directory</li>
+<li>You donât need to include the file extension for <code class="docutils literal notranslate"><span class="pre">.js</span></code> and <code class="docutils literal notranslate"><span class="pre">.json</span></code> files.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="importing-a-library">
+<h3>Importing a Library</h3>
+<p>To import a built-in module or NPM package, simply exclude the relative path.</p>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">demo/modules/google.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">axios</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;axios&#39;</span><span class="p">);</span>
+
+<span class="nx">axios</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;http://google.com&#39;</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">resp</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">resp</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">80</span><span class="p">),</span> <span class="s1">&#39;...&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<p>Node will look in its includes core modules and <code class="docutils literal notranslate"><span class="pre">node_modules</span></code>.</p>
+</div>
+</div>
+<div class="section" id="destructuring-imports">
+<h3>Destructuring Imports</h3>
+<p>When importing an object, it is possible to destructure into variables:</p>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">demo/modules/other2.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="p">{</span> <span class="nx">add</span><span class="p">,</span> <span class="nx">User</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./usefulStuff&#39;</span><span class="p">);</span>
+
+<span class="kr">const</span> <span class="nx">results</span> <span class="o">=</span> <span class="nx">add</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">results</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="exporting-from-a-file">
+<h3>Exporting from a File</h3>
+<p>We use the built-in <code class="docutils literal notranslate"><span class="pre">module.exports</span></code> to explicitly export things from a file.</p>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">demo/modules/usefulStuff.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">MY_GLOBAL</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span>
+
+<span class="kd">function</span> <span class="nx">add</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">x</span> <span class="o">+</span> <span class="nx">y</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kr">class</span> <span class="nx">User</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">username</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">username</span> <span class="o">=</span> <span class="nx">username</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">const</span> <span class="nx">notNeededElsewhere</span> <span class="o">=</span> <span class="s1">&#39;nope&#39;</span><span class="p">;</span> <span class="c1">// I don&#39;t get exported!</span>
+
+<span class="c1">// export an object</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">MY_GLOBAL</span><span class="o">:</span> <span class="nx">MY_GLOBAL</span><span class="p">,</span>
+  <span class="nx">add</span><span class="o">:</span> <span class="nx">add</span><span class="p">,</span>
+  <span class="nx">User</span><span class="o">:</span> <span class="nx">User</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="module-exports">
+<h3>module.exports</h3>
+<p>By convention, we usually set <code class="docutils literal notranslate"><span class="pre">module.exports</span></code> to an object, so that you can export multiple things at once.</p>
+<div class="docutils container">
+<p>But you can actually set it to whatever you want:</p>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">in one file</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;hello welcome to Node.js&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">in another file</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">sayHello</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./example&#39;</span><span class="p">);</span>
+
+<span class="nx">sayHello</span><span class="p">();</span>
+<span class="c1">// hello</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="modules-summary">
+<h3>Modules Summary</h3>
+<ul class="simple">
+<li>Export contents of local files with <cite>module.exports</cite>, which should usually be an object</li>
+<li>Import contents of local files using the <cite>require</cite> keyword with a relative path</li>
+<li>Import libraries using <cite>require</cite> keyword with no path, just the name of the module</li>
+</ul>
+</div>
+</div>
+<div class="section" id="node-callbacks">
+<h2>Node Callbacks</h2>
+<div class="section" id="id4">
+<p>Many Node.js library functions utilize asynchronous callbacks by default.</p>
+<div class="docutils container">
+<p>For example, to read a file:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">fs</span><span class="p">.</span><span class="nx">readFile</span><span class="p">(</span><span class="s1">&#39;myFile.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;utf8&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// process file here...</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="error-first-callbacks">
+<h3>Error-First Callbacks</h3>
+<p>Node.js callbacks usually conform to an <strong>âerror-firstâ pattern.</strong></p>
+<div class="docutils container">
+<ul class="simple">
+<li>The callback functionâs first parameter should be listed as <cite>error</cite>. Node will supply an <cite>error object</cite> (if something bad happened), otherwise <cite>null</cite> as arguments.</li>
+<li>Then follow the other parameters, if there are any:</li>
+</ul>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">fs</span><span class="p">.</span><span class="nx">readFile</span><span class="p">(</span><span class="s2">&quot;myFile.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;utf8&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// handle error</span>
+  <span class="p">}</span>
+  <span class="c1">// otherwise we&#39;re good</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="admonition note">
+<p>The Docs</p>
+<p class="last">Nice reading on error-first callback pattern from the <a class="reference external" href="https://nodejs.org/api/errors.html#errors_error_first_callbacks">official docs here</a>.</p>
+</div>
+</div>
+<div class="section" id="handling-errors">
+<h3>Handling Errors</h3>
+<p>In the browser, there are different things to do with errors:</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Show some âan error happenedâ message in the DOM</li>
+<li>Pop up an alert box</li>
+<li>Log to the console</li>
+</ul>
+</div>
+<div class="docutils container">
+<p>In Node, you will often do one of these:</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Log the error to the console</li>
+<li>Exit the program with <code class="docutils literal notranslate"><span class="pre">process.exit(1)</span></code> (<cite>process</cite> is always there)</li>
+</ul>
+</div>
+</div>
+<div class="admonition note">
+<p>util.promisify()</p>
+<p>Sick of callbacks? For an advanced reading, consider <a class="reference external" href="https://nodejs.org/dist/latest-v8.x/docs/api/util.html#util_util_promisify_original">promisifying your callbacks</a>.</p>
+<p class="last">Just donât look at <cite>callbackify</cite>. <em>We donât talk about callbackify</em>. ð¤</p>
+</div>
+</div>
+</div>
+<div class="section" id="file-system-module">
+<h2>File System Module</h2>
+<div class="section" id="fs">
+<h3>fs</h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">fs</span></code> module is built-in and provides an interface to your local file system.</p>
+<div class="docutils container">
+<ul class="simple">
+<li>It is commonly used to read and write files.</li>
+<li>To start using it, <code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">fs</span> <span class="pre">=</span> <span class="pre">require('fs');</span></code> (no installation necessary).</li>
+</ul>
+</div>
+</div>
+<div class="section" id="reading-files">
+<h3>Reading Files</h3>
+<p>The default method for reading files is asynchronous, using a callback.</p>
+<p><code class="docutils literal notranslate"><span class="pre">fs.readFile(path,</span> <span class="pre">encoding,</span> <span class="pre">callback)</span></code></p>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>path</cite>: path to file (relative to working directory)</li>
+<li><cite>encoding</cite>: how to interpret file<ul>
+<li>for text files, this is almost always âutf8â</li>
+<li>for binary files (like an image), omit this argument</li>
+</ul>
+</li>
+<li><cite>callback</cite>: function that takes <cite>error</cite> and <cite>data</cite></li>
+</ul>
+</div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs&#39;</span><span class="p">);</span>
+
+<span class="nx">fs</span><span class="p">.</span><span class="nx">readFile</span><span class="p">(</span><span class="s1">&#39;myFile.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;utf8&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// handle possible error</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+    <span class="c1">// kill the process and tell the shell it errored</span>
+    <span class="nx">process</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="c1">// otherwise success</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`file contents: </span><span class="si">${</span><span class="nx">data</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;reading file&#39;</span><span class="p">);</span>
+<span class="c1">// file won&#39;t have been read yet at this point</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p>Synchronous Version</p>
+<p>Itâs common, when using Node, to use asynchronous functionsâbut for some things,
+like reading/writing files, there are synchronous methods you can use:</p>
+<div class="last highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs&#39;</span><span class="p">);</span>
+
+<span class="k">try</span> <span class="p">{</span>
+  <span class="c1">// store the read file contents</span>
+  <span class="kd">var</span> <span class="nx">contents</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="s1">&#39;myFile.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;utf8&#39;</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`file contents are &quot;</span><span class="si">${</span><span class="nx">contents</span><span class="si">}</span><span class="sb">&quot;`</span><span class="p">);</span>
+<span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// errors thrown by fs will be caught here</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+  <span class="c1">// kill the process and tell the shell it errored</span>
+  <span class="nx">process</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="writing-files">
+<h3>Writing Files</h3>
+<p><code class="docutils literal notranslate"><span class="pre">fs.writeFile(path,</span> <span class="pre">data,</span> <span class="pre">encoding,</span> <span class="pre">callback)</span></code></p>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>path</cite>: path to file (relative to working directory)</li>
+<li><cite>data</cite>: data to output to file (typically a string)</li>
+<li><cite>encoding</cite>: how to write file<ul>
+<li>for text files, this is almost always âutf8â</li>
+<li>for binary files (like an image), omit this argument</li>
+</ul>
+</li>
+<li><cite>callback</cite>: function that takes <cite>error</cite></li>
+</ul>
+</div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs&#39;</span><span class="p">);</span>
+
+<span class="kr">const</span> <span class="nx">content</span> <span class="o">=</span> <span class="s1">&#39;THIS WILL GO IN THE FILE!&#39;</span><span class="p">;</span>
+
+<span class="nx">fs</span><span class="p">.</span><span class="nx">writeFile</span><span class="p">(</span><span class="s1">&#39;./files/output.txt&#39;</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+    <span class="nx">process</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Successfully wrote to file!&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;writing file...&#39;</span><span class="p">);</span>
+<span class="c1">// file won&#39;t have been written yet at this point</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p>Synchronous Version</p>
+<div class="last highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs&#39;</span><span class="p">);</span>
+
+<span class="kr">const</span> <span class="nx">content</span> <span class="o">=</span> <span class="s1">&#39;THIS WILL GO IN THE FILE!&#39;</span><span class="p">;</span>
+
+<span class="k">try</span> <span class="p">{</span>
+  <span class="nx">fs</span><span class="p">.</span><span class="nx">writeFileSync</span><span class="p">(</span><span class="s1">&#39;./files/output.txt&#39;</span><span class="p">,</span> <span class="nx">content</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Successfully wrote to file!&#39;</span><span class="p">);</span>
+<span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="sb">`File write failed: </span><span class="si">${</span><span class="nx">error</span><span class="si">}</span><span class="sb">`</span><span class="p">)</span>
+  <span class="nx">process</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="file-system-summary">
+<h3>File System Summary</h3>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>fs</cite> is a built-in module; import with <code class="docutils literal notranslate"><span class="pre">require('fs')</span></code>.</li>
+<li>The default methods are asynchronous reading and writing</li>
+<li>Stringify file contents when writing with encoding (normally âutf8â)</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="node-vs-browser-js">
+<h2>Node vs Browser JS</h2>
+<div class="section" id="id5">
+<div class="docutils container">
+<ul class="simple">
+<li>Most programmatic behavior is exactly the same (yay v8!)</li>
+<li>The âglobal objectâ isnât <cite>window</cite>, itâs <cite>global</cite><ul>
+<li>This is where global vars go, where <cite>setTimeout</cite> is, etc</li>
+</ul>
+</li>
+<li>Node doesnât have <cite>document</cite> &amp; DOM methods</li>
+<li>Node provides access to filesystem &amp; can start server processes</li>
+<li>Many NPM libraries are âisomorphicâ (can be used in web JS or Node)</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="looking-ahead">
+<h2>Looking Ahead</h2>
+<div class="section" id="what-s-next">
+<h3>Whatâs Next</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>File I/O Exercise</li>
+<li>Writing our first servers with Express.js</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

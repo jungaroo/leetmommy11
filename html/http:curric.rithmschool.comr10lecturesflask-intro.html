@@ -1,0 +1,568 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Flask Intro</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Flask Intro</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Flask Intro</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#web-frameworks">Web Frameworks</a><ul>
+<li><a class="reference internal" href="#a-quick-demo">A Quick Demo</a></li>
+<li><a class="reference internal" href="#what-is-a-web-server">What is a Web Server?</a></li>
+<li><a class="reference internal" href="#web-application">Web Application</a></li>
+<li><a class="reference internal" href="#flask-is-a-web-framework">Flask is a Web Framework</a></li>
+<li><a class="reference internal" href="#what-do-web-applications-need-to-do">What Do Web Applications Need To Do?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#flask-apps">Flask Apps</a><ul>
+<li><a class="reference internal" href="#installing-flask">Installing Flask</a></li>
+<li><a class="reference internal" href="#making-an-app">Making An App</a></li>
+<li><a class="reference internal" href="#running-flask-app">Running Flask App</a></li>
+<li><a class="reference internal" href="#development-mode">Development Mode</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#adding-routes">Adding Routes</a><ul>
+<li><a class="reference internal" href="#making-responses">Making Responses</a></li>
+<li><a class="reference internal" href="#handling-requests">Handling Requests</a></li>
+<li><a class="reference internal" href="#serving-at-the-root">Serving at the Root</a></li>
+<li><a class="reference internal" href="#what-routes-return">What Routes Return</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#get-and-post">GET and POST</a><ul>
+<li><a class="reference internal" href="#requests">Requests</a></li>
+<li><a class="reference internal" href="#handling-query-arguments">Handling Query Arguments</a></li>
+<li><a class="reference internal" href="#handling-post-requests">Handling POST Requests</a></li>
+<li><a class="reference internal" href="#example-post-request">Example POST Request</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#variables-in-a-url">Variables in a URL</a><ul>
+<li><a class="reference internal" href="#motivation">Motivation</a></li>
+<li><a class="reference internal" href="#id2">Variables in a URL</a></li>
+<li><a class="reference internal" href="#query-params-vs-url-params">Query Params vs URL Params</a></li>
+<li><a class="reference internal" href="#which-should-i-use">Which Should I Use?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#looking-ahead">Looking Ahead</a><ul>
+<li><a class="reference internal" href="#coming-up">Coming Up</a></li>
+<li><a class="reference internal" href="#flask-documentation">Flask Documentation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="flask-intro">
+<h1>Flask Intro</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Whatâs a âweb frameworkâ?</li>
+<li>Build small web applications using Python and Flask</li>
+<li>Set environmental variables for local Flask development</li>
+<li>Handle GET and POST requests with Flask</li>
+<li>Extract data from different parts of the URL with Flask</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="web-frameworks">
+<h2>Web Frameworks</h2>
+<div class="section" id="a-quick-demo">
+<h3>A Quick Demo</h3>
+<pre class="console literal-block">
+(venv) $ <span class="cmd">flask run</span>
+* Environment: development
+* Debug mode: on
+* Running on <a class="reference external" href="http://127.0.0.1:5000/">http://127.0.0.1:5000/</a> (Press CTRL+C to quit)
+* Restarting with stat
+* Debugger is active!
+* Debugger PIN: 160-080-703
+</pre>
+</div>
+<div class="section" id="what-is-a-web-server">
+<h3>What is a Web Server?</h3>
+<p>A program thatâs running on a machine and waiting for a web request.</p>
+<p><em>Note</em>: A web server is a technology that can process requests and issue
+responses via HTTP, a protocol used to distribute information on the world
+wide web. Though itâs also used to refer to computer systems and even
+internet âappliancesâ, weâll use web server to refer to the software running
+on a machine thatâs waiting to respond to HTTP requests.</p>
+<div class="graphviz">
+<img src="_images/graphviz-2fde5ba206bb79f5de0f163ca0b88030b1e40a94.svg" />
+</div>
+<p>The server then responds with the exact HTML text for that page:</p>
+<div class="graphviz">
+<img src="_images/graphviz-dc1d8964319c119fccb4e1f1000f4857c6b9fbc5.svg" />
+</div>
+</div>
+<div class="section" id="web-application">
+<h3>Web Application</h3>
+<p>A server âlisteningâ for requests and issuing responses:</p>
+<blockquote>
+<div>GET /hello     (<a class="reference external" href="http://server/hello">http://server/hello</a>)</div></blockquote>
+<p>â</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Hello World!<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p><em>Note</em>: To keep code samples short in the presentation, weâre eliding some
+less-important HTML markup. The shortest valid HTML skeleton in modern
+HTML would actually be:</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;!doctype html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Hello<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Hello World!<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="flask-is-a-web-framework">
+<h3>Flask is a Web Framework</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Set of functions, classes, etc. that help you define<ul>
+<li><strong>Which</strong> requests to respond to<ul>
+<li><cite>http://server/about-us</cite></li>
+<li><cite>http://server/post/1</cite></li>
+</ul>
+</li>
+<li><strong>How</strong> to respond to requests<ul>
+<li>Shows an âAbout Usâ page</li>
+<li>Show the 1st blog post</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Like a library, but bigger and more opinionated</li>
+<li>Usage is similar to the Python Standard Library. <span class="raw-reveal"><br></span> <span class="raw-reveal"><br></span></li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="compare docutils container">
+<div class="docutils container">
+<p>Using the Python Standard Library</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">choice</span><span class="p">,</span> <span class="n">randint</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>Using Flask</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">request</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="what-do-web-applications-need-to-do">
+<h3>What Do Web Applications Need To Do?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>handle web requests</li>
+<li>produce dynamic HTML</li>
+<li>handle forms</li>
+<li>handle cookies</li>
+<li>connect to databases</li>
+<li>provide user log-in/log-out</li>
+<li>cache pages for performance</li>
+<li>&amp; more!</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="flask-apps">
+<h2>Flask Apps</h2>
+<div class="section" id="installing-flask">
+<h3>Installing Flask</h3>
+<pre class="console literal-block">
+$ <span class="cmd">python3 -m venv venv</span>
+$ <span class="cmd">source venv/bin/activate</span>
+
+(venv)$ <span class="cmd">pip3 install flask</span>
+<em>... lots of stuff ...</em>
+Successfully installed flask Werkzeug Jinja2 <span class="tan">...</span>
+Cleaning up...
+</pre>
+</div>
+<div class="section" id="making-an-app">
+<h3>Making An App</h3>
+<p>Need to create a âflask applicationâ:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>When we create a Flask application, it needs to know what module to scan
+for things like routes (covered later)âso the <code class="docutils literal notranslate"><span class="pre">__name__</span></code> is <em>required</em>
+and should always be written like that.</p>
+</div>
+<div class="section" id="running-flask-app">
+<h3>Running Flask App</h3>
+<pre class="console literal-block">
+(venv) $ <span class="cmd">flask run</span>
+</pre>
+<p>(Control-C to quit)</p>
+<div class="admonition note">
+<p>Flask app not called <cite>app.py</cite>?</p>
+<p>If your Flask app file isnât called <cite>app</cite>:</p>
+<pre class="console literal-block">
+(venv) $ <span class="cmd">FLASK_APP=app.py flask run</span>
+</pre>
+<div class="last docutils container">
+<p><code class="docutils literal notranslate"><span class="pre">FLASK_APP=app.py</span></code> is passing an âenvironmental variableâ</p>
+<p>Only has this meaning while this program is running</p>
+</div>
+</div>
+</div>
+<div class="section" id="development-mode">
+<h3>Development Mode</h3>
+<p>Look for these in console output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="n">Environment</span><span class="p">:</span> <span class="n">development</span>
+<span class="o">*</span> <span class="n">Debug</span> <span class="n">mode</span><span class="p">:</span> <span class="n">on</span>
+</pre></div>
+</div>
+<p>Best to run Flask in âdevelopment modeâ:</p>
+<ul class="simple">
+<li>Much better error messages</li>
+<li>Automatically re-loads server when code changes on disk</li>
+</ul>
+<p>Both of these are very helpful when developingâand very
+bad for working on a live, production server.</p>
+<pre class="console literal-block">
+(venv) $ <span class="cmd">FLASK_ENV=development flask run</span>
+</pre>
+<div class="admonition note">
+<p>FLASK_DEV</p>
+<p>Here at Rithm, our student setup already has your computer
+settings <cite>FLASK_ENV</cite> when you open a terminal shell automatically.</p>
+<p>However, if you donât have our student shell file, you can
+set this in your terminal like:</p>
+<pre class="console last literal-block">
+(venv) $ <span class="cmd">export FLASK_ENV=development</span>
+</pre>
+</div>
+</div>
+</div>
+<div class="section" id="adding-routes">
+<h2>Adding Routes</h2>
+<div class="section" id="making-responses">
+<h3>Making Responses</h3>
+<div class="docutils container">
+<ul>
+<li><p class="first">A function that returns web response is called a <strong>view</strong></p>
+<ul class="simple">
+<li>Response is a <strong>string</strong></li>
+<li>Usually, a <strong>string</strong> of HTML</li>
+</ul>
+</li>
+<li><p class="first">So, our function returns an HTML string:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/hello&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">say_hello</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Return simple &quot;Hello&quot; Greeting.&quot;&quot;&quot;</span>
+
+    <span class="n">html</span> <span class="o">=</span> <span class="s2">&quot;&lt;html&gt;&lt;body&gt;&lt;h1&gt;Hello&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;&quot;</span>
+    <span class="k">return</span> <span class="n">html</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="handling-requests">
+<h3>Handling Requests</h3>
+<p>On requesting <cite>http://localhost:5000/hello</cite> in browser, function is called:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="hll"><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/hello&#39;</span><span class="p">)</span>
+</span><span class="k">def</span> <span class="nf">say_hello</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Return simple &quot;Hello&quot; Greeting.&quot;&quot;&quot;</span>
+
+    <span class="n">html</span> <span class="o">=</span> <span class="s2">&quot;&lt;html&gt;&lt;body&gt;&lt;h1&gt;Hello&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;&quot;</span>
+    <span class="k">return</span> <span class="n">html</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Flask lets you ârouteâ a URL to a function</li>
+<li><code class="docutils literal notranslate"><span class="pre">&#64;app.route('/hello')</span></code> is a Python âdecoratorâ<ul>
+<li><cite>â/helloâ</cite> in the decorator maps directly to the URL the user requested</li>
+</ul>
+</li>
+</ul>
+</div>
+<p>Now we can get to this at <a class="reference external" href="http://localhost:5000/hello">http://localhost:5000/hello</a></p>
+</div>
+<div class="section" id="serving-at-the-root">
+<h3>Serving at the Root</h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Show homepage&quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">      &lt;html&gt;</span>
+<span class="s2">        &lt;body&gt;</span>
+<span class="s2">          &lt;h1&gt;I am the landing page&lt;/h1&gt;</span>
+<span class="s2">        &lt;/body&gt;</span>
+<span class="s2">      &lt;/html&gt;</span>
+<span class="s2">      &quot;&quot;&quot;</span>
+
+</pre></div>
+</div>
+<div class="docutils container">
+<p>This function will get called if the user requests <cite>http://localhost:5000/</cite>.</p>
+</div>
+<p>Now we can reach this page at <a class="reference external" href="http://localhost:5000">http://localhost:5000</a></p>
+</div>
+<div class="section" id="what-routes-return">
+<h3>What Routes Return</h3>
+<p>Routes should return strings!</p>
+</div>
+</div>
+<div class="section" id="get-and-post">
+<h2>GET and POST</h2>
+<div class="section" id="requests">
+<h3>Requests</h3>
+<p>Flask provides an object, <cite>request</cite>, to represent web requests</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">request</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="handling-query-arguments">
+<h3>Handling Query Arguments</h3>
+<p>For a url like <cite>/search?term=fun</cite></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/search&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">search</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Handle GET requests like /search?term=fun&quot;&quot;&quot;</span>
+
+    <span class="n">term</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s2">&quot;term&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">f</span><span class="s2">&quot;&lt;h1&gt;Searching for </span><span class="si">{term}</span><span class="s2">&lt;/h1&gt;&quot;</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p><cite>request.args</cite> is a dict-like object of query parameters.</p>
+</div>
+</div>
+<div class="section" id="handling-post-requests">
+<h3>Handling POST Requests</h3>
+<p>By default, a route only responds to GET requests</p>
+<p>To accept POST requests, must specify that:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="hll"><span class="nd">@app.route</span><span class="p">(</span><span class="s2">&quot;/my/route&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+</span><span class="k">def</span> <span class="nf">handle_post_to_my_route</span><span class="p">():</span>
+   <span class="o">...</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-post-request">
+<h3>Example POST Request</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/add-comment&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">add_comment_form</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Show form for adding a comment.&quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">      &lt;form method=&quot;POST&quot;&gt;</span>
+<span class="s2">        &lt;input name=&quot;comment&quot;&gt;</span>
+<span class="s2">        &lt;button&gt;Submit&lt;/button&gt;</span>
+<span class="s2">      &lt;/form&gt;</span>
+<span class="s2">      &quot;&quot;&quot;</span>
+
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/add-comment&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">add_comment</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Handle adding comment.&quot;&quot;&quot;</span>
+
+    <span class="n">comment</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s2">&quot;comment&quot;</span><span class="p">]</span>
+
+    <span class="c1"># TODO: save that into a database!</span>
+
+    <span class="k">return</span> <span class="n">f</span><span class="s1">&#39;&lt;h1&gt;Received &quot;</span><span class="si">{comment}</span><span class="s1">&quot;.&lt;/h1&gt;&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<p><cite>request.form</cite> is a dict-like object of POST parameters.</p>
+</div>
+</div>
+</div>
+<div class="section" id="variables-in-a-url">
+<h2>Variables in a URL</h2>
+<div class="section" id="motivation">
+<h3>Motivation</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Want user info pages for each user:<ul>
+<li><a class="reference external" href="http://localhost:5000/user/whiskey">http://localhost:5000/user/whiskey</a></li>
+<li><a class="reference external" href="http://localhost:5000/user/spike">http://localhost:5000/user/spike</a></li>
+<li>We donât want every possible username as a separate route</li>
+</ul>
+</li>
+<li>Want to show blog posts (read from database) by id:<ul>
+<li><a class="reference external" href="http://localhost:5000/post/1">http://localhost:5000/post/1</a></li>
+<li><a class="reference external" href="http://localhost:5000/post/2">http://localhost:5000/post/2</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id2">
+<h3>Variables in a URL</h3>
+<p>Argument capture in Flask:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">USERS</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s2">&quot;whiskey&quot;</span><span class="p">:</span> <span class="s2">&quot;Whiskey The Dog&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;spike&quot;</span><span class="p">:</span> <span class="s2">&quot;Spike The Porcupine&quot;</span><span class="p">,</span>
+  <span class="p">}</span>  
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/user/&lt;username&gt;&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">show_user_profile</span><span class="p">(</span><span class="n">username</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Show user profile for user.&quot;&quot;&quot;</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="n">USERS</span><span class="p">[</span><span class="n">username</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">f</span><span class="s2">&quot;&lt;h1&gt;Profile for </span><span class="si">{name}</span><span class="s2">&lt;/h1&gt;&quot;</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>&lt;variable_name&gt;</cite> in <cite>&#64;app.route</cite></li>
+<li>View function must have same <cite>var_name</cite> as parameter</li>
+</ul>
+</div>
+<p>Can also specify <cite>int</cite> variable:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">POSTS</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;Flask is pretty cool&quot;</span><span class="p">,</span>
+  <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;Python is neat-o&quot;</span>
+<span class="p">}</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/post/&lt;int:post_id&gt;&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">show_post</span><span class="p">(</span><span class="n">post_id</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Show post with given integer id.&quot;&quot;&quot;</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;post_id is a &quot;</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">post_id</span><span class="p">))</span>
+
+    <span class="n">post</span> <span class="o">=</span> <span class="n">POSTS</span><span class="p">[</span><span class="n">post_id</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">f</span><span class="s2">&quot;&lt;h1&gt;Post #</span><span class="si">{post_id}</span><span class="s2">&lt;/h1&gt;&lt;p&gt;</span><span class="si">{post}</span><span class="s2">&lt;/p&gt;&quot;</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>&lt;int:variable_name&gt;</cite> in <cite>&#64;app.route</cite></li>
+<li>Converts to integer when calling function</li>
+</ul>
+</div>
+<p>Can have more than one:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@spp.route</span><span class="p">(</span><span class="s2">&quot;/products/&lt;category&gt;/&lt;int:product_id&gt;&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">product_detail</span><span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="n">product_id</span><span class="p">):</span>
+   <span class="sd">&quot;&quot;&quot;Show detail page for product.&quot;&quot;&quot;</span>
+
+   <span class="o">...</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="query-params-vs-url-params">
+<h3>Query Params vs URL Params</h3>
+<p><cite>http://toys.com/shop/spinning-top?color=red</cite></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/shop/&lt;toy&gt;&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">toy_detail</span><span class="p">(</span><span class="n">toy</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Show detail about a toy.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Get color from req.args, falling back to None</span>
+    <span class="n">color</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;color&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">f</span><span class="s2">&quot;&lt;h1&gt;</span><span class="si">{toy}</span><span class="s2">&lt;/h1&gt;Color: </span><span class="si">{color}</span><span class="s2">&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="which-should-i-use">
+<h3>Which Should I Use?</h3>
+<div class="compare docutils container">
+<div class="docutils container">
+<p><strong>URL Parameter</strong></p>
+<p><cite>/shop/&lt;toy&gt;</cite></p>
+<p>Feels more like âsubject of pageâ</p>
+</div>
+<div class="docutils container">
+<p><strong>Query Parameter</strong></p>
+<p><cite>/search?term=elmo</cite></p>
+<p>Feels more like âextra info about pageâ</p>
+<p>Often used when coming from form</p>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="looking-ahead">
+<h2>Looking Ahead</h2>
+<div class="section" id="coming-up">
+<h3>Coming Up</h3>
+<ul class="simple">
+<li>HTML templates</li>
+<li>Handling cookies</li>
+<li>APIs and Flask</li>
+<li>Using databases with Flask</li>
+<li>Auto-generating forms</li>
+<li>Handling users and log in</li>
+</ul>
+</div>
+<div class="section" id="flask-documentation">
+<h3>Flask Documentation</h3>
+<p>The Flask documentation (<a class="reference external" href="http://flask.pocoo.org/">http://flask.pocoo.org/</a>)</p>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script> 
+</body>
+</html>

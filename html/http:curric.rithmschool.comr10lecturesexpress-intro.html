@@ -1,0 +1,691 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Intro to Express.js</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Intro to Express.js</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Intro to Express.js</a><ul>
+<li><a class="reference internal" href="#express-js">Express.js</a><ul>
+<li><a class="reference internal" href="#what-is-express-js">What is Express.js?</a></li>
+<li><a class="reference internal" href="#a-server-in-three-lines">A Server In Three Lines</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#how-does-express-work">How Does Express Work?</a><ul>
+<li><a class="reference internal" href="#route-handlers">Route Handlers</a></li>
+<li><a class="reference internal" href="#route-handler-callbacks">Route Handler Callbacks</a></li>
+<li><a class="reference internal" href="#the-request-response-cycle">The Request-Response Cycle</a></li>
+<li><a class="reference internal" href="#route-methods">Route Methods</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#our-first-express-app">Our First Express App</a><ul>
+<li><a class="reference internal" href="#getting-started">Getting started</a></li>
+<li><a class="reference internal" href="#nodemon">Nodemon</a></li>
+<li><a class="reference internal" href="#url-parameters">URL Parameters</a></li>
+<li><a class="reference internal" href="#other-useful-request-properties">Other Useful Request Properties</a></li>
+<li><a class="reference internal" href="#parsing-the-body">Parsing the Body</a></li>
+<li><a class="reference internal" href="#accessing-the-body">Accessing the Body</a></li>
+<li><a class="reference internal" href="#returning-json">Returning JSON</a></li>
+<li><a class="reference internal" href="#status-codes">Status Codes</a></li>
+<li><a class="reference internal" href="#validation-and-errors">Validation and Errors</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#error-handling-in-express">Error Handling in express</a><ul>
+<li><a class="reference internal" href="#how-do-we-let-express-know-about-an-error">How do we let Express know about an error?</a></li>
+<li><a class="reference internal" href="#throwing-an-error">Throwing an error</a></li>
+<li><a class="reference internal" href="#a-couple-issues-here">A couple issues here</a></li>
+<li><a class="reference internal" href="#let-s-make-our-own-error-class">Letâs make our own error class!</a></li>
+<li><a class="reference internal" href="#id1">Throwing an error</a></li>
+<li><a class="reference internal" href="#almost-there">Almost thereâ¦..</a></li>
+<li><a class="reference internal" href="#id2">Error Handling in express</a></li>
+<li><a class="reference internal" href="#error-handler-example">Error Handler Example</a></li>
+<li><a class="reference internal" href="#getting-from-our-route-to-our-global-error-handler">Getting from our route to our global error handler</a></li>
+<li><a class="reference internal" href="#handling-errors-correctly">Handling errors correctly</a></li>
+<li><a class="reference internal" href="#to-summarize">To summarize</a></li>
+<li><a class="reference internal" href="#handling-404-errors">Handling 404 Errors</a></li>
+<li><a class="reference internal" href="#putting-it-all-together">Putting it all together</a></li>
+<li><a class="reference internal" href="#error-handling-summary">Error Handling Summary</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#debugging-with-express">Debugging with Express</a><ul>
+<li><a class="reference internal" href="#our-current-debugging-process">Our current debugging process</a></li>
+<li><a class="reference internal" href="#we-can-do-better">We can do better!</a></li>
+<li><a class="reference internal" href="#debugging-node">Debugging Node</a></li>
+<li><a class="reference internal" href="#debugging-express">Debugging Express</a></li>
+<li><a class="reference internal" href="#your-turn">Your Turn!</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="intro-to-express-js">
+<h1>Intro to Express.js</h1>
+<p><a class="reference external" href="../express-intro-demo.zip">Download Demo Express.js Code</a></p>
+<div class="section" id="express-js">
+<h2>Express.js</h2>
+<div class="section" id="what-is-express-js">
+<h3>What is Express.js?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Minimalist framework</li>
+<li>Very similar to Flask</li>
+<li>Most popular in the Node ecosystem</li>
+</ul>
+</div>
+</div>
+<div class="section" id="a-server-in-three-lines">
+<h3>A Server In Three Lines</h3>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">demo/tiny.js</span></div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">);</span>
+
+<span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">express</span><span class="p">();</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="mi">3000</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;App on port 3000&#39;</span><span class="p">);</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Our app doesnât do anything except respond 404s, but we have a server running!</li>
+<li><cite>app.listen</cite> takes a port and a callback. It binds the server to a specific port on your machine and listens for requests there.</li>
+<li><cite>app.listen</cite> should always be at the bottom of the file</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="how-does-express-work">
+<h2>How Does Express Work?</h2>
+<div class="section" id="route-handlers">
+<h3>Route Handlers</h3>
+<p>Route handlers are special event listeners - they are just like view functions in Flask:</p>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">demo/firstRoute.js</span></div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">);</span>
+
+<span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">express</span><span class="p">();</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/dogs&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">request</span><span class="p">,</span> <span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">response</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="s1">&#39;Dogs go brk brk&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="mi">3000</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;App on port 3000&#39;</span><span class="p">);</span>
+<span class="p">})</span> 
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">demo/first_route.py</span></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/dogs&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">bark</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s1">&#39;Dogs go brk brk&#39;</span>
+
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<p><code class="docutils literal notranslate"><span class="pre">app.get('/dogs')</span></code> listens for a <cite>GET</cite> Request to the <cite>/dogs</cite> endpoint.</p>
+</div>
+<div class="docutils container">
+<p>In the callback, <code class="docutils literal notranslate"><span class="pre">res.send()</span></code> issues a response of plain-text or HTML.</p>
+</div>
+</div>
+<div class="section" id="route-handler-callbacks">
+<h3>Route Handler Callbacks</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Every handler should have a callback with two parameters:<ul>
+<li><cite>request</cite>: information about request (query string,
+url parameters, form data)</li>
+<li><cite>response</cite>: useful methods for sending a <strong>response</strong> (html, text, json, etc.)</li>
+<li>You will commonly see these parameters named <cite>req</cite> and <cite>res</cite></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="docutils container">
+<p>Express builds the <cite>req</cite> and <cite>res</cite> objects for every request and passes them to your callback.</p>
+</div>
+</div>
+<div class="section" id="the-request-response-cycle">
+<h3>The Request-Response Cycle</h3>
+<p>When you start the server, Express runs through the file and registers all the event listeners before <cite>app.listen</cite> at the bottom.</p>
+<div class="docutils container">
+<p>Whenever a user makes a request, Express invokes the <strong>first matching route handler it finds</strong> until a response is issued via a method on the <cite>response</cite> object.</p>
+</div>
+<div class="docutils container">
+<p>This is called the <cite>request-response cycle</cite> for Express.</p>
+</div>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">demo/secondRoute.js</span></div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">);</span>
+
+<span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">express</span><span class="p">();</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/dogs&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="s1">&#39;Dogs go brk brk&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="c1">// this will never get matched</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/dogs&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="s1">&#39;but what about these dogs???&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="mi">3000</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;App on port 3000&#39;</span><span class="p">);</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>In this example, the first route handler gets matched because it was registered first in the file (itâs defined above the second one).</p>
+</div>
+<div class="docutils container">
+<p>The second handler never gets matched because a response is issued in the previous handler, thus concluding the request cycle.</p>
+</div>
+</div>
+<div class="section" id="route-methods">
+<h3>Route Methods</h3>
+<p>Here are the route methods you will likely use, one for each HTTP verb:</p>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>app.get(path, callback)</cite></li>
+<li><cite>app.post(path, callback)</cite></li>
+<li><cite>app.patch(path, callback)</cite></li>
+<li><cite>app.delete(path, callback)</cite></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="our-first-express-app">
+<h2>Our First Express App</h2>
+<div class="section" id="getting-started">
+<h3>Getting started</h3>
+<div class="docutils container">
+<pre class="console literal-block">
+$ <span class="cmd">mkdir first-express-app</span>
+$ <span class="cmd">cd first-express-app</span>
+$ <span class="cmd">npm init -y</span>
+$ <span class="cmd">npm install express</span>
+</pre>
+</div>
+</div>
+<div class="section" id="nodemon">
+<h3>Nodemon</h3>
+<div class="docutils container">
+<ul>
+<li><p class="first">Nodemon restarts server automatically when you edit files or if the server crashes.</p>
+</li>
+<li><p class="first">To install globally (for use in any project), type the following command anywhere in the terminal:</p>
+<pre class="console literal-block">
+$ <span class="cmd">npm install --global nodemon</span>
+</pre>
+</li>
+<li><p class="first">To start server:</p>
+<pre class="console literal-block">
+$ <span class="cmd">nodemon app.js</span>
+</pre>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="url-parameters">
+<h3>URL Parameters</h3>
+<p>Specify parameters in the route by prefixing them with a colon <code class="docutils literal notranslate"><span class="pre">:</span></code>.</p>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">demo/app.js</span></div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="cm">/** Show info on instructor. */</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/staff/:fname&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="sb">`This instructor is </span><span class="si">${</span><span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">fname</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>All of our parameters become keys in an object found at <cite>req.params</cite></li>
+<li>The values are <em>always</em> strings</li>
+</ul>
+</div>
+</div>
+<div class="section" id="other-useful-request-properties">
+<h3>Other Useful Request Properties</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>query string (<cite>request.query</cite>)</li>
+<li>headers (<cite>request.headers</cite>)</li>
+<li>what about the body of the request?</li>
+</ul>
+</div>
+</div>
+<div class="section" id="parsing-the-body">
+<h3>Parsing the Body</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>To parse body of the request, we need to tell express how to do thatâ¦</li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">demo/app.js</span></div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">);</span>
+
+<span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">express</span><span class="p">();</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">express</span><span class="p">.</span><span class="nx">json</span><span class="p">());</span> 
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">express</span><span class="p">.</span><span class="nx">urlencoded</span><span class="p">({</span> <span class="nx">extended</span><span class="o">:</span> <span class="kc">true</span> <span class="p">}));</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="accessing-the-body">
+<h3>Accessing the Body</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Once you have told express how to parse the request body, you can access it using <cite>request.body</cite></li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">demo/app.js</span></div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="cm">/** Add a new instructor. */</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s1">&#39;/api/staff&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="cm">/** Do some database operation here... */</span>
+  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">({</span>
+    <span class="nx">fname</span><span class="o">:</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">fname</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="admonition warning">
+<p>body-parser</p>
+<p class="last">A recent update to Express added the method <code class="docutils literal notranslate"><span class="pre">express.json()</span></code>. Previously you had to utilize a small library called <a class="reference external" href="https://expressjs.com/en/resources/middleware/body-parser.html">body-parser</a> to do this, so if you see body-parser, it does the same thing.</p>
+</div>
+</div>
+<div class="section" id="returning-json">
+<h3>Returning JSON</h3>
+<div class="docutils container">
+<p>Itâs dead simple!</p>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">demo/app.js</span></div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="cm">/** Show JSON on instructor */</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/api/staff/:fname&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span> <span class="nx">fname</span><span class="o">:</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">fname</span> <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="status-codes">
+<h3>Status Codes</h3>
+<p>To issue status codes with our responses, we can call the <cite>res.status(code)</cite> method first, and then chain our <cite>.json()</cite> to finish the response.</p>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">demo/app.js</span></div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="cm">/** Sample of returning status code */</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/whoops&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="mi">404</span><span class="p">).</span><span class="nx">json</span><span class="p">(</span><span class="s1">&#39;Whoops! Nothing here!&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="validation-and-errors">
+<h3>Validation and Errors</h3>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">demo/app.js</span></div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="cm">/** Sample of validating / error handling */</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/dogs/:name&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">name</span> <span class="o">!==</span> <span class="s1">&#39;Whiskey&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">res</span>
+            <span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="mi">403</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="s1">&#39;Only Whiskey is Allowed.&#39;</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="s1">&#39;Hello Whiskey!&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>This will work to start, but we can do better!</p>
+</div>
+</div>
+</div>
+<div class="section" id="error-handling-in-express">
+<h2>Error Handling in express</h2>
+<div class="section" id="how-do-we-let-express-know-about-an-error">
+<h3>How do we let Express know about an error?</h3>
+<p>There are quite a few ways, but the easiest is just to <cite>throw</cite> an error!</p>
+</div>
+<div class="section" id="throwing-an-error">
+<h3>Throwing an error</h3>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/users/:username&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="nx">res</span><span class="p">,</span><span class="nx">next</span><span class="p">){</span>
+  <span class="kr">const</span> <span class="nx">foundUser</span> <span class="o">=</span> <span class="nx">user</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="nx">u</span> <span class="p">=&gt;</span> <span class="nx">u</span><span class="p">.</span><span class="nx">username</span> <span class="o">===</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">username</span><span class="p">)</span>
+  <span class="k">if</span><span class="p">(</span><span class="nx">foundUser</span> <span class="o">===</span> <span class="kc">undefined</span><span class="p">){</span>
+    <span class="k">throw</span> <span class="s2">&quot;Not found!&quot;</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">({</span><span class="nx">user</span><span class="o">:</span> <span class="nx">foundUser</span><span class="p">})</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="a-couple-issues-here">
+<h3>A couple issues here</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>We canât easily see the stack trace</li>
+<li>What about attaching a status code like 404 or 401?</li>
+<li>If we want that kind of flexibility, we need to create it!</li>
+</ul>
+</div>
+</div>
+<div class="section" id="let-s-make-our-own-error-class">
+<h3>Letâs make our own error class!</h3>
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">demo/routing-app/expressError.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** ExpressError extends the normal JS error so we can easily</span>
+<span class="cm"> *  add a status when we make an instance of it.</span>
+<span class="cm"> *</span>
+<span class="cm"> *  The error-handling middleware will return this.</span>
+<span class="cm"> */</span>
+
+<span class="kr">class</span> <span class="nx">ExpressError</span> <span class="kr">extends</span> <span class="nb">Error</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">message</span><span class="p">,</span> <span class="nx">status</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kr">super</span><span class="p">(</span><span class="nx">message</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="nx">status</span><span class="p">;</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">stack</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">ExpressError</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id1">
+<h3>Throwing an error</h3>
+<div class="docutils container">
+<p>Now that we have our own custom error class, letâs use it!</p>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">ExpressError</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;./expressError&quot;</span><span class="p">)</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/users/:username&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">){</span>
+  <span class="kr">const</span> <span class="nx">foundUser</span> <span class="o">=</span> <span class="nx">user</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="nx">u</span> <span class="p">=&gt;</span> <span class="nx">u</span><span class="p">.</span><span class="nx">username</span> <span class="o">===</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">username</span><span class="p">)</span>
+  <span class="k">if</span><span class="p">(</span><span class="nx">foundUser</span> <span class="o">===</span> <span class="kc">undefined</span><span class="p">){</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="nx">ExpressError</span><span class="p">(</span><span class="s2">&quot;Not found!&quot;</span><span class="p">,</span> <span class="mi">404</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">({</span><span class="nx">user</span><span class="o">:</span> <span class="nx">foundUser</span><span class="p">})</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="almost-there">
+<h3>Almost thereâ¦..</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Weâre throwing errors properly, but weâre not actually responding with anything from the server.</li>
+<li>We need to instruct express how to respond when we throw errors.</li>
+<li>For that, we need to introduce two new concepts, error handling and <cite>next</cite></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id2">
+<h3>Error Handling in express</h3>
+<p>In Express, error handlers are special types of handlers. Here are the rules for building an error handler:</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Error handlers should be at the bottom of the file, just above <code class="docutils literal notranslate"><span class="pre">app.listen</span></code>. This is because <em>any</em> handlers defined above can potentially throw errors!</li>
+<li>They should match every type of request or path, so they should utilize <code class="docutils literal notranslate"><span class="pre">app.use(callback)</span></code>.</li>
+<li>The callback signature to error handlers is unique: it has 4 parameters instead of three (this is how Express knows itâs an error-handler): <code class="docutils literal notranslate"><span class="pre">function</span> <span class="pre">(error,</span> <span class="pre">req,</span> <span class="pre">res,</span> <span class="pre">next)</span></code></li>
+</ul>
+</div>
+</div>
+<div class="section" id="error-handler-example">
+<h3>Error Handler Example</h3>
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">demo/routing-app/app.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">// generic error handler</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// the default status is 500 Internal Server Error</span>
+  <span class="kd">let</span> <span class="nx">status</span> <span class="o">=</span> <span class="nx">err</span><span class="p">.</span><span class="nx">status</span> <span class="o">||</span> <span class="mi">500</span><span class="p">;</span>
+
+  <span class="c1">// set the status and alert the user</span>
+  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="nx">status</span><span class="p">).</span><span class="nx">json</span><span class="p">({</span>
+    <span class="nx">error</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">message</span><span class="o">:</span> <span class="nx">err</span><span class="p">.</span><span class="nx">message</span><span class="p">,</span>
+      <span class="nx">status</span><span class="o">:</span> <span class="nx">status</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
+<span class="p">});</span> 
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="getting-from-our-route-to-our-global-error-handler">
+<h3>Getting from our route to our global error handler</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Weâve correctly set up our global error handler and we are throwing errors properly in our routes.</li>
+<li>Once we <cite>throw</cite>, we need to tell Express to send that error to the global error handler.</li>
+<li>We need to move onto the <cite>next</cite> thing!</li>
+<li>Every single route handler can accept <strong>three</strong> parameters, req, res and next!</li>
+<li>To move on to the error handler, we invoke the <cite>next</cite> function inside of our route handlers.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="handling-errors-correctly">
+<h3>Handling errors correctly</h3>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">ExpressError</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;./expressError&quot;</span><span class="p">)</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/users/:username&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">){</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">foundUser</span> <span class="o">=</span> <span class="nx">users</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">u</span><span class="p">){</span>
+      <span class="k">return</span> <span class="nx">u</span><span class="p">.</span><span class="nx">username</span> <span class="o">===</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">username</span>
+    <span class="p">})</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">foundUser</span> <span class="o">===</span> <span class="kc">undefined</span><span class="p">){</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nx">ExpressError</span><span class="p">(</span><span class="s2">&quot;Not found!&quot;</span><span class="p">,</span> <span class="mi">404</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">({</span><span class="nx">user</span><span class="o">:</span> <span class="nx">foundUser</span><span class="p">})</span>
+  <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">err</span><span class="p">){</span>
+    <span class="k">return</span> <span class="nx">next</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="to-summarize">
+<h3>To summarize</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>All of your route handlers have a <cite>try/catch</cite></li>
+<li>If you want to respond with an error, <cite>throw</cite> a <cite>new ExpressError</cite></li>
+<li>In the <cite>catch</cite> for your route handler, <strong>always</strong> <cite>return next(err)</cite> where <cite>err</cite> is what is passed to <cite>catch</cite></li>
+<li>In your <cite>app.js</cite> make sure you have a global error handler as well as one for 404s</li>
+</ul>
+</div>
+</div>
+<div class="section" id="handling-404-errors">
+<h3>Handling 404 Errors</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>If a route does not match, letâs make sure to handle that as well.</li>
+</ul>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-text">demo/routing-app/app.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">// 404 handler</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">notFoundError</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ExpressError</span><span class="p">(</span><span class="s2">&quot;Not Found&quot;</span><span class="p">,</span> <span class="mi">404</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">next</span><span class="p">(</span><span class="nx">notFoundError</span><span class="p">)</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="putting-it-all-together">
+<h3>Putting it all together</h3>
+<div class="literal-block-wrapper docutils container" id="id16">
+<div class="code-block-caption"><span class="caption-text">demo/routing-app/app.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">// 404 handler</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">notFoundError</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ExpressError</span><span class="p">(</span><span class="s2">&quot;Not Found&quot;</span><span class="p">,</span> <span class="mi">404</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">next</span><span class="p">(</span><span class="nx">notFoundError</span><span class="p">)</span>
+<span class="p">});</span>
+
+<span class="c1">// generic error handler</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// the default status is 500 Internal Server Error</span>
+  <span class="kd">let</span> <span class="nx">status</span> <span class="o">=</span> <span class="nx">err</span><span class="p">.</span><span class="nx">status</span> <span class="o">||</span> <span class="mi">500</span><span class="p">;</span>
+
+  <span class="c1">// set the status and alert the user</span>
+  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="nx">status</span><span class="p">).</span><span class="nx">json</span><span class="p">({</span>
+    <span class="nx">error</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">message</span><span class="o">:</span> <span class="nx">err</span><span class="p">.</span><span class="nx">message</span><span class="p">,</span>
+      <span class="nx">status</span><span class="o">:</span> <span class="nx">status</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
+<span class="p">});</span> 
+<span class="c1">// end generic handler</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="mi">3000</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Server is listening on port 3000&#39;</span><span class="p">);</span>
+<span class="p">});</span> 
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="error-handling-summary">
+<h3>Error Handling Summary</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Define a global error handler towards the bottom of your <cite>app.js</cite></li>
+<li>Inside of your route handlers, place a <cite>try/catch</cite>.</li>
+<li>Inside of the <cite>try</cite> block, if something goes wrong, <cite>throw</cite> an error</li>
+<li>Inside of the <cite>catch</cite> block - <strong>always return `next`</strong> and pass in the error from <cite>catch</cite></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="debugging-with-express">
+<h2>Debugging with Express</h2>
+<div class="section" id="our-current-debugging-process">
+<h3>Our current debugging process</h3>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>console.log</cite></li>
+<li>A good start, just like <cite>print</cite> with Python</li>
+</ul>
+</div>
+</div>
+<div class="section" id="we-can-do-better">
+<h3>We can do better!</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Letâs use something like <cite>pdb</cite></li>
+<li>Even better, letâs use something we already know about - the Chrome Dev Tools!</li>
+</ul>
+</div>
+</div>
+<div class="section" id="debugging-node">
+<h3>Debugging Node</h3>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">--inspect-brk</span></code> flag when executing a Node.js file from the command line to debug it.</p>
+<pre class="console literal-block">
+$ <span class="cmd">node --inspect-brk sumEvens.js</span>
+Debugger listening on ws://127.0.0.1:9229/a98973...
+For help, see: https://nodejs.org/en/docs/inspector
+</pre>
+<div class="docutils container">
+<p>Open <em>chrome://inspect</em> to pull it up in the <strong>Chrome Debugger!</strong> ð ð¤¯  ð</p>
+</div>
+</div>
+<div class="section" id="debugging-express">
+<h3>Debugging Express</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>With <cite>âinspect-brk</cite> a breakpoint will be activated on the first line of your application</li>
+<li>You can also use the <cite>debugger</cite> keyword to activate a breakpoint</li>
+</ul>
+</div>
+<div class="docutils container">
+<pre class="console literal-block">
+$ <span class="cmd">nodemon --inspect</span>
+Debugger listening on ws://127.0.0.1:9229/a98973...
+For help, see: https://nodejs.org/en/docs/inspector
+</pre>
+<div class="docutils container">
+<p>Open <em>chrome://inspect</em> to pull it up in the <strong>Chrome Debugger!</strong> ð ð¤¯  ð</p>
+</div>
+</div>
+</div>
+<div class="section" id="your-turn">
+<h3>Your Turn!</h3>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script>
+<script type="text/javascript" src="_static/language_data.js"></script> 
+</body>
+</html>
