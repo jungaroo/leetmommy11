@@ -2,6 +2,12 @@ import requests
 import bs4
 import re
 
+BASE_LINKS = {
+    'r11': "http://curric.rithmschool.com/r11/lectures/",
+    'r10': "http://curric.rithmschool.com/r10/lectures/",
+    'r9': "http://curric.rithmschool.com/r9/lectures/",
+    'r8': "http://curric.rithmschool.com/r8/lectures/",
+}
 BASE_URL = "http://curric.rithmschool.com/r11/lectures/"
 
 class WordSearcher():
