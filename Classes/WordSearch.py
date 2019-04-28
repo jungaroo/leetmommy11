@@ -31,8 +31,10 @@ class WordSearcher():
         return links
 
 
-    def get_links_with_word(self, word):
-        """Returns all the links with that word """
+    def get_links_with_word(self, word: str):
+        """Returns all the links with that word. 
+            word is the query word """
+
         output = []
 
         links = self.get_lecture_links()
@@ -47,9 +49,9 @@ class WordSearcher():
 
         return output
 
-    def get_pre_links_with_word(self, word):
-        """Returns all the links with that word"""
-        
+    def get_pre_links_with_word(self, word: str, search_func=None):
+        """Returns all the links with that word """
+             
         output = []
 
         links = self.get_lecture_links()
@@ -57,11 +59,12 @@ class WordSearcher():
         # search for the word
         for link in links:
 
-            html_text = get_link_html(link)
+            html_text = self.get_link_html(link)
             
             soup = bs4.BeautifulSoup(html_text, features='html5lib')
             pre = soup.find_all('pre')   
             for code_snip in pre:
+   
                 if word.lower() in code_snip.text.lower():  
                     output.append((f"{self.base_url}{link}", code_snip.text))
         
@@ -80,9 +83,11 @@ class WordSearcher():
         # Files are stored with this format:
         file_name = f"./html/{clean_base}{clean_link}.html"
 
+        # If file exists, just read from it
         try:
             with open(file_name, "r") as html_file: 
                 html_text = html_file.read()
+        # If file does not exist, issue a GET request and then store it as a file
         except FileNotFoundError:
             print("Seeing file for first time")
             response = requests.get(self.base_url + link)

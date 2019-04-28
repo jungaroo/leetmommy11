@@ -43,7 +43,7 @@ def list_snipit_links():
                 all_links[c] = memo2.get((c,search_word))
             else: 
                 wc = WordSearcher(BASE_LINKS.get(c))
-                links = wc.get_links_with_word_search_only_pre(search_word)
+                links = wc.get_pre_links_with_word(search_word)
                 memo2[(c,search_word)] = links
                 all_links[c] = links
             
