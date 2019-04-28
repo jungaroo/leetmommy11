@@ -32,7 +32,7 @@ class WordSearcher():
         for link in links:
             response = requests.get(self.base_url + link)
             soup = bs4.BeautifulSoup(response.text, features='html5lib')
-            if word in soup.text:  # regular expression
+            if word.lower() in soup.text.lower():  # regular expression
                 # print("Try checking in:", f"{BASE_URL}{link}")
                 output.append(f"{self.base_url}{link}")
 
@@ -71,7 +71,8 @@ class WordSearcher():
             soup = bs4.BeautifulSoup(html_text, features='html5lib')
             pre = soup.find_all('pre')   
             for code_snip in pre:
-                if word in code_snip.text:  # regular expression
+                word = word.lower()
+                if word in code_snip.text.lower():  # regular expression
                     # print("Try checking in:", f"{BASE_URL}{link}")
                     output.append((f"{self.base_url}{link}", code_snip.text))
         
