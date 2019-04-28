@@ -50,9 +50,9 @@ def list_snipit_links():
     print(all_links)
     return render_template("codes.html",links_and_snips=all_links)
 
-@app.route('/orlandoSearch')
+@app.route('/linkSearch')
 def list_lecture_links():
-    """Retrun all lecture links with word"""
+    """Return all lecture links with word"""
 
     search_word = request.args.get('search-word', None)
 
@@ -70,5 +70,5 @@ def list_lecture_links():
                 memo[(c,search_word)] = links
                 all_links[c] = links
             
-    return jsonify(lecture_links=all_links)
+    return render_template("codelinks.html",lecture_links=all_links)
 
