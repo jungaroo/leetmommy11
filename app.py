@@ -1,9 +1,6 @@
 from flask import Flask, request, render_template, redirect, jsonify
-from Classes.WordSearch import WordSearcher, BASE_URL, BASE_LINKS
-import os
-# from models import db, connect_db, User, Post, Tag, PostTag
-# from sqlalchemy import desc
-# from notes_search import BASE_URL
+from Classes.WordSearch import WordSearcher, BASE_URL, BASE_LINKS, COHORTS
+
 app = Flask(__name__)
 
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///blogly'
@@ -21,7 +18,6 @@ app = Flask(__name__)
 
 
 ##################################################
-
 memo = {}
 memo2 = {}
 memo3 = {}
@@ -42,7 +38,7 @@ def list_snipit_links():
 
     search_word = request.args.get('search-word', None)
 
-    checks = [request.args.get('r11', False), request.args.get('r10', False), request.args.get('r9', False), request.args.get('r8', False)]
+    checks = [request.args.get(cohort) for cohort in COHORTS]
 
     all_links = {}
 
@@ -52,7 +48,7 @@ def list_snipit_links():
                 all_links[c] = memo2.get((c,search_word))
             else: 
                 wc = WordSearcher(BASE_LINKS.get(c))
-                links = wc.get_links_search_only_pre(search_word)
+                links = wc.get_pre_links_with_word(search_word)
                 memo2[(c,search_word)] = links
                 all_links[c] = links
             
@@ -82,13 +78,13 @@ def render_conceptual_search_results():
     return render_template("conceptualNotes.html",links_and_snips=all_links)
 
 
-@app.route('/orlandoSearch')
+@app.route('/linkSearch')
 def list_lecture_links():
-    """Retrun all lecture links with word"""
+    """Return all lecture links with word"""
 
     search_word = request.args.get('search-word', None)
 
-    checks = [request.args.get('r11', False), request.args.get('r10', False), request.args.get('r9', False), request.args.get('r8', False)]
+    checks = [request.args.get(cohort) for cohort in COHORTS]
 
     all_links = {}
 
@@ -98,9 +94,9 @@ def list_lecture_links():
                 all_links[c] = memo.get((c,search_word))
             else: 
                 wc = WordSearcher(BASE_LINKS.get(c))
-                links = wc.get_links(search_word)
+                links = wc.get_links_with_word(search_word)
                 memo[(c,search_word)] = links
                 all_links[c] = links
             
-    return jsonify(lecture_links=all_links)
+    return render_template("codelinks.html",lecture_links=all_links)
 

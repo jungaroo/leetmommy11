@@ -8,63 +8,20 @@ Welcome to Leet-Mommy Search
 
 <div class='container'>
 
-    {% if links_and_snips.get('r11') != None %}
-    <h1>R11 Notes:</h1>
+    {% if links_and_snips.keys() %}
+    {% for cohort in links_and_snips.keys() %}
+    <h1>R{{cohort[1:]}} Notes:</h1>
     <ul class="list-group">
 
-        {% for link in links_and_snips.get('r11') %}
+        {% for link in links_and_snips.get(cohort) %}
         <li class="list-group-item"><strong><a href="{{link[0]}}">{{link[0]}}</a></strong></li>
         <li class="list-group-item">
-            <pre>{{link[1]}}</pre>
+            <div class='.bg-secondary'>{{link[1]|safe}}</div>
         </li>
         {% endfor %}
     </ul>
-
+    {% endfor %}
     {% endif %}
-
-    {% if links_and_snips.get('r10') != None %}
-    <h1>R10 Notes:</h1>
-    <ul class="list-group">
-
-        {% for link in links_and_snips.get('r10') %}
-        <li class="list-group-item"><strong><a href="{{link[0]}}">{{link[0]}}</a></strong></li>
-        <li class="list-group-item">
-            <pre>{{link[1]}}</pre>
-        </li>
-        {% endfor %}
-    </ul>
-
-    {% endif %}
-
-    {% if links_and_snips.get('r9') != None %}
-    <h1>R9 Notes:</h1>
-    <ul class="list-group">
-
-        {% for link in links_and_snips.get('r9') %}
-        <li class="list-group-item"><strong><a href="{{link[0]}}">{{link[0]}}</a></strong></li>
-        <li class="list-group-item">
-            <pre>{{link[1]}}</pre>
-        </li>
-        {% endfor %}
-    </ul>
-
-    {% endif %}
-
-    {% if links_and_snips.get('r8') != None %}
-    <h1>R8 Notes:</h1>
-    <ul class="list-group">
-
-        {% for link in links_and_snips.get('r8') %}
-        <li class="list-group-item"><strong><a href="{{link[0]}}">{{link[0]}}</a></strong></li>
-        <li class="list-group-item">
-            <pre>{{link[1]}}</pre>
-        </li>
-        {% endfor %}
-    </ul>
-
-    {% endif %}
-
-
 
 </div>
 

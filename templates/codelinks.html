@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>Notes:</h1>
+  
+  <ul class="list-group">
+
+    {% for cohort, links in lecture_links.items() %}
+      <p> Cohort: {{ cohort }}</p> 
+        {% for link in links %} 
+          <li class="list-group-item"><strong><a href="{{ link }}">{{ link }}</a></strong></li>
+        {% endfor %}
+    {% endfor %}
+      
+  </ul>
+{% endblock %}
