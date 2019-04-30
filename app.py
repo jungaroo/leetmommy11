@@ -11,7 +11,6 @@ app = Flask(__name__)
 # app.config['SQLALCHEMY_ECHO'] = True
 
 
-
 # app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
 #     'DATABASE_URL', 'postgres:///flask-heroku')
 
@@ -25,6 +24,7 @@ app = Flask(__name__)
 
 memo = {}
 memo2 = {}
+memo3 = {}
 
 @app.route('/')
 def landing():
@@ -58,6 +58,29 @@ def list_snipit_links():
             
     print(all_links)
     return render_template("codes.html",links_and_snips=all_links)
+
+@app.route('/conceptualSearch')
+def render_conceptual_search_results():
+
+    search_word = request.args.get('search-word', None)
+
+    r_classes = [arg for arg in [*request.args] if arg != 'search-word']
+
+    all_links = {}
+
+    for c in r_classes:
+        if c:
+            if memo3.get((c,search_word)):
+                all_links[c] = memo3.get((c,search_word))
+            else: 
+                wc = WordSearcher(BASE_LINKS.get(c))
+                links = wc.get_conceptual_answers(search_word)
+                memo3[(c,search_word)] = links
+                all_links[c] = links
+            
+    print(all_links)
+    return render_template("conceptualNotes.html",links_and_snips=all_links)
+
 
 @app.route('/orlandoSearch')
 def list_lecture_links():
