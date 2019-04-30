@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Welcome to Leet-Mommy Search
+{% endblock %}
+
+{% block content %}
+
+<div class='container'>
+
+    {% if links_and_snips.keys() %}
+    {% for cohort in links_and_snips.keys() %}
+    <h1>R{{cohort[1:]}} Notes:</h1>
+    <ul class="list-group">
+
+        {% for link in links_and_snips.get(cohort) %}
+        <li class="list-group-item"><strong><a href="{{link[0]}}">{{link[0]}}</a></strong></li>
+        <li class="list-group-item">
+            <div class='.bg-secondary'>{{link[1]|safe}}</div>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endfor %}
+    {% endif %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,310 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Testing with Jest</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Testing with Jest</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Testing with Jest</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#an-introduction-to-jest">An Introduction to Jest</a><ul>
+<li><a class="reference internal" href="#jest">Jest</a></li>
+<li><a class="reference internal" href="#installing-jest">Installing Jest</a></li>
+<li><a class="reference internal" href="#running-tests-with-jest">Running tests with Jest</a></li>
+<li><a class="reference internal" href="#matchers">Matchers</a></li>
+<li><a class="reference internal" href="#matchers-in-action">Matchers in action</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#unit-testing-in-jest">Unit Testing in Jest</a><ul>
+<li><a class="reference internal" href="#testing-review">Testing review</a></li>
+<li><a class="reference internal" href="#unit-tests">Unit Tests</a></li>
+<li><a class="reference internal" href="#let-s-write-tests-for-an-ecommerce-application">Letâs write tests for an ecommerce application!</a></li>
+<li><a class="reference internal" href="#before-after">Before / After</a></li>
+<li><a class="reference internal" href="#what-it-looks-like">What it looks like</a></li>
+<li><a class="reference internal" href="#let-s-build-the-functionality">Letâs build the functionality!</a></li>
+<li><a class="reference internal" href="#your-turn">Your Turn</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="testing-with-jest">
+<h1>Testing with Jest</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Write unit tests using Jest</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="an-introduction-to-jest">
+<h2>An Introduction to Jest</h2>
+<div class="section" id="jest">
+<h3>Jest</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Jest is an open-source testing platform written by Facebook</li>
+<li>Itâs built on top of Jasmine!</li>
+<li>Easy to test in environments that arenât browser-based</li>
+<li>Also very popular for testing React apps</li>
+<li>More information: <a class="reference external" href="https://jestjs.io/">Jestjs.io</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="installing-jest">
+<h3>Installing Jest</h3>
+<pre class="console literal-block">
+$ <span class="cmd">npm i --global jest</span>
+</pre>
+<div class="docutils container">
+<ul class="simple">
+<li>This installs jest globally so you can use it anywhere</li>
+</ul>
+</div>
+</div>
+<div class="section" id="running-tests-with-jest">
+<h3>Running tests with Jest</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>You can place all of your tests in a folder called <cite>__tests__</cite> or in the same directory, name your test files <cite>NAME_OF_FILE.test.js</cite></li>
+<li>If you have a <cite>package.json</cite>, you donât need additional configuration.<ul>
+<li>If not, create <cite>jest.config.js</cite> file. It can be empty, you just need one.</li>
+</ul>
+</li>
+<li>Run all tests using the command <cite>jest</cite><ul>
+<li>You can run an individual test using <cite>jest NAME_OF_FILE</cite></li>
+<li>Tests run in parallel by defaultâto run them in order, use <code class="docutils literal notranslate"><span class="pre">jest</span> <span class="pre">--</span> <span class="pre">-i</span></code></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="matchers">
+<h3>Matchers</h3>
+<dl class="docutils">
+<dt><code class="docutils literal notranslate"><span class="pre">.toEqual(obj)</span></code></dt>
+<dd>Has the same value (eg, different objects with same values match)</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">.toBe(obj)</span></code></dt>
+<dd>Is the same object (eg, different objects with same values do not)</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">.toContain(obj)</span></code></dt>
+<dd>Does object/array contain this item?</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">.not.</span></code></dt>
+<dd>Add before matcher to invert (eg <code class="docutils literal notranslate"><span class="pre">expect([1,2,3]).not.toEqual([4,5,6])</span></code>)</dd>
+</dl>
+<p><a class="reference external" href="https://jestjs.io/docs/en/using-matchers">https://jestjs.io/docs/en/using-matchers</a></p>
+</div>
+<div class="section" id="matchers-in-action">
+<h3>Matchers in action</h3>
+<div class="docutils container">
+<p>Letâs compare <cite>toBe</cite> and <cite>toEqual</cite></p>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">matchers.test.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;matchers&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+  <span class="nx">it</span><span class="p">(</span><span class="s2">&quot;shows that toBe and toEqual are different&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+    <span class="kd">let</span> <span class="nx">nums</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">];</span>
+    <span class="kd">let</span> <span class="nx">newNums</span> <span class="o">=</span> <span class="nx">nums</span><span class="p">.</span><span class="nx">slice</span><span class="p">()</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">nums</span><span class="p">).</span><span class="nx">not</span><span class="p">.</span><span class="nx">toBe</span><span class="p">(</span><span class="nx">newNums</span><span class="p">)</span> <span class="c1">// not the same reference!</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">nums</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="nx">newNums</span><span class="p">)</span> <span class="c1">// same values so we use toEqual</span>
+  <span class="p">})</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="unit-testing-in-jest">
+<h2>Unit Testing in Jest</h2>
+<div class="section" id="testing-review">
+<h3>Testing review</h3>
+<div class="docutils container">
+<ul class="simple">
+<li><strong>Unit Test</strong>: does this individual component work?</li>
+<li><strong>Integration Tests</strong>: do the parts work together?</li>
+<li><strong>End-to-end Test</strong>: does the application meet the requirements?</li>
+</ul>
+</div>
+</div>
+<div class="section" id="unit-tests">
+<h3>Unit Tests</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Test one âunitâ of functionality<ul>
+<li>Typically, one function or method</li>
+</ul>
+</li>
+<li>Donât test integration of components<ul>
+<li>Donât test framework itself <em>(eg, Express)</em></li>
+</ul>
+</li>
+<li>Promote modular code<ul>
+<li>Write code with testing in mind</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="let-s-write-tests-for-an-ecommerce-application">
+<h3>Letâs write tests for an ecommerce application!</h3>
+<div class="docutils container">
+<p>We need a function to calculate the total number of items in our cart.</p>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">shopping-cart-calculations.test.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;calculateTotalQuantity&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;it calculates total quantity&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">cart</span> <span class="o">=</span> <span class="p">[</span>
+      <span class="p">{</span> <span class="nx">item</span><span class="o">:</span> <span class="s2">&quot;le croix&quot;</span><span class="p">,</span> <span class="nx">price</span><span class="o">:</span> <span class="mf">4.99</span><span class="p">,</span> <span class="nx">quantity</span><span class="o">:</span> <span class="mi">3</span> <span class="p">},</span>
+      <span class="p">{</span> <span class="nx">item</span><span class="o">:</span> <span class="s2">&quot;pretzels&quot;</span><span class="p">,</span> <span class="nx">price</span><span class="o">:</span> <span class="mf">8.99</span><span class="p">,</span> <span class="nx">quantity</span><span class="o">:</span> <span class="mi">10</span> <span class="p">}</span>
+    <span class="p">];</span>
+    <span class="kr">const</span> <span class="nx">totalQuantity</span> <span class="o">=</span> <span class="nx">calculateTotalQuantity</span><span class="p">(</span><span class="nx">cart</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">totalQuantity</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">13</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<p>We also need a function to calculate the total price of all items in our cart.</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;calculateCartTotal&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// let&#39;s make a variable cart to be used in each test</span>
+  <span class="kd">let</span> <span class="nx">cart</span><span class="p">;</span>
+
+  <span class="nx">beforeEach</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">cart</span> <span class="o">=</span> <span class="p">[</span>
+      <span class="p">{</span> <span class="nx">item</span><span class="o">:</span> <span class="s2">&quot;le croix&quot;</span><span class="p">,</span> <span class="nx">price</span><span class="o">:</span> <span class="mf">4.99</span><span class="p">,</span> <span class="nx">quantity</span><span class="o">:</span> <span class="mi">3</span> <span class="p">},</span>
+      <span class="p">{</span> <span class="nx">item</span><span class="o">:</span> <span class="s2">&quot;pretzels&quot;</span><span class="p">,</span> <span class="nx">price</span><span class="o">:</span> <span class="mf">8.99</span><span class="p">,</span> <span class="nx">quantity</span><span class="o">:</span> <span class="mi">10</span> <span class="p">}</span>
+    <span class="p">];</span>
+  <span class="p">});</span>
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;it calculates total without discount&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">total</span> <span class="o">=</span> <span class="nx">calculateCartTotal</span><span class="p">(</span><span class="nx">cart</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">total</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mf">104.87</span><span class="p">);</span>
+  <span class="p">});</span>
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;it calculates total with discount&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">total</span> <span class="o">=</span> <span class="nx">calculateCartTotal</span><span class="p">(</span><span class="nx">cart</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">total</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mf">52.44</span><span class="p">);</span>
+  <span class="p">});</span>
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;it handles empty carts&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">total</span> <span class="o">=</span> <span class="nx">calculateCartTotal</span><span class="p">([]);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">total</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="before-after">
+<h3>Before / After</h3>
+<p>Jest gives us quite a few <cite>hooks</cite> we can tap into so we do not have to repeat ourselves</p>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>beforeAll</cite> - run before all tests have finished, useful for one-time setup logic</li>
+<li><cite>beforeEach</cite> - run before all tests have finished, useful for frequent setup logic</li>
+<li><cite>afterEach</cite> - run before all tests have finished, useful for frequent tear down logic</li>
+<li><cite>afterAll</cite> - run after all tests have finished, useful for one-time tear down logic</li>
+</ul>
+</div>
+</div>
+<div class="section" id="what-it-looks-like">
+<h3>What it looks like</h3>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">beforeAll</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Run before all tests&quot;</span><span class="p">)</span>
+<span class="p">})</span>
+
+<span class="nx">beforeEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Run before each it&quot;</span><span class="p">)</span>
+<span class="p">})</span>
+
+<span class="nx">afterEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Run after each it&quot;</span><span class="p">)</span>
+<span class="p">})</span>
+
+<span class="nx">afterAll</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Run after all tests&quot;</span><span class="p">)</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="let-s-build-the-functionality">
+<h3>Letâs build the functionality!</h3>
+<div class="docutils container">
+<p>This code passes our tests!</p>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">demo/shopping-cart-calculations.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** calculate total price rounded to two decimals</span>
+<span class="cm"> -  discount amount is an optional float */</span>
+
+<span class="kd">function</span> <span class="nx">calculateCartTotal</span><span class="p">(</span><span class="nx">cart</span><span class="p">,</span> <span class="nx">discountAmount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">totalPrice</span> <span class="o">=</span> <span class="nx">cart</span><span class="p">.</span><span class="nx">reduce</span><span class="p">(</span>
+      <span class="p">(</span><span class="nx">price</span><span class="p">,</span> <span class="nx">item</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">(</span><span class="nx">price</span> <span class="o">+</span> <span class="nx">item</span><span class="p">.</span><span class="nx">price</span> <span class="o">*</span> <span class="nx">item</span><span class="p">.</span><span class="nx">quantity</span><span class="p">),</span> <span class="mi">0</span><span class="p">);</span>
+  <span class="kd">let</span> <span class="nx">discountedPrice</span> <span class="o">=</span> <span class="nx">totalPrice</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="nx">discountAmount</span><span class="p">);</span>
+  <span class="c1">// toFixed returns string; convert to a number</span>
+  <span class="k">return</span> <span class="o">+</span><span class="nx">discountedPrice</span><span class="p">.</span><span class="nx">toFixed</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cm">/** sum the quantity key for each item */</span>
+
+<span class="kd">function</span> <span class="nx">calculateTotalQuantity</span><span class="p">(</span><span class="nx">cart</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">cart</span><span class="p">.</span><span class="nx">reduce</span><span class="p">((</span><span class="nx">tot</span><span class="p">,</span> <span class="nx">item</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">(</span><span class="nx">tot</span> <span class="o">+</span> <span class="nx">item</span><span class="p">.</span><span class="nx">quantity</span><span class="p">),</span> <span class="mi">0</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="hll"><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class="hll">  <span class="nx">calculateCartTotal</span><span class="p">,</span>
+</span><span class="hll">  <span class="nx">calculateTotalQuantity</span>
+</span><span class="hll"><span class="p">};</span>
+</span></pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="your-turn">
+<h3>Your Turn</h3>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script>
+<script type="text/javascript" src="_static/language_data.js"></script> 
+</body>
+</html>

@@ -30,7 +30,6 @@ class WordSearcher():
 
         return links
 
-
     def get_links_with_word(self, word: str):
         """Returns all the links with that word. 
             word is the query word """
@@ -70,6 +69,42 @@ class WordSearcher():
         
         return output
 
+    def get_conceptual_answers(self, word):
+
+        output = []
+
+        # Search
+        response = requests.get(self.base_url)
+        soup = bs4.BeautifulSoup(response.text, features='html5lib')
+
+        # First grab all the href links for the lectures
+        html_links = soup.find_all('a', href=True)
+        links = [a['href'] for a in html_links if not a['href'].endswith('.zip')][1:]
+
+        # search for the word
+        for link in links:
+            html_text = self.get_link_html(link)
+            
+            soup = bs4.BeautifulSoup(html_text, features='html5lib')
+            
+            if word.lower() in soup.text.lower():
+
+                full_link = f"{self.base_url}{link}"
+                body = soup.find('body')
+                img_tags = body.find_all('img')
+
+                ## replace img tag with full link
+                for img_tag in img_tags:
+                    fixed_image_link = f"{full_link}{img_tag['src']}"
+                    img_tag['src'] = img_tag['src'].replace(img_tag['src'], fixed_image_link)
+                
+                output.append((full_link, body))
+        
+        return output
+
+        
+    
+
     def get_link_html(self, link : str):
         """Returns the html text from the given link.
         If the html for that text is not stored in the html folder, issue a get request and store it.
@@ -96,3 +131,6 @@ class WordSearcher():
             html_text = response.text
 
         return html_text
+
+wc = WordSearcher("http://curric.rithmschool.com/r11/lectures/")
+wc.get_conceptual_answers('flask')
