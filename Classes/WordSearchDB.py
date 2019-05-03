@@ -1,6 +1,5 @@
 from Classes.WordSearch import WordSearcher
-from Classes.DBConnector import DBConnector
-from secret import MONGO_DB_URI
+
 
 class WordSearcherDB(WordSearcher):
 
@@ -63,6 +62,8 @@ class WordSearcherDB(WordSearcher):
             record = self.dbC.isRecordInCollection(COLLECTION_NAME,SEACH_QUERY)
             return record.get('result')
         else: 
+
+            # refactor to make factory method
             lecture_pages = super().get_lecture_pages(word)
             record = {"cohort": self.cohort,
                             "search": word,
