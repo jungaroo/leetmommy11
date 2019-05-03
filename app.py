@@ -15,7 +15,6 @@ if not MONGO_DB_URI:
 app = Flask(__name__)
 
 
-
 # Connect to DB leetmommy
 dbC = DBConnector(MONGO_DB_URI,'leetmommy')
 
