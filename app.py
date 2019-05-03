@@ -1,10 +1,20 @@
 from flask import Flask, request, render_template, redirect, jsonify
 from Classes.WordSearch import WordSearcher, BASE_URL, BASE_LINKS, COHORTS
-from secret import MONGO_DB_URI
 from Classes.DBConnector import DBConnector
 from Classes.WordSearchDB import WordSearcherDB
+import os
+
+
+MONGO_DB_URI = os.environ.get(
+    'MONGO_DB_URI', False)
+
+if not MONGO_DB_URI:
+    import secret
+    MONGO_DB_URI = secret.MONGO_DB_URI
 
 app = Flask(__name__)
+
+
 
 # Connect to DB leetmommy
 dbC = DBConnector(MONGO_DB_URI,'leetmommy')

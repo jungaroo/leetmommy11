@@ -1,6 +1,5 @@
 import requests
 import bs4
-import re
 # from fuzzywuzzy import fuzz
 
 COHORTS = ['r11', 'r10', 'r9', 'r8']

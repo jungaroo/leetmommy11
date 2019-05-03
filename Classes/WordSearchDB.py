@@ -1,6 +1,6 @@
 from Classes.WordSearch import WordSearcher
 from Classes.DBConnector import DBConnector
-from secret import MONGO_DB_URI
+
 
 class WordSearcherDB(WordSearcher):
 

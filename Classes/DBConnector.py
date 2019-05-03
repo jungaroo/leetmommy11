@@ -1,6 +1,5 @@
 from pymongo import MongoClient, DESCENDING
 from pymongo.errors import DuplicateKeyError
-from secret import MONGO_DB_URI
 
 from flask import jsonify
 class DBConnector():
