@@ -7,7 +7,6 @@ COHORTS = ['r11', 'r10', 'r9', 'r8']
 BASE_URL = "http://curric.rithmschool.com/{cohort}/lectures/"
 BASE_LINKS = {cohort : BASE_URL.format(cohort=cohort) for cohort in COHORTS}
 
-
 class WordSearcher():
     """Word Searcher class that uses web scraping and saved html files. """
 
@@ -65,11 +64,11 @@ class WordSearcher():
             for code_snip in pre:
    
                 if word.lower() in code_snip.text.lower():  
-                    output.append((f"{self.base_url}{link}", code_snip.text))
+                    output.append([f"{self.base_url}{link}", code_snip.text])
         
         return output
 
-    def get_conceptual_answers(self, word):
+    def get_lecture_pages(self, word):
 
         output = []
 
@@ -98,7 +97,7 @@ class WordSearcher():
                     fixed_image_link = f"{full_link}{img_tag['src']}"
                     img_tag['src'] = img_tag['src'].replace(img_tag['src'], fixed_image_link)
                 
-                output.append((full_link, body))
+                output.append((full_link, str(body)))
         
         return output
 
@@ -132,5 +131,5 @@ class WordSearcher():
 
         return html_text
 
-wc = WordSearcher("http://curric.rithmschool.com/r11/lectures/")
-wc.get_conceptual_answers('flask')
+# wc = WordSearcher("http://curric.rithmschool.com/r11/lectures/")
+# wc.get_conceptual_answers('flask')
