@@ -14,8 +14,18 @@ class WordSearcher():
         base_url is the link to the main page that contains all the lecture links"""
         
         self.base_url = base_url
+
+    def get_results(self, word, COLLECTION_NAME):
+
+        switcher = { 
+            "links": self._get_links_with_word(word), 
+            "code_snips": self._get_pre_links_with_word(word), 
+            "lecture_pages": self._get_lecture_pages(word)
+        }
+
+        return switcher.get(COLLECTION_NAME, [])
     
-    def get_lecture_links(self):
+    def _get_lecture_links(self):
         """Returns all the lecture links as an array of strings """
         
         # Go the the main links page
@@ -28,13 +38,13 @@ class WordSearcher():
 
         return links
 
-    def get_links_with_word(self, word: str):
+    def _get_links_with_word(self, word: str):
         """Returns all the links with that word. 
             word is the query word """
 
         output = []
 
-        links = self.get_lecture_links()
+        links = self._get_lecture_links()
 
         # Search for the word in each link
         for link in links:
@@ -46,12 +56,12 @@ class WordSearcher():
 
         return output
 
-    def get_pre_links_with_word(self, word: str, search_func=None):
+    def _get_pre_links_with_word(self, word: str, search_func=None):
         """Returns all the links with that word """
              
         output = []
 
-        links = self.get_lecture_links()
+        links = self._get_lecture_links()
 
         # search for the word
         for link in links:
@@ -64,10 +74,11 @@ class WordSearcher():
    
                 if word.lower() in code_snip.text.lower():  
                     output.append([f"{self.base_url}{link}", code_snip.text])
+
         
         return output
 
-    def get_lecture_pages(self, word):
+    def _get_lecture_pages(self, word):
 
         output = []
 

@@ -26,6 +26,12 @@ class DBConnector():
     def _lookupRecordInCollection(self, collection_name, searchDic):
         return self.db[collection_name].find(searchDic)[0]
 
+    def updateToCollection(self, collection_name, QUERY, newResultArr):
+        collection = self.db[collection_name]
+
+        newvalues = { "$set": { "result": newResultArr} }
+        return collection.update_one(QUERY, newvalues)
+
 
 # dbC = DBConnector(MONGO_DB_URI,'leetmommy')
 

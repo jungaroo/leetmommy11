@@ -1,0 +1,589 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Database OO Design Patterns</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Database OO Design Patterns</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Database OO Design Patterns</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#current-design">Current Design</a><ul>
+<li><a class="reference internal" href="#id2">Current Design</a></li>
+<li><a class="reference internal" href="#why-no-sql-in-routes">Why No SQL In Routes?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#object-orientation">Object Orientation</a><ul>
+<li><a class="reference internal" href="#id3">Object Orientation</a></li>
+<li><a class="reference internal" href="#abstraction">Abstraction</a></li>
+<li><a class="reference internal" href="#encapsulation">Encapsulation</a></li>
+<li><a class="reference internal" href="#polymorphism">Polymorphism</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#simple-oo-model">Simple OO Model</a><ul>
+<li><a class="reference internal" href="#id4">Simple OO Model</a></li>
+<li><a class="reference internal" href="#getting-all-cats">Getting All Cats</a></li>
+<li><a class="reference internal" href="#getting-a-cat">Getting A Cat</a></li>
+<li><a class="reference internal" href="#creating-a-cat">Creating a Cat</a></li>
+<li><a class="reference internal" href="#deleting-a-cat">Deleting a Cat</a></li>
+<li><a class="reference internal" href="#aging-a-cat">Aging a Cat</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#smarter-oo-model">Smarter OO Model</a><ul>
+<li><a class="reference internal" href="#id5">Smarter OO Model</a></li>
+<li><a class="reference internal" href="#dogs">Dogs</a></li>
+<li><a class="reference internal" href="#getting-all-dogs">Getting All Dogs</a></li>
+<li><a class="reference internal" href="#getting-a-dog">Getting A Dog</a></li>
+<li><a class="reference internal" href="#creating-a-dog">Creating a Dog</a></li>
+<li><a class="reference internal" href="#deleting-a-dog">Deleting a Dog</a></li>
+<li><a class="reference internal" href="#aging-a-dog">Aging a Dog</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#which-is-better">Which Is Better?</a><ul>
+<li><a class="reference internal" href="#id6">Which Is Better?</a></li>
+<li><a class="reference internal" href="#are-there-orms-for-javascript">Are There ORMs For JavaScript?</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="database-oo-design-patterns">
+<h1>Database OO Design Patterns</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Refactor our Express apps to separate view logic (routing) <span class="raw-reveal"><br></span> from model logic (data)</li>
+<li>Compare different OO designs for interfacing with our database</li>
+<li>Borrow useful ideas from ORMs to build our own model layers!</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="current-design">
+<h2>Current Design</h2>
+<div class="section" id="id2">
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">routes</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** get all cats: [{id, name, age}, ...] */</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+<span class="hll">  <span class="kd">let</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM cats&quot;</span><span class="p">);</span>
+</span>  <span class="kd">let</span> <span class="nx">cats</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">rows</span><span class="p">;</span>
+  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">cats</span><span class="p">)</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>Itâs <em>ok</em>, but itâs better to get SQL out of routes</p>
+</div>
+</div>
+<div class="section" id="why-no-sql-in-routes">
+<h3>Why No SQL In Routes?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>You tend to have lots of routes<ul>
+<li>So lots of copy-and-paste of similar SQL</li>
+</ul>
+</li>
+<li>Itâs nice to centralize validation, schema, etc</li>
+<li>Separation of concerns: routes should be about web-stuff</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="object-orientation">
+<h2>Object Orientation</h2>
+<div class="section" id="id3">
+<p>Why do we use Object Orientation?</p>
+<div class="docutils container">
+<p>To help organize our code!</p>
+</div>
+</div>
+<div class="section" id="abstraction">
+<h3>Abstraction</h3>
+<p>OO can offer <strong>abstraction</strong>, the ability to hide implementation details <span class="raw-reveal"><br></span> when they arenât needed.</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Not everyone should have to understand everything<ul>
+<li>Only one person has to worry about SQL, validation, etc</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="encapsulation">
+<h3>Encapsulation</h3>
+<p>OO can offer <strong>encapsulation</strong>, the ability to group functionality <span class="raw-reveal"><br></span> into larger logical pieces.</p>
+<div class="docutils container">
+<ul class="simple">
+<li>To get in a âcapsuleâ<ul>
+<li>Everything related to cat data/functionality lives in <cite>Cat</cite></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="polymorphism">
+<h3>Polymorphism</h3>
+<p>OO can offer <strong>polymorphism</strong>, the ability to implement similar functionality <span class="raw-reveal"><br></span> in different classes.</p>
+<div class="docutils container">
+<ul class="simple">
+<li>The ability to make similar things work similarly<ul>
+<li>We could have other kinds of animals with same API</li>
+<li>For example, dogs and cats could both have a <cite>speak</cite> method, even though it behaves differently for different animals (âMeowâ vs âWoofâ)</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="simple-oo-model">
+<h2>Simple OO Model</h2>
+<div class="section" id="id4">
+<div class="docutils container">
+<ul class="simple">
+<li>We can make a single class for âall cat-related functionsâ</li>
+<li>It <em>wonât</em> hold data</li>
+<li>You wonât ever instantiate it!</li>
+<li>All the methods are static (called on <cite>Cat</cite>)</li>
+<li>Benefit: help organization, gets SQL out of routes</li>
+</ul>
+</div>
+</div>
+<div class="section" id="getting-all-cats">
+<h3>Getting All Cats</h3>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">Cat model</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span>  <span class="cm">/** get all cats: returns [{id, name, age}, ...] */</span>
+
+  <span class="kr">static</span> <span class="nx">async</span> <span class="nx">getAll</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span>
+        <span class="s2">&quot;SELECT id, name, age FROM cats&quot;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">result</span><span class="p">.</span><span class="nx">rows</span><span class="p">;</span>
+  <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>(thatâs a method inside class <cite>Cat</cite>)</p>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">routes</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** (fixed) get all cats: [{id, name, age}] */</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">cats</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">Cat</span><span class="p">.</span><span class="nx">getAll</span><span class="p">();</span>
+  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">cats</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="getting-a-cat">
+<h3>Getting A Cat</h3>
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">Cat model</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span>  <span class="cm">/** get cat by id: returns {name, age} */</span>
+
+  <span class="kr">static</span> <span class="nx">async</span> <span class="nx">getById</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span>
+        <span class="sb">`SELECT name, age FROM cats WHERE id = $1`</span><span class="p">,</span>
+        <span class="p">[</span><span class="nx">id</span><span class="p">]);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">rows</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="sb">`No such cat: </span><span class="si">${</span><span class="nx">id</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">result</span><span class="p">.</span><span class="nx">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+  <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">routes</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** get cat by id: {id, name, age} */</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/:id&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">cat</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">Cat</span><span class="p">.</span><span class="nx">getById</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">cat</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="creating-a-cat">
+<h3>Creating a Cat</h3>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">Cat model</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span>  <span class="cm">/** create a cat: returns {name, age} */</span>
+
+  <span class="kr">static</span> <span class="nx">async</span> <span class="nx">create</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">age</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span>
+        <span class="sb">`INSERT INTO cats (name, age)</span>
+<span class="sb">        VALUES ($1, $2) RETURNING name, age`</span><span class="p">,</span>
+        <span class="p">[</span><span class="nx">name</span><span class="p">,</span> <span class="nx">age</span><span class="p">]);</span>
+
+    <span class="k">return</span> <span class="nx">result</span><span class="p">.</span><span class="nx">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+  <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">routes</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** create cat from {name, age}: return id */</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">Cat</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">age</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="deleting-a-cat">
+<h3>Deleting a Cat</h3>
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">Cat model</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span>  <span class="cm">/** delete cat with given id */</span>
+
+  <span class="kr">static</span> <span class="nx">async</span> <span class="nx">remove</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span>
+        <span class="sb">`DELETE FROM cats WHERE id=$1 RETURNING id`</span><span class="p">,</span>
+        <span class="p">[</span><span class="nx">id</span><span class="p">]);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">rows</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="sb">`No such cat: </span><span class="si">${</span><span class="nx">id</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-text">routes</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** delete cat from {id}; returns &quot;deleted&quot; */</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="k">delete</span><span class="p">(</span><span class="s2">&quot;/:id&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">await</span> <span class="nx">Cat</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="s2">&quot;deleted&quot;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="aging-a-cat">
+<h3>Aging a Cat</h3>
+<p>What if we want to something special?</p>
+<p>Like, age a cat by one year?</p>
+<div class="literal-block-wrapper docutils container" id="id16">
+<div class="code-block-caption"><span class="caption-text">Cat model</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span>  <span class="cm">/** age cat by 1 year, return new age */</span>
+
+  <span class="kr">static</span> <span class="nx">async</span> <span class="nx">makeOlder</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span>
+        <span class="sb">`UPDATE cats SET age=age+1 WHERE id=$1 RETURNING age`</span><span class="p">,</span>
+        <span class="p">[</span><span class="nx">id</span><span class="p">]);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">rows</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="sb">`No such cat: </span><span class="si">${</span><span class="nx">id</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">result</span><span class="p">.</span><span class="nx">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">age</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id17">
+<div class="code-block-caption"><span class="caption-text">routes</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** age cat: returns new age */</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s2">&quot;/:id/age&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">newAge</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">Cat</span><span class="p">.</span><span class="nx">makeOlder</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">newAge</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Meh. Annoying to have to make special function.</p>
+<p>We could make a special âupdate-dataâ function.</p>
+</div>
+</div>
+<div class="section" id="smarter-oo-model">
+<h2>Smarter OO Model</h2>
+<div class="section" id="id5">
+<div class="docutils container">
+<ul class="simple">
+<li>We can make a more traditional OO class</li>
+<li>You <em>will</em> instantiate it â once per dog!</li>
+<li>It will hold data specific to each dog</li>
+<li>It has static methods<ul>
+<li>To get all dogs, get a particular dog</li>
+</ul>
+</li>
+<li>It has regular methods</li>
+<li>Itâs like a mini-ORM</li>
+</ul>
+</div>
+</div>
+<div class="section" id="dogs">
+<h3>Dogs</h3>
+<p>Weâll make a âsmarter modelâ for dogs.</p>
+<div class="literal-block-wrapper docutils container" id="id18">
+<div class="code-block-caption"><span class="caption-text">Dog model</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span>  <span class="nx">constructor</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">age</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">id</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">age</span> <span class="o">=</span> <span class="nx">age</span><span class="p">;</span>
+  <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="getting-all-dogs">
+<h3>Getting All Dogs</h3>
+<div class="literal-block-wrapper docutils container" id="id19">
+<div class="code-block-caption"><span class="caption-text">Dog model</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span>  <span class="cm">/** get all dogs: returns [dog, ...] */</span>
+
+  <span class="kr">static</span> <span class="nx">async</span> <span class="nx">getAll</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span>
+        <span class="sb">`SELECT id, name, age FROM dogs`</span><span class="p">);</span>
+<span class="hll">    <span class="k">return</span> <span class="nx">result</span><span class="p">.</span><span class="nx">rows</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">d</span> <span class="p">=&gt;</span> <span class="k">new</span> <span class="nx">Dog</span><span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">d</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span> <span class="nx">d</span><span class="p">.</span><span class="nx">age</span><span class="p">));</span>
+</span>  <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id20">
+<div class="code-block-caption"><span class="caption-text">routes</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** get all dogs: [{id, name, age}, ...] */</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">dogs</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">Dog</span><span class="p">.</span><span class="nx">getAll</span><span class="p">();</span>
+  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">dogs</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<p>We get Dog instances, but Express can turn them into JSON</p>
+</div>
+</div>
+<div class="section" id="getting-a-dog">
+<h3>Getting A Dog</h3>
+<div class="literal-block-wrapper docutils container" id="id21">
+<div class="code-block-caption"><span class="caption-text">Dog model</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span>  <span class="cm">/** get dog by id: returns dog */</span>
+
+  <span class="kr">static</span> <span class="nx">async</span> <span class="nx">getById</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span>
+        <span class="sb">`SELECT name, age FROM dogs WHERE id = $1`</span><span class="p">,</span>
+        <span class="p">[</span><span class="nx">id</span><span class="p">]);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">rows</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="sb">`No such dog: </span><span class="si">${</span><span class="nx">id</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="kd">let</span> <span class="nx">d</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+<span class="hll">    <span class="k">return</span> <span class="k">new</span> <span class="nx">Dog</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">d</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span> <span class="nx">d</span><span class="p">.</span><span class="nx">age</span><span class="p">);</span>
+</span>  <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id22">
+<div class="code-block-caption"><span class="caption-text">routes</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** get dog by id: {id, name, age} */</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/:id&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">dog</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">Dog</span><span class="p">.</span><span class="nx">getById</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">dog</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="creating-a-dog">
+<h3>Creating a Dog</h3>
+<div class="literal-block-wrapper docutils container" id="id23">
+<div class="code-block-caption"><span class="caption-text">Dog model</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span>  <span class="cm">/** create a dog: returns dog */</span>
+
+  <span class="kr">static</span> <span class="nx">async</span> <span class="nx">create</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">age</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span>
+        <span class="sb">`INSERT INTO dogs (name, age)</span>
+<span class="sb">        VALUES ($1, $2) RETURNING id`</span><span class="p">,</span>
+        <span class="p">[</span><span class="nx">name</span><span class="p">,</span> <span class="nx">age</span><span class="p">]);</span>
+
+    <span class="kd">let</span> <span class="p">{</span> <span class="nx">id</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+<span class="hll">    <span class="k">return</span> <span class="k">new</span> <span class="nx">Dog</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">age</span><span class="p">);</span>
+</span>  <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id24">
+<div class="code-block-caption"><span class="caption-text">routes</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** create dog from {name, age}: return id */</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">Dog</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">age</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="deleting-a-dog">
+<h3>Deleting a Dog</h3>
+<div class="literal-block-wrapper docutils container" id="id25">
+<div class="code-block-caption"><span class="caption-text">Dog model</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span>  <span class="cm">/** delete dog */</span>
+
+  <span class="nx">async</span> <span class="nx">remove</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span>
+        <span class="sb">`DELETE FROM dogs WHERE id = $1`</span><span class="p">,</span>
+        <span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">]);</span>
+  <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id26">
+<div class="code-block-caption"><span class="caption-text">routes</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** delete dog from {id}; returns &quot;deleted&quot; */</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="k">delete</span><span class="p">(</span><span class="s2">&quot;/:id&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">dog</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">Dog</span><span class="p">.</span><span class="nx">getById</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+<span class="hll">  <span class="nx">await</span> <span class="nx">dog</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
+</span>  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="s2">&quot;deleted&quot;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<p>Notice: itâs just a method that acts on current dog!</p>
+</div>
+</div>
+<div class="section" id="aging-a-dog">
+<h3>Aging a Dog</h3>
+<p>Now, we donât need special functionality to age a dog</p>
+<p>We can just age on instance and <cite>.save()</cite> it!</p>
+<div class="literal-block-wrapper docutils container" id="id27">
+<div class="code-block-caption"><span class="caption-text">Dog model</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span>  <span class="nx">async</span> <span class="nx">save</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span>
+        <span class="sb">`UPDATE dogs SET name=$1, age=$2 WHERE id = $3`</span><span class="p">,</span>
+        <span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">age</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">]);</span>
+  <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id28">
+<div class="code-block-caption"><span class="caption-text">routes</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** age dog: returns new age */</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s2">&quot;/:id/age&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">dog</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">Dog</span><span class="p">.</span><span class="nx">getById</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+<span class="hll">  <span class="nx">dog</span><span class="p">.</span><span class="nx">age</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class="hll">  <span class="nx">await</span> <span class="nx">dog</span><span class="p">.</span><span class="nx">save</span><span class="p">();</span>
+</span>  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">dog</span><span class="p">.</span><span class="nx">age</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="which-is-better">
+<h2>Which Is Better?</h2>
+<div class="section" id="id6">
+<div class="docutils container">
+<ul class="simple">
+<li>âSimple classâ <em>(no data, only static methods)</em><ul>
+<li>Can be easier to write class</li>
+<li>Fewer SQL queries may fire (compare delete between <cite>Cat</cite> and <cite>Dog</cite></li>
+<li>Doing more interesting things can be trickier</li>
+</ul>
+</li>
+<li>âSmarter classâ <em>(data, real methods)</em><ul>
+<li>Real attributes can be handy!</li>
+<li>Easier to do validation</li>
+<li>Can do things like <code class="docutils literal notranslate"><span class="pre">cat.speak()</span></code> rather than <code class="docutils literal notranslate"><span class="pre">Cat.speak(id)</span></code></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="are-there-orms-for-javascript">
+<h3>Are There ORMs For JavaScript?</h3>
+<p>Yes!</p>
+<div class="docutils container">
+<p>Thereâs a nice one called <a class="reference external" href="http://docs.sequelizejs.com">Sequelize</a></p>
+</div>
+<div class="docutils container">
+<p>Not as popular as ORMs in other languages, though.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script>
+<script type="text/javascript" src="_static/language_data.js"></script> 
+</body>
+</html>

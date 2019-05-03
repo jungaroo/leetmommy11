@@ -32,15 +32,8 @@ def render_code_snip_search():
     """Render CodeSnip Landing page"""
     return render_template("codeForm.html")
 
-@app.route('/codeSnipSearch')
-def render_code_snips():
 
-    # get search word from query string
-    search_word = request.args.get('search-word', None)
-
-    # Get all the cohort links that were checked with the checkbox from the UI
-    cohorts = [request.args.get(cohort, False) for cohort in COHORTS]
-
+def _get_data(dbC,cohorts,search_word,type_of_search):
     # object that holds the results to be passsed to template
     data = {}
 
@@ -50,15 +43,33 @@ def render_code_snips():
             #create a Word Searcher obj
             word_searcher = WordSearcherDB(BASE_LINKS.get(cohort),dbC,cohort)
             # ask Word Searcher obj to get code snips based on word search
-            links = word_searcher.get_code_snips_with_word_DB(search_word)
+            links = word_searcher.get_results_db(search_word,type_of_search)
             #append links to dict
-            data[cohort] = links
+            data[cohort] = links 
+
+    return data   
+
+
+@app.route('/codeSnipSearch')
+def render_code_snips():
+
+    TYPE_OF_SEARCH = 'code_snips'
+    # get search word from query string
+    search_word = request.args.get('search-word', None)
+
+    # Get all the cohort links that were checked with the checkbox from the UI
+    cohorts = [request.args.get(cohort, False) for cohort in COHORTS]
+
+    # object that holds the results to be passsed to template
+    data = _get_data(dbC,cohorts,search_word,TYPE_OF_SEARCH)
     
     return render_template("codeSnipsResult.html",links_and_snips=data)
 
 @app.route('/conceptualSearch')
 def render_entire_lecture_pages():
 
+    TYPE_OF_SEARCH = 'lecture_pages'
+
     # get search word from query string
     search_word = request.args.get('search-word', None)
 
@@ -66,17 +77,7 @@ def render_entire_lecture_pages():
     cohorts = [request.args.get(cohort, False) for cohort in COHORTS]
 
     # object that holds the results to be passsed to template
-    data = {}
-
-    # for each cohort that is checked:
-    for cohort in cohorts:
-        if cohort:
-            #create a Word Searcher obj
-            word_searcher = WordSearcherDB(BASE_LINKS.get(cohort),dbC,cohort)
-            # ask Word Searcher obj to get code snips based on word search
-            links = word_searcher.get_lecture_pages_DB(search_word)
-            #append links to dict
-            data[cohort] = links
+    data = _get_data(dbC,cohorts,search_word,TYPE_OF_SEARCH)
 
     return render_template("lecturePagesResult.html",lecture_pages=data)
 
@@ -85,17 +86,13 @@ def render_entire_lecture_pages():
 def list_lecture_links():
     """Return all lecture links with word"""
 
+    TYPE_OF_SEARCH = 'links'
+
     search_word = request.args.get('search-word', None)
 
     cohorts = [request.args.get(cohort, False) for cohort in COHORTS]
 
-    all_links = {}
-
-    for cohort in cohorts:
-        if cohort:
-            word_searcher = WordSearcherDB(BASE_LINKS.get(cohort),dbC,cohort)
-            links = word_searcher.get_links_with_word_DB(search_word)
-            all_links[cohort] = links
+    all_links = _get_data(dbC,cohorts,search_word,TYPE_OF_SEARCH)
             
     return render_template("codelinksResult.html",lecture_links=all_links)
 
