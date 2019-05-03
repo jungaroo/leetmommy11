@@ -1,31 +1,21 @@
 from flask import Flask, request, render_template, redirect, jsonify
 from Classes.WordSearch import WordSearcher, BASE_URL, BASE_LINKS, COHORTS
+from secret import MONGO_DB_URI
+from Classes.DBConnector import DBConnector
+from Classes.WordSearchDB import WordSearcherDB
 
 app = Flask(__name__)
 
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///blogly'
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# app.config['SQLALCHEMY_ECHO'] = True
-
-
-# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-#     'DATABASE_URL', 'postgres:///flask-heroku')
-
-# connect_db(app)
-
-# # creates tables in db if non exist.
-# db.create_all()
+# Connect to DB leetmommy
+dbC = DBConnector(MONGO_DB_URI,'leetmommy')
 
 
 ##################################################
-memo = {}
-memo2 = {}
-memo3 = {}
+
 
 @app.route('/')
 def landing():
-    """Render Landing page"""
-
+    """Render Search page"""
     return render_template("landing.html")
 
 @app.route('/codesnip')
@@ -34,48 +24,52 @@ def render_code_snip_search():
     return render_template("codeForm.html")
 
 @app.route('/codeSnipSearch')
-def list_snipit_links():
+def render_code_snips():
 
+    # get search word from query string
     search_word = request.args.get('search-word', None)
 
-    checks = [request.args.get(cohort) for cohort in COHORTS]
+    # Get all the cohort links that were checked with the checkbox from the UI
+    cohorts = [request.args.get(cohort, False) for cohort in COHORTS]
 
-    all_links = {}
+    # object that holds the results to be passsed to template
+    data = {}
 
-    for c in checks:
-        if c:
-            if memo2.get((c,search_word)):
-                all_links[c] = memo2.get((c,search_word))
-            else: 
-                wc = WordSearcher(BASE_LINKS.get(c))
-                links = wc.get_pre_links_with_word(search_word)
-                memo2[(c,search_word)] = links
-                all_links[c] = links
-            
-    print(all_links)
-    return render_template("codes.html",links_and_snips=all_links)
+    # for each cohort that is checked:
+    for cohort in cohorts:
+        if cohort:
+            #create a Word Searcher obj
+            word_searcher = WordSearcherDB(BASE_LINKS.get(cohort),dbC,cohort)
+            # ask Word Searcher obj to get code snips based on word search
+            links = word_searcher.get_code_snips_with_word_DB(search_word)
+            #append links to dict
+            data[cohort] = links
+    
+    return render_template("codeSnipsResult.html",links_and_snips=data)
 
 @app.route('/conceptualSearch')
-def render_conceptual_search_results():
+def render_entire_lecture_pages():
 
+    # get search word from query string
     search_word = request.args.get('search-word', None)
 
-    r_classes = [arg for arg in [*request.args] if arg != 'search-word']
+    # Get all the cohort links that were checked with the checkbox from the UI
+    cohorts = [request.args.get(cohort, False) for cohort in COHORTS]
 
-    all_links = {}
+    # object that holds the results to be passsed to template
+    data = {}
 
-    for c in r_classes:
-        if c:
-            if memo3.get((c,search_word)):
-                all_links[c] = memo3.get((c,search_word))
-            else: 
-                wc = WordSearcher(BASE_LINKS.get(c))
-                links = wc.get_conceptual_answers(search_word)
-                memo3[(c,search_word)] = links
-                all_links[c] = links
-            
-    print(all_links)
-    return render_template("conceptualNotes.html",links_and_snips=all_links)
+    # for each cohort that is checked:
+    for cohort in cohorts:
+        if cohort:
+            #create a Word Searcher obj
+            word_searcher = WordSearcherDB(BASE_LINKS.get(cohort),dbC,cohort)
+            # ask Word Searcher obj to get code snips based on word search
+            links = word_searcher.get_lecture_pages_DB(search_word)
+            #append links to dict
+            data[cohort] = links
+
+    return render_template("lecturePagesResult.html",lecture_pages=data)
 
 
 @app.route('/linkSearch')
@@ -84,19 +78,15 @@ def list_lecture_links():
 
     search_word = request.args.get('search-word', None)
 
-    checks = [request.args.get(cohort) for cohort in COHORTS]
+    cohorts = [request.args.get(cohort, False) for cohort in COHORTS]
 
     all_links = {}
 
-    for c in checks:
-        if c:
-            if memo.get((c,search_word)):
-                all_links[c] = memo.get((c,search_word))
-            else: 
-                wc = WordSearcher(BASE_LINKS.get(c))
-                links = wc.get_links_with_word(search_word)
-                memo[(c,search_word)] = links
-                all_links[c] = links
+    for cohort in cohorts:
+        if cohort:
+            word_searcher = WordSearcherDB(BASE_LINKS.get(cohort),dbC,cohort)
+            links = word_searcher.get_links_with_word_DB(search_word)
+            all_links[cohort] = links
             
-    return render_template("codelinks.html",lecture_links=all_links)
+    return render_template("codelinksResult.html",lecture_links=all_links)
 

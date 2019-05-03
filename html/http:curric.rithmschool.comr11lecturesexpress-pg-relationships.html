@@ -1,0 +1,405 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Node Postgres Relationships</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Node Postgres Relationships</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Node Postgres Relationships</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#one-to-many-relationships">One to Many Relationships</a><ul>
+<li><a class="reference internal" href="#id2">One to Many Relationships</a></li>
+<li><a class="reference internal" href="#get-users-id-with-messages">GET <cite>/users/[id]</cite> With Messages</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#many-to-many-relationships">Many to Many Relationships</a><ul>
+<li><a class="reference internal" href="#id3">Many to Many Relationships</a></li>
+<li><a class="reference internal" href="#what-about-this-query">What about this query?</a></li>
+<li><a class="reference internal" href="#restructuring-this-data">Restructuring This Data</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#handling-missing-resources">Handling Missing Resources</a><ul>
+<li><a class="reference internal" href="#id4">Handling Missing Resources</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="node-postgres-relationships">
+<h1>Node Postgres Relationships</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Work with 1:M relationships in <cite>pg</cite></li>
+<li>Work with M:M relationships in <cite>pg</cite></li>
+<li>Handle missing data by sending 404s</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="one-to-many-relationships">
+<h2>One to Many Relationships</h2>
+<div class="section" id="id2">
+<div class="graphviz">
+<img src="_images/graphviz-3467e6f8d2d6b809e1a8365077ab46df5e924273.svg" />
+</div>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">users</span> <span class="p">(</span>
+    <span class="n">id</span> <span class="nb">SERIAL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+    <span class="n">name</span> <span class="nb">TEXT</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+    <span class="k">type</span> <span class="nb">TEXT</span> <span class="k">NOT</span> <span class="k">NULL</span>
+<span class="p">);</span>
+
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">messages</span> <span class="p">(</span>
+    <span class="n">id</span> <span class="nb">SERIAL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+    <span class="n">user_id</span> <span class="nb">INTEGER</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">REFERENCES</span> <span class="n">users</span><span class="p">,</span>
+    <span class="n">msg</span> <span class="nb">TEXT</span> <span class="k">NOT</span> <span class="k">NULL</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+<p>We want our API to include:</p>
+<dl class="docutils">
+<dt>GET /users/1</dt>
+<dd><p class="first">Return detail of user <em>and</em> list of message:</p>
+<div class="last highlight-js notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Juanita&quot;</span><span class="p">,</span>
+  <span class="nx">type</span><span class="o">:</span> <span class="s2">&quot;admin&quot;</span><span class="p">,</span>
+  <span class="nx">messages</span><span class="o">:</span> <span class="p">[</span>
+    <span class="p">{</span><span class="nx">id</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">msg</span><span class="o">:</span> <span class="s1">&#39;msg #1&#39;</span><span class="p">},</span>
+    <span class="p">{</span><span class="nx">id</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span> <span class="nx">msg</span><span class="o">:</span> <span class="s1">&#39;msg #2&#39;</span><span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</div>
+<div class="section" id="get-users-id-with-messages">
+<h3>GET <cite>/users/[id]</cite> With Messages</h3>
+<div class="compare32 compare docutils container">
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">demo/routes/users.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** Get user: {name, type, messages: [{msg, msg}]} */</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/:id&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">userRes</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span>
+          <span class="sb">`SELECT name, type FROM users WHERE id=$1`</span><span class="p">,</span>
+        <span class="p">[</span><span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span><span class="p">]);</span>
+
+    <span class="kr">const</span> <span class="nx">messagesRes</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span>
+          <span class="sb">`SELECT id, msg FROM messages </span>
+<span class="sb">             WHERE user_id = $1`</span><span class="p">,</span>
+        <span class="p">[</span><span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span><span class="p">]);</span>
+
+    <span class="kr">const</span> <span class="nx">user</span> <span class="o">=</span> <span class="nx">userRes</span><span class="p">.</span><span class="nx">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+    <span class="nx">user</span><span class="p">.</span><span class="nx">messages</span> <span class="o">=</span> <span class="nx">messagesRes</span><span class="p">.</span><span class="nx">rows</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">user</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="k">catch</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">next</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">(results)</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Juanita&quot;</span><span class="p">,</span>
+  <span class="nx">type</span><span class="o">:</span> <span class="s2">&quot;admin&quot;</span><span class="p">,</span>
+  <span class="nx">messages</span><span class="o">:</span> <span class="p">[</span>
+    <span class="p">{</span><span class="nx">id</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">msg</span><span class="o">:</span> <span class="s1">&#39;msg #1&#39;</span><span class="p">},</span>
+    <span class="p">{</span><span class="nx">id</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span> <span class="nx">msg</span><span class="o">:</span> <span class="s1">&#39;msg #2&#39;</span><span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<p>We just add property on user and populate with messages!</p>
+<div class="admonition note">
+<p><strong>Optimizing this code</strong></p>
+<p>For ease of readability, weâve awaited two database queries sequentially in the above code example. We could have just as easily run these queries in parallel by wrapping them in a <code class="docutils literal notranslate"><span class="pre">Promise.all</span></code>, since the message query doesnât depend on the result of the user query.</p>
+<p class="last">You might also be wondering why we donât use a join, and simply make one request to the database. What would be some advantages to using this approach? What might some disadvantages be?</p>
+</div>
+</div>
+</div>
+<div class="section" id="many-to-many-relationships">
+<h2>Many to Many Relationships</h2>
+<div class="section" id="id3">
+<div class="graphviz">
+<img src="_images/graphviz-b6afe5142389750462cdbfefe1a467c590e080d1.svg" />
+</div>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">tags</span> <span class="p">(</span>
+    <span class="n">code</span> <span class="nb">TEXT</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+    <span class="n">tag</span> <span class="nb">TEXT</span> <span class="k">UNIQUE</span>
+<span class="p">);</span>
+
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">messages_tags</span> <span class="p">(</span>
+    <span class="n">message_id</span> <span class="nb">INTEGER</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">REFERENCES</span> <span class="n">messages</span><span class="p">,</span>
+    <span class="n">tag_code</span> <span class="nb">TEXT</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">REFERENCES</span> <span class="n">tags</span><span class="p">,</span>
+    <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">(</span><span class="n">message_id</span><span class="p">,</span> <span class="n">tag_code</span><span class="p">)</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+<p>We want our API to include:</p>
+<dl class="docutils">
+<dt>GET /messages/1</dt>
+<dd><p class="first">Return info about message <em>and</em> associated tag names:</p>
+<div class="last highlight-js notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="nx">msg</span><span class="o">:</span> <span class="s2">&quot;msg #1&quot;</span><span class="p">,</span>
+  <span class="nx">tags</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;Python&quot;</span><span class="p">,</span> <span class="s2">&quot;JavaScript&quot;</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</div>
+<div class="section" id="what-about-this-query">
+<h3>What about this query?</h3>
+<div class="compare32 compare docutils container">
+<div class="docutils container">
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="n">m</span><span class="p">.</span><span class="n">id</span><span class="p">,</span> <span class="n">m</span><span class="p">.</span><span class="n">msg</span><span class="p">,</span> <span class="n">t</span><span class="p">.</span><span class="n">tag</span>
+  <span class="k">FROM</span> <span class="n">messages</span> <span class="k">AS</span> <span class="n">m</span>
+    <span class="k">LEFT</span> <span class="k">JOIN</span>
+      <span class="n">messages_tags</span> <span class="k">AS</span> <span class="n">mt</span>
+    <span class="k">ON</span> <span class="n">m</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">mt</span><span class="p">.</span><span class="n">message_id</span>
+    <span class="k">LEFT</span> <span class="k">JOIN</span>
+      <span class="n">tags</span> <span class="k">AS</span> <span class="n">t</span>
+    <span class="k">ON</span> <span class="n">mt</span><span class="p">.</span><span class="n">tag_code</span> <span class="o">=</span> <span class="n">t</span><span class="p">.</span><span class="n">code</span>
+  <span class="k">WHERE</span> <span class="n">m</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="32%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">id</th>
+<th class="head">msg</th>
+<th class="head">tag</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>msg #1</td>
+<td>Python</td>
+</tr>
+<tr class="row-odd"><td>1</td>
+<td>msg #1</td>
+<td>JavaScript</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="restructuring-this-data">
+<h3>Restructuring This Data</h3>
+<div class="compare32 compare docutils container">
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">we get from database</span></div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+  <span class="p">{</span><span class="nx">id</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">msg</span><span class="o">:</span> <span class="s2">&quot;msg #1&quot;</span><span class="p">,</span> <span class="nx">tag</span><span class="o">:</span> <span class="s2">&quot;Python&quot;</span><span class="p">},</span>
+  <span class="p">{</span><span class="nx">id</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">msg</span><span class="o">:</span> <span class="s2">&quot;msg #1&quot;</span><span class="p">,</span> <span class="nx">tag</span><span class="o">:</span> <span class="s2">&quot;JavaScript&quot;</span><span class="p">},</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">we want to return</span></div>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nx">id</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="nx">msg</span><span class="o">:</span> <span class="s2">&quot;msg #1&quot;</span><span class="p">,</span>
+  <span class="nx">tags</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;Python&quot;</span><span class="p">,</span> <span class="s2">&quot;JavaScript&quot;</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">demo/routes/messages.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** Get message: {id, msg tags: [name, name]} */</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;/:id&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span>
+          <span class="sb">`SELECT m.id, m.msg, t.tag</span>
+<span class="sb">             FROM messages AS m</span>
+<span class="sb">               LEFT JOIN messages_tags AS mt </span>
+<span class="sb">                 ON m.id = mt.message_id</span>
+<span class="sb">               LEFT JOIN tags AS t ON mt.tag_code = t.code</span>
+<span class="sb">             WHERE m.id = $1;`</span><span class="p">,</span>
+        <span class="p">[</span><span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span><span class="p">]);</span>
+
+    <span class="kd">let</span> <span class="p">{</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">msg</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+    <span class="kd">let</span> <span class="nx">tags</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">rows</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">r</span> <span class="p">=&gt;</span> <span class="nx">r</span><span class="p">.</span><span class="nx">tag</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">tags</span> <span class="p">});</span>
+  <span class="p">}</span>
+
+  <span class="k">catch</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">next</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p><strong>Donât Forget about the debugger!</strong></p>
+<p class="last">Remember, if this code starts to become too hard to track, you can use the <cite>debugger</cite> to pause code execution and see whatâs going on!</p>
+</div>
+<div class="admonition note">
+<p><strong>Manipulating data</strong></p>
+<p class="last">When it comes to handling these many-to-many relationships, youâll find that you often need to manipulate arrays of objects in JavaScript. There are many helper libraries with utilities that can assist with this process (such as <a class="reference external" href="https://lodash.com/">lodash</a> or <a class="reference external" href="https://underscorejs.org/">underscore</a>), but for now, weâll focus on writing all of the business logic ourselves.</p>
+</div>
+</div>
+</div>
+<div class="section" id="handling-missing-resources">
+<h2>Handling Missing Resources</h2>
+<div class="section" id="id4">
+<p>We want:</p>
+<dl class="docutils">
+<dt>PUT /messages/[id]</dt>
+<dd>Given <code class="docutils literal notranslate"><span class="pre">{msg}</span></code>, updates DB &amp; return <code class="docutils literal notranslate"><span class="pre">{id,</span> <span class="pre">user_id,</span> <span class="pre">msg}</span></code></dd>
+</dl>
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">demo/routes/messages.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** Update message: {msg} =&gt; {id, user_id, msg} */</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="nx">put</span><span class="p">(</span><span class="s2">&quot;/:id&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span>
+          <span class="sb">`UPDATE messages SET msg=$1 WHERE id = $2</span>
+<span class="sb">           RETURNING id, user_id, msg`</span><span class="p">,</span>
+        <span class="p">[</span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">msg</span><span class="p">,</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span><span class="p">]);</span>
+
+    <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+  <span class="p">}</span>
+
+  <span class="k">catch</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">next</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>Just returns <cite>undefined</cite> if not found!</p>
+</div>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">(works, but requires two queries)</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** Update message #2: {msg} =&gt; {id, user_id, msg} */</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="nx">put</span><span class="p">(</span><span class="s2">&quot;/v2/:id&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">try</span> <span class="p">{</span>
+<span class="hll">    <span class="kr">const</span> <span class="nx">checkRes</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span>
+</span><span class="hll">        <span class="sb">`SELECT id FROM messages WHERE id = $1`</span><span class="p">,</span>
+</span><span class="hll">        <span class="p">[</span><span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span><span class="p">]);</span>
+</span><span class="hll">
+</span><span class="hll">    <span class="k">if</span> <span class="p">(</span><span class="nx">checkRes</span><span class="p">.</span><span class="nx">rows</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="hll">      <span class="k">throw</span> <span class="k">new</span> <span class="nx">ExpressError</span><span class="p">(</span><span class="s2">&quot;No such message&quot;</span><span class="p">,</span> <span class="mi">404</span><span class="p">);</span>
+</span><span class="hll">    <span class="p">}</span>
+</span>
+    <span class="kr">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span>
+          <span class="sb">`UPDATE messages SET msg=$1 WHERE id = $2,</span>
+<span class="sb">           RETURNING id, user_id, msg`</span><span class="p">,</span>
+        <span class="p">[</span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">msg</span><span class="p">,</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span><span class="p">]);</span>
+
+    <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+  <span class="p">}</span>
+
+  <span class="k">catch</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">next</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">(same thing, but with one query)</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** Update message #3: {msg} =&gt; {id, user_id, msg} */</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="nx">put</span><span class="p">(</span><span class="s2">&quot;/v3/:id&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span>
+          <span class="sb">`UPDATE messages SET msg=$1 WHERE id = $2</span>
+<span class="sb">           RETURNING id, user_id, msg`</span><span class="p">,</span>
+        <span class="p">[</span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">msg</span><span class="p">,</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span><span class="p">]);</span>
+
+<span class="hll">    <span class="k">if</span> <span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">rows</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="hll">      <span class="k">throw</span> <span class="k">new</span> <span class="nx">ExpressError</span><span class="p">(</span><span class="s2">&quot;No such message!&quot;</span><span class="p">,</span> <span class="mi">404</span><span class="p">);</span>
+</span><span class="hll">    <span class="p">}</span>
+</span>
+    <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+  <span class="p">}</span>
+
+  <span class="k">catch</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">next</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script>
+<script type="text/javascript" src="_static/language_data.js"></script> 
+</body>
+</html>
