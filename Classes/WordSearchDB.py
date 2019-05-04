@@ -14,14 +14,12 @@ class WordSearcherDB(WordSearcher):
     def get_results_db(self, word, type_of_search):
 
         switcher = { 
-            "links": self.get_links_with_word_DB(word), 
-            "code_snips": self.get_code_snips_with_word_DB(word), 
-            "lecture_pages": self.get_lecture_pages_DB(word)
+            "links": self.get_links_with_word_DB, 
+            "code_snips": self.get_code_snips_with_word_DB, 
+            "lecture_pages": self.get_lecture_pages_DB
         }
 
-
-
-        return switcher.get(type_of_search, [])  
+        return switcher.get(type_of_search, lambda: [])(word)  
         
     def get_links_with_word_DB(self, word: str):
 

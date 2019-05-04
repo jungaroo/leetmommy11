@@ -18,12 +18,13 @@ class WordSearcher():
     def get_results(self, word, COLLECTION_NAME):
 
         switcher = { 
-            "links": self._get_links_with_word(word), 
-            "code_snips": self._get_pre_links_with_word(word), 
-            "lecture_pages": self._get_lecture_pages(word)
+            "links": self._get_links_with_word, 
+            "code_snips": self._get_pre_links_with_word, 
+            "lecture_pages": self._get_lecture_pages
         }
-
-        return switcher.get(COLLECTION_NAME, [])
+        
+        # get correct function, else return functin that returns []
+        return switcher.get(COLLECTION_NAME, lambda x : [])(word)
     
     def _get_lecture_links(self):
         """Returns all the lecture links as an array of strings """
