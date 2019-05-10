@@ -1,0 +1,524 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Express Testing Practices</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">Express Testing Practices</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">Express Testing Practices</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#good-testing-practices">Good Testing Practices</a><ul>
+<li><a class="reference internal" href="#id2">Good Testing Practices</a></li>
+<li><a class="reference internal" href="#seeing-tests-in-action">Seeing tests in action</a></li>
+<li><a class="reference internal" href="#one-option">One option</a></li>
+<li><a class="reference internal" href="#a-better-way-to-test">A better way to test</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#test-driven-development">Test Driven Development</a><ul>
+<li><a class="reference internal" href="#id3">Test Driven Development</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mocking">Mocking</a><ul>
+<li><a class="reference internal" href="#id4">Mocking</a></li>
+<li><a class="reference internal" href="#advantages-of-mocking">Advantages of mocking</a></li>
+<li><a class="reference internal" href="#challenges-with-mocking">Challenges with mocking</a></li>
+<li><a class="reference internal" href="#mocking-with-jest">Mocking with Jest</a></li>
+<li><a class="reference internal" href="#an-example">An example</a></li>
+<li><a class="reference internal" href="#our-tests">Our tests</a></li>
+<li><a class="reference internal" href="#what-kinds-of-things-can-you-mock">What kinds of things can you mock?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#continuous-integration-ci">Continuous Integration (CI)</a><ul>
+<li><a class="reference internal" href="#id5">Continuous Integration (CI)</a></li>
+<li><a class="reference internal" href="#what-can-ci-do-for-you">What can CI do for you?</a></li>
+<li><a class="reference internal" href="#how-does-it-work">How does it work?</a></li>
+<li><a class="reference internal" href="#common-ci-tools">Common CI Tools</a></li>
+<li><a class="reference internal" href="#using-travis-ci">Using Travis CI</a></li>
+<li><a class="reference internal" href="#and-the-following-tests">And the following tests</a></li>
+<li><a class="reference internal" href="#here-s-what-a-simple-travis-config-looks-like">Hereâs what a simple Travis config looks like</a></li>
+<li><a class="reference internal" href="#seeing-it-in-action">Seeing it in action</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#end-to-end-tests">End to End Tests</a><ul>
+<li><a class="reference internal" href="#id6">End to End Tests</a></li>
+<li><a class="reference internal" href="#pros-of-e2e-tests">Pros of E2E tests</a></li>
+<li><a class="reference internal" href="#cons-of-e2e-tests">Cons of E2E tests</a></li>
+<li><a class="reference internal" href="#common-e2e-testing-tools">Common E2E Testing tools</a></li>
+<li><a class="reference internal" href="#an-example-with-cypress-meme-generator">An example with Cypress - Meme Generator!</a></li>
+<li><a class="reference internal" href="#basic-cypress-setup">Basic Cypress Setup</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="express-testing-practices">
+<h1>Express Testing Practices</h1>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Revisit some essential concepts with testing</li>
+<li>Understand what mocking is</li>
+<li>Examine end to end tests with Cypress</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="good-testing-practices">
+<h2>Good Testing Practices</h2>
+<div class="section" id="id2">
+<div class="docutils container">
+<ul class="simple">
+<li>Make sure you write tests!</li>
+<li>Donât get too attached to coverage percentages</li>
+<li>Make sure in your readme you specify how to run the tests!</li>
+</ul>
+</div>
+</div>
+<div class="section" id="seeing-tests-in-action">
+<h3>Seeing tests in action</h3>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** POST /cats - create cat from data; return `{cat: cat}` */</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;POST /cats&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;Creates a new cat&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="sb">`/cats`</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">send</span><span class="p">({</span>
+        <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Ezra&quot;</span>
+      <span class="p">});</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">201</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">({</span>
+      <span class="nx">cat</span><span class="o">:</span> <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Ezra&quot;</span> <span class="p">}</span>
+    <span class="p">});</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Weâre not testing if we actually created anything!</li>
+<li>How should we test this? What do we test?</li>
+</ul>
+</div>
+</div>
+<div class="section" id="one-option">
+<h3>One option</h3>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** POST /cats - create cat from data; return `{cat: cat}` */</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;POST /cats&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;Creates a new cat&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="sb">`/cats`</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">send</span><span class="p">({</span>
+        <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Ezra&quot;</span>
+      <span class="p">});</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">201</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">({</span>
+      <span class="nx">cat</span><span class="o">:</span> <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Ezra&quot;</span> <span class="p">}</span>
+    <span class="p">});</span>
+
+    <span class="kr">const</span> <span class="nx">catsQuery</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s2">&quot;SELECT name FROM cats;&quot;</span><span class="p">)</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">catsQuery</span><span class="p">.</span><span class="nx">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">]).</span><span class="nx">toEqual</span><span class="p">({</span> <span class="nx">name</span><span class="o">:</span><span class="s2">&quot;Ezra&quot;</span> <span class="p">});</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">catsQuery</span><span class="p">.</span><span class="nx">rows</span><span class="p">).</span><span class="nx">toHaveLength</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="a-better-way-to-test">
+<h3>A better way to test</h3>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="cm">/** POST /cats - create cat from data; return `{cat: cat}` */</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;POST /cats&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;Creates a new cat&quot;</span><span class="p">,</span> <span class="nx">async</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="sb">`/cats`</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">send</span><span class="p">({</span>
+        <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Ezra&quot;</span>
+      <span class="p">});</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">statusCode</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">201</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">({</span>
+      <span class="nx">cat</span><span class="o">:</span> <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Ezra&quot;</span> <span class="p">}</span>
+    <span class="p">});</span>
+
+    <span class="kr">const</span> <span class="nx">getCatsResponse</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="sb">`/cats`</span><span class="p">)</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">[</span><span class="mi">0</span><span class="p">]).</span><span class="nx">toEqual</span><span class="p">({</span> <span class="nx">name</span><span class="o">:</span><span class="s2">&quot;Ezra&quot;</span> <span class="p">});</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">).</span><span class="nx">toHaveLength</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Instead of testing the database, test the API</li>
+<li>Stay consistent with what you are testing</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="test-driven-development">
+<h2>Test Driven Development</h2>
+<div class="section" id="id3">
+<div class="docutils container">
+<ul class="simple">
+<li>Write tests <strong>first</strong> - they will fail!</li>
+<li>Only write the code necessary to get the tests to pass</li>
+<li>Focus on completing the task/user story at hand</li>
+<li>As you write more code, keep running tests <span class="raw-reveal"><br></span> and make sure they are passing</li>
+</ul>
+</div>
+<p><strong>Red, Green, Refactor</strong></p>
+<div class="docutils container">
+<ul class="simple">
+<li>Your tests fail (<span class="red">red</span>)</li>
+<li>You write the code to get the tests to pass (<span class="green">green</span>)</li>
+<li>You refactor!</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="mocking">
+<h2>Mocking</h2>
+<div class="section" id="id4">
+<p>When testing, you will commonly hear the term âmocking.â</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Mocking is primarily used in unit testing</li>
+<li>An object under test may have dependencies on other (complex) objects</li>
+<li>To isolate the behavior, you replace other objects <span class="raw-reveal"><br></span> by mocks that simulate their behavior</li>
+<li>This is useful if the real objects are impractical to incorporate <span class="raw-reveal"><br></span> into the unit test.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="advantages-of-mocking">
+<h3>Advantages of mocking</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>It can be faster.<ul>
+<li>You donât have to wait for an API response</li>
+<li>You donât have to deal with rate limits.</li>
+</ul>
+</li>
+<li>It makes your tests âpureâ. Whether they fail or pass depends <span class="raw-reveal"><br></span> only on your code, not on anything externally built.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="challenges-with-mocking">
+<h3>Challenges with mocking</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>It sometimes requires a convoluted setup</li>
+<li>It is not always necessary and can be an over-optimization</li>
+</ul>
+</div>
+</div>
+<div class="section" id="mocking-with-jest">
+<h3>Mocking with Jest</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>There are quite a few libraries used for mocking, including <cite>sinon</cite></li>
+<li>Jest comes in the with ability to mock functions</li>
+<li><a class="reference external" href="https://jestjs.io/docs/en/mock-functions.html">https://jestjs.io/docs/en/mock-functions.html</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="an-example">
+<h3>An example</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">demo/mocking-demo/dice.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">rollDice</span><span class="p">(</span><span class="nx">numSides</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="nx">numSides</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">rollDice</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="our-tests">
+<h3>Our tests</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">demo/mocking-demo/dice.test.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">rollDice</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;./dice&quot;</span><span class="p">);</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;#rollDice&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span> <span class="o">=</span> <span class="nx">jest</span><span class="p">.</span><span class="nx">fn</span><span class="p">(()</span> <span class="p">=&gt;</span> <span class="mf">0.5</span><span class="p">);</span>
+
+  <span class="nx">test</span><span class="p">(</span><span class="s2">&quot;it rolls the correct amount of dice&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">rollDice</span><span class="p">(</span><span class="mi">6</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">).</span><span class="nx">toHaveBeenCalled</span><span class="p">();</span>
+
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">rollDice</span><span class="p">(</span><span class="mi">2</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">).</span><span class="nx">toHaveBeenCalled</span><span class="p">();</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="what-kinds-of-things-can-you-mock">
+<h3>What kinds of things can you mock?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>AJAX requests</li>
+<li>Reading/Writing to files</li>
+<li>Impure functions like Math.random</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="continuous-integration-ci">
+<h2>Continuous Integration (CI)</h2>
+<div class="section" id="id5">
+<p>Continuous Integration is the practice of merging in small code changes
+frequently, rather than merging in a large change at the end of a development
+cycle.</p>
+<div class="docutils container">
+<ul class="simple">
+<li>The goal is to build better software by developing and testing <span class="raw-reveal"><br></span> in smaller increments.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="what-can-ci-do-for-you">
+<h3>What can CI do for you?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Automate running your tests when pushing your code</li>
+<li>Reject deployments if your tests do not pass</li>
+<li>Easily notify you when changes to your test suite occur</li>
+</ul>
+</div>
+</div>
+<div class="section" id="how-does-it-work">
+<h3>How does it work?</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>It integrates with tools like GitHub and carries out a series of tasks to build and test your code</li>
+<li>If one or more of those tasks fails, the build is considered broken</li>
+<li>If none of the tasks fail, the build is considered passed, and Travis CI can deploy your code</li>
+</ul>
+</div>
+</div>
+<div class="section" id="common-ci-tools">
+<h3>Common CI Tools</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Travis CI</li>
+<li>Jenkins</li>
+<li>Circle CI</li>
+<li>Buddy</li>
+</ul>
+</div>
+</div>
+<div class="section" id="using-travis-ci">
+<h3>Using Travis CI</h3>
+<p>Imagine we have the following code:</p>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">demo/travis-ci-demo/operations.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">add</span><span class="p">(</span><span class="nx">a</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">b</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">average</span><span class="p">(...</span><span class="nx">numbers</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">total</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">numbers</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">num</span> <span class="k">of</span> <span class="nx">numbers</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">total</span> <span class="o">+=</span> <span class="nx">num</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">total</span> <span class="o">/</span> <span class="nx">numbers</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">add</span><span class="p">,</span> <span class="nx">average</span> <span class="p">};</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="and-the-following-tests">
+<h3>And the following tests</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">demo/travis-ci-demo/operations.test.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kr">const</span> <span class="p">{</span> <span class="nx">add</span><span class="p">,</span> <span class="nx">average</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;./operations&quot;</span><span class="p">);</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;#add&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">it</span><span class="p">(</span><span class="s2">&quot;adds numbers&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">add</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+  <span class="p">});</span>
+  <span class="nx">it</span><span class="p">(</span><span class="s2">&quot;handles empty inputs&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">add</span><span class="p">()).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;#average&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">it</span><span class="p">(</span><span class="s2">&quot;calculates the average&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">average</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">average</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+  <span class="p">});</span>
+  <span class="nx">it</span><span class="p">(</span><span class="s2">&quot;handles empty inputs&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">average</span><span class="p">()).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="here-s-what-a-simple-travis-config-looks-like">
+<h3>Hereâs what a simple Travis config looks like</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">demo/travis-ci-demo/.travis.yml</span></div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">language</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">node_js</span>
+<span class="nt">node_js</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="s">&#39;10&#39;</span>
+<span class="nt">script</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">jest operations.test.js</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="seeing-it-in-action">
+<h3>Seeing it in action</h3>
+<p><a class="reference external" href="https://travis-ci.com/rithmschool/travis-ci-demo/builds">https://travis-ci.com/rithmschool/travis-ci-demo/builds</a></p>
+</div>
+</div>
+<div class="section" id="end-to-end-tests">
+<h2>End to End Tests</h2>
+<div class="section" id="id6">
+<div class="docutils container">
+<ul class="simple">
+<li>End-to-end testing tests an applicationâs flow from start to end.</li>
+<li>The purpose of E2E testing is to simulate an entire real user scenario.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="pros-of-e2e-tests">
+<h3>Pros of E2E tests</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>You are also going to find a lot more user-impacting bugs up front, because you are working directly with the application at the userâs perspective.</li>
+<li>You donât have to be as familiar with the specific implementation, or even how coding works to write automated UI tests. Many tools allow you to just click record, perform some actions, and save a script.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="cons-of-e2e-tests">
+<h3>Cons of E2E tests</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>E2E tests are not nearly as maintainable as unit tests. <span class="raw-reveal"><br></span> They break easily when one feature changes.</li>
+<li>They are much more time consuming to write <span class="raw-reveal"><br></span> and can be handled by QA teams.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="common-e2e-testing-tools">
+<h3>Common E2E Testing tools</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Selenium</li>
+<li>Cypress</li>
+</ul>
+</div>
+</div>
+<div class="section" id="an-example-with-cypress-meme-generator">
+<h3>An example with Cypress - Meme Generator!</h3>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">demo/cypress-demo/cypress/integration/meme.spec.js</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;Meme Generator&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">beforeEach</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">cy</span><span class="p">.</span><span class="nx">visit</span><span class="p">(</span><span class="s2">&quot;/index.html&quot;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">timeout</span><span class="o">:</span> <span class="mi">5000</span> <span class="p">});</span>
+  <span class="p">});</span>
+
+  <span class="nx">it</span><span class="p">(</span><span class="s2">&quot;loads correctly&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">cy</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;#meme-form&quot;</span><span class="p">).</span><span class="nx">should</span><span class="p">(</span><span class="s2">&quot;exist&quot;</span><span class="p">);</span>
+  <span class="p">});</span>
+
+  <span class="nx">it</span><span class="p">(</span><span class="s2">&quot;adds a meme when the form is submitted&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">cy</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;.meme&quot;</span><span class="p">).</span><span class="nx">should</span><span class="p">(</span><span class="s2">&quot;not.exist&quot;</span><span class="p">);</span>
+    <span class="nx">addMeme</span><span class="p">();</span>
+    <span class="nx">cy</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;.meme&quot;</span><span class="p">).</span><span class="nx">should</span><span class="p">(</span><span class="s2">&quot;exist&quot;</span><span class="p">);</span>
+  <span class="p">});</span>
+
+  <span class="nx">it</span><span class="p">(</span><span class="s2">&quot;removes a meme when the meme is clicked&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">addMeme</span><span class="p">();</span>
+    <span class="nx">cy</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;.meme&quot;</span><span class="p">).</span><span class="nx">click</span><span class="p">();</span>
+    <span class="nx">cy</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;.meme&quot;</span><span class="p">).</span><span class="nx">should</span><span class="p">(</span><span class="s2">&quot;not.exist&quot;</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="basic-cypress-setup">
+<h3>Basic Cypress Setup</h3>
+<div class="docutils container">
+<pre class="console literal-block">
+$ <span class="cmd">npm i --save-dev cypress</span>
+</pre>
+</div>
+<div class="docutils container">
+<p>In <cite>package.json</cite>:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;scripts&quot;</span><span class="o">:</span> <span class="p">{</span>
+  <span class="s2">&quot;cypress:open&quot;</span><span class="o">:</span> <span class="s2">&quot;cypress open&quot;</span>
+<span class="p">},</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>For more, check out the <a class="reference external" href="https://docs.cypress.io/guides/getting-started/writing-your-first-test.html">docs</a>!</p>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script>
+<script type="text/javascript" src="_static/language_data.js"></script> 
+</body>
+</html>

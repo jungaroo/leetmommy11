@@ -2,6 +2,7 @@ from flask import Flask, request, render_template, redirect, jsonify
 from Classes.WordSearch import WordSearcher, BASE_URL, BASE_LINKS, COHORTS
 from Classes.DBConnector import DBConnector
 from Classes.WordSearchDB import WordSearcherDB
+from Classes.InterviewQuestion import InterviewQSearcher
 import os
 
 
@@ -95,4 +96,15 @@ def list_lecture_links():
     all_links = _get_data(dbC,cohorts,search_word,TYPE_OF_SEARCH)
             
     return render_template("codelinksResult.html",lecture_links=all_links)
+
+@app.route('/interviewQSearch')
+def list_interview_links():
+    """Return all links with word"""
+
+    search_word = request.args.get('search-word', None)
+
+    iqs = InterviewQSearcher()
+    links = iqs.getLinks(search_word)
+            
+    return render_template("interviewLinksResult.html",links=links)
 

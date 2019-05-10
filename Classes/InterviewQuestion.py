@@ -32,6 +32,6 @@ class InterviewQSearcher():
         return links
 
 
-iqs = InterviewQSearcher()
-print(iqs.getLinks('tree'))
+# iqs = InterviewQSearcher()
+# print(iqs.getLinks('tree'))
 

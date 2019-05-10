@@ -6,8 +6,8 @@ Welcome to Leet-Mommy Search
 
 {% block content %}
 
-<div class='container'>
-    <form id='search-form' class='m-5'>
+<div class='container m-5'>
+    <form class='search-form m-5'>
         <div class="form-group">
             <label for="search-word">Search Word:</label>
             <input type="text" class="form-control" name="search-word" id="search-word" placeholder="Enter a search"
@@ -24,6 +24,20 @@ Welcome to Leet-Mommy Search
         <button class='btn btn-primary' formaction="/linkSearch" type='submit'>Get Links</button>
         <button class='btn btn-primary' formaction="/codeSnipSearch" type='submit'>CodeSnip</button>
         <button class='btn btn-primary' formaction="/conceptualSearch" type='submit'>Conceptual Notes</button>
+    </form>
+    <div class='text-center'>
+        <img id='loading-gif' src="https://ui-ex.com/images/gif-transparent-loading-4.gif" alt="" visibility: hidden>
+    </div>
+</div>
+
+<div class='container' style='margin-top:5%'>
+    <form class='search-form m-5'>
+        <div class="form-group">
+            <label for="search-word">Search topic:</label>
+            <input type="text" class="form-control" name="search-word" id="search-word"
+                placeholder="Enter a topic (tree, anagram, string, permutations)" required="required">
+        </div>
+        <button class='btn btn-success' formaction="/interviewQSearch" type='submit'>Interview Question Links</button>
     </form>
     <div class='text-center'>
         <img id='loading-gif' src="https://ui-ex.com/images/gif-transparent-loading-4.gif" alt="" visibility: hidden>

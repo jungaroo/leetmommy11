@@ -1,0 +1,486 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>React State</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">React State</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">React State</a><ul>
+<li><a class="reference internal" href="#id1">React State</a><ul>
+<li><a class="reference internal" href="#core-react-concepts">Core React Concepts</a></li>
+<li><a class="reference internal" href="#state">State</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#initial-state">Initial State</a><ul>
+<li><a class="reference internal" href="#id2">Initial State</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#changing-state">Changing State</a><ul>
+<li><a class="reference internal" href="#id3">Changing State</a></li>
+<li><a class="reference internal" href="#changing-state-with-timers">Changing State With Timers</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#basic-events">Basic Events</a><ul>
+<li><a class="reference internal" href="#id4">Basic Events</a></li>
+<li><a class="reference internal" href="#broken-click">Broken Click</a></li>
+<li><a class="reference internal" href="#good-click">Good Click</a></li>
+<li><a class="reference internal" href="#click-rando">Click Rando</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#specialized-testing">Specialized Testing</a><ul>
+<li><a class="reference internal" href="#id5">Specialized Testing</a></li>
+<li><a class="reference internal" href="#complex-component">Complex Component</a></li>
+<li><a class="reference internal" href="#output-debugging-api">Output/Debugging API</a></li>
+<li><a class="reference internal" href="#finding-matching-api">Finding/Matching API</a></li>
+<li><a class="reference internal" href="#state-props-api">State/Props API</a></li>
+<li><a class="reference internal" href="#simulation-api">Simulation API</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#debugging-tests">Debugging Tests</a><ul>
+<li><a class="reference internal" href="#id6">Debugging Tests</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="react-state">
+<h1>React State</h1>
+<div class="section" id="id1">
+<div class="section" id="core-react-concepts">
+<h3>Core React Concepts</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>component<ul>
+<li>building block of React</li>
+<li>combines logic and presentation</li>
+</ul>
+</li>
+<li>prop<ul>
+<li>data passed to a component <em>(or found via defaults)</em></li>
+<li>immutable; component cannot change its own props</li>
+</ul>
+</li>
+<li>state<ul>
+<li>data specific to a component</li>
+<li>can change!</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="state">
+<h3>State</h3>
+<p>In React, state is always an object.</p>
+<p>Typically, youâll keep track of several things with keys/values.</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nx">playerName</span><span class="o">:</span> <span class="s2">&quot;Whiskey&quot;</span><span class="p">,</span>
+  <span class="nx">currScore</span><span class="o">:</span> <span class="mi">100</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="initial-state">
+<h2>Initial State</h2>
+<div class="section" id="id2">
+<p>To set initial state, do so in the constructor:</p>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">Person</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="nx">mood</span><span class="p">:</span> <span class="s">&quot;happy&quot;</span><span class="p">,</span>
+      <span class="nx">activity</span><span class="p">:</span> <span class="s">&quot;reading&quot;</span><span class="p">,</span>
+    <span class="p">};</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>constructor</cite> must take one argument, <cite>props</cite></li>
+<li>You must call <cite>super(props)</cite> at start of constructor</li>
+<li>Inside methods, itâs <cite>this.state</cite></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="changing-state">
+<h2>Changing State</h2>
+<div class="section" id="id3">
+<p><code class="docutils literal notranslate"><span class="pre">this.setState({key:</span> <span class="pre">val,</span> <span class="pre">key2:</span> <span class="pre">val2})</span></code></p>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">Person</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="c1">// ...</span>
+
+  <span class="nx">changeMood</span><span class="p">(</span><span class="nx">newMood</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span><span class="nx">mood</span><span class="p">:</span> <span class="nx">newMood</span><span class="p">});</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Cannot call this in constructor â but everywhere else!</li>
+<li>Patches state object â keys not set are retained</li>
+</ul>
+</div>
+</div>
+<div class="section" id="changing-state-with-timers">
+<h3>Changing State With Timers</h3>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">demo/click-me/src/Rando.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">Rando</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">num</span><span class="p">:</span> <span class="m">0</span> <span class="p">};</span>
+
+    <span class="c1">// every 1sec, run this function</span>
+<span class="hll">    <span class="nx">setInterval</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span><span class="hll">      <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span>
+</span><span class="hll">        <span class="nx">num</span><span class="p">:</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="m">10</span><span class="p">)</span>
+</span><span class="hll">      <span class="p">});</span>
+</span><span class="hll">    <span class="p">},</span> <span class="m">1000</span><span class="p">);</span>
+</span>  <span class="p">}</span>
+
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">&lt;</span><span class="nt">button</span><span class="p">&gt;</span>Rando: <span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">num</span><span class="p">}&lt;/</span><span class="nt">button</span><span class="p">&gt;;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="basic-events">
+<h2>Basic Events</h2>
+<div class="section" id="id4">
+<p>React can have event handlers!</p>
+<p>They are camel-cased, like <cite>onClick</cite>, and take functions, as usual:</p>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">button</span> <span class="na">onClick</span><span class="o">=</span><span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">handleClick</span> <span class="p">}&gt;</span> Click Me! <span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="broken-click">
+<h3>Broken Click</h3>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">demo/click-me/src/BrokenClick.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">BrokenClick</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">handleClick</span><span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s">&quot;clicked!&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="p">&lt;</span><span class="nt">button</span> <span class="na">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">handleClick</span><span class="p">}&gt;</span>
+        BrokenClick
+      <span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<p><cite>this</cite> is undefined!</p>
+<div class="docutils container">
+<ul class="simple">
+<li>Who is calling <cite>handleClick</cite> for us?<ul>
+<li>React is, on click</li>
+</ul>
+</li>
+<li>What is it calling it on?<ul>
+<li>Errrâ¦ it doesnât know to call it on our instance</li>
+</ul>
+</li>
+<li>What do we do?<ul>
+<li><cite>.bind()</cite> it!</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="good-click">
+<h3>Good Click</h3>
+<p>Weâll fix by binding instance methods in constructor:</p>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">demo/click-me/src/GoodClick.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">GoodClick</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+<span class="hll">    <span class="k">this</span><span class="p">.</span><span class="nx">handleClick</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">handleClick</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+</span>  <span class="p">}</span>
+
+  <span class="nx">handleClick</span><span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s">&quot;clicked!&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="p">&lt;</span><span class="nt">button</span> <span class="na">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">handleClick</span><span class="p">}&gt;</span>
+        GoodClick
+      <span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="click-rando">
+<h3>Click Rando</h3>
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">demo/click-me/src/ClickRando.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">ClickRando</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">num</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">getRandom</span><span class="p">()</span> <span class="p">};</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">handleClick</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">handleClick</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="nx">getRandom</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">maxNum</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nx">handleClick</span><span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span> <span class="nx">num</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">getRandom</span><span class="p">()</span> <span class="p">});</span>
+  <span class="p">}</span>
+
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="p">&lt;</span><span class="nt">button</span> <span class="na">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">handleClick</span><span class="p">}&gt;</span>
+        Click Rando: <span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">num</span><span class="p">}</span>
+      <span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="specialized-testing">
+<h2>Specialized Testing</h2>
+<div class="section" id="id5">
+<p>Snapshot testing is great!</p>
+<p>But sometimes youâll need to hand-test functionality</p>
+</div>
+<div class="section" id="complex-component">
+<h3>Complex Component</h3>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">demo/click-me/src/Complex.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">Complex</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">static</span> <span class="nx">defaultProps</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">text</span><span class="p">:</span> <span class="s">&quot;Lucky&quot;</span><span class="p">,</span> <span class="nx">maxNum</span><span class="p">:</span> <span class="m">100</span> <span class="p">};</span>
+
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">pushed</span><span class="p">:</span> <span class="k">false</span><span class="p">,</span> <span class="nx">num</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">getRandom</span><span class="p">()</span> <span class="p">};</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">handleClick</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">handleClick</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="nx">getRandom</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">maxNum</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nx">handleClick</span><span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span> <span class="nx">pushed</span><span class="p">:</span> <span class="k">true</span><span class="p">,</span> <span class="nx">num</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">getRandom</span><span class="p">()</span> <span class="p">});</span>
+  <span class="p">}</span>
+
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="p">&lt;</span><span class="nt">button</span> <span class="na">className</span><span class="o">=</span><span class="s">&quot;btn&quot;</span> <span class="na">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">handleClick</span><span class="p">}&gt;</span>
+        <span class="p">&lt;</span><span class="nt">b</span><span class="p">&gt;{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">text</span><span class="p">}</span>:<span class="p">&lt;/</span><span class="nt">b</span><span class="p">&gt;</span> =
+        <span class="p">&lt;</span><span class="nt">i</span><span class="p">&gt;{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">num</span><span class="p">}&lt;/</span><span class="nt">i</span><span class="p">&gt;</span>
+      <span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Takes <cite>maxNum</cite> and <cite>text</cite> props we can test</li>
+<li>Initial state is random â how can we test this?</li>
+<li>Want to make sure <cite>&lt;b&gt;</cite> and <cite>&lt;i&gt;</cite> children are in there</li>
+<li>Want to test functionality of clicking</li>
+</ul>
+</div>
+<p>We can make specialized tests with methods on results of <cite>mount()</cite></p>
+</div>
+<div class="section" id="output-debugging-api">
+<h3>Output/Debugging API</h3>
+<div class="docutils container">
+<dl class="docutils">
+<dt>.debug()</dt>
+<dd>Useful for debugging tests â shows what <cite>mount()</cite> got</dd>
+<dt>.html()</dt>
+<dd>Rendered HTML of component</dd>
+</dl>
+</div>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">demo/click-me/src/Complex.test.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="nx">it</span><span class="p">(</span><span class="s">&#39;can use output tests&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">wrapper</span> <span class="o">=</span> <span class="nx">mount</span><span class="p">(&lt;</span><span class="nt">Complex</span> <span class="p">/&gt;);</span>
+
+  <span class="c1">// show what this looks like in jest console</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">wrapper</span><span class="p">.</span><span class="nx">debug</span><span class="p">());</span>
+
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">wrapper</span><span class="p">.</span><span class="nx">html</span><span class="p">()).</span><span class="nx">toContain</span><span class="p">(</span><span class="s">&quot;Lucky:&quot;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">result of <cite>console.log()</cite></span></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&lt;Complex text=&quot;Lucky&quot; maxNum={100}&gt;
+  &lt;button className=&quot;btn&quot;
+          onClick={[Function: bound handleClick]}&gt;
+    &lt;b&gt;Lucky:&lt;/b&gt;
+     =
+    &lt;i&gt;2&lt;/i&gt;
+  &lt;/button&gt;
+&lt;/Complex&gt;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="finding-matching-api">
+<h3>Finding/Matching API</h3>
+<div class="docutils container">
+<dl class="docutils">
+<dt>.exists(selector)</dt>
+<dd>Can we find <em>selector</em>?</dd>
+<dt>.find(selector)</dt>
+<dd>Find all nodes matching selector</dd>
+<dt>.matchesElement(node)</dt>
+<dd>Does this match element <em>(donât have to provide all attributes!)</em></dd>
+</dl>
+</div>
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">demo/click-me/src/Complex.test.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="nx">it</span><span class="p">(</span><span class="s">&#39;can use matching tests&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">wrapper</span> <span class="o">=</span> <span class="nx">mount</span><span class="p">(&lt;</span><span class="nt">Complex</span> <span class="p">/&gt;);</span>
+
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">wrapper</span><span class="p">.</span><span class="nx">exists</span><span class="p">(</span><span class="s">&#39;b&#39;</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="k">true</span><span class="p">);</span>
+
+  <span class="kd">let</span> <span class="nx">b_elem</span> <span class="o">=</span> <span class="nx">wrapper</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;b&#39;</span><span class="p">).</span><span class="nx">first</span><span class="p">();</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">b_elem</span><span class="p">.</span><span class="nx">equals</span><span class="p">(&lt;</span><span class="nt">b</span><span class="p">&gt;</span>Lucky:<span class="p">&lt;/</span><span class="nt">b</span><span class="p">&gt;)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="k">true</span><span class="p">);</span>
+
+  <span class="c1">// matches even w/o attrs (data-nclicks, onClick)</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">wrapper</span><span class="p">.</span><span class="nx">matchesElement</span><span class="p">(&lt;</span><span class="nt">button</span> <span class="na">className</span><span class="o">=</span><span class="s">&quot;btn&quot;</span><span class="p">/&gt;));</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="state-props-api">
+<h3>State/Props API</h3>
+<div class="docutils container">
+<dl class="docutils">
+<dt>.props()</dt>
+<dd>Get props of component</dd>
+<dt>.setProps(props)</dt>
+<dd>Set properties of component</dd>
+<dt>.state()</dt>
+<dd>Get state of component</dd>
+<dt>.setState(state)</dt>
+<dd>Set state of component</dd>
+</dl>
+</div>
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-text">demo/click-me/src/Complex.test.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="nx">it</span><span class="p">(</span><span class="s">&#39;can be props/state tested&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">wrapper</span> <span class="o">=</span> <span class="nx">mount</span><span class="p">(&lt;</span><span class="nt">Complex</span> <span class="na">text</span><span class="o">=</span><span class="s">&quot;Pushes&quot;</span><span class="p">/&gt;);</span>
+
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">wrapper</span><span class="p">.</span><span class="nx">prop</span><span class="p">(</span><span class="s">&#39;text&#39;</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s">&#39;Pushes&#39;</span><span class="p">);</span>
+
+  <span class="nx">wrapper</span><span class="p">.</span><span class="nx">setProps</span><span class="p">({</span><span class="nx">text</span><span class="p">:</span> <span class="s">&quot;Wins&quot;</span><span class="p">});</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">wrapper</span><span class="p">.</span><span class="nx">html</span><span class="p">()).</span><span class="nx">toContain</span><span class="p">(</span><span class="s">&quot;Wins&quot;</span><span class="p">);</span>
+
+  <span class="nx">wrapper</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span><span class="nx">num</span><span class="p">:</span> <span class="m">42</span><span class="p">});</span>
+  <span class="kd">let</span> <span class="nx">i_elem</span> <span class="o">=</span> <span class="nx">wrapper</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;i&#39;</span><span class="p">).</span><span class="nx">first</span><span class="p">();</span>
+  <span class="c1">// note {42}, not just 42 --- has to match exactly</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">i_elem</span><span class="p">.</span><span class="nx">equals</span><span class="p">(&lt;</span><span class="nt">i</span><span class="p">&gt;{</span><span class="m">42</span><span class="p">}&lt;/</span><span class="nt">i</span><span class="p">&gt;)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="k">true</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="simulation-api">
+<h3>Simulation API</h3>
+<div class="docutils container">
+<dl class="docutils">
+<dt>.simulate(eventName, data)</dt>
+<dd>Simulate event on wrapper object</dd>
+</dl>
+</div>
+<div class="literal-block-wrapper docutils container" id="id16">
+<div class="code-block-caption"><span class="caption-text">demo/click-me/src/Complex.test.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="nx">it</span><span class="p">(</span><span class="s">&#39;can be event tested&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">wrapper</span> <span class="o">=</span> <span class="nx">mount</span><span class="p">(&lt;</span><span class="nt">Complex</span> <span class="p">/&gt;);</span>
+
+  <span class="nx">wrapper</span><span class="p">.</span><span class="nx">simulate</span><span class="p">(</span><span class="s">&quot;click&quot;</span><span class="p">);</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">wrapper</span><span class="p">.</span><span class="nx">state</span><span class="p">().</span><span class="nx">pushed</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="k">true</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="debugging-tests">
+<h2>Debugging Tests</h2>
+<div class="section" id="id6">
+<p>Tests can be tricky to figure out.</p>
+<p>Edit your package JSON to include:</p>
+<div class="literal-block-wrapper docutils container" id="id17">
+<div class="code-block-caption"><span class="caption-text">package.json</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;scripts&quot;</span><span class="o">:</span> <span class="p">{</span>
+  <span class="c1">// ... keep other things and add this</span>
+  <span class="s2">&quot;test:debug&quot;</span><span class="o">:</span> <span class="s2">&quot;react-scripts --inspect-brk test --runInBand&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<p>Add <cite>debugger</cite> line in test or component you want to test</p>
+<p>A``npm run test:debug`` will run tests using Chrome/node debugger!</p>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script>
+<script type="text/javascript" src="_static/language_data.js"></script> 
+</body>
+</html>

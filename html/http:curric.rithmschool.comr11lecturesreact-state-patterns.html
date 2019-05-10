@@ -1,0 +1,556 @@
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>React State Patterns</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/handouts-sphinx.css"/>
+
+    
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic|Inconsolata:400,700'
+          rel='stylesheet' type='text/css'>
+    
+</head>
+<body>
+<div id="page-wrapper">
+    <div id="page-sidebar">
+        <header>
+            <p class="project">Demo</p>
+
+            <p class="title">React State Patterns</p>
+
+            <p class="backlink"><a href=""> &laquo; Back to Homepage</a></p>
+
+        </header>
+        <div id="toc">
+            <ul>
+<li><a class="reference internal" href="#">React State Patterns</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a><ul>
+<li><a class="reference internal" href="#id1">Goals</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#changing-state">Changing State</a><ul>
+<li><a class="reference internal" href="#id2">Changing State</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#state-changes-are-asynchronous">State Changes Are Asynchronous</a><ul>
+<li><a class="reference internal" href="#id3">State Changes are Asynchronous</a></li>
+<li><a class="reference internal" href="#knowing-when-state-change-is-done">Knowing When State Change Is Done</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#setting-state-using-state">Setting State Using State</a><ul>
+<li><a class="reference internal" href="#id4">Setting State Using State</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mutable-data-structures">Mutable Data Structures</a><ul>
+<li><a class="reference internal" href="#id5">Mutable Data Structures</a></li>
+<li><a class="reference internal" href="#changing-mutable-state">Changing Mutable State</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#nested-mutable-states">Nested Mutable States</a><ul>
+<li><a class="reference internal" href="#id6">Nested Mutable States</a></li>
+<li><a class="reference internal" href="#do-i-have-to-do-this">Do I <em>Have</em> To Do This?</a></li>
+<li><a class="reference internal" href="#a-common-pattern">A Common Pattern</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#designing-components-state">Designing Components &amp; State</a><ul>
+<li><a class="reference internal" href="#id7">Designing Components &amp; State</a></li>
+<li><a class="reference internal" href="#components">Components</a></li>
+<li><a class="reference internal" href="#dumb-components">âDumbâ Components</a></li>
+<li><a class="reference internal" href="#don-t-store-derived-info">Donât Store Derived Info</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#example-design-lottery">Example Design: Lottery</a><ul>
+<li><a class="reference internal" href="#let-s-design-an-app">Letâs Design an App!</a></li>
+<li><a class="reference internal" href="#should-be-reusable-flexible">Should Be Reusable, Flexible</a></li>
+<li><a class="reference internal" href="#design">Design</a></li>
+<li><a class="reference internal" href="#lottery-component"><cite>Lottery</cite> Component</a></li>
+<li><a class="reference internal" href="#lotteryball-component"><cite>LotteryBall Component</cite></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+    </div>
+    <div id="page-content">
+        
+  <div class="section" id="react-state-patterns">
+<h1>React State Patterns</h1>
+<p><a class="reference external" href="../react-state-patterns-demo.zip">Download Demo Code</a></p>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<div class="section" id="id1">
+<div class="docutils container">
+<ul class="simple">
+<li>Learn about sharp edges of React <cite>setState()</cite></li>
+<li>Learn about storing mutable items in state &amp; updating them</li>
+<li>Learn tips for deciding on components &amp; state</li>
+<li>Practice designing a React app!</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="changing-state">
+<h2>Changing State</h2>
+<div class="section" id="id2">
+<p><strong>Always</strong> change the state using <cite>.setState()</cite></p>
+<p><strong>Only</strong> assign directly to state (<code class="docutils literal notranslate"><span class="pre">this.state</span> <span class="pre">=</span> <span class="pre">...</span></code>) in constructor</p>
+<div class="docutils container">
+<p>Otherwise, React canât tell state changed &amp; component wonât re-render</p>
+</div>
+</div>
+</div>
+<div class="section" id="state-changes-are-asynchronous">
+<h2>State Changes Are Asynchronous</h2>
+<div class="section" id="id3">
+<h3>State Changes are Asynchronous</h3>
+<div class="docutils container">
+<ul class="simple">
+<li><cite>setState()</cite> is asynchronous!<ul>
+<li>The actual change will happen later that the call to <cite>setState()</cite></li>
+</ul>
+</li>
+<li>When you call <cite>setState()</cite>, earlier changes may not have yet happened</li>
+<li>This can present challenges</li>
+</ul>
+</div>
+</div>
+<div class="section" id="knowing-when-state-change-is-done">
+<h3>Knowing When State Change Is Done</h3>
+<p>It wonât work to use <cite>this.state</cite> after <cite>setState()</cite></p>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">in a click handler</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span> <span class="nx">mood</span><span class="p">:</span> <span class="nx">pickMood</span><span class="p">()</span> <span class="p">});</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s">&quot;new mood is&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">mood</span><span class="p">);</span>  <span class="c1">// nope :(</span>
+</pre></div>
+</div>
+</div>
+<p><cite>.setState()</cite> can take a second argument â a callback</p>
+<p>This is run <em>after</em> the state has been updated:</p>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">in a click handler</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">(</span>
+  <span class="p">{</span> <span class="nx">mood</span><span class="p">:</span> <span class="nx">pickMood</span><span class="p">()</span> <span class="p">},</span>
+  <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s">&quot;new mood&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">mood</span><span class="p">)</span> <span class="p">}</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">demo/simple-counter/src/RandomClick.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">RandomClick</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">num</span><span class="p">:</span> <span class="s">&quot;-&quot;</span> <span class="p">};</span>
+
+    <span class="k">this</span><span class="p">.</span><span class="nx">handleClick</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">handleClick</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="nx">handleClick</span><span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">(</span>
+      <span class="p">{</span> <span class="nx">num</span><span class="p">:</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="m">10</span><span class="p">)</span> <span class="p">},</span>
+      <span class="kd">function</span> <span class="nx">after</span><span class="p">()</span> <span class="p">{</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s">&quot;after&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">)</span> <span class="p">}</span>
+    <span class="p">);</span>
+
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s">&quot;not yet&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">num</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">num</span><span class="p">;</span>
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="p">&lt;</span><span class="nt">button</span> <span class="na">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">handleClick</span><span class="p">}&gt;{</span><span class="nx">num</span><span class="p">}&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="setting-state-using-state">
+<h2>Setting State Using State</h2>
+<div class="section" id="id4">
+<p>Since <cite>setState()</cite> is asynchronous, itâs risky having <cite>setState</cite> depend
+on the state:</p>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">in a click handler</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span> <span class="nx">num</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">num</span> <span class="o">+</span> <span class="m">1</span> <span class="p">});</span>  <span class="c1">// ut oh</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>Click #1: requests changing state from 0 â 1  <span class="green">(ok!)</span></li>
+<li>Click #2, if you click slowly<ul>
+<li>First state change is complete, 1 â 2 <span class="green">(ok!)</span></li>
+</ul>
+</li>
+<li>Click #2, if you click very quickly:<ul>
+<li>First state change isnât complete, 0 â 1 <span class="red">(grrr!)</span></li>
+</ul>
+</li>
+</ul>
+</div>
+<p>When new state relies on a value in old state, use the <span class="raw-reveal"><br></span>
+âalternate callback versionâ for first argument to <cite>.setState()</cite></p>
+<p>Callback is called when all <em>already-requested</em> state changes have finished</p>
+<div class="docutils container">
+<p>It is passed the state as an argument &amp; should return new state:</p>
+<div class="compare docutils container">
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">cb as normal function</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">st</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">{</span><span class="nx">num</span><span class="p">:</span> <span class="nx">st</span><span class="p">.</span><span class="nx">num</span> <span class="o">+</span> <span class="m">1</span><span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">cb as arrow</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="c1">// parens are req&#39;d for arrow fn syntax</span>
+
+<span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">(</span><span class="nx">st</span> <span class="o">=&gt;</span> <span class="p">({</span><span class="nx">num</span><span class="p">:</span> <span class="nx">st</span><span class="p">.</span><span class="nx">num</span> <span class="o">+</span> <span class="m">1</span><span class="p">}));</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">demo/simple-counter/src/SimpleCounter.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">SimpleCounter</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">num</span><span class="p">:</span> <span class="m">0</span> <span class="p">};</span>
+
+    <span class="k">this</span><span class="p">.</span><span class="nx">clickUp</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">clickUp</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">clickDown</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">clickDown</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="nx">clickUp</span><span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">(</span><span class="nx">st</span> <span class="o">=&gt;</span> <span class="p">({</span> <span class="nx">num</span><span class="p">:</span> <span class="nx">st</span><span class="p">.</span><span class="nx">num</span> <span class="o">+</span> <span class="m">1</span> <span class="p">}))</span> <span class="p">}</span>
+
+  <span class="nx">clickDown</span><span class="p">(</span><span class="nx">evt</span><span class="p">)</span> <span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">(</span><span class="nx">st</span> <span class="o">=&gt;</span> <span class="p">({</span> <span class="nx">num</span><span class="p">:</span> <span class="nx">st</span><span class="p">.</span><span class="nx">num</span> <span class="o">-</span> <span class="m">1</span> <span class="p">}))</span> <span class="p">}</span>
+
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">h3</span><span class="p">&gt;</span>Count: <span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">num</span><span class="p">}&lt;/</span><span class="nt">h3</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">button</span> <span class="na">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">clickUp</span><span class="p">}&gt;</span>Up<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">button</span> <span class="na">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">clickDown</span><span class="p">}&gt;</span>Down<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+      <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="mutable-data-structures">
+<h2>Mutable Data Structures</h2>
+<div class="section" id="id5">
+<div class="docutils container">
+<p>So, weâve just had primitive values (strings &amp; numbers) in our state.</p>
+</div>
+<div class="docutils container">
+<p>But state also stores things like objects &amp; arrays.</p>
+</div>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">todos</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;do the dishes&quot;</span><span class="p">,</span> <span class="s2">&quot;vacuum the floor&quot;</span><span class="p">]</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="changing-mutable-state">
+<h3>Changing Mutable State</h3>
+<p>Just mutating a value in the state wonât work:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">todos</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s2">&quot;call mom&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>Wonât work at all â component wonât know to re-render!</p>
+</div>
+<p>This <em>can</em> work if you call <cite>.setState()</cite> afterwards:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">(</span><span class="nx">st</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="nx">st</span><span class="p">.</span><span class="nx">todos</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s2">&quot;call mom&quot;</span><span class="p">);</span>
+  <span class="k">return</span> <span class="p">{</span><span class="nx">todos</span><span class="o">:</span> <span class="nx">st</span><span class="p">.</span><span class="nx">todos</span><span class="p">};</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<ul class="simple">
+<li>We strongly recommend you donât do this!<ul>
+<li>It makes it much harder to optimize your React app later</li>
+<li>It can make debugging any state bugs harder</li>
+</ul>
+</li>
+</ul>
+</div>
+<p>A better way is to make a new copy of the data structure:</p>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">(</span><span class="nx">st</span> <span class="o">=&gt;</span> <span class="p">({</span>
+  <span class="nx">todos</span><span class="p">:</span> <span class="p">[...</span><span class="nx">st</span><span class="p">.</span><span class="nx">todos</span><span class="p">,</span> <span class="s">&quot;call mom&quot;</span><span class="p">]</span>
+<span class="p">}))</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>That makes a <em>new array of todos</em> for <cite>setState()</cite></p>
+<p>This will let us later optimize our React apps/use advanced features.</p>
+</div>
+<div class="admonition note">
+<p>Affect Runtime!</p>
+<p class="last">There is a slight efficiency cost due to the O(N) space/time required to make a copy,
+but itâs almost always worth it to ensure that your app doesnât have extremely
+difficult to detect bugs due to side effects.</p>
+</div>
+</div>
+</div>
+<div class="section" id="nested-mutable-states">
+<h2>Nested Mutable States</h2>
+<div class="section" id="id6">
+<p>State can also be things like arrays-of-objects:</p>
+<div class="docutils container">
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">todos</span><span class="o">:</span> <span class="p">[</span>
+    <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">task</span><span class="o">:</span> <span class="s1">&#39;do the dishes&#39;</span><span class="p">,</span>    <span class="nx">done</span><span class="o">:</span> <span class="kc">false</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span> <span class="nx">task</span><span class="o">:</span> <span class="s1">&#39;vacuum the floor&#39;</span><span class="p">,</span> <span class="nx">done</span><span class="o">:</span> <span class="kc">true</span> <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</div>
+<div class="compare docutils container">
+<div class="docutils container">
+<p>To mark first todo as done:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">(</span><span class="nx">st</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="p">[</span><span class="nx">first</span><span class="p">,</span> <span class="p">...</span><span class="nx">rest</span><span class="p">]</span> <span class="o">=</span> <span class="nx">st</span><span class="p">.</span><span class="nx">todos</span><span class="p">;</span>
+  <span class="nx">first</span><span class="p">.</span><span class="nx">done</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+  <span class="k">return</span> <span class="p">{</span><span class="nx">todos</span><span class="o">:</span> <span class="p">[</span><span class="nx">first</span><span class="p">,</span> <span class="p">...</span><span class="nx">rest</span><span class="p">]};</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>New array, but mutated first todo obj</p>
+</div>
+<div class="docutils container">
+<p>A better way:</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">(</span><span class="nx">st</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="p">[</span><span class="nx">oldFirst</span><span class="p">,</span> <span class="p">...</span><span class="nx">rest</span><span class="p">]</span> <span class="o">=</span> <span class="nx">st</span><span class="p">.</span><span class="nx">todos</span><span class="p">;</span>
+  <span class="kd">let</span> <span class="nx">first</span> <span class="o">=</span> <span class="p">{...</span><span class="nx">oldFirst</span><span class="p">,</span> <span class="nx">done</span><span class="o">:</span> <span class="kc">true</span><span class="p">};</span>
+  <span class="k">return</span> <span class="p">{</span><span class="nx">todos</span><span class="o">:</span> <span class="p">[</span><span class="nx">first</span><span class="p">,</span> <span class="p">...</span><span class="nx">rest</span><span class="p">]};</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>New array <em>and</em> first todo is a new obj!</p>
+</div>
+</div>
+<div class="docutils container">
+<p>Now weâre not mutating <em>anything</em></p>
+</div>
+</div>
+<div class="section" id="do-i-have-to-do-this">
+<h3>Do I <em>Have</em> To Do This?</h3>
+<p>No, not for normal React</p>
+<p>But some add-on features &amp; debugging tools will require this.</p>
+<p>Itâs a very good idea to do this â never mutate <em>any part of state</em></p>
+</div>
+<div class="section" id="a-common-pattern">
+<h3>A Common Pattern</h3>
+<p>Often, you can do this with JS âpure functionsâ, like <cite>map</cite> or <cite>filter</cite>:</p>
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-text">remove todo w/id</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span>  <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">(</span><span class="nx">st</span> <span class="p">=&gt;</span> <span class="p">({</span>
+    <span class="nx">todos</span><span class="o">:</span> <span class="nx">st</span><span class="p">.</span><span class="nx">todos</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">todo</span> <span class="p">=&gt;</span> <span class="nx">todo</span><span class="p">.</span><span class="nx">id</span> <span class="o">!==</span> <span class="nx">id</span><span class="p">)</span>
+  <span class="p">});</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id16">
+<div class="code-block-caption"><span class="caption-text">mark todo w/id as done</span></div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span>  <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">(</span><span class="nx">st</span> <span class="p">=&gt;</span> <span class="p">({</span>
+    <span class="nx">todos</span><span class="o">:</span> <span class="nx">st</span><span class="p">.</span><span class="nx">todos</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">todo</span> <span class="p">=&gt;</span> <span class="p">({</span>
+        <span class="nx">todo</span><span class="p">.</span><span class="nx">id</span> <span class="o">===</span> <span class="nx">id</span>
+          <span class="o">?</span> <span class="p">{</span> <span class="p">...</span><span class="nx">todo</span><span class="p">,</span> <span class="nx">done</span><span class="o">:</span> <span class="kc">true</span> <span class="p">}</span>
+          <span class="o">:</span> <span class="nx">todo</span>
+    <span class="p">})</span>
+  <span class="p">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="docutils container">
+<p>These are good intermediate idioms to practice</p>
+</div>
+</div>
+</div>
+<div class="section" id="designing-components-state">
+<h2>Designing Components &amp; State</h2>
+<div class="section" id="id7">
+<p>Designing a React application is a challenging skill that takes lots of practice.</p>
+<p>Here are some ideas to begin with.</p>
+</div>
+<div class="section" id="components">
+<h3>Components</h3>
+<p>Generally, components should be small &amp; do one thing</p>
+<p>This often makes them more reusable</p>
+<div class="docutils container">
+<p>Example: component that shows a die w/val could be used in lots of dice games.</p>
+</div>
+</div>
+<div class="section" id="dumb-components">
+<h3>âDumbâ Components</h3>
+<p>Often, small components are simple &amp; donât have state:</p>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">Die</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">&lt;</span><span class="nt">div</span> <span class="na">className</span><span class="o">=</span><span class="s">&quot;Die&quot;</span><span class="p">&gt;</span> <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">dieVal</span> <span class="p">}</span> <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>This can be used like:</p>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">SetOfDice</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>  <span class="c1">// ... lots missing</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">&lt;</span><span class="nt">div</span> <span class="na">className</span><span class="o">=</span><span class="s">&quot;SetOfDice&quot;</span><span class="p">&gt;</span>
+             <span class="p">&lt;</span><span class="nt">Die</span> <span class="na">dieVal</span><span class="o">=</span><span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">vals</span><span class="p">[</span><span class="m">0</span><span class="p">]</span> <span class="p">}</span> <span class="p">/&gt;</span>
+             <span class="p">&lt;</span><span class="nt">Die</span> <span class="na">dieVal</span><span class="o">=</span><span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">vals</span><span class="p">[</span><span class="m">1</span><span class="p">]</span> <span class="p">}</span> <span class="p">/&gt;</span>
+             <span class="p">&lt;</span><span class="nt">Die</span> <span class="na">dieVal</span><span class="o">=</span><span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">vals</span><span class="p">[</span><span class="m">2</span><span class="p">]</span> <span class="p">}</span> <span class="p">/&gt;</span>
+           <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="docutils container">
+<p>Components like <cite>Die</cite> are called âpresentationalâ or âdumbâ <em>[in a good way!]</em></p>
+</div>
+</div>
+<div class="section" id="don-t-store-derived-info">
+<h3>Donât Store Derived Info</h3>
+<p>If one thing can be calculated from another, donât store both:</p>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nx">TaskList</span> <span class="k">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span>  <span class="p">{</span>
+      <span class="nx">todos</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;wash car&quot;</span><span class="p">,</span> <span class="s">&quot;wash cat&quot;</span><span class="p">],</span>
+      <span class="nx">numTodos</span><span class="p">:</span> <span class="m">2</span><span class="p">,</span>
+    <span class="p">};</span>
+  <span class="p">}</span>
+
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+             You have <span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">numTodos</span><span class="p">}</span> tasks ...
+           <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="docutils container">
+<p>Yuck! Just calculate the number of todos as needed!</p>
+</div>
+</div>
+</div>
+<div class="section" id="example-design-lottery">
+<h2>Example Design: Lottery</h2>
+<div class="section" id="let-s-design-an-app">
+<h3>Letâs Design an App!</h3>
+<a class="reference internal image-reference" href="_images/lottery.png"><img alt="_images/lottery.png" src="_images/lottery.png" style="width: 50%;" /></a>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id17">
+<div class="code-block-caption"><span class="caption-text">in App.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">Lottery</span> <span class="p">/&gt;</span>
+</pre></div>
+</div>
+</div>
+<p>Should show 6 balls</p>
+<p>Value 1-40 generated when button clicked</p>
+</div>
+</div>
+<div class="section" id="should-be-reusable-flexible">
+<h3>Should Be Reusable, Flexible</h3>
+<a class="reference internal image-reference" href="_images/lottery-many.png"><img alt="_images/lottery-many.png" src="_images/lottery-many.png" style="width: 35%;" /></a>
+<div class="docutils container">
+<div class="literal-block-wrapper docutils container" id="id18">
+<div class="code-block-caption"><span class="caption-text">in App.js</span></div>
+<div class="highlight-jsx notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">Lottery</span> <span class="p">/&gt;</span>
+  <span class="p">&lt;</span><span class="nt">Lottery</span> <span class="na">title</span><span class="o">=</span><span class="s">&quot;Mini Daily&quot;</span> <span class="na">numBalls</span><span class="o">=</span><span class="p">{</span><span class="m">4</span><span class="p">}</span> <span class="na">maxNum</span><span class="o">=</span><span class="p">{</span><span class="m">10</span><span class="p">}</span> <span class="p">/&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</div>
+<p>Should be able to control title, num balls to show, and max value</p>
+</div>
+</div>
+<div class="section" id="design">
+<h3>Design</h3>
+<ul class="simple">
+<li>What components will we need?</li>
+<li>What props will they need?</li>
+<li>What state will we need?</li>
+</ul>
+</div>
+<div class="section" id="lottery-component">
+<h3><cite>Lottery</cite> Component</h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Props<ul>
+<li><cite>title</cite>: title of the lottery</li>
+<li><cite>numBalls</cite>: num of balls to display</li>
+<li><cite>maxNum</cite>: max value of ball</li>
+</ul>
+</li>
+<li>State<ul>
+<li><cite>nums</cite>: array of <code class="docutils literal notranslate"><span class="pre">[num,</span> <span class="pre">num,</span> <span class="pre">num,</span> <span class="pre">...]</span></code> for balls</li>
+</ul>
+</li>
+<li>Events<ul>
+<li><cite>onClick</cite>: regenerate nums in state</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="lotteryball-component">
+<h3><cite>LotteryBall Component</cite></h3>
+<div class="docutils container">
+<ul class="simple">
+<li>Props<ul>
+<li><cite>num</cite>: value on this ball</li>
+</ul>
+</li>
+<li>State<ul>
+<li>none!</li>
+</ul>
+</li>
+<li>Events<ul>
+<li>none!</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+
+    </div>
+</div>
+<script type="text/javascript" src="_static/jquery.js"></script>
+<script type="text/javascript" src="_static/underscore.js"></script>
+<script type="text/javascript" src="_static/doctools.js"></script>
+<script type="text/javascript" src="_static/language_data.js"></script> 
+</body>
+</html>

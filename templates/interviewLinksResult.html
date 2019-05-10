@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Interview Question Notes:</h1>
+
+<ul class="list-group">
+
+  {% for link in links %}
+  <li class="list-group-item"><strong><a href="{{ link[1] }}">{{ link[0] }}</a></strong></li>
+  {% endfor %}
+
+</ul>
+{% endblock %}
