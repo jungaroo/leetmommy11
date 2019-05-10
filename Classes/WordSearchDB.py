@@ -19,7 +19,7 @@ class WordSearcherDB(WordSearcher):
             "lecture_pages": self.get_lecture_pages_DB
         }
 
-        return switcher.get(type_of_search, lambda: [])(word)  
+        return switcher.get(type_of_search, lambda x: [])(word)  
         
     def get_links_with_word_DB(self, word: str):
 
