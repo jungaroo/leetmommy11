@@ -1,8 +1,8 @@
 from flask import Flask, request, render_template, redirect, jsonify
-from Classes.WordSearch import WordSearcher, BASE_URL, BASE_LINKS, COHORTS
-from Classes.DBConnector import DBConnector
-from Classes.WordSearchDB import WordSearcherDB
-from Classes.InterviewQuestion import InterviewQSearcher
+from classes.wordsearch import WordSearcher, BASE_URL, BASE_LINKS, COHORTS
+from classes.dbconnector import DBConnector
+from classes.wordsearchdb import WordSearcherDB
+from classes.interviewquestion import InterviewQSearcher
 import os
 
 
