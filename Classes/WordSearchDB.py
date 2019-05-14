@@ -1,5 +1,5 @@
-from Classes.WordSearch import WordSearcher
-from Classes.DBConnector import DBConnector
+from classes.wordsearch import WordSearcher
+from classes.dbconnector import DBConnector
 import random
 
 

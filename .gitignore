@@ -1,6 +1,6 @@
 venv/
 .vscode
 __pycache__/
-Classes/__pycache__/
+classes/__pycache__/
 __pycache__
 secret.py

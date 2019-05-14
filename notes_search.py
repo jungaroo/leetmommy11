@@ -1,6 +1,5 @@
 import requests
 import bs4
-import re
 import argparse
 import sys
 import asyncio
@@ -55,7 +54,6 @@ async def main():
     args = vars(parser.parse_args())
     word = args['word']
     print(f"Searching for the word: {word}")
-
 
     # Grab all links
     links = get_all_links()
