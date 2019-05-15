@@ -4,6 +4,10 @@ from classes.dbconnector import DBConnector
 from classes.wordsearchdb import WordSearcherDB
 from classes.interviewquestion import InterviewQSearcher
 import os
+import pickle
+
+from classes.models import db, connect_db, LinkHTML
+from classes import indexsearch
 
 
 MONGO_DB_URI = os.environ.get(
@@ -21,6 +25,12 @@ dbC = DBConnector(MONGO_DB_URI,'leetmommy')
 
 
 ##################################################
+
+# Connect to DB for indexed search
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///leetmommy'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_ECHO'] = True
+connect_db(app)
 
 
 @app.route('/')
@@ -107,4 +117,62 @@ def list_interview_links():
     links = iqs.getLinks(search_word)
             
     return render_template("interviewLinksResult.html",links=links)
+
+@app.route('/indexSearch')
+def list_indexed_links():
+    """Return all links using the inverted index - beta version """
+    search_word = request.args.get('search-word', None)
+
+    # Open the file that will load your inverted index
+    with open('inverted_index.pickle', 'rb') as handle:
+        inverted_index = pickle.load(handle)
+
+    base_url = 'http://curric.rithmschool.com/r11/lectures/'
+
+    # Search the word through the inverted index
+    link_ids = inverted_index.get(search_word, [])
+
+    # Use the db to grab the link name from the ID
+    links_rows = LinkHTML.query.filter(LinkHTML.id.in_(link_ids))
+    
+    if (link_ids):
+        urls = [base_url + link.url for link in links_rows]
+        all_links = { "r11" : urls }
+        return render_template("codelinksResult.html",lecture_links=all_links)
+    else:
+        return render_template("codelinksResult.html",lecture_links={"r11":["No links found"]})
+
+    
+
+# temporary route to add stuff
+@app.route('/buildIndex', methods=["POST"])
+def build_index():
+    """ Don't actually hit this route, it's just for connecting the the database to grab the IDs
+    """
+
+    import asyncio 
+    import aiohttp 
+    import pickle
+
+    base_url = 'http://curric.rithmschool.com/r11/lectures/'
+    links = indexsearch.get_lecture_links_from_table_of_contents(base_url)
+
+    # Create the inverted index from all of them 
+    invindex = {}
+    for link in links:
+        word = indexsearch.get_words_from_link(base_url+link) # This grabs words from the links using an NLTK tokenizer
+        
+        # Grab the document ID based on that link
+        link_row = LinkHTML.query.filter_by(url=link).first()
+        link_id = link_row.id
+
+        # Add to the inverted index
+        indexsearch.add_words_to_invindex(invindex, word, link_id)
+        print("Done with: ", link_id)
+
+    with open('inverted_index', 'wb') as handle:
+        pickle.dump(invindex, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    
+    print("saved!")
+    return jsonify({"stuff": "completed"})
 
