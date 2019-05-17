@@ -35,7 +35,7 @@ dbC = DBConnector(MONGO_DB_URI,'leetmommy')
 # Connect to DB for indexed search
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgresql:///leetmommy')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_ECHO'] = True
+# app.config['SQLALCHEMY_ECHO'] = True
 connect_db(app)
 
 
@@ -135,7 +135,6 @@ def list_indexed_links():
 
     base_url = 'http://curric.rithmschool.com/r11/lectures/'
     
-    print(inverted_index)
     # Search the word through the inverted index
     link_ids = inverted_index.get(search_word, [])
 
@@ -184,7 +183,6 @@ def build_index():
 
         # Add to the inverted index
         indexsearch.add_words_to_invindex(invindex, word, link_id)
-        print("Done with: ", link_id)
     
     # Write out the inverted index structure onto the pickle 
     with open('inverted_index.pickle', 'wb') as handle:
