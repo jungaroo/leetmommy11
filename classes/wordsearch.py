@@ -112,5 +112,4 @@ if __name__ == "__main__":
     print("testing...")
     wc = WordSearcher("http://curric.rithmschool.com/r11/lectures/")
     s = asyncio.run(wc._get_links_with_word("flask"))
-    print(s)
-
+    print("result:", s)

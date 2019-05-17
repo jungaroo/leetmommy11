@@ -71,5 +71,6 @@ class WordSearcherDB(WordSearcher):
             print('YEHH YOU UPDATED DB!')
 
         return
-    
 
+if __name__ == "__main__":
+    print("Need to write tests!")
