@@ -56,10 +56,11 @@ class InterviewQSearcher():
         flat_list = [item for sublist in total_links for item in sublist]
         return flat_list
 
-
-# iqs = InterviewQSearcher()
-# results = iqs.getLinks('tree')
-# for links in results:
-#     print('\n')
-#     print(links)
+if __name__ == "__main__":
+    print("Testing...")
+    iqs = InterviewQSearcher()
+    results = iqs.getLinks('tree')
+    for links in results:
+        print('\n')
+        print(links)
 

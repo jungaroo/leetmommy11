@@ -37,7 +37,7 @@ class WordSearcherDB(WordSearcher):
 
         COLLECTION_NAME = 'lecture_pages'
         
-        return self._get_results(word,COLLECTION_NAME)
+        return self._get_results(word, COLLECTION_NAME)
     
 
     def _get_results(self,word,COLLECTION_NAME):
@@ -60,7 +60,8 @@ class WordSearcherDB(WordSearcher):
             return resultsArr  
 
 
-    def _randomizeUpdateDB(self,COLLECTION_NAME,SEACH_QUERY, word):
+    def _randomizeUpdateDB(self, COLLECTION_NAME, SEACH_QUERY, word):
+        """Randomizes so that one (lucky?) person who searches must update the database """
         RANDOM_INT = random.randint(0, 10)
 
         if RANDOM_INT == 5:

@@ -1,8 +1,11 @@
+"""
+A class that searches all documents found from the BASE_URL asynchronously with aiohttp & asyncio.
+"""
+
 import requests
 import bs4
 import asyncio
 import aiohttp
-from functools import partial
 
 COHORTS = ['r11', 'r10', 'r9', 'r8']
 BASE_URL = "http://curric.rithmschool.com/{cohort}/lectures/"
@@ -105,7 +108,8 @@ class WordSearcher:
 
  
 if __name__ == "__main__":
-        
+    
+    print("testing...")
     wc = WordSearcher("http://curric.rithmschool.com/r11/lectures/")
     s = asyncio.run(wc._get_links_with_word("flask"))
     print(s)

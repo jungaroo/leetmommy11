@@ -1,3 +1,9 @@
+"""table schema:
+links 
+id  | url
+int | string 
+"""
+
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
