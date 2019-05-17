@@ -33,7 +33,7 @@ dbC = DBConnector(MONGO_DB_URI,'leetmommy')
 ##################################################
 
 # Connect to DB for indexed search
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI', 'postgresql:///leetmommy')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgresql:///leetmommy')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 connect_db(app)
