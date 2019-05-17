@@ -19,4 +19,3 @@ class LinkHTML(db.Model):
                      nullable=False,
                      unique=True)
 
-db.create_all()
