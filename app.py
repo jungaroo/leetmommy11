@@ -8,7 +8,7 @@ import pickle
 
 from classes.models import db, connect_db, LinkHTML
 from classes import indexsearch
-
+from functools import reduce
 
 MONGO_DB_URI = os.environ.get(
     'MONGO_DB_URI', False)
@@ -127,7 +127,9 @@ def list_interview_links():
 @app.route('/indexSearch')
 def list_indexed_links():
     """Return all links using the inverted index - beta version to work only on rithm 11 """
-    search_word = request.args.get('search-word', None)
+    
+    search_words = request.args.get('search-word', None).split();
+    
 
     # Open the file that will load your inverted index
     with open('inverted_index.pickle', 'rb') as handle:
@@ -135,8 +137,17 @@ def list_indexed_links():
 
     base_url = 'http://curric.rithmschool.com/r11/lectures/'
     
-    # Search the word through the inverted index
-    link_ids = inverted_index.get(search_word, [])
+    link_sets = []
+    for search_word in search_words:
+        
+        current_ids = inverted_index.get(search_word, [])
+        
+        # Search the word through the inverted index
+        link_sets.append(set(current_ids))
+
+    # Grab the intersections of all search terms
+    link_ids = reduce(lambda acc, nxt: acc & nxt, link_sets)
+
 
     # Use the db to grab the link name from the ID
     links_rows = LinkHTML.query.filter(LinkHTML.id.in_(link_ids))
