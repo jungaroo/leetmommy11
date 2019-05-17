@@ -12,6 +12,9 @@ import bs4
 import string
 import sqlalchemy
 
+import asyncio
+import aiohttp
+
 
 def get_words_from_link(link):
     """ Grabs all the tokenized words from the link """
@@ -21,7 +24,7 @@ def get_words_from_link(link):
 
     tokens = nltk.word_tokenize(text)
     non_words = [*stopwords.words('english'), *string.punctuation]
-    filtered_words = [word for word in tokens if word not in non_words]
+    filtered_words = [word.lower() for word in tokens if word not in non_words]
 
     return filtered_words
 

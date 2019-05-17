@@ -17,6 +17,12 @@ if not MONGO_DB_URI:
     import secret
     MONGO_DB_URI = secret.MONGO_DB_URI
 
+UPDATE_PASSWORD = os.environ.get('UPDATE_PASSWORD', False)
+
+if not UPDATE_PASSWORD:
+    import secret
+    UPDATE_PASSWORD = secret.UPDATE_PASSWORD
+
 app = Flask(__name__)
 
 
@@ -27,7 +33,7 @@ dbC = DBConnector(MONGO_DB_URI,'leetmommy')
 ##################################################
 
 # Connect to DB for indexed search
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///leetmommy'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI', 'postgresql:///leetmommy')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 connect_db(app)
@@ -120,7 +126,7 @@ def list_interview_links():
 
 @app.route('/indexSearch')
 def list_indexed_links():
-    """Return all links using the inverted index - beta version """
+    """Return all links using the inverted index - beta version to work only on rithm 11 """
     search_word = request.args.get('search-word', None)
 
     # Open the file that will load your inverted index
@@ -128,7 +134,8 @@ def list_indexed_links():
         inverted_index = pickle.load(handle)
 
     base_url = 'http://curric.rithmschool.com/r11/lectures/'
-
+    
+    print(inverted_index)
     # Search the word through the inverted index
     link_ids = inverted_index.get(search_word, [])
 
@@ -144,11 +151,14 @@ def list_indexed_links():
 
     
 
-# temporary route to add stuff
+# Admin only route to add stuff
 @app.route('/buildIndex', methods=["POST"])
 def build_index():
-    """ Don't actually hit this route, it's just for connecting the the database to grab the IDs
+    """ Admin route for updating the links table for id: url
     """
+
+    if UPDATE_PASSWORD != request.json.get('p'):
+        return jsonify({"error": "Invalid"})
 
     import asyncio 
     import aiohttp 
@@ -164,13 +174,20 @@ def build_index():
         
         # Grab the document ID based on that link
         link_row = LinkHTML.query.filter_by(url=link).first()
+        if not link_row: # Link does not exist in the database
+            new_link = LinkHTML(url=link)
+            db.session.add(new_link)
+            db.session.commit()
+            link_row = LinkHTML.query.filter_by(url=link).first()
+
         link_id = link_row.id
 
         # Add to the inverted index
         indexsearch.add_words_to_invindex(invindex, word, link_id)
         print("Done with: ", link_id)
-
-    with open('inverted_index', 'wb') as handle:
+    
+    # Write out the inverted index structure onto the pickle 
+    with open('inverted_index.pickle', 'wb') as handle:
         pickle.dump(invindex, handle, protocol=pickle.HIGHEST_PROTOCOL)
     
     print("saved!")
