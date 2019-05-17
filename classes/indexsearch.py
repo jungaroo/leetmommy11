@@ -65,7 +65,3 @@ def make_sql_query(base_url):
 
 if __name__ == "__main__":
     pass
-
-
-    
-
