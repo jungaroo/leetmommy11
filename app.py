@@ -182,10 +182,11 @@ def build_index():
     if UPDATE_PASSWORD != request.json.get('p'):
         return jsonify({"error": "Invalid"})
 
+    base_url = 'http://curric.rithmschool.com/r11/lectures/'
+      
     # Rebuild the index!
     try:
-        base_url = 'http://curric.rithmschool.com/r11/lectures/'
-        IndexSearcher.rebuild_index_pickle_file(db=db, base_url=base_url)
+        IndexSearcher.rebuild_index_pickle_file_async(db=db, base_url=base_url)
         return jsonify({"success": "completed"})
     except Exception as e:
         print(str(e))
