@@ -5,7 +5,6 @@ from classes.dbconnector import DBConnector
 from classes.wordsearchdb import WordSearcherDB
 from classes.interviewquestion import InterviewQSearcher
 
-
 import os
 import pickle
 
@@ -23,12 +22,12 @@ if not MONGO_DB_URI:
     import secret
     MONGO_DB_URI = secret.MONGO_DB_URI
 
+# Password to update the Inverted Index
 UPDATE_PASSWORD = os.environ.get('UPDATE_PASSWORD', False)
 
 if not UPDATE_PASSWORD:
     import secret
     UPDATE_PASSWORD = secret.UPDATE_PASSWORD
-
 
 
 ##################################################
@@ -38,8 +37,9 @@ if not UPDATE_PASSWORD:
 
 app = Flask(__name__)
 
-# Connect to MongoDB for wordsearchDB - leetmommy
+# Connect to MongoDB for wordsearchDB
 dbC = DBConnector(MONGO_DB_URI,'leetmommy')
+
 # Connect to PSQL for indexed search - leetmommy
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgresql:///leetmommy')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -72,17 +72,15 @@ def _get_data(dbC, cohorts, search_word, type_of_search):
         etc.   
     }
     """
-    # object that holds the results to be passsed to template
+    # Dictionary that holds the results to be passsed to template
+    # i.e. { "r11" : [doc1, doc2, doc3, ..] }
     data = {}
 
-    # for each cohort that is checked:
+    # Go through the cohorts that were checked on the form:
     for cohort in cohorts:
         if cohort:
-            #create a Word Searcher obj
             word_searcher = WordSearcherDB(BASE_LINKS.get(cohort), dbC, cohort)
-            # ask Word Searcher obj to get code snips based on word search
             links = word_searcher.get_results_db(search_word, type_of_search)
-            #append links to dict
             data[cohort] = links 
 
     return data   
@@ -151,7 +149,7 @@ def list_interview_links():
 
 @app.route('/indexSearch')
 def list_indexed_links():
-    """Return all links using the inverted index - beta version to work only on rithm 11 """
+    """Return all links using the inverted index - works only on rithm 11 """
     
     search_words = request.args.get('search-word', None).split();
     
@@ -171,16 +169,17 @@ def list_indexed_links():
     else:
         return render_template("codelinksResult.html",lecture_links={"r11":["No links found"]})
 
-    
-# Admin only route to add stuff
+###############################    
+# Private (dev only route)
+###############################
 @app.route('/buildIndex', methods=["POST"])
 def build_index():
-    """ Admin route for updating the links table for id: url
+    """ Admin route for updating the psql database table that matches ids to urls
     """
 
     # Check for the correct password to allow user to update the db
     if UPDATE_PASSWORD != request.json.get('p'):
-        return jsonify({"error": "Invalid"})
+        return jsonify({"error": "Invalid password"})
 
     base_url = 'http://curric.rithmschool.com/r11/lectures/'
       
@@ -191,4 +190,75 @@ def build_index():
     except Exception as e:
         print(str(e))
         return jsonify({"failure": str(e)})
+
+#### API Routes ####
+@app.route('/api/index-search', methods=["GET"])
+def api_search():
+
+    search_string = request.args.get('search', None)
+    if not search_string:
+        return jsonify({ "error" : "A key of 'search' is required in the args" })
+    
+    search_words = search_string.split()
+
+    idx_searcher = IndexSearcher()
+    
+    link_ids = idx_searcher.search(search_words)
+
+    # Use the db to grab the link name from the ID
+    links_rows = LinkHTML.query.filter(LinkHTML.id.in_(link_ids))
+    
+    # Render the results
+    base_url = 'http://curric.rithmschool.com/r11/lectures/'
+    
+    if (link_ids):
+        urls = [f"{base_url}{link.url}" for link in links_rows]
+    else:
+        urls = []
+    
+    return jsonify({"links": urls})
+
+
+@app.route('/api/scrape-search', methods=["GET"])
+def codesnip_search():
+    
+    VALID_SEARCH_TYPES = ["code_snips", "lecture_pages", "links"]
+    # get search word from query string
+    search_word = request.args.get('search', None)
+    type_of_search = request.args.get('type', None)
+
+    if type_of_search not in VALID_SEARCH_TYPES:
+        return jsonify({
+            "error": f"The 'type' query param is either missing or invalid. Must be one of {VALID_SEARCH_TYPES}"
+            })
+
+    # Get a list of all the cohorts provided
+    cohort_params = request.args.get('cohorts', "").split(',')
+
+    VALID_COHORTS = ["r11", "r10", "r9", "r8"]
+    # Validate cohorts
+    cohorts = [cohort for cohort in cohort_params if cohort in VALID_COHORTS]
+
+
+    if not cohorts:
+        return jsonify({
+            "error": f"'cohorts' query param is missing or invalid. Must be comma separated string with any of these: {VALID_COHORTS}'"
+        })
+
+    # object that holds the results to be passsed to template
+    data = _get_data(dbC, cohorts, search_word, type_of_search)
+    
+    return jsonify({"data": data })
+
+
+@app.route('/api/interviewq-search', methods=["GET"])
+def interview_q_search():
+    search_word = request.args.get('search', None)
+    iqs = InterviewQSearcher()
+    name_and_links = iqs.getLinks(search_word)
+    
+    return jsonify({"data" : name_and_links })
+
+
+
 
