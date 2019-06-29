@@ -23,7 +23,9 @@ from classes.models import LinkHTML
 PICKLE_FILE_PATH = 'inverted_index.pickle'
 
 class IndexSearcher:
-    """Class to represent the Index Search """
+    """Class to represent the Index Search
+    self.inv_index : A dictionary with mapping of words : set of doc ID's, loaded from a pickle file
+    """
 
     def __init__(self):
         self.inv_index = self._load_from_pickle_file(PICKLE_FILE_PATH)
@@ -40,7 +42,8 @@ class IndexSearcher:
 
         # A list containing sets.
         # Each set corresponds to all the link id's that contain the word
-        # ex: [ {2, 4, 6}, {3, 1} , {5,7,2} ]
+        # e.g. [ "database", "query", "sql"] may return:
+        # [ {2, 4, 6}, {3, 1} , {5,7,2} ] , meaning the word 'database' was found in docs #2, 4 and 6
         link_sets = []
 
         for search_word in search_words:
@@ -62,20 +65,24 @@ class IndexSearcher:
 
     @staticmethod
     async def fetch(session, url):
-        """Async fetching of html from url  """
+        """Helper async fetching of html from url  """
         async with session.get(url) as response:
             return await response.text(encoding="utf-8")
 
     @classmethod
     async def create_inv_indicies(cls, link, base_url, id_url, db):
-        """ grabs all words from the link """
+        """Grabs all words in the document's html text of the given link.
+        Returns an inverted index built from that document.
+        """
         async with aiohttp.ClientSession() as session:
             full_url = base_url + link
 
+            # Fetch raw HTML text
             html = await cls.fetch(session, full_url)
             soup = bs4.BeautifulSoup(html, features='html5lib')
             text = soup.get_text()
-
+            
+            # Filter out non-token words using nltk's corpus
             tokens = nltk.word_tokenize(text)
             non_words = [*stopwords.words('english'), *string.punctuation]
             filtered_words = [word.lower()
@@ -85,8 +92,7 @@ class IndexSearcher:
 
             try:
                 link_id = id_url[full_url]
-            except KeyError:
-                # link id does not exist
+            except KeyError: # link does not currently exist in our database.
                 print(full_url, "'s id does not exist. Creating new entry in db")
                 new_link = LinkHTML(url=link)
                 db.session.add(new_link)
@@ -102,13 +108,21 @@ class IndexSearcher:
 
     @classmethod
     async def gather_all(cls, links, base_url, id_url, db):
-        """Send all request to each link at the same time """
+        """Sends all request to each rithm lecture link at the same time.
+        params: links - array of strings of urls to append to the base_url.
+        id_url: 
+        db: SQLAlchemy database object so that the id's can be inserted into the db
+        """
+        
         kwargs = {
             "base_url" : base_url,
             "id_url": id_url,
             "db": db
         }
-        all_results = await asyncio.gather(*[cls.create_inv_indicies(link=link, **kwargs) for link in links])
+
+        all_results = await asyncio.gather(
+            *[cls.create_inv_indicies(link=link, **kwargs) for link in links]
+            )
         results = [link_index for link_index in all_results if link_index]
         return results
 
@@ -117,7 +131,6 @@ class IndexSearcher:
         """Asynchronously rebuilds pickle file from scraping """
         
         # Grab all links
-        base_url = "http://curric.rithmschool.com/r11/lectures/"
         links = cls.get_lecture_links_from_table_of_contents(base_url)
 
         # Create dictionary of URL : ids from database
