@@ -1,3 +1,5 @@
+""" Script that asynchronously searches through r11 notes """
+
 import requests
 import bs4
 import argparse

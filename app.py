@@ -56,6 +56,7 @@ def landing():
     """Render Search page"""
     return render_template("landing.html")
 
+
 @app.route('/codesnip')
 def render_code_snip_search():
     """Render CodeSnip Landing page"""
@@ -90,7 +91,7 @@ def _get_data(dbC, cohorts, search_word, type_of_search):
 # Search endpoints
 ##################################################
 
-@app.route('/codeSnipSearch')
+@app.route('/codesnip-search')
 def render_code_snips():
 
     TYPE_OF_SEARCH = 'code_snips'
@@ -105,7 +106,7 @@ def render_code_snips():
     
     return render_template("codeSnipsResult.html", links_and_snips=data)
 
-@app.route('/conceptualSearch')
+@app.route('/conceptual-search')
 def render_entire_lecture_pages():
 
     TYPE_OF_SEARCH = 'lecture_pages'
@@ -119,10 +120,10 @@ def render_entire_lecture_pages():
     # object that holds the results to be passsed to template
     data = _get_data(dbC,cohorts,search_word,TYPE_OF_SEARCH)
 
-    return render_template("lecturePagesResult.html",lecture_pages=data)
+    return render_template("lecturePagesResult.html", lecture_pages=data)
 
 
-@app.route('/linkSearch')
+@app.route('/link-search')
 def list_lecture_links():
     """Return all lecture links with word"""
 
@@ -134,9 +135,10 @@ def list_lecture_links():
 
     all_links = _get_data(dbC,cohorts,search_word,TYPE_OF_SEARCH)
             
-    return render_template("codelinksResult.html",lecture_links=all_links)
+    return render_template("codelinksResult.html", lecture_links=all_links)
 
-@app.route('/interviewQSearch')
+
+@app.route('/interviewq-search')
 def list_interview_links():
     """Return all links with word"""
 
@@ -147,7 +149,8 @@ def list_interview_links():
             
     return render_template("interviewLinksResult.html",links=links)
 
-@app.route('/indexSearch')
+
+@app.route('/index-search')
 def list_indexed_links():
     """Return all links using the inverted index - works only on rithm 11 """
     
@@ -172,7 +175,7 @@ def list_indexed_links():
 ###############################    
 # Private (dev only route)
 ###############################
-@app.route('/buildIndex', methods=["POST"])
+@app.route('/build-index', methods=["POST"])
 def build_index():
     """ Admin route for updating the psql database table that matches ids to urls
     """
