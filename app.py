@@ -154,57 +154,71 @@ def list_interview_links():
 def list_indexed_links():
     """Return all links using the inverted index - works only on rithm 11 """
     
+    # Grab only the supported cohorts
+    cohorts = [cohort for cohort in ['r13', 'r12', 'r11'] if request.args.get(cohort)]
+    cohort = cohorts[0] if cohorts else 'r13' # We only support index search for the first one
+
     search_words = request.args.get('search-word', None).split();
     
-    idx_searcher = IndexSearcher()
+    idx_searcher = IndexSearcher(cohort)
     link_ids = idx_searcher.search(search_words)
 
     # Use the db to grab the link name from the ID
     links_rows = LinkHTML.query.filter(LinkHTML.id.in_(link_ids))
     
     # Render the results
-    base_url = 'http://curric.rithmschool.com/r11/lectures/'
+    base_url = f'http://curric.rithmschool.com/{cohort}/lectures/'
     
     if (link_ids):
         urls = [f"{base_url}{link.url}" for link in links_rows]
-        all_links = { "r11" : urls }
+        all_links = { cohort : urls }
         return render_template("codelinksResult.html",lecture_links=all_links)
     else:
-        return render_template("codelinksResult.html",lecture_links={"r11":["No links found"]})
+        return render_template("codelinksResult.html",lecture_links={cohort:["No links found"]})
 
 ###############################    
 # Private (dev only route)
 ###############################
 @app.route('/build-index', methods=["POST"])
 def build_index():
-    """ Admin route for updating the psql database table that matches ids to urls
+    """ Admin route for updating the psql database table that matches ids to urls.
+    POST request must have a password and the rithm cohort
     """
 
     # Check for the correct password to allow user to update the db
     if UPDATE_PASSWORD != request.json.get('p'):
         return jsonify({"error": "Invalid password"})
+    
+    cohort = request.json.get('cohort', 'r11')
 
-    base_url = 'http://curric.rithmschool.com/r11/lectures/'
+    base_url = f'http://curric.rithmschool.com/{cohort}/lectures/'
       
     # Rebuild the index!
     try:
-        IndexSearcher.rebuild_index_pickle_file_async(db=db, base_url=base_url)
-        return jsonify({"success": "completed"})
+        IndexSearcher.rebuild_index_pickle_file_async(db=db, base_url=base_url, cohort=cohort)
+        return jsonify({"success": f"completed building for cohort {cohort}"})
     except Exception as e:
         print(str(e))
         return jsonify({"failure": str(e)})
 
 #### API Routes ####
+@app.route('/api/ping')
+def ping_api():
+    return jsonify({ "status " : "success" })
+
 @app.route('/api/index-search', methods=["GET"])
 def api_search():
 
     search_string = request.args.get('search', None)
+    cohort = request.args.get('cohort', 'r11')
+
+
     if not search_string:
         return jsonify({ "error" : "A key of 'search' is required in the args" })
     
     search_words = search_string.split()
 
-    idx_searcher = IndexSearcher()
+    idx_searcher = IndexSearcher(cohort)
     
     link_ids = idx_searcher.search(search_words)
 
@@ -212,7 +226,7 @@ def api_search():
     links_rows = LinkHTML.query.filter(LinkHTML.id.in_(link_ids))
     
     # Render the results
-    base_url = 'http://curric.rithmschool.com/r11/lectures/'
+    base_url = f'http://curric.rithmschool.com/{cohort}/lectures/'
     
     if (link_ids):
         urls = [f"{base_url}{link.url}" for link in links_rows]
@@ -229,6 +243,11 @@ def codesnip_search():
     # get search word from query string
     search_word = request.args.get('search', None)
     type_of_search = request.args.get('type', None)
+
+    if not search_word:
+        return jsonify({
+            "error": f"Missing 'search' query param."
+        })
 
     if type_of_search not in VALID_SEARCH_TYPES:
         return jsonify({

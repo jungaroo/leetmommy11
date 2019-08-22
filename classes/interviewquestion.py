@@ -6,7 +6,7 @@ class InterviewQSearcher():
         
     def getLinks(self,search_word):
 
-        ##Links from AD
+        ## Links from AD
         URLS = ['http://www.ardendertat.com/2011/','http://www.ardendertat.com/2011/page/2/','http://www.ardendertat.com/2011/page/3/'] 
 
         resultsArr = []
@@ -15,7 +15,7 @@ class InterviewQSearcher():
             links = self.__getLinksFromAD(url,search_word)
             resultsArr.append(links)
 
-        ##links from GG
+        ## links from GG
         gg_links = self.__getLinksFromGG(search_word)
         resultsArr.append(gg_links)
 

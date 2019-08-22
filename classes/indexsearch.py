@@ -20,20 +20,25 @@ from .decorators import deprecated
 
 from classes.models import LinkHTML
 
-PICKLE_FILE_PATH = 'inverted_index.pickle'
+pickle_index = {
+    'r11': 'r11.pickle',
+    'r12': 'r12.pickle',
+    'r13': 'r13.pickle',
+}
 
 class IndexSearcher:
     """Class to represent the Index Search
     self.inv_index : A dictionary with mapping of words : set of doc ID's, loaded from a pickle file
     """
 
-    def __init__(self):
-        self.inv_index = self._load_from_pickle_file(PICKLE_FILE_PATH)
+    def __init__(self, cohort):
+        pickle_file_path = pickle_index[cohort]
+        self.inv_index = self._load_from_pickle_file(pickle_file_path)
 
     def _load_from_pickle_file(self, path_to_pickle):
         """Loads a inverted index dictionary from the pickle file. """
 
-        with open(PICKLE_FILE_PATH, 'rb') as handle:
+        with open(path_to_pickle, 'rb') as handle:
             inv_index = pickle.load(handle)
             return inv_index
 
@@ -81,24 +86,24 @@ class IndexSearcher:
             html = await cls.fetch(session, full_url)
             soup = bs4.BeautifulSoup(html, features='html5lib')
             text = soup.get_text()
-            
+
             # Filter out non-token words using nltk's corpus
             tokens = nltk.word_tokenize(text)
             non_words = [*stopwords.words('english'), *string.punctuation]
             filtered_words = [word.lower()
-                                for word in tokens if word not in non_words]
+                              for word in tokens if word not in non_words]
 
             inv_index = {}
 
             try:
                 link_id = id_url[full_url]
-            except KeyError: # link does not currently exist in our database.
+            except KeyError:  # link does not currently exist in our database.
                 print(full_url, "'s id does not exist. Creating new entry in db")
                 new_link = LinkHTML(url=link)
                 db.session.add(new_link)
                 db.session.commit()
                 link_id = LinkHTML.query.filter_by(url=link).first().id
-                
+
             cls.add_words_to_invindex(
                 invindex=inv_index,
                 words=filtered_words,
@@ -113,30 +118,31 @@ class IndexSearcher:
         id_url: 
         db: SQLAlchemy database object so that the id's can be inserted into the db
         """
-        
+
         kwargs = {
-            "base_url" : base_url,
+            "base_url": base_url,
             "id_url": id_url,
             "db": db
         }
 
         all_results = await asyncio.gather(
             *[cls.create_inv_indicies(link=link, **kwargs) for link in links]
-            )
+        )
         results = [link_index for link_index in all_results if link_index]
         return results
 
     @classmethod
-    def rebuild_index_pickle_file_async(cls, db, base_url):
+    def rebuild_index_pickle_file_async(cls, db, base_url, cohort):
         """Asynchronously rebuilds pickle file from scraping """
-        
+
         # Grab all links
         links = cls.get_lecture_links_from_table_of_contents(base_url)
 
         # Create dictionary of URL : ids from database
-        id_url = dict((base_url + link.url, link.id) for link in LinkHTML.query.all())
+        id_url = dict((base_url + link.url, link.id)
+                      for link in LinkHTML.query.all())
 
-        # Send all requests to gather list of inverted indexes for each link 
+        # Send all requests to gather list of inverted indexes for each link
         # [{"word1", {docid}, "word2", {docid} }, ...]
         results = asyncio.run(cls.gather_all(links, base_url, id_url, db))
         print("Done scraping all", len(results))
@@ -146,20 +152,21 @@ class IndexSearcher:
             """ { "word1" : {1, 2} } and { "word1" : {3}, "word2" : {2} }
             become { "word1" : {1, 2, 3}, "word2" : {2} }
             """
-            for key, value in inv_index.items(): 
+            for key, value in inv_index.items():
                 acc[key] = acc[key] | value if key in acc else value
             return acc
 
         # Result of combining all inverted indices
         final_index = reduce(combine_index, results, {})
 
+        pickle_file_path = pickle_index[cohort]
+
         # Write out the inverted index structure onto the pickle
-        with open(PICKLE_FILE_PATH, 'wb') as handle:
+        with open(pickle_file_path, 'wb') as handle:
             pickle.dump(final_index, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
         print("Completed!")
-        return 
-
+        return
 
     @staticmethod
     def add_words_to_invindex(invindex: dict, words: str, link_id: int):
@@ -224,8 +231,7 @@ class IndexSearcher:
                           for word in tokens if word not in non_words]
 
         return filtered_words
-    
-    
+
     @deprecated
     @classmethod
     def rebuild_index_pickle_file(cls, db, base_url):

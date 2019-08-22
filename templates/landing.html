@@ -12,16 +12,21 @@ Welcome to Leet-Mommy Search
             <label for="search-word">Search Word:</label>
             <input type="text" class="form-control" name="search-word" id="search-word" placeholder="Enter a search"
                 required="required">
-            <label for="search-word">R11</label>
-            <input type="checkbox" aria-label="Checkbox for following text input" name="r11" id="r11" value='r11'>
-            <label for="search-word">R10</label>
-            <input type="checkbox" aria-label="Checkbox for following text input" name="r10" id="r10" value='r10'>
-            <label for="search-word">R9</label>
-            <input type="checkbox" aria-label="Checkbox for following text input" name="r9" id="r9" value='r9'>
-            <label for="search-word">R8</label>
-            <input type="checkbox" aria-label="Checkbox for following text input" name="r8" id="r8" value='r8'>
+
+            <label for="r13">R13</label>
+            <input class="check-box" type="checkbox" aria-label="Checkbox for following text input" name="r13" id="r13" value='r13'>
+            <label for="r12">R12</label>
+            <input class="check-box" type="checkbox" aria-label="Checkbox for following text input" name="r12" id="r12" value='r12'>
+            <label for="r11">R11</label>
+            <input class="check-box" type="checkbox" aria-label="Checkbox for following text input" name="r11" id="r11" value='r11'>
+            <label for="r10">R10</label>
+            <input class="check-box" type="checkbox" aria-label="Checkbox for following text input" name="r10" id="r10" value='r10'>
+            <label for="r9">R9</label>
+            <input class="check-box" type="checkbox" aria-label="Checkbox for following text input" name="r9" id="r9" value='r9'>
+            <label for="r8">R8</label>
+            <input class="check-box" type="checkbox" aria-label="Checkbox for following text input" name="r8" id="r8" value='r8'>
         </div>
-        <button class='btn btn-danger' formaction="/index-search" type='submit'>Index Search - r11 only - (beta)  </button>
+        <button class='btn btn-danger' formaction="/index-search" type='submit'>Indexed Search (r13, r12, r11 only) </button>
         <button class='btn btn-primary' formaction="/link-search" type='submit'>Get Links</button>
         <button class='btn btn-primary' formaction="/codesnip-search" type='submit'>CodeSnip</button>
         <button class='btn btn-primary' formaction="/conceptual-search" type='submit'>Conceptual Notes</button>
@@ -38,7 +43,7 @@ Welcome to Leet-Mommy Search
             <input type="text" class="form-control" name="search-word" id="search-word"
                 placeholder="Enter a topic (tree, anagram, string, permutations)" required="required">
         </div>
-        <button class='btn btn-success' formaction="/interviewQSearch" type='submit'>Interview Question Links</button>
+        <button class='btn btn-success' formaction="/interviewq-search" type='submit'>Interview Question Links</button>
     </form>
     <div class='text-center'>
         <img id='loading-gif' src="https://ui-ex.com/images/gif-transparent-loading-4.gif" alt="" visibility: hidden>
