@@ -8,7 +8,7 @@ python3
 ```
 ## To access the hosted version:
 
-<leetmommy.herokuapp.com> 
+leetmommy.herokuapp.com
 
 ## To use the command-line tool:
 Make a virtual env
