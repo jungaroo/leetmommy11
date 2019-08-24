@@ -43,16 +43,18 @@ class IndexSearcher:
             return inv_index
 
     def search(self, search_words):
-        """Pass a list of search words, a string of search words. """
+        """ Pass in list of a string of words to search for. """
 
-        # A list containing sets.
-        # Each set corresponds to all the link id's that contain the word
-        # e.g. [ "database", "query", "sql"] may return:
+        # A list of sets, where each set contains all link id's (of the lecture notes) that contain that word, where
+        # search_words[i] corresponds to link_sets[i]
+        # e.g. search_words = [ "database", "query", "sql"] may return:
         # [ {2, 4, 6}, {3, 1} , {5,7,2} ] , meaning the word 'database' was found in docs #2, 4 and 6
         link_sets = []
 
         for search_word in search_words:
-
+            
+            search_word = search_word.lower()
+            
             # Empty set if the search word was not found in the inverted index
             current_ids = self.inv_index.get(search_word, [])
 
@@ -65,33 +67,39 @@ class IndexSearcher:
         return link_ids
 
     ################################################
-    # Static helper functions to rebuild the index pickle
+    # Static (private) helper functions to rebuild the index pickle
     ###############################################
 
     @staticmethod
     async def fetch(session, url):
-        """Helper async fetching of html from url  """
+        """Helper. An asynchronous get request to a URL. Returns the get request response as text. """
         async with session.get(url) as response:
             return await response.text(encoding="utf-8")
 
     @classmethod
-    async def create_inv_indicies(cls, link, base_url, id_url, db):
+    async def create_inv_indicies(cls, lecture_title, base_url, id_url, db):
         """Grabs all words in the document's html text of the given link.
         Returns an inverted index built from that document.
+        
+        base_url : A string , like: 'http://curric.rithmschoo.com/r13/lectures/' 
+        link :  A string, the lecture title
         """
         async with aiohttp.ClientSession() as session:
-            full_url = base_url + link
+            full_url = base_url + lecture_title
 
             # Fetch raw HTML text
             html = await cls.fetch(session, full_url)
             soup = bs4.BeautifulSoup(html, features='html5lib')
             text = soup.get_text()
 
-            # Filter out non-token words using nltk's corpus
+            # Filter out non-token words using nltk's corpus. Words such as 'of', 'the', 'but'.
             tokens = nltk.word_tokenize(text)
             non_words = [*stopwords.words('english'), *string.punctuation]
             filtered_words = [word.lower()
                               for word in tokens if word not in non_words]
+
+            # Add the full lecture title and split lecture title into the index list
+            filtered_words.extend([*lecture_title.split('-'), lecture_title])
 
             inv_index = {}
 
@@ -99,10 +107,10 @@ class IndexSearcher:
                 link_id = id_url[full_url]
             except KeyError:  # link does not currently exist in our database.
                 print(full_url, "'s id does not exist. Creating new entry in db")
-                new_link = LinkHTML(url=link)
+                new_link = LinkHTML(url=lecture_title)
                 db.session.add(new_link)
                 db.session.commit()
-                link_id = LinkHTML.query.filter_by(url=link).first().id
+                link_id = LinkHTML.query.filter_by(url=lecture_title).first().id
 
             cls.add_words_to_invindex(
                 invindex=inv_index,
@@ -126,7 +134,7 @@ class IndexSearcher:
         }
 
         all_results = await asyncio.gather(
-            *[cls.create_inv_indicies(link=link, **kwargs) for link in links]
+            *[cls.create_inv_indicies(lecture_title=lecture_title, **kwargs) for lecture_title in links]
         )
         results = [link_index for link_index in all_results if link_index]
         return results
@@ -147,13 +155,14 @@ class IndexSearcher:
         results = asyncio.run(cls.gather_all(links, base_url, id_url, db))
         print("Done scraping all", len(results))
 
-        # Combines all the indexes together. To be used with reduce
+        # Combines two indexes together. To be used with reduce
         def combine_index(acc, inv_index):
             """ { "word1" : {1, 2} } and { "word1" : {3}, "word2" : {2} }
             become { "word1" : {1, 2, 3}, "word2" : {2} }
             """
             for key, value in inv_index.items():
-                acc[key] = acc[key] | value if key in acc else value
+                # If the key exists in both, combine them, else initialize a new entry
+                acc[key] = (acc[key] | value) if key in acc else value
             return acc
 
         # Result of combining all inverted indices
@@ -203,71 +212,10 @@ class IndexSearcher:
 
     @staticmethod
     def make_sql_query():
-        """Creates the SQL query for seeding the initial database, with all the lectures """
+        """Creates the SQL query for seeding the initial database, with all the lectures. One time use, probably never use again. """
         links = get_lecture_links_from_table_of_contents(
             'http://curric.rithmschool.com/r11/lectures/')
 
         values = (", ".join([f"('{link}')" for link in links]))
 
         return f"INSERT INTO links (url) VALUES {values} "
-
-    ###################################################
-    # DEPRECATED Static helper functions to rebuild the index pickle synchronously
-    ###################################################
-
-    @deprecated
-    @staticmethod
-    def get_words_from_link(link):
-        """Grabs all the tokenized words from the link"""
-        response = requests.get(link)
-        soup = bs4.BeautifulSoup(response.text, features='html5lib')
-        text = soup.get_text()
-
-        # NLTK corpus files must be specified in the nltk.txt
-        # Filter words for nltk filters out any non stop words and string punctuation
-        tokens = nltk.word_tokenize(text)
-        non_words = [*stopwords.words('english'), *string.punctuation]
-        filtered_words = [word.lower()
-                          for word in tokens if word not in non_words]
-
-        return filtered_words
-
-    @deprecated
-    @classmethod
-    def rebuild_index_pickle_file(cls, db, base_url):
-        """DEPRECATED - Rebuilds the index from the pickle file.
-        Must be called in a view function.
-
-        Pass in a base_url. i.e.
-        http://curric.rithmschool.com/r11/lectures/
-        """
-
-        print("Rebuilding...")
-        links = cls.get_lecture_links_from_table_of_contents(base_url)
-        print("Here are the links", links)
-        # Rebuild the inverted index from all of them
-        invindex = {}
-        for link in links:
-            # This grabs words from the links using an NLTK tokenizer
-            word = cls.get_words_from_link(base_url+link)
-
-            # Grab the document ID based on that link
-            link_row = LinkHTML.query.filter_by(url=link).first()
-            if not link_row:  # Link does not exist in the database
-                new_link = LinkHTML(url=link)
-                db.session.add(new_link)
-                db.session.commit()
-                link_row = LinkHTML.query.filter_by(url=link).first()
-
-            link_id = link_row.id
-
-            # Add to the inverted index
-            cls.add_words_to_invindex(invindex, word, link_id)
-
-            print(f"Added {link} to the index")
-
-        # Write out the inverted index structure onto the pickle
-        with open(PICKLE_FILE_PATH, 'wb') as handle:
-            pickle.dump(invindex, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
-        print("Completed!")

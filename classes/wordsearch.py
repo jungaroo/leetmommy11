@@ -7,7 +7,7 @@ import bs4
 import asyncio
 import aiohttp
 
-COHORTS = ['r11', 'r10', 'r9', 'r8']
+COHORTS = ['r13', 'r12', 'r11', 'r10', 'r9', 'r8']
 BASE_URL = "http://curric.rithmschool.com/{cohort}/lectures/"
 BASE_LINKS = {cohort : BASE_URL.format(cohort=cohort) for cohort in COHORTS}
 
