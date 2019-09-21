@@ -163,14 +163,14 @@ def list_indexed_links():
     idx_searcher = IndexSearcher(cohort)
     link_ids = idx_searcher.search(search_words)
 
-    # Use the db to grab the link name from the ID
     links_rows = LinkHTML.query.filter(LinkHTML.id.in_(link_ids))
-    
+    print(links_rows)
     # Render the results
-    base_url = f'http://curric.rithmschool.com/{cohort}/lectures/'
+    base_url = f'http://curric.rithmschool.com/'
     
     if (link_ids):
         urls = [f"{base_url}{link.url}" for link in links_rows]
+
         all_links = { cohort : urls }
         return render_template("codelinksResult.html",lecture_links=all_links)
     else:
@@ -191,11 +191,11 @@ def build_index():
     
     cohort = request.json.get('cohort', 'r11')
 
-    base_url = f'http://curric.rithmschool.com/{cohort}/lectures/'
+    base_url = f'http://curric.rithmschool.com/'
       
     # Rebuild the index!
     try:
-        IndexSearcher.rebuild_index_pickle_file_async(db=db, base_url=base_url, cohort=cohort)
+        IndexSearcher.rebuild_index_pickle_file_async(db=db, cohort=cohort)
         return jsonify({"success": f"completed building for cohort {cohort}"})
     except Exception as e:
         print(str(e))
@@ -226,7 +226,7 @@ def api_search():
     links_rows = LinkHTML.query.filter(LinkHTML.id.in_(link_ids))
     
     # Render the results
-    base_url = f'http://curric.rithmschool.com/{cohort}/lectures/'
+    base_url = f'http://curric.rithmschool.com/'
     
     if (link_ids):
         urls = [f"{base_url}{link.url}" for link in links_rows]

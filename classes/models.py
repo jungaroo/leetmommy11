@@ -1,7 +1,7 @@
 """table schema:
 links 
 id  | url
-int | string  (examples:  'big-o/', 'express-intro' )
+int | string  (examples:  'r11/lectures/big-o/', 'r11/lectures/express-intro' )
 """
 
 from flask_sqlalchemy import SQLAlchemy
