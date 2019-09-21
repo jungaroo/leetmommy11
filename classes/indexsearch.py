@@ -24,6 +24,7 @@ pickle_index = {
     'r11': 'r11.pickle',
     'r12': 'r12.pickle',
     'r13': 'r13.pickle',
+    'test': 'test.pickle',
 }
 
 class IndexSearcher:
@@ -63,6 +64,7 @@ class IndexSearcher:
 
         # Grab the intersections of all search terms
         link_ids = reduce(lambda acc, nxt: acc & nxt, link_sets)
+        
 
         return link_ids
 
