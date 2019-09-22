@@ -35,7 +35,7 @@ python3 notes_search.py flask-wtf
 
 ## Resource URL (base URL)
 ```
-https://leetmommy.herokuapp.com/
+http://leetmommy.herokuapp.com/
 ```
 
 | HTTP VERB | URL | Description |
