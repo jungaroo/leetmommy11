@@ -104,7 +104,7 @@ class IndexSearcher:
                               for word in tokens if word not in non_words]
 
             # Link extension is like r13/lectures, so we will extract the lecture title fro mtaht
-            lecture_title = link_extension.split('/')[1]
+            lecture_title = link_extension.split('/')[2]
             
             # Add the full lecture title and split lecture title into the index list
             filtered_words.extend([*lecture_title.split('-'), lecture_title])
@@ -112,14 +112,14 @@ class IndexSearcher:
             inv_index = {}
 
             try:
-                link_id = id_url[full_url]
+                link_id = id_url[link_extension]
             except KeyError:  # link does not currently exist in our database.
-                print(full_url, "'s id does not exist. Creating new entry in db")
+                print(link_extension, "'s id does not exist. Creating new entry in db")
                 new_link = LinkHTML(url=link_extension)
                 db.session.add(new_link)
                 db.session.commit()
                 link_id = LinkHTML.query.filter_by(url=link_extension).first().id
-
+            
             cls.add_words_to_invindex(
                 invindex=inv_index,
                 words=filtered_words,
@@ -155,10 +155,10 @@ class IndexSearcher:
         links = cls.get_lecture_links_from_table_of_contents(cohort)
 
         # Create dictionary of URL : ids from database
-        id_url = dict((BASE_URL + f'{cohort}/lectures/' + link.url, link.id)
+        # e.g. { r11/lectures/react-router : 120 }
+        id_url = dict((link.url, link.id)
                       for link in LinkHTML.query.all())
         
-
         # Send all requests to gather list of inverted indexes for each link
         # [{"word1", {docid}, "word2", {docid} }, ...]
         results = asyncio.run(cls.gather_all(links, id_url, db))
