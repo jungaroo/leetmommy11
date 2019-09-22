@@ -1,4 +1,5 @@
 from flask import Flask, request, render_template, redirect, jsonify
+from flask_cors import CORS
 
 from classes.wordsearch import WordSearcher, BASE_URL, BASE_LINKS, COHORTS
 from classes.dbconnector import DBConnector
@@ -36,6 +37,7 @@ if not UPDATE_PASSWORD:
 
 
 app = Flask(__name__)
+CORS(app)
 
 # Connect to MongoDB for wordsearchDB
 dbC = DBConnector(MONGO_DB_URI,'leetmommy')
@@ -164,7 +166,7 @@ def list_indexed_links():
     link_ids = idx_searcher.search(search_words)
 
     links_rows = LinkHTML.query.filter(LinkHTML.id.in_(link_ids))
-    print(links_rows)
+    
     # Render the results
     base_url = f'http://curric.rithmschool.com/'
     
@@ -235,7 +237,6 @@ def api_search():
     
     return jsonify({"links": urls})
 
-
 @app.route('/api/scrape-search', methods=["GET"])
 def codesnip_search():
     
@@ -261,7 +262,6 @@ def codesnip_search():
     # Validate cohorts
     cohorts = [cohort for cohort in cohort_params if cohort in VALID_COHORTS]
 
-
     if not cohorts:
         return jsonify({
             "error": f"'cohorts' query param is missing or invalid. Must be comma separated string with any of these: {VALID_COHORTS}'"
@@ -271,7 +271,6 @@ def codesnip_search():
     data = _get_data(dbC, cohorts, search_word, type_of_search)
     
     return jsonify({"data": data })
-
 
 @app.route('/api/interviewq-search', methods=["GET"])
 def interview_q_search():
